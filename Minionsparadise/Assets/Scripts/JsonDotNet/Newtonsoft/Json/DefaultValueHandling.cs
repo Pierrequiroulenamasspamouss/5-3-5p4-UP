@@ -1,0 +1,11 @@
+namespace Newtonsoft.Json
+{
+	[global::System.Flags]
+	public enum DefaultValueHandling
+	{
+		Include = 0,
+		Ignore = 1,
+		Populate = 2,
+		IgnoreAndPopulate = 3
+	}
+}

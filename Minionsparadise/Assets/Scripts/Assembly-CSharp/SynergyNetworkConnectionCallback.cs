@@ -1,0 +1,1 @@
+public delegate void SynergyNetworkConnectionCallback(NimbleBridge_SynergyNetworkConnectionHandle handle);

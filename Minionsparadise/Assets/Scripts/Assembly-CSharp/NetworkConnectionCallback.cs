@@ -1,0 +1,1 @@
+public delegate void NetworkConnectionCallback(NimbleBridge_NetworkConnectionHandle handle);
