@@ -32,17 +32,12 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
+			case "VFXPREFABS":
+				reader.Read();
+				VFXPrefabs = global::Kampai.Util.ReaderUtil.PopulateList<string>(reader, converters, global::Kampai.Util.ReaderUtil.ReadString, VFXPrefabs);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-				if (num == 1)
-				{
-					reader.Read();
-					VFXPrefabs = global::Kampai.Util.ReaderUtil.PopulateList<string>(reader, converters, global::Kampai.Util.ReaderUtil.ReadString, VFXPrefabs);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "TRANSACTIONID":
 				reader.Read();
 				TransactionID = global::System.Convert.ToInt32(reader.Value);

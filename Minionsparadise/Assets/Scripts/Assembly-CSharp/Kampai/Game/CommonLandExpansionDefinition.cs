@@ -32,17 +32,12 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
+			case "VFXGRASSCLEARING":
+				reader.Read();
+				VFXGrassClearing = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					VFXGrassClearing = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "MINIONPREFAB":
 				reader.Read();
 				MinionPrefab = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);

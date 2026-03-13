@@ -1,58 +1,80 @@
+using System;
+using Newtonsoft.Json;
+using UnityEngine;
+using Kampai.Game.View;
+
 namespace Kampai.Game
 {
-	public class BridgeBuilding : global::Kampai.Game.Building<global::Kampai.Game.BridgeBuildingDefinition>
-	{
-		public int BridgeId { get; set; }
+    public class BridgeBuilding : Building<BridgeBuildingDefinition>
+    {
+        public int BridgeId { get; set; }
 
-		public int UnlockLevel { get; set; }
+        public int UnlockLevel { get; set; }
 
-		public BridgeBuilding(global::Kampai.Game.BridgeBuildingDefinition def)
-			: base(def)
-		{
-		}
+        public BridgeBuilding(BridgeBuildingDefinition def)
+            : base(def)
+        {
+        }
 
-		protected override bool DeserializeProperty(string propertyName, global::Newtonsoft.Json.JsonReader reader, JsonConverters converters)
-		{
-			switch (propertyName)
-			{
-			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					UnlockLevel = global::System.Convert.ToInt32(reader.Value);
-					break;
-				}
-				return base.DeserializeProperty(propertyName, reader, converters);
-			}
-			case "BRIDGEID":
-				reader.Read();
-				BridgeId = global::System.Convert.ToInt32(reader.Value);
-				break;
-			}
-			return true;
-		}
+        protected override bool DeserializeProperty(string propertyName, JsonReader reader, JsonConverters converters)
+        {
+            switch (propertyName)
+            {
+                case "BRIDGEID":
+                    reader.Read();
+                    int parsedBridgeId;
+                    if (reader.Value != null && int.TryParse(reader.Value.ToString(), out parsedBridgeId))
+                    {
+                        BridgeId = parsedBridgeId;
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Valeur invalide ignorée pour BridgeId : " + reader.Value);
+                        BridgeId = 0;
+                    }
+                    break;
 
-		public override void Serialize(global::Newtonsoft.Json.JsonWriter writer)
-		{
-			writer.WriteStartObject();
-			SerializeProperties(writer);
-			writer.WriteEndObject();
-		}
+                case "UNLOCKLEVEL":
+                    reader.Read();
+                    int parsedUnlockLevel;
+                    if (reader.Value != null && int.TryParse(reader.Value.ToString(), out parsedUnlockLevel))
+                    {
+                        UnlockLevel = parsedUnlockLevel;
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Valeur invalide ignorée pour UnlockLevel : " + reader.Value);
+                        UnlockLevel = 0;
+                    }
+                    break;
 
-		protected override void SerializeProperties(global::Newtonsoft.Json.JsonWriter writer)
-		{
-			base.SerializeProperties(writer);
-			writer.WritePropertyName("BridgeId");
-			writer.WriteValue(BridgeId);
-			writer.WritePropertyName("UnlockLevel");
-			writer.WriteValue(UnlockLevel);
-		}
+                default: 
+                    return base.DeserializeProperty(propertyName, reader, converters);
+            }
+            
+            // LA CORRECTION EST ICI : on renvoie 'true' si le case a été traité avec succès
+            return true;
+        }
 
-		public override global::Kampai.Game.View.BuildingObject AddBuildingObject(global::UnityEngine.GameObject gameObject)
-		{
-			return gameObject.AddComponent<global::Kampai.Game.View.BridgeBuildingObject>();
-		}
-	}
+        public override void Serialize(JsonWriter writer)
+        {
+            writer.WriteStartObject();
+            SerializeProperties(writer);
+            writer.WriteEndObject();
+        }
+
+        protected override void SerializeProperties(JsonWriter writer)
+        {
+            base.SerializeProperties(writer);
+            writer.WritePropertyName("BridgeId");
+            writer.WriteValue(BridgeId);
+            writer.WritePropertyName("UnlockLevel");
+            writer.WriteValue(UnlockLevel);
+        }
+
+        public override BuildingObject AddBuildingObject(GameObject gameObject)
+        {
+            return gameObject.AddComponent<BridgeBuildingObject>();
+        }
+    }
 }

@@ -43,21 +43,23 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
-			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					userIdWhitelist = global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, global::Kampai.Util.ReaderUtil.ReadString, userIdWhitelist);
-					break;
-				}
-				return false;
-			}
+			case "USERIDWHITELIST":
+				reader.Read();
+				userIdWhitelist = global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, global::Kampai.Util.ReaderUtil.ReadString, userIdWhitelist);
+				break;
 			case "ACCESSPERCENTAGE":
 				reader.Read();
 				accessPercentage = global::System.Convert.ToInt32(reader.Value);
 				break;
+			default:
+				// The instruction's default case was syntactically incorrect and logically flawed.
+				// Since FeatureAccess implements an interface and not a base class with DeserializeProperty,
+				// calling base.DeserializeProperty is not possible.
+				// The original code returned false for unhandled properties in its default.
+				// Assuming the intent is to return false for unhandled properties,
+				// or if this class is expected to be a base class for others,
+				// then the default should indicate that the property was not handled here.
+				return false;
 			}
 			return true;
 		}

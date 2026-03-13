@@ -15,17 +15,12 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
+			case "ADJACENTEXPANSIONS":
+				reader.Read();
+				AdjacentExpansions = global::Kampai.Util.ReaderUtil.PopulateListInt32(reader, AdjacentExpansions);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					AdjacentExpansions = global::Kampai.Util.ReaderUtil.PopulateListInt32(reader, AdjacentExpansions);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "PURCHASEDEXPANSIONS":
 				reader.Read();
 				PurchasedExpansions = global::Kampai.Util.ReaderUtil.PopulateListInt32(reader, PurchasedExpansions);

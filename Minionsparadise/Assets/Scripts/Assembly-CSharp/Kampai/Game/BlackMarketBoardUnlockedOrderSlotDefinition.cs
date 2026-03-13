@@ -32,23 +32,19 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
-			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
+				default:
+					return base.DeserializeProperty(propertyName, reader, converters);
+				case "ORDERSLOTS":
 					reader.Read();
 					OrderSlots = global::System.Convert.ToInt32(reader.Value);
 					break;
-				}
-				return base.DeserializeProperty(propertyName, reader, converters);
-			}
-			case "UNLOCKLEVEL":
-				reader.Read();
-				UnlockLevel = global::System.Convert.ToInt32(reader.Value);
-				break;
+
+				case "UNLOCKLEVEL":
+					reader.Read();
+					UnlockLevel = global::System.Convert.ToInt32(reader.Value);
+					break;
 			}
 			return true;
-		}
+		} 
 	}
 }

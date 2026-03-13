@@ -32,17 +32,12 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
+			case "PLACEMENTDEFINITIONS":
+				reader.Read();
+				PlacementDefinitions = ((converters.adPlacementDefinitionConverter == null) ? global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, PlacementDefinitions) : global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, converters.adPlacementDefinitionConverter, PlacementDefinitions));
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					PlacementDefinitions = ((converters.adPlacementDefinitionConverter == null) ? global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, PlacementDefinitions) : global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, converters.adPlacementDefinitionConverter, PlacementDefinitions));
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "MAXREWARDSPERDAYGLOBAL":
 				reader.Read();
 				MaxRewardsPerDayGlobal = global::System.Convert.ToInt32(reader.Value);

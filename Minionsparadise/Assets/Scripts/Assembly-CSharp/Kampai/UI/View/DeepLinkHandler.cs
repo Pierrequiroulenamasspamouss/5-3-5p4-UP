@@ -68,24 +68,17 @@ namespace Kampai.UI.View
 			logger.Debug("action = {0}", text2);
 			switch (text2)
 			{
-			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
+			case "clone":
+				if (global::Kampai.Util.GameConstants.StaticConfig.DEBUG_ENABLED && array.Length == 4)
 				{
-					if (global::Kampai.Util.GameConstants.StaticConfig.DEBUG_ENABLED && array.Length == 4)
-					{
-						cloneUserFromEnvSignal.Dispatch(array[2], global::System.Convert.ToInt64(array[3]));
-						break;
-					}
-					logger.Error("Incorrect deeplink url: {0}", text);
+					cloneUserFromEnvSignal.Dispatch(array[2], global::System.Convert.ToInt64(array[3]));
+					break;
 				}
-				else
-				{
-					logger.Error("Unsupported action: {0}", text2);
-				}
+				logger.Error("Incorrect deeplink url: {0}", text);
 				break;
-			}
+			default:
+				logger.Error("Unsupported action: {0}", text2);
+				break;
 			case "view":
 			{
 				string text3 = array[2];

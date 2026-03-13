@@ -32,17 +32,12 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
+			case "TRANSLATION":
+				reader.Read();
+				Translation = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					Translation = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "LANGUAGE":
 				reader.Read();
 				Language = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);

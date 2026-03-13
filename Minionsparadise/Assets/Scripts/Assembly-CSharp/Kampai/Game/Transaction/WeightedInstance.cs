@@ -15,17 +15,12 @@ namespace Kampai.Game.Transaction
 		{
 			switch (propertyName)
 			{
+			case "SEED":
+				reader.Read();
+				Seed = global::System.Convert.ToInt32(reader.Value);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					Seed = global::System.Convert.ToInt32(reader.Value);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "DECKINDEX":
 				reader.Read();
 				DeckIndex = global::System.Convert.ToInt32(reader.Value);

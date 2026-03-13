@@ -62,11 +62,13 @@ namespace Kampai.Game
 				}
 				catch (global::Newtonsoft.Json.JsonSerializationException ex)
 				{
+					global::UnityEngine.Debug.LogErrorFormat("DefinitionService: JsonSerializationException: {0}\n{1}", ex.Message, ex.StackTrace);
 					logger.Error(ex.StackTrace);
 					throw new global::Kampai.Util.FatalException(global::Kampai.Util.FatalCode.DS_PARSE_ERROR, ex, "Def json error: {0}", ex);
 				}
 				catch (global::Newtonsoft.Json.JsonReaderException ex2)
 				{
+					global::UnityEngine.Debug.LogErrorFormat("DefinitionService: JsonReaderException: {0}\n{1}", ex2.Message, ex2.StackTrace);
 					logger.Error(ex2.StackTrace);
 					throw new global::Kampai.Util.FatalException(global::Kampai.Util.FatalCode.DS_PARSE_ERROR, ex2, "Def json error: {0}", ex2);
 				}

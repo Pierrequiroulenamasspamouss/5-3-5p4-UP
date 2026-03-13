@@ -33,21 +33,16 @@ namespace Kampai.Game
 			switch (propertyName)
 			{
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					AttentionAnimation = global::Kampai.Util.FastJSONDeserializer.Deserialize<global::Kampai.Game.MinionAnimationDefinition>(reader, converters);
-					break;
-				}
-				return base.DeserializeProperty(propertyName, reader, converters);
-			}
-			case "CELEBRATEANIMATION":
+                        return base.DeserializeProperty(propertyName, reader, converters);
+            case "CELEBRATEANIMATION":
 				reader.Read();
 				CelebrateAnimation = global::Kampai.Util.FastJSONDeserializer.Deserialize<global::Kampai.Game.MinionAnimationDefinition>(reader, converters);
 				break;
-			}
+			case "ATTENTIONANIMATION":
+                    reader.Read();
+                    AttentionAnimation = global::Kampai.Util.FastJSONDeserializer.Deserialize<global::Kampai.Game.MinionAnimationDefinition>(reader, converters);
+                    break;
+            }
 			return true;
 		}
 

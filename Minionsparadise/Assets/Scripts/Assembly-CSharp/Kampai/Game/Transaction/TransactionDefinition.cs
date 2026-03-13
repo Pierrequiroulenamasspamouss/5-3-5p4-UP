@@ -33,17 +33,12 @@ namespace Kampai.Game.Transaction
 		{
 			switch (propertyName)
 			{
+			case "OUTPUTS":
+				reader.Read();
+				Outputs = global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, Outputs);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					Outputs = global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, Outputs);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "INPUTS":
 				reader.Read();
 				Inputs = global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, Inputs);

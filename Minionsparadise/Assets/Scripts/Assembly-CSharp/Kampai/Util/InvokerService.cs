@@ -2,21 +2,16 @@ namespace Kampai.Util
 {
 	public class InvokerService : global::Kampai.Util.IInvokerService
 	{
-		private global::System.Collections.Generic.Queue<global::System.Action> work = new global::System.Collections.Generic.Queue<global::System.Action>();
-
-		private global::System.Threading.Mutex mutex = new global::System.Threading.Mutex(false);
+		private static global::System.Collections.Generic.Queue<global::System.Action> work = new global::System.Collections.Generic.Queue<global::System.Action>();
+		private static readonly object _lock = new object();
 
 		public void Add(global::System.Action a)
 		{
-			try
+			lock (_lock)
 			{
-				mutex.WaitOne();
 				work.Enqueue(a);
 			}
-			finally
-			{
-				mutex.ReleaseMutex();
-			}
+			global::UnityEngine.Debug.LogFormat("InvokerService: Action enqueued. Current count: {0}", work.Count);
 		}
 
 		public void Update()
@@ -25,25 +20,33 @@ namespace Kampai.Util
 			{
 				return;
 			}
-			try
+
+			while (true)
 			{
-				mutex.WaitOne();
-				while (work.Count > 0)
+				global::System.Action action = null;
+				lock (_lock)
 				{
-					global::System.Action action = work.Dequeue();
-					try
+					if (work.Count > 0)
 					{
-						action();
-					}
-					catch (global::System.Exception ex)
-					{
-						global::UnityEngine.Debug.LogErrorFormat("InvokerService: Exception during action execution: {0}\n{1}", ex.Message, ex.StackTrace);
+						action = work.Dequeue();
 					}
 				}
-			}
-			finally
-			{
-				mutex.ReleaseMutex();
+
+				if (action == null)
+				{
+					break;
+				}
+
+				global::UnityEngine.Debug.LogFormat("InvokerService: Executing action. Remaining in queue: {0}", work.Count);
+				try
+				{
+					action();
+				}
+				catch (global::System.Exception ex)
+				{
+					global::UnityEngine.Debug.LogErrorFormat("InvokerService: Exception during action execution: {0}\n{1}", ex.Message, ex.StackTrace);
+				}
+				global::UnityEngine.Debug.LogFormat("InvokerService: Finished executing action.");
 			}
 		}
 	}

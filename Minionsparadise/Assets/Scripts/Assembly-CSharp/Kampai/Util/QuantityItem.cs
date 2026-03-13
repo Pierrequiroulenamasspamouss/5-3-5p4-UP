@@ -76,17 +76,12 @@ namespace Kampai.Util
 		{
 			switch (propertyName)
 			{
+			case "QUANTITY":
+				reader.Read();
+				Quantity = global::System.Convert.ToUInt32(reader.Value);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					Quantity = global::System.Convert.ToUInt32(reader.Value);
-					break;
-				}
 				return false;
-			}
 			case "ID":
 				reader.Read();
 				ID = global::System.Convert.ToInt32(reader.Value);

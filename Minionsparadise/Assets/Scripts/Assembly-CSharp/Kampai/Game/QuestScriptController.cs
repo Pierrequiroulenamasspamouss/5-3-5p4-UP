@@ -252,20 +252,15 @@ namespace Kampai.Game
 			string text = args.GetString(1);
 			switch (text)
 			{
-			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
+			case "achievement":
 				{
 					string text2 = args.GetString(2);
 					telemetryService.Send_Telemetry_EVT_GP_ACHIEVEMENTS_CHECKPOINTS_EAL(questScriptInstance.QuestLocalizedKey + "." + text2, global::Kampai.Common.Service.Telemetry.TelemetryAchievementType.QuestStep, 0, string.Empty);
+					break;
 				}
-				else
-				{
-					ERROR(string.Format("Unknown telemetry event type at line {0} ({1})", "undefined", text));
-				}
+			default:
+				ERROR(string.Format("Unknown telemetry event type at line {0} ({1})", "undefined", text));
 				break;
-			}
 			case "tutorial":
 			{
 				string step = args.GetString(2);

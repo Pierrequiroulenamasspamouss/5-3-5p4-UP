@@ -32,17 +32,12 @@ namespace Kampai.Splash
 		{
 			switch (propertyName)
 			{
+			case "MAX":
+				reader.Read();
+				Max = global::System.Convert.ToInt32(reader.Value);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					Max = global::System.Convert.ToInt32(reader.Value);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "MIN":
 				reader.Read();
 				Min = global::System.Convert.ToInt32(reader.Value);

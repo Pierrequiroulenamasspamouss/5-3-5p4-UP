@@ -32,17 +32,12 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
+			case "TRAININGDEFINITIONIDS":
+				reader.Read();
+				trainingDefinitionIDs = global::Kampai.Util.ReaderUtil.PopulateListInt32(reader, trainingDefinitionIDs);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					trainingDefinitionIDs = global::Kampai.Util.ReaderUtil.PopulateListInt32(reader, trainingDefinitionIDs);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "CATEGORYTITLELOCALIZEDKEY":
 				reader.Read();
 				categoryTitleLocalizedKey = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);
