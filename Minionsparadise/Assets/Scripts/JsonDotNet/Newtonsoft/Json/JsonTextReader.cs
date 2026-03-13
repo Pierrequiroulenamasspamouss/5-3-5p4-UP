@@ -393,7 +393,7 @@ namespace Newtonsoft.Json
 			while (true)
 			{
 				char c;
-				if (((int?)_lastChar).HasValue)
+				if (_lastChar.HasValue)
 				{
 					c = _lastChar.Value;
 					_lastChar = null;
