@@ -6,7 +6,6 @@ namespace Kampai.Main
 		{
 			global::Kampai.Util.TimeProfiler.StartSection("main");
 			context = new global::Kampai.Main.MainContext(this, true);
-			context.Start();
 		}
 	}
 }

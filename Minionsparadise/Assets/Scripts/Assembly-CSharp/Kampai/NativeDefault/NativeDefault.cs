@@ -11,6 +11,7 @@ namespace Kampai.Util
 			get
 			{
 				string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "config.json");
+				global::UnityEngine.Debug.Log("NativeDefault: Loading config from " + path);
 				if (global::System.IO.File.Exists(path))
 				{
 					return global::System.IO.File.ReadAllText(path).Trim();

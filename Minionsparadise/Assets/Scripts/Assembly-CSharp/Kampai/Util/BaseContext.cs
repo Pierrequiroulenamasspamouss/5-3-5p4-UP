@@ -218,8 +218,13 @@ namespace Kampai.Util
 				injectionBinder.Bind<global::Kampai.Game.UpdateVolumeSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Common.ICoppaService>().To<global::Kampai.Common.CoppaService>().ToSingleton()
 					.CrossContext();
+#if !UNITY_ANDROID || UNITY_EDITOR
+				injectionBinder.Bind<global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequestFactory>().To<global::Ea.Sharkbite.HttpPlugin.Http.Impl.DefaultRequestFactory>().ToSingleton()
+					.CrossContext();
+#else
 				injectionBinder.Bind<global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequestFactory>().To<global::Ea.Sharkbite.HttpPlugin.Http.Impl.NimbleRequestFactory>().ToSingleton()
 					.CrossContext();
+#endif
 				injectionBinder.Bind<global::Kampai.Common.ITelemetryService>().To<global::Kampai.Common.TelemetryService>().ToSingleton()
 					.CrossContext();
 				injectionBinder.Bind<global::Kampai.Game.ITimeService>().To<global::Kampai.Game.TimeService>().ToSingleton()

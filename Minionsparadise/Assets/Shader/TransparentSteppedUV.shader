@@ -1,67 +1,60 @@
-//////////////////////////////////////////
-///////////////////////////////////////////
 Shader "Kampai/Transparent/Vertex Color Stepped Anim" {
-Properties {
- _Color ("Main Color", Color) = (1,1,1,1)
- _MainTex ("Base (RGBA)", 2D) = "white" { }
- _Boost ("Boost", Float) = 1
- _NumFrames ("Number Frames", Float) = 4
- _ScrollSpeed ("Scroll Speed", Float) = 4
-}
-SubShader { 
- Tags { "QUEUE"="Transparent" }
- Pass {
-  Tags { "QUEUE"="Transparent" }
-  ZWrite Off
-  Blend SrcAlpha OneMinusSrcAlpha
-GLSLPROGRAM
-#version 100
+    Properties {
+        _Color ("Main Color", Color) = (1,1,1,1)
+        _MainTex ("Base (RGBA)", 2D) = "white" {}
+        _Boost ("Boost", Float) = 1
+        _NumFrames ("Number Frames", Float) = 4
+        _ScrollSpeed ("Scroll Speed", Float) = 4
+    }
+    SubShader { 
+        Tags { "QUEUE"="Transparent" }
+        Pass {
+            ZWrite Off
+            Blend SrcAlpha OneMinusSrcAlpha
 
-#ifdef VERTEX
-attribute vec4 _glesVertex;
-attribute vec4 _glesColor;
-attribute vec4 _glesMultiTexCoord0;
-uniform highp vec4 _Time;
-uniform highp mat4 glstate_matrix_mvp;
-uniform mediump float _ScrollSpeed;
-uniform mediump float _NumFrames;
-varying lowp vec4 xlv_COLOR;
-varying mediump vec2 xlv_TEXCOORD0;
-void main ()
-{
-  mediump vec2 tmpvar_1;
-  mediump vec2 tmpvar_2;
-  tmpvar_2.y = 0.0;
-  tmpvar_2.x = (1.0/(_NumFrames));
-  highp vec2 tmpvar_3;
-  tmpvar_3 = fract((_glesMultiTexCoord0.xy + (
-    floor((_Time.y * _ScrollSpeed))
-   * tmpvar_2)));
-  tmpvar_1 = tmpvar_3;
-  gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_COLOR = _glesColor;
-  xlv_TEXCOORD0 = tmpvar_1;
-}
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
 
+            struct appdata {
+                float4 vertex : POSITION;
+                float4 color : COLOR;
+                float2 uv : TEXCOORD0;
+            };
 
-#endif
-#ifdef FRAGMENT
-uniform sampler2D _MainTex;
-uniform lowp float _Boost;
-uniform lowp vec4 _Color;
-varying lowp vec4 xlv_COLOR;
-varying mediump vec2 xlv_TEXCOORD0;
-void main ()
-{
-  lowp vec4 tmpvar_1;
-  tmpvar_1 = ((texture2D (_MainTex, xlv_TEXCOORD0) * _Boost) * (_Color * xlv_COLOR));
-  gl_FragData[0] = tmpvar_1;
-}
+            struct v2f {
+                float4 pos : SV_POSITION;
+                float4 color : COLOR;
+                float2 uv : TEXCOORD0;
+            };
 
+            sampler2D _MainTex;
+            float _Boost;
+            float _NumFrames;
+            float _ScrollSpeed;
+            float4 _Color;
 
-#endif
+            v2f vert (appdata v) {
+                v2f o;
+                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.color = v.color;
+                
+                // Calcul du décalage par "pas" (Stepped) pour lire l'image suivante
+                float stepX = 1.0 / _NumFrames;
+                float currentFrame = floor(_Time.y * _ScrollSpeed);
+                
+                o.uv = v.uv;
+                o.uv.x = frac(v.uv.x + (currentFrame * stepX));
+                
+                return o;
+            }
 
-ENDGLSL
- }
-}
+            fixed4 frag (v2f i) : SV_Target {
+                fixed4 tex = tex2D(_MainTex, i.uv);
+                return tex * _Boost * _Color * i.color;
+            }
+            ENDCG
+        }
+    }
 }

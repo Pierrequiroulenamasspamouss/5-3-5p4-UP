@@ -30,6 +30,7 @@ namespace Elevation.Logging.Targets
 				RollLogFiles();
 			}
 		}
+	}
 #else
 	public abstract class BufferedTarget : global::Elevation.Logging.Targets.FileTarget
 	{

@@ -10,11 +10,12 @@ namespace Kampai.Util
 		{
 			get
 			{
-				string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "config.json");
+				string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "config.json").Replace("\\", "/");
 				if (!path.Contains("://"))
 				{
-					path = "file://" + path;
+					path = "file:///" + path;
 				}
+				global::UnityEngine.Debug.Log("NativeWebPlayer: Loading config from " + path);
 				global::UnityEngine.WWW www = new global::UnityEngine.WWW(path);
 				while (!www.isDone) {}
 				if (string.IsNullOrEmpty(www.error) && !string.IsNullOrEmpty(www.text) && !www.text.TrimStart().StartsWith("<"))
@@ -109,10 +110,10 @@ namespace Kampai.Util
 
 		public byte[] GetStreamingAsset(string path)
 		{
-			string fullPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, path);
+			string fullPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, path).Replace("\\", "/");
 			if (!fullPath.Contains("://"))
 			{
-				fullPath = "file://" + fullPath;
+				fullPath = "file:///" + fullPath;
 			}
 			global::UnityEngine.WWW www = new global::UnityEngine.WWW(fullPath);
 			while (!www.isDone) {}
@@ -125,10 +126,10 @@ namespace Kampai.Util
 
 		public string GetStreamingTextAsset(string path)
 		{
-			string fullPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, path);
+			string fullPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, path).Replace("\\", "/");
 			if (!fullPath.Contains("://"))
 			{
-				fullPath = "file://" + fullPath;
+				fullPath = "file:///" + fullPath;
 			}
 			global::UnityEngine.WWW www = new global::UnityEngine.WWW(fullPath);
 			while (!www.isDone) {}

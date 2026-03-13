@@ -116,6 +116,7 @@ namespace Kampai.Main
 
 		private void RegisterMediaReceiver()
 		{
+#if UNITY_ANDROID && !UNITY_EDITOR
 			using (global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("com.ea.gp.minions.app.MediaReceiver"))
 			{
 				androidJavaClass.CallStatic("setOnReceiveBroadcastListener", new global::Kampai.Util.Native.OnReceiveBroadcastListener(delegate(global::UnityEngine.AndroidJavaObject context, global::UnityEngine.AndroidJavaObject intent)
@@ -137,14 +138,17 @@ namespace Kampai.Main
 					});
 				}));
 			}
+#endif
 		}
 
 		private void UnregisterMediaReceiver()
 		{
+#if UNITY_ANDROID && !UNITY_EDITOR
 			using (global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("com.ea.gp.minions.app.MediaReceiver"))
 			{
 				androidJavaClass.CallStatic("setOnReceiveBroadcastListener", null);
 			}
+#endif
 		}
 	}
 }

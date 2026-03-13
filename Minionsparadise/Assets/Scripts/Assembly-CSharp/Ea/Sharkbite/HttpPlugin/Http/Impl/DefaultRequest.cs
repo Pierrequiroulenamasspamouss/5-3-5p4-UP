@@ -1,739 +1,620 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using UnityEngine;
+using strange.extensions.signal.impl;
+using Ea.Sharkbite.HttpPlugin.Http.Api;
+using Kampai.Util;
+using ICSharpCode.SharpZipLib.GZip;
+using System.Security.Cryptography.X509Certificates;
+
 namespace Ea.Sharkbite.HttpPlugin.Http.Impl
 {
-	public class DefaultRequest : global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest
-	{
-		public const long UNDEFINED_CONTENT_LENGTH = 0L;
+    public class DefaultRequest : IRequest
+    {
+        #region Constantes et Champs
+        public const long UNDEFINED_CONTENT_LENGTH = 0L;
+        private const int BLOCK_SIZE = 8192;
+        protected const long MIN_NOTIFY_DELTA = 102400L;
+
+        private bool _useGZip;
+        protected DownloadProgress _progress;
+        protected Action<DownloadProgress, IRequest> _notifyAction;
+        protected bool _abort;
+        protected bool _isRestarted;
+        #endregion
+
+        #region Propriétés
+        public string Uri { get; set; }
+        public virtual string Method { get; set; }
+        public byte[] Body { get; set; }
+        public string Accept { get; set; }
+        public string ContentType { get; set; }
+        public string Username { get; set; }
+        public string Password { private get; set; }
+        
+        public List<KeyValuePair<string, string>> QueryParams { get; set; }
+        public Dictionary<string, string> Headers { get; set; }
+        public List<KeyValuePair<string, string>> FormParams { get; set; }
+
+        protected long Range { get; set; }
+        public bool CanRetry { get; set; }
+        public int RetryCount { get; set; }
+        public bool TryResume { get; set; }
+        public string FilePath { get; set; }
+        public string Md5 { get; set; }
+        public bool UseUdp { get; set; }
+        public int requestCount { get; set; } // Remis en minuscule pour satisfaire l'interface
+
+        public bool UseGZip
+        {
+            get { return _useGZip; }
+            set
+            {
+                _useGZip = value;
+                Headers["Accept-Encoding"] = _useGZip ? "gzip" : "identity";
+            }
+        }
+
+        public bool AvoidBackup { get; set; }
+        public bool RunInBackground { get; set; }
+
+        public Signal<IResponse> ResponseSignal { get; set; }
+        public Signal<DownloadProgress, IRequest> ProgressSignal { get; set; }
+        #endregion
+
+        #region Constructeur
+        public DefaultRequest(string uri)
+        {
+            if (string.IsNullOrEmpty(uri))
+                throw new ArgumentNullException("uri");
+
+            Uri uriObj = new Uri(uri);
+            string scheme = uriObj.Scheme.ToLower();
+
+            if (scheme != "http" && scheme != "https")
+                throw new ArgumentException("Only HTTP and HTTPS schemes supported");
+
+            if (!string.IsNullOrEmpty(uriObj.Query))
+                throw new ArgumentException("Query parameters should be set using the WithQueryParam method, rather than set directly in the Uri");
+
+            Uri = uri;
+            Method = "GET";
+            Accept = string.Empty;
+            ContentType = string.Empty;
+            QueryParams = new List<KeyValuePair<string, string>>();
+            Headers = new Dictionary<string, string>();
+            FormParams = new List<KeyValuePair<string, string>>();
+            Range = 0L;
+            UseGZip = false;
+            requestCount = 0;
+            AvoidBackup = false;
+            _progress = new DownloadProgress(uri);
+        }
+        #endregion
+
+        #region Méthodes HTTP (Verbes)
+        public virtual void Get(Action<IResponse> callback) { Method = "GET"; Execute(callback); }
+        public virtual void Head(Action<IResponse> callback) { Method = "HEAD"; Execute(callback); }
+        public virtual void Options(Action<IResponse> callback) { Method = "OPTIONS"; Execute(callback); }
+        public virtual void Post(Action<IResponse> callback) { Method = "POST"; Execute(callback); }
+        public virtual void Put(Action<IResponse> callback) { Method = "PUT"; Execute(callback); }
+        public virtual void Delete(Action<IResponse> callback) { Method = "DELETE"; Execute(callback); }
+
+        public virtual void Execute(Action<IResponse> callback)
+        {
+            ThreadPool.QueueUserWorkItem(state => GetResponse(callback));
+        }
+        #endregion
+
+        #region API Fluide (Builder Pattern)
+        public IRequest WithContentType(string contentType) { ContentType = contentType; return this; }
+        public IRequest WithAccept(string accept) { Accept = accept; return this; }
+        
+        public IRequest WithQueryParam(string key, string value)
+        {
+            QueryParams.Add(new KeyValuePair<string, string>(key, value));
+            return this;
+        }
+
+        public IRequest WithHeaderParam(string key, string value)
+        {
+            Headers[key] = value;
+            return this;
+        }
+
+        public IRequest WithFormParam(string key, string value)
+        {
+            FormParams.Add(new KeyValuePair<string, string>(key, value));
+            return this;
+        }
+
+        public IRequest WithBasicAuth(string username, string password)
+        {
+            Username = username;
+            Password = password;
+            return this;
+        }
+
+        public IRequest WithBody(byte[] body) { Body = body; return this; }
+        
+        public IRequest WithPreprocessor(IRequestPreprocessor preprocessor)
+        {
+            preprocessor.preprocess(this);
+            return this;
+        }
+
+        public IRequest WithMethod(string method) { Method = method; return this; }
+        public IRequest WithOutputFile(string filePath) { FilePath = filePath; return this; }
+        public IRequest WithMd5(string md5) { Md5 = md5; return this; }
+        public IRequest WithGZip(bool useGZip) { UseGZip = useGZip; return this; }
+        public IRequest WithUdp(bool useUdp) { UseUdp = useUdp; return this; }
+        public IRequest WithAvoidBackup(bool avoidBackup) { AvoidBackup = avoidBackup; return this; }
+        public IRequest WithRunInBackground(bool runInBackground) { RunInBackground = runInBackground; return this; }
+        public IRequest WithResponseSignal(Signal<IResponse> responseSignal) { ResponseSignal = responseSignal; return this; }
+        public IRequest WithProgressSignal(Signal<DownloadProgress, IRequest> progressSignal) { ProgressSignal = progressSignal; return this; }
+        
+        public void RegisterNotifiable(Action<DownloadProgress, IRequest> notify) { _notifyAction = notify; }
+        
+        public IRequest WithRetry(bool retry = true, int times = 3)
+        {
+            CanRetry = retry;
+            RetryCount = times;
+            return this;
+        }
+
+        public IRequest WithResume(bool tryResume) { TryResume = tryResume; return this; }
+        
+        public IRequest WithEntity(object entity)
+        {
+            Body = FastJSONSerializer.SerializeUTF8(entity);
+            return this;
+        }
+
+	public IRequest WithRequestCount(int requestCount) { this.requestCount = requestCount; return this; }
+        #endregion
+
+        #region Contrôle de Flux (Abort/Restart)
+        public virtual void Abort()
+        {
+            _abort = true;
+            if (_isRestarted) _isRestarted = false;
+        }
+
+        public virtual bool IsAborted() { return _abort; }
+
+        public virtual void Restart()
+        {
+            Abort();
+            _isRestarted = true;
+        }
+
+        public virtual bool IsRestarted() { return _isRestarted; }
+
+        protected virtual void TryRestart()
+        {
+            if (_isRestarted)
+            {
+                _abort = false;
+                _isRestarted = false;
+            }
+            if (!_abort)
+            {
+                _progress = new DownloadProgress(Uri);
+            }
+        }
+
+        public virtual DownloadProgress GetProgress()
+        {
+            return _progress == null ? null : _progress.Clone();
+        }
+
+        public virtual string GetTempFilePath()
+        {
+            return string.Format("{0}.download", FilePath);
+        }
+        #endregion
+
+        #region Utilitaires Web
+        protected string GetUriWithQueryParams()
+        {
+            string baseUrl = UseUdp ? MediaClient.ConvertUrl(Uri) : Uri;
+            StringBuilder builder = new StringBuilder(baseUrl);
+            
+            if (QueryParams.Count > 0)
+            {
+                builder.Append("?");
+                List<string> queryParts = new List<string>();
+                foreach (var param in QueryParams)
+                {
+                    queryParts.Add(string.Format("{0}={1}", WWW.EscapeURL(param.Key), WWW.EscapeURL(param.Value)));
+                }
+                builder.Append(string.Join("&", queryParts.ToArray()));
+            }
+            return builder.ToString();
+        }
+
+        protected string GetBasicAuthHeader()
+        {
+            string credentials = string.Format("{0}:{1}", Username, Password);
+            return string.Format("Basic {0}", Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials)));
+        }
+        #endregion
+
+        #region Logique Principale (Requêtes & Réponses)
+        protected virtual HttpWebRequest CreateRequest()
+        {
+            HttpWebRequest request = null;
+            try
+            {
+                request = WebRequest.Create(GetUriWithQueryParams()) as HttpWebRequest;
+                request.Timeout = HttpRequestConfig.HttpRequestTimeout;
+                request.ReadWriteTimeout = HttpRequestConfig.HttpRequestReadWriteTimeout;
+                
+                if (ConnectionSettings.ConnectionLimit != 0)
+                    request.ServicePoint.ConnectionLimit = ConnectionSettings.ConnectionLimit;
+
+                if (string.IsNullOrEmpty(Method))
+                    throw new InvalidOperationException("A request Method (GET, POST, PUT, DELETE) must be provided.");
+                
+                request.Method = Method;
+
+                if (!string.IsNullOrEmpty(Accept)) request.Accept = Accept;
+                if (!string.IsNullOrEmpty(ContentType)) request.ContentType = ContentType;
+
+                foreach (var header in Headers)
+                {
+                    request.Headers.Add(header.Key, header.Value);
+                }
+
+                if (Range != 0L) request.AddRange((int)Range);
+                if (!string.IsNullOrEmpty(Username)) request.Headers.Add(HttpRequestHeader.Authorization, GetBasicAuthHeader());
+
+                bool hasBody = Body != null;
+                bool hasFormParams = FormParams.Count > 0;
+
+                if (hasBody && hasFormParams)
+                    throw new InvalidOperationException("Request must contain only form params, or a body, or an entity, without combination.");
+
+                if (hasFormParams)
+                {
+                    if (string.IsNullOrEmpty(ContentType))
+                    {
+                        ContentType = "application/x-www-form-urlencoded";
+                        request.MediaType = "application/x-www-form-urlencoded";
+                    }
+                    List<string> formParts = new List<string>();
+                    foreach (var param in FormParams)
+                    {
+                        formParts.Add(string.Format("{0}={1}", WWW.EscapeURL(param.Key), WWW.EscapeURL(param.Value)));
+                    }
+                    Body = Encoding.UTF8.GetBytes(string.Join("&", formParts.ToArray()));
+                }
+
+                // Attention: Le code original attache un callback global ici.
+                ServicePointManager.ServerCertificateValidationCallback += CertificateValidationCallback;
+
+                if (Body != null)
+                {
+                    if (Method == "GET" || Method == "DELETE")
+                        throw new ProtocolViolationException();
+
+                    request.ContentLength = Body.Length;
+                    // Amélioration propre : utilisation de `using` pour garantir la fermeture du stream
+                    using (Stream requestStream = request.GetRequestStream())
+                    {
+                        requestStream.Write(Body, 0, Body.Length);
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                ServicePointManager.ServerCertificateValidationCallback -= CertificateValidationCallback;
+                Native.LogError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Native.LogError(ex.Message);
+            }
+            return request;
+        }
+
+        protected virtual HttpWebResponse ExecuteRequest()
+        {
+            HttpWebResponse response = null;
+            HttpWebRequest request = CreateRequest();
+            
+            if (request == null)
+            {
+                Native.LogError(string.Format("Null request for Uri {0}", Uri));
+                return null;
+            }
+            
+            try
+            {
+                response = request.GetResponse() as HttpWebResponse;
+            }
+            catch (WebException ex)
+            {
+                Native.LogWarning(string.Format("WebException Downloading {0}: {1}", Uri, ex.Message));
+                if (ex.Response != null)
+                {
+                    response = ex.Response as HttpWebResponse;
+                }
+                else
+                {
+                    ServicePointManager.ServerCertificateValidationCallback -= CertificateValidationCallback;
+                    Native.LogError(string.Format("WebException Response is NULL: {0}", ex.Message));
+                }
+            }
+            catch (Exception ex)
+            {
+                Native.LogError(string.Format("Exception Downloading {0}: {1}", Uri, ex.Message));
+            }
+            return response;
+        }
+
+        protected virtual Dictionary<string, string> ProcessResponse(HttpWebResponse response, string body = "")
+        {
+            var dict = new Dictionary<string, string>();
+            if (response != null && response.Headers != null)
+            {
+                foreach (string key in response.Headers.AllKeys)
+                {
+                    dict.Add(key, response.Headers.Get(key));
+                }
+            }
+            ServicePointManager.ServerCertificateValidationCallback -= CertificateValidationCallback;
+            return dict;
+        }
+
+        protected virtual string ReadResponse(HttpWebResponse response)
+        {
+            if (!IsFileDownload())
+            {
+                string result = string.Empty;
+                try
+                {
+                    if (response.GetResponseStream() != null)
+                    {
+                        Encoding encoding;
+                        try { encoding = Encoding.GetEncoding(response.CharacterSet); }
+                        catch (ArgumentException) { encoding = Encoding.UTF8; }
+
+                        // Amélioration propre : lecture en blocs sécurisée
+                        using (Stream stream = response.GetResponseStream())
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            byte[] buffer = new byte[BLOCK_SIZE];
+                            int bytesRead;
+                            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                ms.Write(buffer, 0, bytesRead);
+                            }
+                            result = encoding.GetString(ms.ToArray());
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Native.LogError(ex.Message);
+                }
+                return result;
+            }
+
+            using (Stream stream = response.GetResponseStream())
+            {
+                string contentEncoding = response.Headers["Content-Encoding"];
+                if (!string.IsNullOrEmpty(contentEncoding) && contentEncoding.ToLower().Contains("gzip"))
+                {
+                    using (GZipInputStream gzipStream = new GZipInputStream(stream))
+                    {
+                        return ReadFileResponse(gzipStream);
+                    }
+                }
+                return ReadFileResponse(stream);
+            }
+        }
+
+        protected virtual void GetResponse(Action<IResponse> callback)
+        {
+            DefaultResponse finalResponse = null;
+            TryRestart();
+            bool isFile = IsFileDownload();
+
+            if (!_abort)
+            {
+                _progress.StartTimer();
+                using (HttpWebResponse httpWebResponse = ExecuteRequest())
+                {
+                    if (httpWebResponse != null)
+                    {
+                        if (!isFile)
+                        {
+                            string body = ReadResponse(httpWebResponse);
+                            finalResponse = (DefaultResponse)new DefaultResponse()
+                                .WithBody(body)
+                                .WithCode((int)httpWebResponse.StatusCode)
+                                .WithRequest(this)
+                                .WithContentLength(httpWebResponse.ContentLength)
+                                .WithContentType(httpWebResponse.ContentType)
+                                .WithHeaders(ProcessResponse(httpWebResponse, body));
+                        }
+                        else
+                        {
+                            PrepareDirectory();
+                            try
+                            {
+                                var headers = ProcessResponse(httpWebResponse, string.Empty);
+                                _progress.TotalBytes = GetContentLength(headers);
+                                
+                                string hashText = (httpWebResponse.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable) 
+                                    ? string.Empty 
+                                    : ReadResponse(httpWebResponse);
+                                
+                                string tempPath = GetTempFilePath();
+                                string error = null;
+                                int code = (int)httpWebResponse.StatusCode;
 
-		private const int BLOCK_SIZE = 8192;
-
-		protected const long MIN_NOTIFY_DELTA = 102400L;
-
-		private bool useGZip;
-
-		protected global::Ea.Sharkbite.HttpPlugin.Http.Api.DownloadProgress progress;
-
-		protected global::System.Action<global::Ea.Sharkbite.HttpPlugin.Http.Api.DownloadProgress, global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest> notifyAction;
-
-		protected bool abort;
-
-		protected bool isRestarted;
-
-		public string Uri { get; set; }
-
-		public virtual string Method { get; set; }
-
-		public byte[] Body { get; set; }
-
-		public string Accept { get; set; }
-
-		public string ContentType { get; set; }
-
-		public string Username { get; set; }
-
-		public string Password { private get; set; }
-
-		public global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<string, string>> QueryParams { get; set; }
-
-		public global::System.Collections.Generic.Dictionary<string, string> Headers { get; set; }
-
-		public global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<string, string>> FormParams { get; set; }
-
-		protected long Range { get; set; }
-
-		public bool CanRetry { get; set; }
-
-		public int RetryCount { get; set; }
-
-		public bool TryResume { get; set; }
-
-		public string FilePath { get; set; }
-
-		public string Md5 { get; set; }
-
-		public bool UseUdp { get; set; }
-
-		public int requestCount { get; set; }
-
-		public bool UseGZip
-		{
-			get
-			{
-				return useGZip;
-			}
-			set
-			{
-				useGZip = value;
-				Headers["Accept-Encoding"] = ((!useGZip) ? "identity" : "gzip");
-			}
-		}
-
-		public bool AvoidBackup { get; set; }
-
-		public bool RunInBackground { get; set; }
-
-		public global::strange.extensions.signal.impl.Signal<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> ResponseSignal { get; set; }
-
-		public global::strange.extensions.signal.impl.Signal<global::Ea.Sharkbite.HttpPlugin.Http.Api.DownloadProgress, global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest> ProgressSignal { get; set; }
-
-		public DefaultRequest(string uri)
-		{
-			if (string.IsNullOrEmpty(uri))
-			{
-				throw new global::System.ArgumentNullException();
-			}
-			global::System.Uri uri2 = new global::System.Uri(uri);
-			switch (uri2.Scheme.ToLower())
-			{
-			default:
-				throw new global::System.ArgumentException("Only HTTP and HTTPS schemes supported");
-			case "http":
-			case "https":
-				if (!string.IsNullOrEmpty(uri2.Query))
-				{
-					throw new global::System.ArgumentException("Query parameters should be set using the WithQueryParam method, rather than set directly in the Uri");
-				}
-				Uri = uri;
-				Method = "GET";
-				Body = null;
-				Accept = string.Empty;
-				ContentType = string.Empty;
-				QueryParams = new global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<string, string>>();
-				Headers = new global::System.Collections.Generic.Dictionary<string, string>();
-				FormParams = new global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<string, string>>();
-				Range = 0L;
-				UseGZip = false;
-				requestCount = 0;
-				AvoidBackup = false;
-				progress = new global::Ea.Sharkbite.HttpPlugin.Http.Api.DownloadProgress(uri);
-				break;
-			}
-		}
-
-		public virtual void Get(global::System.Action<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> callback)
-		{
-			Method = "GET";
-			Execute(callback);
-		}
-
-		public virtual void Head(global::System.Action<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> callback)
-		{
-			Method = "HEAD";
-			Execute(callback);
-		}
-
-		public virtual void Options(global::System.Action<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> callback)
-		{
-			Method = "OPTIONS";
-			Execute(callback);
-		}
-
-		public virtual void Post(global::System.Action<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> callback)
-		{
-			Method = "POST";
-			Execute(callback);
-		}
-
-		public virtual void Put(global::System.Action<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> callback)
-		{
-			Method = "PUT";
-			Execute(callback);
-		}
-
-		public virtual void Delete(global::System.Action<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> callback)
-		{
-			Method = "DELETE";
-			Execute(callback);
-		}
-
-		public virtual void Execute(global::System.Action<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> callback)
-		{
-			global::System.Threading.ThreadPool.QueueUserWorkItem(delegate
-			{
-				GetResponse(callback);
-			});
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithContentType(string contentType)
-		{
-			ContentType = contentType;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithAccept(string accept)
-		{
-			Accept = accept;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithQueryParam(string key, string value)
-		{
-			QueryParams.Add(new global::System.Collections.Generic.KeyValuePair<string, string>(key, value));
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithHeaderParam(string key, string value)
-		{
-			Headers[key] = value;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithFormParam(string key, string value)
-		{
-			FormParams.Add(new global::System.Collections.Generic.KeyValuePair<string, string>(key, value));
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithBasicAuth(string username, string password)
-		{
-			Username = username;
-			Password = password;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithBody(byte[] body)
-		{
-			Body = body;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithPreprocessor(global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequestPreprocessor preprocessor)
-		{
-			preprocessor.preprocess(this);
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithMethod(string method)
-		{
-			Method = method;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithOutputFile(string filePath)
-		{
-			FilePath = filePath;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithMd5(string md5)
-		{
-			Md5 = md5;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithGZip(bool useGZip)
-		{
-			UseGZip = useGZip;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithUdp(bool useUdp)
-		{
-			UseUdp = useUdp;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithAvoidBackup(bool avoidBackup)
-		{
-			AvoidBackup = avoidBackup;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithRunInBackground(bool runInBackground)
-		{
-			RunInBackground = runInBackground;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithResponseSignal(global::strange.extensions.signal.impl.Signal<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> responseSignal)
-		{
-			ResponseSignal = responseSignal;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithProgressSignal(global::strange.extensions.signal.impl.Signal<global::Ea.Sharkbite.HttpPlugin.Http.Api.DownloadProgress, global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest> progressSignal)
-		{
-			ProgressSignal = progressSignal;
-			return this;
-		}
-
-		public void RegisterNotifiable(global::System.Action<global::Ea.Sharkbite.HttpPlugin.Http.Api.DownloadProgress, global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest> notify)
-		{
-			notifyAction = notify;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithRetry(bool retry = true, int times = 3)
-		{
-			CanRetry = retry;
-			RetryCount = times;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithResume(bool tryResume)
-		{
-			TryResume = tryResume;
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithEntity(object entity)
-		{
-			Body = global::Kampai.Util.FastJSONSerializer.SerializeUTF8(entity);
-			return this;
-		}
-
-		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest WithRequestCount(int requestCount)
-		{
-			this.requestCount = requestCount;
-			return this;
-		}
-
-		public virtual void Abort()
-		{
-			abort = true;
-			if (isRestarted)
-			{
-				isRestarted = false;
-			}
-		}
-
-		public virtual bool IsAborted()
-		{
-			return abort;
-		}
-
-		public virtual void Restart()
-		{
-			Abort();
-			isRestarted = true;
-		}
-
-		public virtual bool IsRestarted()
-		{
-			return isRestarted;
-		}
-
-		protected virtual void TryRestart()
-		{
-			if (isRestarted)
-			{
-				abort = false;
-				isRestarted = false;
-			}
-			if (!abort)
-			{
-				progress = new global::Ea.Sharkbite.HttpPlugin.Http.Api.DownloadProgress(Uri);
-			}
-		}
-
-		public virtual global::Ea.Sharkbite.HttpPlugin.Http.Api.DownloadProgress GetProgress()
-		{
-			return (progress == null) ? null : progress.Clone();
-		}
-
-		public virtual string GetTempFilePath()
-		{
-			return string.Format("{0}.download", FilePath);
-		}
-
-		protected string GetUriWithQueryParams()
-		{
-			string value = ((!UseUdp) ? Uri : global::Kampai.Util.MediaClient.ConvertUrl(Uri));
-			global::System.Text.StringBuilder stringBuilder = new global::System.Text.StringBuilder(value);
-			if (QueryParams.Count > 0)
-			{
-				stringBuilder.Append("?");
-				global::System.Collections.Generic.List<string> list = new global::System.Collections.Generic.List<string>();
-				foreach (global::System.Collections.Generic.KeyValuePair<string, string> queryParam in QueryParams)
-				{
-					list.Add(string.Format("{0}={1}", global::UnityEngine.WWW.EscapeURL(queryParam.Key), global::UnityEngine.WWW.EscapeURL(queryParam.Value)));
-				}
-				stringBuilder.Append(string.Join("&", list.ToArray()));
-			}
-			return stringBuilder.ToString();
-		}
-
-		protected string GetBasicAuthHeader()
-		{
-			return string.Format("Basic {0}", global::System.Convert.ToBase64String(global::System.Text.Encoding.UTF8.GetBytes(string.Format("{0}:{1}", Username, Password))));
-		}
-
-		protected virtual global::System.Net.HttpWebRequest CreateRequest()
-		{
-			global::System.Net.HttpWebRequest httpWebRequest = null;
-			try
-			{
-				httpWebRequest = global::System.Net.WebRequest.Create(new global::System.Uri(GetUriWithQueryParams())) as global::System.Net.HttpWebRequest;
-				httpWebRequest.Timeout = global::Kampai.Util.HttpRequestConfig.HttpRequestTimeout;
-				httpWebRequest.ReadWriteTimeout = global::Kampai.Util.HttpRequestConfig.HttpRequestReadWriteTimeout;
-				if (global::Ea.Sharkbite.HttpPlugin.Http.Api.ConnectionSettings.ConnectionLimit != 0)
-				{
-					httpWebRequest.ServicePoint.ConnectionLimit = global::Ea.Sharkbite.HttpPlugin.Http.Api.ConnectionSettings.ConnectionLimit;
-				}
-				if (string.IsNullOrEmpty(Method))
-				{
-					throw new global::System.InvalidOperationException("A request Method (GET, POST, PUT, DELETE) must be provided.");
-				}
-				httpWebRequest.Method = Method;
-				if (!string.IsNullOrEmpty(Accept))
-				{
-					httpWebRequest.Accept = Accept;
-				}
-				if (!string.IsNullOrEmpty(ContentType))
-				{
-					httpWebRequest.ContentType = ContentType;
-				}
-				foreach (global::System.Collections.Generic.KeyValuePair<string, string> header in Headers)
-				{
-					httpWebRequest.Headers.Add(header.Key, header.Value);
-				}
-				if (Range != 0L)
-				{
-					httpWebRequest.AddRange((int)Range);
-				}
-				if (!string.IsNullOrEmpty(Username))
-				{
-					httpWebRequest.Headers.Add(global::System.Net.HttpRequestHeader.Authorization, GetBasicAuthHeader());
-				}
-				int num = 0;
-				if (Body != null)
-				{
-					num++;
-				}
-				if (FormParams.Count > 0)
-				{
-					num++;
-				}
-				if (num > 1)
-				{
-					throw new global::System.InvalidOperationException("Request must contain only form params, or a body, or an entity, without combination.");
-				}
-				if (FormParams.Count > 0)
-				{
-					if (string.IsNullOrEmpty(ContentType))
-					{
-						ContentType = "application/x-www-form-urlencoded";
-						httpWebRequest.MediaType = "application/x-www-form-urlencoded";
-					}
-					global::System.Collections.Generic.List<string> list = new global::System.Collections.Generic.List<string>();
-					foreach (global::System.Collections.Generic.KeyValuePair<string, string> formParam in FormParams)
-					{
-						list.Add(string.Format("{0}={1}", global::UnityEngine.WWW.EscapeURL(formParam.Key), global::UnityEngine.WWW.EscapeURL(formParam.Value)));
-					}
-					Body = global::System.Text.Encoding.UTF8.GetBytes(string.Join("&", list.ToArray()));
-				}
-				global::System.Net.ServicePointManager.ServerCertificateValidationCallback = (global::System.Net.Security.RemoteCertificateValidationCallback)global::System.Delegate.Combine(global::System.Net.ServicePointManager.ServerCertificateValidationCallback, new global::System.Net.Security.RemoteCertificateValidationCallback(CertificateValidationCallback));
-				byte[] body = Body;
-				if (body != null)
-				{
-					switch (Method)
-					{
-					case "GET":
-					case "DELETE":
-						throw new global::System.Net.ProtocolViolationException();
-					default:
-					{
-						httpWebRequest.ContentLength = body.Length;
-						global::System.IO.Stream requestStream = httpWebRequest.GetRequestStream();
-						requestStream.Write(body, 0, body.Length);
-						requestStream.Close();
-						break;
-					}
-					}
-				}
-			}
-			catch (global::System.Net.WebException ex)
-			{
-				global::System.Net.ServicePointManager.ServerCertificateValidationCallback = (global::System.Net.Security.RemoteCertificateValidationCallback)global::System.Delegate.Remove(global::System.Net.ServicePointManager.ServerCertificateValidationCallback, new global::System.Net.Security.RemoteCertificateValidationCallback(CertificateValidationCallback));
-				global::Kampai.Util.Native.LogError(ex.Message);
-			}
-			catch (global::System.Exception ex2)
-			{
-				global::Kampai.Util.Native.LogError(ex2.Message);
-			}
-			return httpWebRequest;
-		}
-
-		protected virtual global::System.Net.HttpWebResponse ExecuteRequest()
-		{
-			global::System.Net.HttpWebResponse result = null;
-			global::System.Net.HttpWebRequest httpWebRequest = CreateRequest();
-			if (httpWebRequest == null)
-			{
-				global::Kampai.Util.Native.LogError(string.Format("Null request for Uri {0}", Uri));
-				return null;
-			}
-			try
-			{
-				result = httpWebRequest.GetResponse() as global::System.Net.HttpWebResponse;
-			}
-			catch (global::System.Net.WebException ex)
-			{
-				global::Kampai.Util.Native.LogWarning(string.Format("WebException Downloading {0}: {1}", Uri, ex.Message));
-				if (ex.Response != null)
-				{
-					result = ex.Response as global::System.Net.HttpWebResponse;
-				}
-				else
-				{
-					global::System.Net.ServicePointManager.ServerCertificateValidationCallback = (global::System.Net.Security.RemoteCertificateValidationCallback)global::System.Delegate.Remove(global::System.Net.ServicePointManager.ServerCertificateValidationCallback, new global::System.Net.Security.RemoteCertificateValidationCallback(CertificateValidationCallback));
-					global::Kampai.Util.Native.LogError(string.Format("WebException Response is NULL: {0}", ex.Message));
-				}
-			}
-			catch (global::System.Exception ex2)
-			{
-				global::Kampai.Util.Native.LogError(string.Format("Exception Downloading {0}: {1}", Uri, ex2.Message));
-			}
-			return result;
-		}
-
-		protected virtual global::System.Collections.Generic.Dictionary<string, string> ProcessResponse(global::System.Net.HttpWebResponse response, string body = "")
-		{
-			global::System.Collections.Generic.Dictionary<string, string> dictionary = new global::System.Collections.Generic.Dictionary<string, string>();
-			if (response != null && response.Headers != null)
-			{
-				string[] allKeys = response.Headers.AllKeys;
-				foreach (string text in allKeys)
-				{
-					dictionary.Add(text, response.Headers.Get(text));
-				}
-			}
-			global::System.Net.ServicePointManager.ServerCertificateValidationCallback = (global::System.Net.Security.RemoteCertificateValidationCallback)global::System.Delegate.Remove(global::System.Net.ServicePointManager.ServerCertificateValidationCallback, new global::System.Net.Security.RemoteCertificateValidationCallback(CertificateValidationCallback));
-			return dictionary;
-		}
-
-		protected virtual string ReadResponse(global::System.Net.HttpWebResponse response)
-		{
-			if (!IsFileDownload())
-			{
-				string result = string.Empty;
-				try
-				{
-					if (response.GetResponseStream() != null)
-					{
-						global::System.Text.Encoding encoding;
-						try
-						{
-							encoding = global::System.Text.Encoding.GetEncoding(response.CharacterSet);
-						}
-						catch (global::System.ArgumentException)
-						{
-							encoding = global::System.Text.Encoding.UTF8;
-						}
-						byte[] array = new byte[8192];
-						int num = 0;
-						using (global::System.IO.Stream stream = response.GetResponseStream())
-						{
-							for (int num2 = stream.Read(array, 0, array.Length); num2 > 0; num2 = stream.Read(array, num, array.Length - num))
-							{
-								num += num2;
-								if (num == array.Length)
-								{
-									global::System.Array.Resize(ref array, array.Length + 8192);
-								}
-							}
-						}
-						if (num > 0)
-						{
-							result = encoding.GetString(array, 0, num);
-						}
-					}
-				}
-				catch (global::System.Exception ex2)
-				{
-					global::Kampai.Util.Native.LogError(ex2.Message);
-				}
-				return result;
-			}
-			using (global::System.IO.Stream stream2 = response.GetResponseStream())
-			{
-				string text = response.Headers["Content-Encoding"];
-				if (!string.IsNullOrEmpty(text) && text.ToLower().Contains("gzip"))
-				{
-					using (global::ICSharpCode.SharpZipLib.GZip.GZipInputStream input = new global::ICSharpCode.SharpZipLib.GZip.GZipInputStream(stream2))
-					{
-						return ReadFileResponse(input);
-					}
-				}
-				return ReadFileResponse(stream2);
-			}
-		}
-
-		protected virtual void GetResponse(global::System.Action<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> callback)
-		{
-			global::Ea.Sharkbite.HttpPlugin.Http.Impl.DefaultResponse defaultResponse = null;
-			TryRestart();
-			bool flag = IsFileDownload();
-			if (!abort)
-			{
-				progress.StartTimer();
-				using (global::System.Net.HttpWebResponse httpWebResponse = ExecuteRequest())
-				{
-					if (httpWebResponse != null)
-					{
-						if (!flag)
-						{
-							string body = ReadResponse(httpWebResponse);
-							defaultResponse = new global::Ea.Sharkbite.HttpPlugin.Http.Impl.DefaultResponse().WithBody(body).WithCode((int)httpWebResponse.StatusCode).WithRequest(this)
-								.WithContentLength(httpWebResponse.ContentLength)
-								.WithContentType(httpWebResponse.ContentType)
-								.WithHeaders(ProcessResponse(httpWebResponse, body));
-						}
-						else
-						{
-							PrepareDirectory();
-							try
-							{
-								global::System.Collections.Generic.Dictionary<string, string> headers = ProcessResponse(httpWebResponse, string.Empty);
-								progress.TotalBytes = GetContentLength(headers);
-								string text = ((httpWebResponse.StatusCode == global::System.Net.HttpStatusCode.RequestedRangeNotSatisfiable) ? string.Empty : ReadResponse(httpWebResponse));
-								string tempFilePath = GetTempFilePath();
-								string error = null;
-								int code = (int)httpWebResponse.StatusCode;
 #if !UNITY_WEBPLAYER
-								if (!abort && (string.IsNullOrEmpty(Md5) || Md5 == text))
-								{
-									global::System.IO.File.Move(tempFilePath, FilePath);
-								}
-								else
-								{
-									global::System.IO.File.Delete(tempFilePath);
-									error = (abort ? "Aborting file download" : string.Format("Invalid MD5SUM {0} != {1}", Md5, text));
-									code = 418;
-								}
+                                if (!_abort && (string.IsNullOrEmpty(Md5) || Md5 == hashText))
+                                {
+                                    File.Move(tempPath, FilePath);
+                                }
+                                else
+                                {
+                                    if (File.Exists(tempPath)) File.Delete(tempPath);
+                                    error = _abort ? "Aborting file download" : string.Format("Invalid MD5SUM {0} != {1}", Md5, hashText);
+                                    code = 418; // I am a teapot (souvent utilisé pour des erreurs custom)
+                                }
 #endif
-								defaultResponse = new global::Ea.Sharkbite.HttpPlugin.Http.Impl.FileDownloadResponse().WithError(error).WithCode(code).WithRequest(this)
-									.WithContentLength(httpWebResponse.ContentLength)
-									.WithContentType(httpWebResponse.ContentType)
-									.WithHeaders(headers);
-							}
-							catch (global::System.Exception ex)
-							{
-								defaultResponse = new global::Ea.Sharkbite.HttpPlugin.Http.Impl.FileDownloadResponse().WithError(ex.Message).WithRequest(this).WithCode(500);
-								global::Kampai.Util.Native.LogError(ex.Message);
-							}
-						}
-					}
-					else
-					{
-						global::Kampai.Util.Native.LogError("Null response for " + Uri);
-						defaultResponse = (flag ? new global::Ea.Sharkbite.HttpPlugin.Http.Impl.FileDownloadResponse().WithError("The request timed out?") : new global::Ea.Sharkbite.HttpPlugin.Http.Impl.DefaultResponse()).WithCode(flag ? 408 : 500).WithRequest(this).WithConnectionLoss(true);
-					}
-				}
-				progress.StopTimer();
-				defaultResponse = defaultResponse.WithDownloadTime(progress.GetDownloadTime());
-			}
-			else
-			{
-				defaultResponse = (flag ? new global::Ea.Sharkbite.HttpPlugin.Http.Impl.FileDownloadResponse() : new global::Ea.Sharkbite.HttpPlugin.Http.Impl.DefaultResponse()).WithRequest(this).WithCode(500).WithError("Request was aborted before execution.");
-			}
-			if (callback != null)
-			{
-				callback(defaultResponse);
-			}
-		}
+                                finalResponse = (DefaultResponse)new FileDownloadResponse()
+                                    .WithError(error)
+                                    .WithCode(code)
+                                    .WithRequest(this)
+                                    .WithContentLength(httpWebResponse.ContentLength)
+                                    .WithContentType(httpWebResponse.ContentType)
+                                    .WithHeaders(headers);
+                            }
+                            catch (Exception ex)
+                            {
+                                finalResponse = (DefaultResponse)new FileDownloadResponse()
+                                    .WithError(ex.Message)
+                                    .WithRequest(this)
+                                    .WithCode(500);
+                                Native.LogError(ex.Message);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Native.LogError("Null response for " + Uri);
+                        finalResponse = isFile 
+                            ? (DefaultResponse)new FileDownloadResponse().WithError("The request timed out?").WithCode(408).WithRequest(this).WithConnectionLoss(true) 
+                            : (DefaultResponse)new DefaultResponse().WithCode(500).WithRequest(this).WithConnectionLoss(true);
+                    }
+                }
+                _progress.StopTimer();
+                finalResponse = (DefaultResponse)finalResponse.WithDownloadTime(_progress.GetDownloadTime());
+            }
+            else
+            {
+                finalResponse = isFile 
+                    ? (DefaultResponse)new FileDownloadResponse().WithRequest(this).WithCode(500).WithError("Request was aborted before execution.")
+                    : (DefaultResponse)new DefaultResponse().WithRequest(this).WithCode(500).WithError("Request was aborted before execution.");
+            }
 
-		private string ReadFileResponse(global::System.IO.Stream input)
-		{
+            if (callback != null)
+                callback(finalResponse);
+        }
+
+        private string ReadFileResponse(Stream input)
+        {
 #if !UNITY_WEBPLAYER
-			try
-			{
-				using (global::System.Security.Cryptography.MD5 mD = global::System.Security.Cryptography.MD5.Create())
-				{
-					using (global::System.IO.FileStream fileStream = global::System.IO.File.Create(tempFilePath))
-					{
-						try
-						{
-							int num = 0;
-							byte[] array = new byte[4096];
-							while (!abort && (num = input.Read(array, 0, array.Length)) != 0)
-							{
-								fileStream.Write(array, 0, num);
-								mD.TransformBlock(array, 0, num, array, 0);
-								NotifyProgress(num, 102400L);
-							}
-							if (!abort)
-							{
-								mD.TransformFinalBlock(array, 0, 0);
-							}
-						}
-						finally
-						{
-							NotifyProgress(0L, 0L);
-						}
-						return abort ? string.Empty : global::System.BitConverter.ToString(mD.Hash).Replace("-", string.Empty).ToLower();
-					}
-				}
-			}
-			catch (global::System.Exception ex)
-			{
-				global::Kampai.Util.Native.LogError(ex.Message);
-				return string.Empty;
-			}
+            try
+            {
+                using (MD5 md5 = MD5.Create())
+                using (FileStream fileStream = File.Create(GetTempFilePath()))
+                {
+                    try
+                    {
+                        int bytesRead;
+                        byte[] buffer = new byte[BLOCK_SIZE];
+                        
+                        while (!_abort && (bytesRead = input.Read(buffer, 0, buffer.Length)) != 0)
+                        {
+                            fileStream.Write(buffer, 0, bytesRead);
+                            md5.TransformBlock(buffer, 0, bytesRead, buffer, 0);
+                            NotifyProgress(bytesRead, MIN_NOTIFY_DELTA);
+                        }
+                        
+                        if (!_abort)
+                        {
+                            md5.TransformFinalBlock(buffer, 0, 0);
+                        }
+                    }
+                    finally
+                    {
+                        NotifyProgress(0L, 0L);
+                    }
+                    return _abort ? string.Empty : BitConverter.ToString(md5.Hash).Replace("-", string.Empty).ToLower();
+                }
+            }
+            catch (Exception ex)
+            {
+                Native.LogError(ex.Message);
+                return string.Empty;
+            }
 #else
-			return string.Empty;
+            return string.Empty;
 #endif
-		}
+        }
 
-		protected virtual void NotifyProgress(long downloadedAmount, long downloadSizeDeltaMin = 0L)
-		{
-			progress.CompletedBytes += downloadedAmount;
-			progress.DownloadedBytes += downloadedAmount;
-			progress.Delta += downloadedAmount;
-			if (notifyAction != null && progress.Delta > downloadSizeDeltaMin)
-			{
-				notifyAction(GetProgress(), this);
-				progress.Delta = 0L;
-			}
-		}
+        protected virtual void NotifyProgress(long downloadedAmount, long downloadSizeDeltaMin = 0L)
+        {
+            _progress.CompletedBytes += downloadedAmount;
+            _progress.DownloadedBytes += downloadedAmount;
+            _progress.Delta += downloadedAmount;
+            
+            if (_notifyAction != null && _progress.Delta > downloadSizeDeltaMin)
+            {
+                _notifyAction(GetProgress(), this);
+                _progress.Delta = 0L;
+            }
+        }
 
-		protected bool IsFileDownload()
-		{
-			return !string.IsNullOrEmpty(FilePath);
-		}
+        protected bool IsFileDownload()
+        {
+            return !string.IsNullOrEmpty(FilePath);
+        }
 
-		protected void PrepareDirectory()
-		{
-			if (IsFileDownload())
-			{
+        protected void PrepareDirectory()
+        {
+            if (IsFileDownload())
+            {
 #if !UNITY_WEBPLAYER
-				if (global::System.IO.File.Exists(FilePath))
-				{
-					global::System.IO.File.Delete(FilePath);
-				}
-				string tempFilePath = GetTempFilePath();
-				if (global::System.IO.File.Exists(tempFilePath))
-				{
-					global::System.IO.File.Delete(tempFilePath);
-				}
-				string directoryName = global::System.IO.Path.GetDirectoryName(FilePath);
-				if (!global::System.IO.Directory.Exists(directoryName))
-				{
-					global::System.IO.Directory.CreateDirectory(directoryName);
-				}
+                if (File.Exists(FilePath)) File.Delete(FilePath);
+                
+                string tempFilePath = GetTempFilePath();
+                if (File.Exists(tempFilePath)) File.Delete(tempFilePath);
+                
+                string directoryName = Path.GetDirectoryName(FilePath);
+                if (!string.IsNullOrEmpty(directoryName) && !Directory.Exists(directoryName))
+                {
+                    Directory.CreateDirectory(directoryName);
+                }
 #endif
-			}
-		}
+            }
+        }
 
-		protected long GetContentLength(global::System.Collections.Generic.IDictionary<string, string> headers)
-		{
-			string key = "Content-Length";
-			long result;
-			if (!headers.ContainsKey(key) || !long.TryParse(headers[key], out result))
-			{
-				result = -1L;
-			}
-			return (result <= 0) ? 0 : result;
-		}
+        protected long GetContentLength(IDictionary<string, string> headers)
+        {
+            long result;
+            if (!headers.ContainsKey("Content-Length") || !long.TryParse(headers["Content-Length"], out result))
+            {
+                result = -1L;
+            }
+            return result <= 0 ? 0 : result;
+        }
 
-		protected string GetHeader(global::System.Collections.Generic.IDictionary<string, string> headers, string key)
-		{
-			string value;
-			headers.TryGetValue(key, out value);
-			return value ?? string.Empty;
-		}
+        protected string GetHeader(IDictionary<string, string> headers, string key)
+        {
+            string value;
+            headers.TryGetValue(key, out value);
+            return value ?? string.Empty;
+        }
 
-		protected static bool CertificateValidationCallback(object sender, global::System.Security.Cryptography.X509Certificates.X509Certificate certificate, global::System.Security.Cryptography.X509Certificates.X509Chain chain, global::System.Net.Security.SslPolicyErrors sslPolicyErrors)
-		{
-			return true;
-		}
-	}
+        protected static bool CertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            // Dans le jeu original, EA a désactivé la vérification SSL (renvoie toujours true).
+            // Pratique en dev, mais risqué en prod !
+            return true;
+        }
+        #endregion
+    }
 }

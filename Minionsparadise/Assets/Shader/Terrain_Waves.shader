@@ -1,74 +1,74 @@
-//////////////////////////////////////////
-///////////////////////////////////////////
 Shader "Kampai/Water/Terrain Waves" {
-Properties {
- _Diffuse ("Diffuse", 2D) = "white" { }
- _AlphaMask ("Alpha Mask", 2D) = "white" { }
- _Color ("Color", Color) = (0.5,0.5,0.5,1)
- _Speed ("Speed", Float) = 1
- _FadeAlpha ("Fade Alpha", Range(0,1)) = 1
-[HideInInspector]  _Mode ("Rendering Queue", Float) = 0
-[HideInInspector]  _LayerIndex ("Layer index", Float) = 0
-}
-SubShader { 
- Tags { "LIGHTMODE"="Always" "QUEUE"="Background+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
- Pass {
-  Tags { "LIGHTMODE"="Always" "QUEUE"="Background+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
-  ZTest Always
-  ZWrite Off
-  Blend SrcAlpha OneMinusSrcAlpha
-GLSLPROGRAM
-#version 100
+    Properties {
+        _Diffuse ("Diffuse", 2D) = "white" { }
+        _AlphaMask ("Alpha Mask", 2D) = "white" { }
+        _Color ("Color", Color) = (0.5,0.5,0.5,1)
+        _Speed ("Speed", Float) = 1
+        _FadeAlpha ("Fade Alpha", Range(0,1)) = 1
+        [HideInInspector] _Mode ("Rendering Queue", Float) = 0
+        [HideInInspector] _LayerIndex ("Layer index", Float) = 0
+    }
 
-#ifdef VERTEX
-attribute vec4 _glesVertex;
-attribute vec4 _glesMultiTexCoord0;
-attribute vec4 _glesMultiTexCoord1;
-uniform highp vec4 _Time;
-uniform highp mat4 glstate_matrix_mvp;
-uniform highp vec4 _Diffuse_ST;
-uniform highp vec4 _AlphaMask_ST;
-uniform mediump float _Speed;
-varying mediump vec2 xlv_TEXCOORD0;
-varying mediump vec2 xlv_TEXCOORD1;
-void main ()
-{
-  mediump vec2 tmpvar_1;
-  mediump vec2 tmpvar_2;
-  highp vec2 tmpvar_3;
-  tmpvar_3.x = 0.0;
-  tmpvar_3.y = fract((_Time.y * _Speed));
-  tmpvar_1 = ((_glesMultiTexCoord0.xy * _Diffuse_ST.xy) + (_Diffuse_ST.zw + tmpvar_3));
-  tmpvar_2 = ((_glesMultiTexCoord1.xy * _AlphaMask_ST.xy) + _AlphaMask_ST.zw);
-  gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = tmpvar_1;
-  xlv_TEXCOORD1 = tmpvar_2;
-}
+    SubShader { 
+        Tags { 
+            "LIGHTMODE"="Always" 
+            "QUEUE"="Background+1" 
+            "IGNOREPROJECTOR"="true" 
+            "RenderType"="Transparent" 
+        }
+        Pass {
+            ZTest Always
+            ZWrite Off
+            Blend SrcAlpha OneMinusSrcAlpha
 
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
 
-#endif
-#ifdef FRAGMENT
-uniform sampler2D _Diffuse;
-uniform sampler2D _AlphaMask;
-uniform lowp vec4 _Color;
-uniform lowp float _FadeAlpha;
-varying mediump vec2 xlv_TEXCOORD0;
-varying mediump vec2 xlv_TEXCOORD1;
-void main ()
-{
-  lowp vec4 tmpvar_1;
-  tmpvar_1 = texture2D (_Diffuse, xlv_TEXCOORD0);
-  lowp vec4 tmpvar_2;
-  tmpvar_2.xyz = (_Color.xyz + tmpvar_1.xyz);
-  tmpvar_2.w = ((tmpvar_1.x * texture2D (_AlphaMask, xlv_TEXCOORD1).x) * (_Color.w * _FadeAlpha));
-  gl_FragData[0] = tmpvar_2;
-}
+            struct appdata {
+                float4 vertex : POSITION;
+                float2 uv0 : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
+            };
 
+            struct v2f {
+                float4 pos : SV_POSITION;
+                float2 uvDiffuse : TEXCOORD0;
+                float2 uvMask : TEXCOORD1;
+            };
 
-#endif
+            sampler2D _Diffuse; float4 _Diffuse_ST;
+            sampler2D _AlphaMask; float4 _AlphaMask_ST;
+            float4 _Color;
+            float _Speed;
+            float _FadeAlpha;
 
-ENDGLSL
- }
-}
-Fallback "Diffuse"
+            v2f vert (appdata v) {
+                v2f o;
+                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                
+                // Scrolling des UV sur l'axe Y pour la texture diffuse
+                float2 uvOffset = float2(0.0, frac(_Time.y * _Speed));
+                o.uvDiffuse = (v.uv0 * _Diffuse_ST.xy) + _Diffuse_ST.zw + uvOffset;
+                
+                // Le masque ne bouge pas (il utilise un autre set d'UVs)
+                o.uvMask = (v.uv1 * _AlphaMask_ST.xy) + _AlphaMask_ST.zw;
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target {
+                fixed4 diff = tex2D(_Diffuse, i.uvDiffuse);
+                fixed mask = tex2D(_AlphaMask, i.uvMask).r;
+                
+                fixed3 finalRGB = _Color.rgb + diff.rgb;
+                // L'alpha est multiplié par le canal Rouge de la diffuse ET du masque
+                fixed finalAlpha = diff.r * mask * _Color.a * _FadeAlpha;
+                
+                return fixed4(finalRGB, finalAlpha);
+            }
+            ENDCG
+        }
+    }
+    Fallback "Diffuse"
 }
