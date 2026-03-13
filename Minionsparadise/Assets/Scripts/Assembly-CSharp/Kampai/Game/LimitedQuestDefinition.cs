@@ -32,17 +32,12 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
+			case "SERVERSTOPTIMEUTC":
+				reader.Read();
+				ServerStopTimeUTC = global::System.Convert.ToInt32(reader.Value);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					ServerStopTimeUTC = global::System.Convert.ToInt32(reader.Value);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "SERVERSTARTTIMEUTC":
 				reader.Read();
 				ServerStartTimeUTC = global::System.Convert.ToInt32(reader.Value);

@@ -145,15 +145,10 @@ namespace Kampai.Game
 			int num = 0;
 			switch (text)
 			{
+			case "qsutil":
+				num = qsutilTableRef;
+				break;
 			default:
-			{
-				
-				int num2 = 1 ; //FIX USE OF UNASSIGNED VARIABLE
-				if (num2 == 1)
-				{
-					num = qsutilTableRef;
-					break;
-				}
 				L.lua_pushvalue(2);
 				L.lua_rawget(1);
 				if (L.lua_type(-1) == global::Kampai.Wrappers.LuaType.LUA_TNIL)
@@ -162,7 +157,6 @@ namespace Kampai.Game
 					L.lua_getglobal(text);
 				}
 				return 1;
-			}
 			case "qs":
 				num = qsTableRef;
 				break;

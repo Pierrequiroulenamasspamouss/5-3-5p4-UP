@@ -198,6 +198,7 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 		{
 			global::Kampai.Util.FatalException ex2 = ex;
 			global::Kampai.Util.FatalException e = ex2;
+			global::UnityEngine.Debug.LogErrorFormat("LoadDefinitionsCommand: FatalException: {0}\n{1}", e.Message, e.StackTrace);
 			logger.Error("Can't deserialize: {0}", e);
 			invokerService.Add(delegate
 			{
@@ -208,6 +209,7 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 		{
 			global::System.Exception ex4 = ex3;
 			global::System.Exception e2 = ex4;
+			global::UnityEngine.Debug.LogErrorFormat("LoadDefinitionsCommand: System.Exception: {0}\n{1}", e2.Message, e2.StackTrace);
 			logger.Error("Can't deserialize: {0}", e2);
 			invokerService.Add(delegate
 			{

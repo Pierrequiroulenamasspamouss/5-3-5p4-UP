@@ -40,17 +40,12 @@ namespace Kampai.Game.Trigger
 		{
 			switch (propertyName)
 			{
+			case "DURATION":
+				reader.Read();
+				duration = global::System.Convert.ToInt32(reader.Value);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					duration = global::System.Convert.ToInt32(reader.Value);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "QUESTDEFINITIONID":
 				reader.Read();
 				questDefinitionID = global::System.Convert.ToInt32(reader.Value);

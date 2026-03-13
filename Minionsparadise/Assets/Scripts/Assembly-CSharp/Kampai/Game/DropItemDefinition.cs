@@ -32,17 +32,12 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
+			case "DROPTYPE":
+				reader.Read();
+				dropType = global::Kampai.Util.ReaderUtil.ReadEnum<global::Kampai.Game.DropType>(reader);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					dropType = global::Kampai.Util.ReaderUtil.ReadEnum<global::Kampai.Game.DropType>(reader);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "RARITY":
 				reader.Read();
 				Rarity = global::System.Convert.ToSingle(reader.Value);

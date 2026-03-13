@@ -32,17 +32,12 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
+			case "BUILDINGDEFINITIONID":
+				reader.Read();
+				BuildingDefinitionID = global::System.Convert.ToInt32(reader.Value);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					BuildingDefinitionID = global::System.Convert.ToInt32(reader.Value);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "PREFABNAME":
 				reader.Read();
 				PrefabName = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);

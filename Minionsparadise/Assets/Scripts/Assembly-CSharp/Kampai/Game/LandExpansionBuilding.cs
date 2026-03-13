@@ -15,17 +15,12 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
+			case "MINIMUMLEVEL":
+				reader.Read();
+				MinimumLevel = global::System.Convert.ToInt32(reader.Value);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					MinimumLevel = global::System.Convert.ToInt32(reader.Value);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "EXPANSIONID":
 				reader.Read();
 				ExpansionID = global::System.Convert.ToInt32(reader.Value);

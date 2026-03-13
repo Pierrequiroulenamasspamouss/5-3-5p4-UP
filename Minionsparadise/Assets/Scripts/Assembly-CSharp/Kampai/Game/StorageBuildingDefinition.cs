@@ -1,59 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
+using Kampai.Util;
+
 namespace Kampai.Game
 {
-	public class StorageBuildingDefinition : global::Kampai.Game.AnimatingBuildingDefinition
-	{
-		public override int TypeCode
-		{
-			get
-			{
-				return 1063;
-			}
-		}
+    public class StorageBuildingDefinition : AnimatingBuildingDefinition
+    {
+        public override int TypeCode
+        {
+            get { return 1063; }
+        }
 
-		public int Capacity { get; set; }
+        public int Capacity { get; set; }
 
-		public global::System.Collections.Generic.IList<global::Kampai.Game.StorageUpgradeDefinition> StorageUpgrades { get; set; }
+        public IList<StorageUpgradeDefinition> StorageUpgrades { get; set; }
 
-		public override void Write(global::System.IO.BinaryWriter writer)
-		{
-			base.Write(writer);
-			writer.Write(Capacity);
-			global::Kampai.Util.BinarySerializationUtil.WriteList(writer, global::Kampai.Util.BinarySerializationUtil.WriteStorageUpgradeDefinition, StorageUpgrades);
-		}
+        public override void Write(BinaryWriter writer)
+        {
+            base.Write(writer);
+            writer.Write(Capacity);
+            BinarySerializationUtil.WriteList(writer, BinarySerializationUtil.WriteStorageUpgradeDefinition, StorageUpgrades);
+        }
 
-		public override void Read(global::System.IO.BinaryReader reader)
-		{
-			base.Read(reader);
-			Capacity = reader.ReadInt32();
-			StorageUpgrades = global::Kampai.Util.BinarySerializationUtil.ReadList(reader, global::Kampai.Util.BinarySerializationUtil.ReadStorageUpgradeDefinition, StorageUpgrades);
-		}
+        public override void Read(BinaryReader reader)
+        {
+            base.Read(reader);
+            Capacity = reader.ReadInt32();
+            StorageUpgrades = BinarySerializationUtil.ReadList(reader, BinarySerializationUtil.ReadStorageUpgradeDefinition, StorageUpgrades);
+        }
 
-		protected override bool DeserializeProperty(string propertyName, global::Newtonsoft.Json.JsonReader reader, JsonConverters converters)
-		{
-			switch (propertyName)
-			{
-			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					StorageUpgrades = global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, global::Kampai.Util.ReaderUtil.ReadStorageUpgradeDefinition, StorageUpgrades);
-					break;
-				}
-				return base.DeserializeProperty(propertyName, reader, converters);
-			}
-			case "CAPACITY":
-				reader.Read();
-				Capacity = global::System.Convert.ToInt32(reader.Value);
-				break;
-			}
-			return true;
-		}
+        protected override bool DeserializeProperty(string propertyName, JsonReader reader, JsonConverters converters)
+        {
+            switch (propertyName)
+            {
+                case "STORAGEUPGRADES":
+                    reader.Read();
+                    StorageUpgrades = ReaderUtil.PopulateList(reader, converters, ReaderUtil.ReadStorageUpgradeDefinition, StorageUpgrades);
+                    break;
 
-		public override global::Kampai.Game.Building BuildBuilding()
-		{
-			return new global::Kampai.Game.StorageBuilding(this);
-		}
-	}
+                case "CAPACITY":
+                    reader.Read();
+                    int parsedCapacity;
+                    if (reader.Value != null && int.TryParse(reader.Value.ToString(), out parsedCapacity))
+                    {
+                        Capacity = parsedCapacity;
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.LogWarning("Valeur invalide ignorée pour Capacity : " + reader.Value);
+                        Capacity = 0;
+                    }
+                    break;
+
+                default:
+                    return base.DeserializeProperty(propertyName, reader, converters);
+            }
+            return true;
+        }
+
+        public override Building BuildBuilding()
+        {
+            return new StorageBuilding(this);
+        }
+    }
 }

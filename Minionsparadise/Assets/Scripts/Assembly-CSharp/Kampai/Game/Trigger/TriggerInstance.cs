@@ -89,19 +89,11 @@ namespace Kampai.Game.Trigger
 		{
 			switch (propertyName)
 			{
-			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					StartGameTime = global::System.Convert.ToInt32(reader.Value);
-					break;
-				}
-				return false;
-			}
-			case "RECIEVEDREWARDIDS":
+			case "STARTGAMETIME":
 				reader.Read();
+				StartGameTime = global::System.Convert.ToInt32(reader.Value);
+				break;
+			default: return false;
 				RecievedRewardIds = global::Kampai.Util.ReaderUtil.PopulateListInt32(reader, RecievedRewardIds);
 				break;
 			}

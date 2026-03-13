@@ -40,17 +40,12 @@ namespace Kampai.Game.Trigger
 		{
 			switch (propertyName)
 			{
+			case "ISPURCHASED":
+				reader.Read();
+				isPurchased = global::System.Convert.ToBoolean(reader.Value);
+				break;
 			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					isPurchased = global::System.Convert.ToBoolean(reader.Value);
-					break;
-				}
 				return base.DeserializeProperty(propertyName, reader, converters);
-			}
 			case "LANDEXPANSIONID":
 				reader.Read();
 				landExpansionId = global::System.Convert.ToInt32(reader.Value);

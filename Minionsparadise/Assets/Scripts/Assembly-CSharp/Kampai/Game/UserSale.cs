@@ -41,21 +41,16 @@ namespace Kampai.Game
 		{
 			switch (propertyName)
 			{
-			default:
-			{
-                        int num = 1; //FIX USE OF UNASSIGNED VARIABLE
-                        if (num == 1)
-				{
-					reader.Read();
-					SaleDefinition = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);
-					break;
-				}
-				return false;
-			}
+			case "SALEDEFINITION":
+				reader.Read();
+				SaleDefinition = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);
+				break;
 			case "SALEID":
 				reader.Read();
 				SaleId = global::System.Convert.ToInt64(reader.Value);
 				break;
+			default:
+				return false;
 			}
 			return true;
 		}
