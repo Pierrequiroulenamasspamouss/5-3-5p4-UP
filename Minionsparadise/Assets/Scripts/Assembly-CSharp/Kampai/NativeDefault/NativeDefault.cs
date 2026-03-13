@@ -128,9 +128,15 @@ namespace Kampai.Util
 			return 19;
 		}
 
+		private string cachedPersistentDataPath = null;
+
 		public string GetPersistentDataPath()
 		{
-			return global::UnityEngine.Application.persistentDataPath;
+			if (cachedPersistentDataPath == null)
+			{
+				cachedPersistentDataPath = global::UnityEngine.Application.persistentDataPath;
+			}
+			return cachedPersistentDataPath;
 		}
 
 		public ulong GetAvailableStorage(string path)

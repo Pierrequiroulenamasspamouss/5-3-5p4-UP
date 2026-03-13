@@ -11,6 +11,14 @@ VIDEO_PATH = os.path.join(SERVER_DIR, "assets", "video.mp4")
 DEFINITIONS_PATH = os.path.join(SERVER_DIR, "definitions.json")
 CONFIG_PATH = os.path.join(SERVER_DIR, "config.json")
 MANIFEST_PATH = os.path.join(SERVER_DIR, "DLC_Manifest.json")
+DLC_DIR = os.path.join(SERVER_DIR, "DLC")
+
+@game_bp.route('/DLC/<path:filename>')
+def serve_dlc(filename):
+    file_path = os.path.join(DLC_DIR, filename)
+    if os.path.exists(file_path):
+        return send_file(file_path)
+    return "", 404
 
 @game_bp.route('/video.mp4')
 def serve_video():

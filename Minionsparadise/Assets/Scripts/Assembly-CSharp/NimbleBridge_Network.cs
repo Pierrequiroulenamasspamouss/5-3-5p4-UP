@@ -37,12 +37,17 @@ public class NimbleBridge_Network
 
 	public NimbleBridge_NetworkConnectionHandle SendGetRequest(string url, NetworkConnectionCallback callback)
 	{
+#if !UNITY_EDITOR
 		global::System.IntPtr callbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(callback);
 		return NimbleBridge_Network_sendGetRequest(url, NimbleBridge_NetworkConnectionHandle.OnNetworkConnectionCallback, callbackData);
+#else
+		return null;
+#endif
 	}
 
 	public NimbleBridge_NetworkConnectionHandle SendPostRequest(string url, byte[] data, NetworkConnectionCallback callback)
 	{
+#if !UNITY_EDITOR
 		global::System.IntPtr intPtr = global::System.IntPtr.Zero;
 		try
 		{
@@ -57,26 +62,43 @@ public class NimbleBridge_Network
 				MarshalUtility.DisposeDataPtr(intPtr);
 			}
 		}
+#else
+		return null;
+#endif
 	}
 
 	public NimbleBridge_NetworkConnectionHandle SendRequest(NimbleBridge_HttpRequest request, NetworkConnectionCallback callback)
 	{
+#if !UNITY_EDITOR
 		global::System.IntPtr callbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(callback);
 		return NimbleBridge_Network_sendRequest(request, NimbleBridge_NetworkConnectionHandle.OnNetworkConnectionCallback, callbackData);
+#else
+		return null;
+#endif
 	}
 
 	public void ForceRedetectNetworkStatus()
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_Network_forceRedetectNetworkStatus();
+#endif
 	}
 
 	public NimbleBridge_Network.NimbleBridge_Network_Status GetNetworkStatus()
 	{
+#if !UNITY_EDITOR
 		return (NimbleBridge_Network.NimbleBridge_Network_Status)NimbleBridge_Network_getNetworkStatus();
+#else
+		return NimbleBridge_Network_Status.STATUS_OK;
+#endif
 	}
 
 	public bool IsNetworkWifi()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_Network_isNetworkWifi();
+#else
+		return true;
+#endif
 	}
 }

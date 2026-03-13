@@ -66,42 +66,65 @@ public class NimbleBridge_Persistence : global::System.Runtime.InteropServices.S
 
 	protected override bool ReleaseHandle()
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_PersistenceWrapper_Dispose(this);
+#endif
 		return true;
 	}
 
 	public string GetIdentifier()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_Persistence_getIdentifier(this);
+#else
+		return string.Empty;
+#endif
 	}
 
 	public NimbleBridge_Persistence.Storage GetStorage()
 	{
+#if !UNITY_EDITOR
 		return (NimbleBridge_Persistence.Storage)NimbleBridge_Persistence_getStorage(this);
+#else
+		return Storage.STORAGE_DOCUMENT;
+#endif
 	}
 
 	public bool GetEncryption()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_Persistence_getEncryption(this);
+#else
+		return false;
+#endif
 	}
 
 	public void SetEncryption(bool encryption)
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_Persistence_setEncryption(this, encryption);
+#endif
 	}
 
 	public void SetValue(string key, string value)
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_Persistence_setValue(this, key, value);
+#endif
 	}
 
 	public string GetStringValue(string key)
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_Persistence_getStringValue(this, key);
+#else
+		return string.Empty;
+#endif
 	}
 
 	public void AddEntries(global::System.Collections.Generic.Dictionary<string, string> dictionary)
 	{
+#if !UNITY_EDITOR
 		global::System.IntPtr intPtr = global::System.IntPtr.Zero;
 		try
 		{
@@ -115,15 +138,20 @@ public class NimbleBridge_Persistence : global::System.Runtime.InteropServices.S
 				MarshalUtility.DisposeMapPtr(intPtr);
 			}
 		}
+#endif
 	}
 
 	public void Clean()
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_Persistence_clean(this);
+#endif
 	}
 
 	public void Synchronize()
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_Persistence_synchronize(this);
+#endif
 	}
 }

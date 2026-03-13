@@ -97,30 +97,45 @@ public class NimbleBridge_MTX
 
 	public NimbleBridge_Error PurchaseItem(string sku, MTXTransactionCallback receiptCallback, MTXTransactionCallback purchaseCallback)
 	{
+#if !UNITY_EDITOR
 		global::System.IntPtr receiptCallbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(receiptCallback);
 		global::System.IntPtr purchaseCallbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(purchaseCallback);
 		return NimbleBridge_MTX_purchaseItem(sku, OnMTXTransactionCallback, receiptCallbackData, OnMTXTransactionCallback, purchaseCallbackData);
+#else
+		return null;
+#endif
 	}
 
 	public NimbleBridge_Error ItemGranted(string transactionId, NimbleBridge_MTXCatalogItem.Type itemType, MTXTransactionCallback callback)
 	{
+#if !UNITY_EDITOR
 		global::System.IntPtr callbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(callback);
 		return NimbleBridge_MTX_itemGranted(transactionId, (int)itemType, OnMTXTransactionCallback, callbackData);
+#else
+		return null;
+#endif
 	}
 
 	public NimbleBridge_Error FinalizeTransaction(string transactionId, MTXTransactionCallback callback)
 	{
+#if !UNITY_EDITOR
 		global::System.IntPtr callbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(callback);
 		return NimbleBridge_MTX_finalizeTransaction(transactionId, OnMTXTransactionCallback, callbackData);
+#else
+		return null;
+#endif
 	}
 
 	public void RestorePurchasedTransactions()
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_MTX_restorePurchasedTransactions();
+#endif
 	}
 
 	public NimbleBridge_MTXTransaction[] GetPurchasedTransactions()
 	{
+#if !UNITY_EDITOR
 		global::System.Collections.Generic.List<NimbleBridge_MTXTransaction> list = new global::System.Collections.Generic.List<NimbleBridge_MTXTransaction>();
 		global::System.IntPtr intPtr = NimbleBridge_MTX_getPurchasedTransactions();
 		global::System.IntPtr intPtr2 = global::System.Runtime.InteropServices.Marshal.ReadIntPtr(intPtr);
@@ -133,10 +148,14 @@ public class NimbleBridge_MTX
 		}
 		NimbleBridge_MTX_deleteTransactionArray(intPtr);
 		return list.ToArray();
+#else
+		return new NimbleBridge_MTXTransaction[0];
+#endif
 	}
 
 	public NimbleBridge_MTXTransaction[] GetPendingTransactions()
 	{
+#if !UNITY_EDITOR
 		global::System.Collections.Generic.List<NimbleBridge_MTXTransaction> list = new global::System.Collections.Generic.List<NimbleBridge_MTXTransaction>();
 		global::System.IntPtr intPtr = NimbleBridge_MTX_getPendingTransactions();
 		global::System.IntPtr intPtr2 = global::System.Runtime.InteropServices.Marshal.ReadIntPtr(intPtr);
@@ -149,6 +168,9 @@ public class NimbleBridge_MTX
 		}
 		NimbleBridge_MTX_deleteTransactionArray(intPtr);
 		return list.ToArray();
+#else
+		return new NimbleBridge_MTXTransaction[0];
+#endif
 	}
 
 	public NimbleBridge_MTXTransaction[] GetRecoveredTransactions()
@@ -183,11 +205,14 @@ public class NimbleBridge_MTX
 
 	public void RefreshAvailableCatalogItems()
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_MTX_refreshAvailableCatalogItems();
+#endif
 	}
 
 	public NimbleBridge_MTXCatalogItem[] GetAvailableCatalogItems()
 	{
+#if !UNITY_EDITOR
 		global::System.Collections.Generic.List<NimbleBridge_MTXCatalogItem> list = new global::System.Collections.Generic.List<NimbleBridge_MTXCatalogItem>();
 		global::System.IntPtr intPtr = NimbleBridge_MTX_getAvailableCatalogItems();
 		if (intPtr != global::System.IntPtr.Zero)
@@ -203,10 +228,14 @@ public class NimbleBridge_MTX
 			NimbleBridge_MTX_deleteItemArray(intPtr);
 		}
 		return list.ToArray();
+#else
+		return new NimbleBridge_MTXCatalogItem[0];
+#endif
 	}
 
 	public void SetPlatformParameters(global::System.Collections.Generic.Dictionary<string, string> parameters)
 	{
+#if !UNITY_EDITOR
 		global::System.IntPtr intPtr = global::System.IntPtr.Zero;
 		try
 		{
@@ -220,12 +249,15 @@ public class NimbleBridge_MTX
 				MarshalUtility.DisposeMapPtr(intPtr);
 			}
 		}
+#endif
 	}
 
 	public void RefreshReceipt(MTXRefreshReceiptCallback refreshReceiptCallback)
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_CallbackHelper nimbleBridge_CallbackHelper = NimbleBridge_CallbackHelper.Get();
 		global::System.IntPtr refreshReceiptCallbackData = nimbleBridge_CallbackHelper.MakeCallbackData(refreshReceiptCallback);
 		NimbleBridge_MTXRefreshReceipt(OnMTXRefreshReceiptCallback, refreshReceiptCallbackData);
+#endif
 	}
 }

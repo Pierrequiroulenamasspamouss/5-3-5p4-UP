@@ -26,7 +26,11 @@ public class Supersonic : SupersonicIAgent
 
 	private Supersonic()
 	{
+#if UNITY_ANDROID && !UNITY_EDITOR
 		_platformAgent = new AndroidAgent();
+#else
+		_platformAgent = null; // Or a MockAgent if needed
+#endif
 	}
 
 	public static string pluginVersion()
@@ -41,142 +45,207 @@ public class Supersonic : SupersonicIAgent
 
 	public void start()
 	{
-		_platformAgent.start();
+		if (_platformAgent != null)
+		{
+			_platformAgent.start();
+		}
 	}
 
 	public void onResume()
 	{
-		_platformAgent.onResume();
+		if (_platformAgent != null)
+		{
+			_platformAgent.onResume();
+		}
 	}
 
 	public void onPause()
 	{
-		_platformAgent.onPause();
+		if (_platformAgent != null)
+		{
+			_platformAgent.onPause();
+		}
 	}
 
 	public void setAge(int age)
 	{
-		_platformAgent.setAge(age);
+		if (_platformAgent != null)
+		{
+			_platformAgent.setAge(age);
+		}
 	}
 
 	public void setGender(string gender)
 	{
-		if (gender.Equals("male"))
+		if (_platformAgent != null)
 		{
-			_platformAgent.setGender("male");
-		}
-		else if (gender.Equals("female"))
-		{
-			_platformAgent.setGender("female");
-		}
-		else if (gender.Equals("unknown"))
-		{
-			_platformAgent.setGender("unknown");
+			if (gender.Equals("male"))
+			{
+				_platformAgent.setGender("male");
+			}
+			else if (gender.Equals("female"))
+			{
+				_platformAgent.setGender("female");
+			}
+			else if (gender.Equals("unknown"))
+			{
+				_platformAgent.setGender("unknown");
+			}
 		}
 	}
 
 	public void setMediationSegment(string segment)
 	{
-		_platformAgent.setMediationSegment(segment);
+		if (_platformAgent != null)
+		{
+			_platformAgent.setMediationSegment(segment);
+		}
 	}
 
 	public void reportAppStarted()
 	{
-		_platformAgent.reportAppStarted();
+		if (_platformAgent != null)
+		{
+			_platformAgent.reportAppStarted();
+		}
 	}
 
 	public void initRewardedVideo(string appKey, string userId)
 	{
-		_platformAgent.initRewardedVideo(appKey, userId);
+		if (_platformAgent != null)
+		{
+			_platformAgent.initRewardedVideo(appKey, userId);
+		}
 	}
 
 	public string getAdvertiserId()
 	{
-		return _platformAgent.getAdvertiserId();
+		if (_platformAgent != null)
+		{
+			return _platformAgent.getAdvertiserId();
+		}
+		return string.Empty;
 	}
 
 	public void validateIntegration()
 	{
-		_platformAgent.validateIntegration();
+		if (_platformAgent != null)
+		{
+			_platformAgent.validateIntegration();
+		}
 	}
 
 	public void shouldTrackNetworkState(bool track)
 	{
-		_platformAgent.shouldTrackNetworkState(track);
+		if (_platformAgent != null)
+		{
+			_platformAgent.shouldTrackNetworkState(track);
+		}
 	}
 
 	public void showRewardedVideo()
 	{
-		_platformAgent.showRewardedVideo();
+		if (_platformAgent != null)
+		{
+			_platformAgent.showRewardedVideo();
+		}
 	}
 
 	public void showRewardedVideo(string placementName)
 	{
-		_platformAgent.showRewardedVideo(placementName);
+		if (_platformAgent != null)
+		{
+			_platformAgent.showRewardedVideo(placementName);
+		}
 	}
 
 	public SupersonicPlacement getPlacementInfo(string placementName)
 	{
-		return _platformAgent.getPlacementInfo(placementName);
+		if (_platformAgent != null)
+		{
+			return _platformAgent.getPlacementInfo(placementName);
+		}
+		return null;
 	}
 
 	public bool isRewardedVideoAvailable()
 	{
-		return _platformAgent.isRewardedVideoAvailable();
+		return _platformAgent != null && _platformAgent.isRewardedVideoAvailable();
 	}
 
 	public bool isRewardedVideoPlacementCapped(string placementName)
 	{
-		return _platformAgent.isRewardedVideoPlacementCapped(placementName);
+		return _platformAgent != null && _platformAgent.isRewardedVideoPlacementCapped(placementName);
 	}
 
 	public void initInterstitial(string appKey, string userId)
 	{
-		_platformAgent.initInterstitial(appKey, userId);
+		if (_platformAgent != null)
+		{
+			_platformAgent.initInterstitial(appKey, userId);
+		}
 	}
 
 	public void loadInterstitial()
 	{
-		_platformAgent.loadInterstitial();
+		if (_platformAgent != null)
+		{
+			_platformAgent.loadInterstitial();
+		}
 	}
 
 	public void showInterstitial()
 	{
-		_platformAgent.showInterstitial();
+		if (_platformAgent != null)
+		{
+			_platformAgent.showInterstitial();
+		}
 	}
 
 	public void showInterstitial(string placementName)
 	{
-		_platformAgent.showInterstitial(placementName);
+		if (_platformAgent != null)
+		{
+			_platformAgent.showInterstitial(placementName);
+		}
 	}
 
 	public bool isInterstitialReady()
 	{
-		return _platformAgent.isInterstitialReady();
+		return _platformAgent != null && _platformAgent.isInterstitialReady();
 	}
 
 	public bool isInterstitialPlacementCapped(string placementName)
 	{
-		return _platformAgent.isInterstitialPlacementCapped(placementName);
+		return _platformAgent != null && _platformAgent.isInterstitialPlacementCapped(placementName);
 	}
 
 	public void initOfferwall(string appKey, string userId)
 	{
-		_platformAgent.initOfferwall(appKey, userId);
+		if (_platformAgent != null)
+		{
+			_platformAgent.initOfferwall(appKey, userId);
+		}
 	}
 
 	public void showOfferwall()
 	{
-		_platformAgent.showOfferwall();
+		if (_platformAgent != null)
+		{
+			_platformAgent.showOfferwall();
+		}
 	}
 
 	public void getOfferwallCredits()
 	{
-		_platformAgent.getOfferwallCredits();
+		if (_platformAgent != null)
+		{
+			_platformAgent.getOfferwallCredits();
+		}
 	}
 
 	public bool isOfferwallAvailable()
 	{
-		return _platformAgent.isOfferwallAvailable();
+		return _platformAgent != null && _platformAgent.isOfferwallAvailable();
 	}
 }
