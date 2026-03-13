@@ -108,6 +108,7 @@ namespace Ea.Sharkbite.HttpPlugin.Http.Impl
 
         public virtual void Execute(Action<IResponse> callback)
         {
+            UnityEngine.Debug.LogFormat("Sending HTTP {0} request to: {1}", Method, Uri);
             ThreadPool.QueueUserWorkItem(state => GetResponse(callback));
         }
         #endregion
