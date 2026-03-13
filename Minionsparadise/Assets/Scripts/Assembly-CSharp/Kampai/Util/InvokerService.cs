@@ -31,7 +31,14 @@ namespace Kampai.Util
 				while (work.Count > 0)
 				{
 					global::System.Action action = work.Dequeue();
-					action();
+					try
+					{
+						action();
+					}
+					catch (global::System.Exception ex)
+					{
+						global::UnityEngine.Debug.LogErrorFormat("InvokerService: Exception during action execution: {0}\n{1}", ex.Message, ex.StackTrace);
+					}
 				}
 			}
 			finally

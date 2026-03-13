@@ -23,21 +23,35 @@ public class NimbleBridge_PersistenceService
 
 	public NimbleBridge_Persistence GetPersistence(string identifier, NimbleBridge_Persistence.Storage storage)
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_PersistenceService_getPersistence(identifier, (int)storage);
+#else
+		return null;
+#endif
 	}
 
 	public void MigratePersistence(string sourcePersistenceId, NimbleBridge_Persistence.Storage storage, string targetPersistenceId, NimbleBridge_Persistence.MergePolicy mergePolicy)
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_PersistenceService_migratePersistence(sourcePersistenceId, (int)storage, targetPersistenceId, (int)mergePolicy);
+#endif
 	}
 
 	public static NimbleBridge_Persistence GetAppPersistence(NimbleBridge_Persistence.Storage storage)
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_PersistenceService_getAppPersistence((int)storage);
+#else
+		return null;
+#endif
 	}
 
 	public static NimbleBridge_Persistence GetPersistenceForNimbleComponent(string componentId, NimbleBridge_Persistence.Storage storage)
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_PersistenceService_getPersistenceForNimbleComponent(componentId, (int)storage);
+#else
+		return null;
+#endif
 	}
 }

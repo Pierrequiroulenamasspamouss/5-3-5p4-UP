@@ -96,51 +96,91 @@ public class NimbleBridge_SynergyEnvironment
 
 	public string GetEADeviceId()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getEADeviceId();
+#else
+		return string.Empty;
+#endif
 	}
 
 	public string GetSynergyId()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getSynergyId();
+#else
+		return "mock_synergy_id";
+#endif
 	}
 
 	public string GetSellId()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getSellId();
+#else
+		return string.Empty;
+#endif
 	}
 
 	public string GetProductId()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getProductId();
+#else
+		return string.Empty;
+#endif
 	}
 
 	public string GetEAHardwareId()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getEAHardwareId();
+#else
+		return string.Empty;
+#endif
 	}
 
 	public string GetServerUrlWithKey(string key)
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getServerUrlWithKey(key);
+#else
+		return string.Empty;
+#endif
 	}
 
 	public NimbleBridge_SynergyEnvironment.SynergyAppVersionCheckResult GetLatestAppVersionCheckResult()
 	{
+#if !UNITY_EDITOR
 		return (NimbleBridge_SynergyEnvironment.SynergyAppVersionCheckResult)NimbleBridge_SynergyEnvironment_getLatestAppVersionCheckResult();
+#else
+		return SynergyAppVersionCheckResult.SYNERGY_APP_VERSION_OK;
+#endif
 	}
 
 	public bool IsDataAvailable()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_isDataAvailable();
+#else
+		return true;
+#endif
 	}
 
 	public bool IsUpdateInProgress()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_isUpdateInProgress();
+#else
+		return false;
+#endif
 	}
 
 	public NimbleBridge_Error CheckAndInitiateSynergyEnvironmentUpdate()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_checkAndInitiateSynergyEnvironmentUpdate();
+#else
+		return null;
+#endif
 	}
 }

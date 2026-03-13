@@ -46,7 +46,7 @@ namespace Kampai.Game
 
 		public int Uptime()
 		{
-#if !UNITY_WEBPLAYER && UNITY_ANDROID
+#if !UNITY_WEBPLAYER && UNITY_ANDROID && !UNITY_EDITOR
 			using (global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("android.os.SystemClock"))
 			{
 				long num = androidJavaClass.CallStatic<long>("elapsedRealtime", new object[0]);

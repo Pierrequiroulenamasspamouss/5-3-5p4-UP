@@ -8,13 +8,17 @@ public class NimbleBridge_NotificationCenter
 
 	public static void RegisterListener(string notification, NimbleBridge_NotificationListener listener)
 	{
+#if !UNITY_EDITOR
 		listener.EnsureInitialized();
 		NimbleBridge_NotificationCenter_registerListener(notification, listener);
+#endif
 	}
 
 	public static void UnregisterListener(NimbleBridge_NotificationListener listener)
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_NotificationCenter_unregisterListener(listener);
 		listener.Unregister();
+#endif
 	}
 }

@@ -27,21 +27,37 @@ public class NimbleBridge_SynergyIdManager
 
 	public string GetSynergyId()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyIdManager_getSynergyId();
+#else
+		return "mock_synergy_id";
+#endif
 	}
 
 	public string GetAnonymousSynergyId()
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyIdManager_getAnonymousSynergyId();
+#else
+		return "mock_anon_id";
+#endif
 	}
 
 	public NimbleBridge_Error Login(string userSynergyId, string authenticatorIdentifier)
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyIdManager_login(userSynergyId, authenticatorIdentifier);
+#else
+		return null;
+#endif
 	}
 
 	public NimbleBridge_Error Logout(string authenticatorIdentifier)
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_SynergyIdManager_logout(authenticatorIdentifier);
+#else
+		return null;
+#endif
 	}
 }

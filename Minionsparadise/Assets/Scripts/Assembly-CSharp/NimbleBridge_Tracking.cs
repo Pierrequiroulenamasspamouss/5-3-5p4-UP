@@ -43,7 +43,7 @@ public class NimbleBridge_Tracking
 
 	public void LogEvent(string type, global::System.Collections.Generic.Dictionary<string, string> parameters)
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if !UNITY_WEBPLAYER && !UNITY_EDITOR && UNITY_ANDROID
 		global::System.IntPtr intPtr = global::System.IntPtr.Zero;
 		try
 		{
@@ -130,7 +130,7 @@ public class NimbleBridge_Tracking
 
 	public static bool IsEventTypeMemberOfSet(string _event, global::System.Collections.Generic.List<string> eventTypeSet)
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if !UNITY_WEBPLAYER && !UNITY_EDITOR && UNITY_ANDROID
 		string[] array = new string[eventTypeSet.Count + 1];
 		eventTypeSet.CopyTo(array);
 		array[eventTypeSet.Count] = null;
