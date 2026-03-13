@@ -14,7 +14,7 @@ namespace Kampai.Util
 
 		private void Update()
 		{
-			if (isInitialized)
+			if (isInitialized && invokerService != null)
 			{
 				invokerService.Update();
 			}

@@ -424,6 +424,7 @@ namespace Ea.Sharkbite.HttpPlugin.Http.Impl
 
         protected virtual void GetResponse(Action<IResponse> callback)
         {
+            UnityEngine.Debug.LogFormat("[HTTP] GetResponse started for {0}", Uri);
             DefaultResponse finalResponse = null;
             TryRestart();
             bool isFile = IsFileDownload();
@@ -433,6 +434,7 @@ namespace Ea.Sharkbite.HttpPlugin.Http.Impl
                 _progress.StartTimer();
                 using (HttpWebResponse httpWebResponse = ExecuteRequest())
                 {
+                    UnityEngine.Debug.LogFormat("[HTTP] ExecuteRequest returned for {0}. Response is {1}", Uri, (httpWebResponse != null) ? httpWebResponse.StatusCode.ToString() : "NULL");
                     if (httpWebResponse != null)
                     {
                         if (!isFile)
@@ -511,7 +513,10 @@ namespace Ea.Sharkbite.HttpPlugin.Http.Impl
             }
 
             if (callback != null)
+            {
+                UnityEngine.Debug.LogFormat("[HTTP] Calling callback for {0}", Uri);
                 callback(finalResponse);
+            }
         }
 
         private string ReadFileResponse(Stream input)

@@ -34,15 +34,21 @@ public class LocalPersistanceService : ILocalPersistanceService
 	public void PutData(string name, string data)
 	{
 		cache[name] = new LocalPersistanceService.CachedData(data);
-		global::UnityEngine.PlayerPrefs.SetString(EnvPrefix + name, data);
-		global::UnityEngine.PlayerPrefs.Save();
+		NimbleBridge_CallbackHelper.Get().RunOnMainThread(delegate
+		{
+			global::UnityEngine.PlayerPrefs.SetString(EnvPrefix + name, data);
+			global::UnityEngine.PlayerPrefs.Save();
+		});
 	}
 
 	public void PutDataInt(string name, int data)
 	{
 		cache[name] = new LocalPersistanceService.CachedData(data);
-		global::UnityEngine.PlayerPrefs.SetInt(EnvPrefix + name, data);
-		global::UnityEngine.PlayerPrefs.Save();
+		NimbleBridge_CallbackHelper.Get().RunOnMainThread(delegate
+		{
+			global::UnityEngine.PlayerPrefs.SetInt(EnvPrefix + name, data);
+			global::UnityEngine.PlayerPrefs.Save();
+		});
 	}
 
 	public string GetData(string name)

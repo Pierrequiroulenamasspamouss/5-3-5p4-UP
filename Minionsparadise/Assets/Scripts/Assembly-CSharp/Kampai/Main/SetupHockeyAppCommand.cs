@@ -22,7 +22,6 @@ namespace Kampai.Main
 		{
 			logger.EventStart("SetupHockeyAppCommand.Execute");
 			global::UnityEngine.GameObject gameObject = new global::UnityEngine.GameObject("HockeyApp");
-			gameObject.transform.parent = managers.transform;
 			gameObject.SetActive(false);
 			string userId = persistanceService.GetData("UserID");
 			gameObject.name = "HockeyAppUnityAndroid";
