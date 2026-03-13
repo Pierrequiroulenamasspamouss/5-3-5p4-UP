@@ -29,6 +29,10 @@ namespace Kampai.Main.View
 
 		private void Update()
 		{
+			if (model == null)
+			{
+				return;
+			}
 			global::UnityEngine.NetworkReachability networkReachability = global::Kampai.Util.NetworkUtil.GetNetworkReachability();
 			if (networkReachability != model.reachability)
 			{

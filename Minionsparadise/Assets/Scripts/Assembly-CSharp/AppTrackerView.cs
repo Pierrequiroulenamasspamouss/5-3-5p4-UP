@@ -47,7 +47,7 @@ public class AppTrackerView : global::strange.extensions.mediation.impl.View
 
 	public void OnApplicationFocus(bool hasFocus)
 	{
-		if (hasFocus && isInitialized)
+		if (hasFocus && isInitialized && focusGainedSignal != null)
 		{
 			focusGainedSignal.Dispatch();
 		}

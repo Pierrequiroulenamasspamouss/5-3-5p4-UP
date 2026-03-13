@@ -124,7 +124,7 @@ namespace Kampai.Splash
 
 		private float GetCurrentProgress()
 		{
-			return dlcMode ? model.CurrentProgress : current;
+			return (dlcMode && model != null) ? model.CurrentProgress : current;
 		}
 
 		private void UpdateView()

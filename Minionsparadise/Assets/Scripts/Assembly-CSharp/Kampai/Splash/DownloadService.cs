@@ -190,7 +190,7 @@ namespace Kampai.Splash
 			{
 				logger.Info("HTTP START [{0}] {1}: {2}", runningRequests.Count, request.Method, request.Uri);
 			}
-			request.Execute(RequestCallback);
+			request.Execute(RequestCallbackProxy);
 		}
 
 		private void ProgressCallbackProxy(global::Ea.Sharkbite.HttpPlugin.Http.Api.DownloadProgress progress, global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest request)

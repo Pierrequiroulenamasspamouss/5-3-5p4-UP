@@ -68,7 +68,7 @@ public class HockeyAppAndroid : global::UnityEngine.MonoBehaviour
 
 	protected void StartCrashManager(string appID, bool updateManagerEnabled, bool autoSendEnabled, string userID)
 	{
-#if !UNITY_WEBPLAYER && UNITY_ANDROID
+#if !UNITY_WEBPLAYER && UNITY_ANDROID && !UNITY_EDITOR
 		global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("com.unity3d.player.UnityPlayer");
 		global::UnityEngine.AndroidJavaObject androidJavaObject = androidJavaClass.GetStatic<global::UnityEngine.AndroidJavaObject>("currentActivity");
 		global::UnityEngine.AndroidJavaClass androidJavaClass2 = new global::UnityEngine.AndroidJavaClass("net.hockeyapp.unity.HockeyUnityPlugin");
@@ -79,7 +79,7 @@ public class HockeyAppAndroid : global::UnityEngine.MonoBehaviour
 	protected string GetVersion()
 	{
 		string text = null;
-#if !UNITY_WEBPLAYER && UNITY_ANDROID
+#if !UNITY_WEBPLAYER && UNITY_ANDROID && !UNITY_EDITOR
 		global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("net.hockeyapp.unity.HockeyUnityPlugin");
 		return androidJavaClass.CallStatic<string>("getAppVersion", new object[0]);
 #else
