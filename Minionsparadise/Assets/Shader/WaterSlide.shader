@@ -1,93 +1,88 @@
-//////////////////////////////////////////
-///////////////////////////////////////////
 Shader "Kampai/Water/WaterSlide" {
-Properties {
- _AlphaMask ("Alpha Mask", 2D) = "gray" { }
- _diffuse1 ("diffuse1", 2D) = "gray" { }
- _diffuse2 ("diffuse2", 2D) = "gray" { }
- _time_scale ("time_scale", Float) = 10
-}
-SubShader { 
- Tags { "QUEUE"="Geometry" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
- Pass {
-  Name "FORWARDBASE"
-  Tags { "LIGHTMODE"="ForwardBase" "QUEUE"="Geometry" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
-  ZWrite Off
-  Blend SrcAlpha OneMinusSrcAlpha
-  Offset [_OffsetFactor], [_OffsetUnits]
-GLSLPROGRAM
-#version 100
+    Properties {
+        _AlphaMask ("Alpha Mask", 2D) = "gray" { }
+        _diffuse1 ("diffuse1", 2D) = "gray" { }
+        _diffuse2 ("diffuse2", 2D) = "gray" { }
+        _time_scale ("time_scale", Float) = 10
+        
+        // Ajoutés pour éviter les erreurs de compilation avec la commande Offset
+        [HideInInspector] _OffsetFactor ("Offset Factor", Float) = 0
+        [HideInInspector] _OffsetUnits ("Offset Units", Float) = 0
+    }
+    
+    SubShader { 
+        // Le jeu forçait le rendu dans la queue Geometry pour que le toboggan 
+        // s'affiche avant les autres éléments transparents.
+        Tags { "QUEUE"="Geometry" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+        
+        Pass {
+            Name "FORWARDBASE"
+            Tags { "LIGHTMODE"="ForwardBase" }
+            ZWrite Off
+            Blend SrcAlpha OneMinusSrcAlpha
+            Offset [_OffsetFactor], [_OffsetUnits]
 
-#ifdef VERTEX
-attribute vec4 _glesVertex;
-attribute vec4 _glesColor;
-attribute vec4 _glesMultiTexCoord0;
-uniform highp vec4 _Time;
-uniform highp mat4 glstate_matrix_mvp;
-uniform lowp vec4 _AlphaMask_ST;
-uniform lowp vec4 _diffuse1_ST;
-uniform lowp vec4 _diffuse2_ST;
-uniform highp float _time_scale;
-varying mediump vec2 xlv_TEXCOORD0;
-varying mediump vec2 xlv_TEXCOORD1;
-varying mediump vec2 xlv_TEXCOORD2;
-varying mediump vec2 xlv_TEXCOORD3;
-varying lowp vec4 xlv_COLOR;
-void main ()
-{
-  mediump float scroll_1;
-  mediump vec2 tmpvar_2;
-  mediump vec2 tmpvar_3;
-  mediump vec2 tmpvar_4;
-  mediump vec2 tmpvar_5;
-  highp float tmpvar_6;
-  tmpvar_6 = fract((_Time.x * _time_scale));
-  scroll_1 = tmpvar_6;
-  tmpvar_2 = (_glesMultiTexCoord0.xy * _diffuse1_ST.xy);
-  tmpvar_2.x = (tmpvar_2.x - scroll_1);
-  tmpvar_3 = (_glesMultiTexCoord0.xy * _diffuse2_ST.xy);
-  tmpvar_3.x = (tmpvar_3.x - scroll_1);
-  mediump vec2 tmpvar_7;
-  tmpvar_7 = (_glesMultiTexCoord0.xy * _AlphaMask_ST.xy);
-  tmpvar_4.y = tmpvar_7.y;
-  tmpvar_4.x = (tmpvar_7.x - scroll_1);
-  tmpvar_5.y = tmpvar_7.y;
-  tmpvar_5.x = (tmpvar_7.x - scroll_1);
-  gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = tmpvar_2;
-  xlv_TEXCOORD1 = tmpvar_3;
-  xlv_TEXCOORD2 = tmpvar_4;
-  xlv_TEXCOORD3 = tmpvar_5;
-  xlv_COLOR = _glesColor;
-}
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
 
+            struct appdata {
+                float4 vertex : POSITION;
+                float4 color : COLOR;
+                float2 uv : TEXCOORD0;
+            };
 
-#endif
-#ifdef FRAGMENT
-uniform sampler2D _AlphaMask;
-uniform sampler2D _diffuse1;
-uniform sampler2D _diffuse2;
-varying mediump vec2 xlv_TEXCOORD0;
-varying mediump vec2 xlv_TEXCOORD1;
-varying mediump vec2 xlv_TEXCOORD2;
-varying mediump vec2 xlv_TEXCOORD3;
-varying lowp vec4 xlv_COLOR;
-void main ()
-{
-  lowp vec4 finalColor_1;
-  finalColor_1.xyz = clamp ((1.0 - (
-    (1.0 - texture2D (_diffuse1, xlv_TEXCOORD0))
-   * 
-    (1.0 - texture2D (_diffuse2, xlv_TEXCOORD1))
-  )), 0.0, 1.0).xyz;
-  finalColor_1.w = (xlv_COLOR.w * clamp ((texture2D (_AlphaMask, xlv_TEXCOORD2).x + texture2D (_AlphaMask, xlv_TEXCOORD3).z), 0.0, 1.0));
-  gl_FragData[0] = finalColor_1;
-}
+            struct v2f {
+                float4 pos : SV_POSITION;
+                float4 color : COLOR;
+                float2 uvDiff1 : TEXCOORD0;
+                float2 uvDiff2 : TEXCOORD1;
+                float2 uvMask  : TEXCOORD2;
+            };
 
+            sampler2D _AlphaMask; float4 _AlphaMask_ST;
+            sampler2D _diffuse1; float4 _diffuse1_ST;
+            sampler2D _diffuse2; float4 _diffuse2_ST;
+            float _time_scale;
 
-#endif
+            v2f vert (appdata v) {
+                v2f o;
+                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.color = v.color;
+                
+                // Calcul du défilement de l'eau (scrolling)
+                float scroll = frac(_Time.x * _time_scale);
+                
+                // Application du Tiling (XY) et du Scrolling sur l'axe X (le sens de la descente)
+                o.uvDiff1 = v.uv * _diffuse1_ST.xy;
+                o.uvDiff1.x -= scroll;
+                
+                o.uvDiff2 = v.uv * _diffuse2_ST.xy;
+                o.uvDiff2.x -= scroll;
+                
+                o.uvMask = v.uv * _AlphaMask_ST.xy;
+                o.uvMask.x -= scroll;
+                
+                return o;
+            }
 
-ENDGLSL
- }
-}
+            fixed4 frag (v2f i) : SV_Target {
+                fixed4 d1 = tex2D(_diffuse1, i.uvDiff1);
+                fixed4 d2 = tex2D(_diffuse2, i.uvDiff2);
+                fixed4 mask = tex2D(_AlphaMask, i.uvMask);
+                
+                // --- Formule magique "Screen Blend" restaurée ---
+                // Clamp/Saturate garantit que les couleurs ne dépassent pas 1.0
+                fixed3 finalRGB = saturate(1.0 - ((1.0 - d1.rgb) * (1.0 - d2.rgb)));
+                
+                // L'opacité combine l'alpha du sommet (Vertex Color) 
+                // avec l'addition des canaux Rouge et Bleu du masque
+                fixed finalAlpha = i.color.a * saturate(mask.r + mask.b);
+                
+                return fixed4(finalRGB, finalAlpha);
+            }
+            ENDCG
+        }
+    }
 }

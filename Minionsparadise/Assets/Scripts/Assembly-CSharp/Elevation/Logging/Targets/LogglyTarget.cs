@@ -164,6 +164,7 @@ namespace Elevation.Logging.Targets
 			stringBuilder.Append('}');
 			return stringBuilder.ToString();
 		}
+	}
 #else
 	public abstract class LogglyTarget : global::Elevation.Logging.Targets.BufferedTarget
 	{

@@ -2556,6 +2556,7 @@ namespace Kampai.Util
 					return;
 				}
 				SERVER_URL = GetString(dictionary, "server");
+				global::UnityEngine.Debug.Log("StaticConfig: SERVER_URL = " + SERVER_URL);
 				ENVIRONMENT = GetString(dictionary, "env");
 				CDN_METADATA_URL = GetString(dictionary, "cdn_metadata_url");
 				CDN_URL = GetString(dictionary, "cdn_url");

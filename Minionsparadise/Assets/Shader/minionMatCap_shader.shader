@@ -1,111 +1,73 @@
-//////////////////////////////////////////
-///////////////////////////////////////////
 Shader "Kampai/Standard/Minion" {
-Properties {
- _MainTex ("Base (RGB)", 2D) = "gray" { }
- _MatCapBase ("MatCapBase (RGB)", 2D) = "gray" { }
- _LightColor ("Light Color (RGB)", Color) = (0.733,0.706,0.525,1)
-[HideInInspector]  _Mode ("Rendering Queue", Float) = 0
-[HideInInspector]  _LayerIndex ("Layer index", Float) = 0
- __Stencil ("Ref", Float) = 0
-[Enum(UnityEngine.Rendering.CompareFunction)]  __StencilComp ("Comparison", Float) = 8
- __StencilReadMask ("Read Mask", Float) = 255
- __StencilWriteMask ("Write Mask", Float) = 255
-[Enum(UnityEngine.Rendering.StencilOp)]  __StencilPassOp ("Pass Operation", Float) = 0
-[Enum(UnityEngine.Rendering.StencilOp)]  __StencilFailOp ("Fail Operation", Float) = 0
-[Enum(UnityEngine.Rendering.StencilOp)]  __StencilZFailOp ("ZFail Operation", Float) = 0
-}
-SubShader { 
- Tags { "RenderType"="Opaque" }
- Pass {
-  Tags { "LIGHTMODE"="Always" "RenderType"="Opaque" }
-  Stencil {
-   Ref [__Stencil]
-   ReadMask [__StencilReadMask]
-   WriteMask [__StencilWriteMask]
-   Comp [__StencilComp]
-   Pass [__StencilPassOp]
-   Fail [__StencilFailOp]
-   ZFail [__StencilZFailOp]
-  }
-GLSLPROGRAM
-#version 100
+    Properties {
+        _MainTex ("Base (RGB)", 2D) = "gray" {}
+        _MatCapBase ("MatCapBase (RGB)", 2D) = "gray" {}
+        _LightColor ("Light Color (RGB)", Color) = (0.733,0.706,0.525,1)
+        // ... (Stencils à rajouter au besoin)
+    }
 
-#ifdef VERTEX
-attribute vec4 _glesVertex;
-attribute vec4 _glesColor;
-attribute vec3 _glesNormal;
-attribute vec4 _glesMultiTexCoord0;
-uniform highp mat4 glstate_matrix_mvp;
-uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp vec4 _MainTex_ST;
-varying lowp vec2 xlv_TEXCOORD0;
-varying lowp vec2 xlv_TEXCOORD1;
-varying lowp vec4 xlv_COLOR;
-void main ()
-{
-  lowp vec2 capCoord_1;
-  lowp vec2 tmpvar_2;
-  tmpvar_2 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
-  lowp vec3 tmpvar_3;
-  tmpvar_3 = normalize(_glesNormal);
-  highp vec4 v_4;
-  v_4.x = glstate_matrix_invtrans_modelview0[0].x;
-  v_4.y = glstate_matrix_invtrans_modelview0[1].x;
-  v_4.z = glstate_matrix_invtrans_modelview0[2].x;
-  v_4.w = glstate_matrix_invtrans_modelview0[3].x;
-  highp vec3 tmpvar_5;
-  tmpvar_5 = normalize(v_4.xyz);
-  capCoord_1.x = dot (tmpvar_5, tmpvar_3);
-  highp vec4 v_6;
-  v_6.x = glstate_matrix_invtrans_modelview0[0].y;
-  v_6.y = glstate_matrix_invtrans_modelview0[1].y;
-  v_6.z = glstate_matrix_invtrans_modelview0[2].y;
-  v_6.w = glstate_matrix_invtrans_modelview0[3].y;
-  highp vec3 tmpvar_7;
-  tmpvar_7 = normalize(v_6.xyz);
-  capCoord_1.y = dot (tmpvar_7, tmpvar_3);
-  gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = tmpvar_2;
-  xlv_TEXCOORD1 = ((capCoord_1 * 0.5) + 0.5);
-  xlv_COLOR = _glesColor;
-}
+    SubShader { 
+        Tags { "RenderType"="Opaque" }
+        Pass {
+            Tags { "LIGHTMODE"="Always" }
 
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
 
-#endif
-#ifdef FRAGMENT
-uniform lowp vec4 _LightColor;
-uniform sampler2D _MainTex;
-uniform sampler2D _MatCapBase;
-varying lowp vec2 xlv_TEXCOORD0;
-varying lowp vec2 xlv_TEXCOORD1;
-varying lowp vec4 xlv_COLOR;
-void main ()
-{
-  lowp vec3 diffuse_1;
-  lowp vec4 tmpvar_2;
-  tmpvar_2 = texture2D (_MainTex, xlv_TEXCOORD0);
-  lowp vec4 tmpvar_3;
-  tmpvar_3 = texture2D (_MatCapBase, xlv_TEXCOORD1);
-  diffuse_1 = (vec3(pow (tmpvar_3.x, xlv_COLOR.x)) * _LightColor.xyz);
-  diffuse_1 = (diffuse_1 + (diffuse_1 * 0.6));
-  lowp vec4 tmpvar_4;
-  tmpvar_4.w = 1.0;
-  tmpvar_4.xyz = (((
-    (((tmpvar_3.y * xlv_COLOR.x) * 1.75) + pow (tmpvar_2.xyz, vec3(2.25, 2.25, 2.25)))
-   + 
-    clamp ((((
-      (tmpvar_3.z * xlv_COLOR.z)
-     * tmpvar_2.xyz) * 1.25) - 0.25), 0.0, 1.0)
-  ) * diffuse_1) + (xlv_COLOR.y * 0.1));
-  gl_FragData[0] = tmpvar_4;
-}
+            sampler2D _MainTex; float4 _MainTex_ST;
+            sampler2D _MatCapBase;
+            fixed4 _LightColor;
 
+            struct appdata {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+                fixed4 color : COLOR;
+                float2 uv : TEXCOORD0;
+            };
 
-#endif
+            struct v2f {
+                float4 pos : SV_POSITION;
+                float2 uv : TEXCOORD0;
+                float2 capCoord : TEXCOORD1;
+                fixed4 color : COLOR;
+            };
 
-ENDGLSL
- }
-}
-Fallback "VertexLit"
+            v2f vert (appdata v) {
+                v2f o;
+                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                
+                // Calcul Matcap Corrigé (transformation de la normale, pas de la position)
+                float3 viewNormal = mul((float3x3)UNITY_MATRIX_IT_MV, v.normal);
+                o.capCoord = normalize(viewNormal).xy * 0.5 + 0.5;
+                o.color = v.color;
+                
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target {
+                fixed4 tex = tex2D(_MainTex, i.uv);
+                fixed4 matcap = tex2D(_MatCapBase, i.capCoord);
+                
+                // --- MASQUAGE PAR VERTEX COLORS ---
+                // Canal Rouge du sommet = Intensité diffuse globale et reflets
+                fixed3 diffuse = pow(abs(matcap.r), i.color.r) * _LightColor.rgb;
+                diffuse += diffuse * 0.6;
+                
+                fixed3 spec = (matcap.g * i.color.r * 1.75) + pow(abs(tex.rgb), 2.25);
+                
+                // Canal Bleu du sommet = Intensité du Rim Lighting (contour lumineux)
+                fixed3 rim = clamp((matcap.b * i.color.b * tex.rgb * 1.25) - 0.25, 0.0, 1.0);
+                
+                // Canal Vert du sommet = Illumination propre / Emission
+                fixed3 finalRGB = ((spec + rim) * diffuse) + (i.color.g * 0.1);
+                
+                return fixed4(finalRGB, 1.0);
+            }
+            ENDCG
+        }
+    }
+    Fallback "VertexLit"
 }

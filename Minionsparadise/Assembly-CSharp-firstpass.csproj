@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Temp\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_3_5;UNITY_5_3;UNITY_5;ENABLE_NEW_BUGREPORTER;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_SPRITE_POLYGON;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;ENABLE_LOCALIZATION;ENABLE_ANDROID_ATLAS_ETC1_COMPRESSION;ENABLE_EDITOR_TESTS_RUNNER;UNITY_WEBPLAYER;ENABLE_SUBSTANCE;WEBPLUG;ENABLE_TEXTUREID_MAP;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_MONO;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_3_5;UNITY_5_3;UNITY_5;ENABLE_NEW_BUGREPORTER;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_SPRITE_POLYGON;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;ENABLE_LOCALIZATION;ENABLE_ANDROID_ATLAS_ETC1_COMPRESSION;ENABLE_EDITOR_TESTS_RUNNER;UNITY_ANDROID;UNITY_ANDROID_API;ENABLE_SUBSTANCE;ENABLE_TEXTUREID_MAP;ENABLE_EGL;ENABLE_NETWORK;ENABLE_RUNTIME_GI;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_LOG_MIXED_STACKTRACE;ENABLE_UNITYWEBREQUEST;PLATFORM_SUPPORTS_ADS_ID;ENABLE_UNITYADS_RUNTIME;UNITY_UNITYADS_API;ENABLE_MONO;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
@@ -38,10 +38,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEngine">
-      <HintPath>C:/Program Files/Unity/Hub/5.3.5p4/Editor/Data/Managed/UnityEngine.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/5.3.5p4/Editor/Data/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>C:/Program Files/Unity/Hub/5.3.5p4/Editor/Data/Managed/UnityEditor.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/5.3.5p4/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -119,70 +119,37 @@
      <None Include="Assets\Shader\TransparentSteppedUV.shader" />
      <None Include="Assets\Shader\GrayscaleMask.shader" />
      <None Include="Assets\Shader\bluePrint.shader" />
-     <None Include="Assets\Shader\Internal-GUITextureClip.shader" />
      <None Include="Assets\Shader\UnlitVertexColor.shader" />
      <None Include="Assets\Resources\lua\socket\headers.txt" />
-     <None Include="Assets\Shader\FrameDebuggerRenderTargetDisplay.shader" />
      <None Include="Assets\Shader\TransparentMatCapGlass.shader" />
      <None Include="Assets\Shader\camera_vignette.shader" />
-     <None Include="Assets\Shader\Internal-Clear.shader" />
      <None Include="Assets\Resources\lua\socket\tp.txt" />
      <None Include="Assets\Shader\WaterFlow.shader" />
-     <None Include="Assets\Shader\Internal-SplashShadowBlur.shader" />
-     <None Include="Assets\Shader\Camera-DepthNormalTexture.shader" />
-     <None Include="Assets\Shader\Mobile-VertexLit.shader" />
-     <None Include="Assets\Shader\Internal-Colored.shader" />
      <None Include="Assets\Resources\JSSDKBindings.txt" />
-     <None Include="Assets\Shader\Unlit.shader" />
      <None Include="Assets\Resources\lua\Utilities.txt" />
      <None Include="Assets\Shader\AlphaMask.shader" />
-     <None Include="Assets\Shader\Internal-PrePassCollectShadows.shader" />
      <None Include="Assets\Resources\lua\socket.txt" />
-     <None Include="Assets\Shader\Normal-VertexLit.shader" />
      <None Include="Assets\Resources\lua\socket\http.txt" />
-     <None Include="Assets\Shader\Internal-SplashShadowReceiverSimple.shader" />
-     <None Include="Assets\Shader\Internal-Halo.shader" />
      <None Include="Assets\Shader\UnlitSpecular.shader" />
-     <None Include="Assets\Shader\Internal-PrePassLighting.shader" />
-     <None Include="Assets\Shader\Normal-Diffuse.shader" />
-     <None Include="Assets\Shader\Internal-SplashShadowReceiver.shader" />
-     <None Include="Assets\Shader\Internal-DeferredReflections.shader" />
      <None Include="Assets\Shader\Matcap.shader" />
-     <None Include="Assets\Shader\Font.shader" />
      <None Include="Assets\Resources\lua\mobdebug.txt" />
-     <None Include="Assets\Shader\Sprites-Default.shader" />
      <None Include="Assets\Shader\Hidden.shader" />
-     <None Include="Assets\Shader\Unlit #527.shader" />
-     <None Include="Assets\Shader\Internal-SplashShadowCaster.shader" />
      <None Include="Assets\Shader\minionMatCap_shader_LOD1.shader" />
-     <None Include="Assets\Shader\UI-Default.shader" />
      <None Include="Assets\Resources\lua\ltn12.txt" />
-     <None Include="Assets\Shader\Internal-GUITextureBlit.shader" />
-     <None Include="Assets\Shader\Internal-Flare.shader" />
      <None Include="Assets\Resources\lua\socket\smtp.txt" />
      <None Include="Assets\Shader\WaterSlide.shader" />
      <None Include="Assets\Resources\lua\mime.txt" />
      <None Include="Assets\Shader\minionMatCap_shader.shader" />
-     <None Include="Assets\Shader\Internal-BlitCopy.shader" />
      <None Include="Assets\Resources\lua\socket\ftp.txt" />
-     <None Include="Assets\Shader\Internal-GUITexture.shader" />
-     <None Include="Assets\Shader\Internal-DeferredShading.shader" />
-     <None Include="Assets\Shader\Internal-ErrorShader.shader" />
-     <None Include="Assets\Shader\Mobile-Diffuse.shader" />
-     <None Include="Assets\Shader\Internal-GUITextureClipText.shader" />
-     <None Include="Assets\Shader\Internal-CombineDepthNormals.shader" />
-     <None Include="Assets\Shader\Unlit-Normal.shader" />
      <None Include="Assets\Shader\3_color_mixer.shader" />
      <None Include="Assets\Resources\lua\socket\url.txt" />
-     <None Include="Assets\Shader\UI-DefaultFont.shader" />
      <None Include="Assets\Shader\VertAnimation.shader" />
-     <None Include="Assets\Shader\Projector Multiply.shader" />
      <None Include="Assets\Shader\Outline.shader" />
  <Reference Include="UnityEngine.UI">
- <HintPath>C:/Program Files/Unity/Hub/5.3.5p4/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/Program Files/Unity/5.3.5p4/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
- <HintPath>C:/Program Files/Unity/Hub/5.3.5p4/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ <HintPath>C:/Program Files/Unity/5.3.5p4/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

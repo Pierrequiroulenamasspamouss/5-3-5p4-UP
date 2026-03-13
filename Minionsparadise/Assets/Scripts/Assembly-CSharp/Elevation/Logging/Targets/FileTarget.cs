@@ -186,6 +186,7 @@ namespace Elevation.Logging.Targets
 				}
 			}
 		}
+	}
 #else
 	public class FileTarget : global::Elevation.Logging.Targets.AsyncLoggingTarget
 	{

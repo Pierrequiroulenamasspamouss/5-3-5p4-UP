@@ -50,6 +50,16 @@ namespace Kampai.Main
 				logger.Error("Error obtaining preinstalled localization file: {0}", ex.ToString());
 				localStringDict = new global::System.Collections.Generic.Dictionary<string, global::Kampai.Main.ILocalString>();
 			}
+			catch (global::Newtonsoft.Json.JsonSerializationException ex2)
+			{
+				logger.Error("Error parsing preinstalled localization file: {0}", ex2.ToString());
+				localStringDict = new global::System.Collections.Generic.Dictionary<string, global::Kampai.Main.ILocalString>();
+			}
+			catch (global::Newtonsoft.Json.JsonReaderException ex3)
+			{
+				logger.Error("Error reading preinstalled localization file: {0}", ex3.ToString());
+				localStringDict = new global::System.Collections.Generic.Dictionary<string, global::Kampai.Main.ILocalString>();
+			}
 			foreach (global::System.Collections.Generic.KeyValuePair<string, global::Kampai.Main.ILocalString> item in localStringDict)
 			{
 				ParseLocalString(item.Value);
