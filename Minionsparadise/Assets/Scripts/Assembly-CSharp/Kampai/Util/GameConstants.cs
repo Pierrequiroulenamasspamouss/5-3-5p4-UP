@@ -3111,7 +3111,7 @@ namespace Kampai.Util
 
 		public static readonly string PRE_INSTALLED_DLC_PATH = global::UnityEngine.Application.streamingAssetsPath + "/DLC/";
 
-		public static readonly string PRE_INSTALLED_FMOD_PATH = "file:///android_asset/DLC/";
+		public static readonly string PRE_INSTALLED_FMOD_PATH = global::UnityEngine.Application.streamingAssetsPath + "/DLC/";
 
 		private static readonly float[] DEFAULT_MINION_LOD_HEIGHTS = new float[3] { 0.2f, 0.12f, 0f };
 

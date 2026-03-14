@@ -39,9 +39,16 @@ def register():
     
     print(f"[REGISTER] UserID={new_id_str}", flush=True)
     return jsonify({
-        "userId": new_id_str, "synergyId": f"syn_{new_id_str}",
-        "secret": "mock", "sessionKey": "mock",
-        "isNewUser": True, "isTester": True, "country": "US"
+        "userId": new_id_str,
+        "id": new_id_str,
+        "externalId": new_id_str,
+        "synergyId": f"syn_{new_id_str}",
+        "secret": "mock",
+        "sessionKey": "mock",
+        "isNewUser": True,
+        "isTester": True,
+        "country": "US",
+        "type": 0
     })
 
 # --- TSE ENDPOINTS MOCKS ---
