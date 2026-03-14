@@ -156,11 +156,19 @@ namespace Kampai.Common.Service.Audio
 			try
 			{
 				string eventMapFilePath = GetEventMapFilePath();
+				logger.Info("Loading FmodGlobalEventMap from: {0}", eventMapFilePath);
 #if !UNITY_WEBPLAYER
-				using (global::System.IO.StreamReader streamReader = new global::System.IO.StreamReader(eventMapFilePath))
+				if (global::System.IO.File.Exists(eventMapFilePath))
 				{
-					global::Newtonsoft.Json.JsonTextReader reader = new global::Newtonsoft.Json.JsonTextReader(streamReader);
-					fmodGlobalEventMap = global::Kampai.Util.FastJSONDeserializer.Deserialize<global::Kampai.Common.Service.Audio.FmodGlobalEventMap>(reader);
+					using (global::System.IO.StreamReader streamReader = new global::System.IO.StreamReader(eventMapFilePath))
+					{
+						global::Newtonsoft.Json.JsonTextReader reader = new global::Newtonsoft.Json.JsonTextReader(streamReader);
+						fmodGlobalEventMap = global::Kampai.Util.FastJSONDeserializer.Deserialize<global::Kampai.Common.Service.Audio.FmodGlobalEventMap>(reader);
+					}
+				}
+				else
+				{
+					logger.Error("FmodGlobalEventMap file not found: {0}", eventMapFilePath);
 				}
 #endif
 			}
@@ -175,6 +183,11 @@ namespace Kampai.Common.Service.Audio
 			catch (global::System.Exception ex3)
 			{
 				logger.Fatal(global::Kampai.Util.FatalCode.FMOD_EVENT_MAP_ERROR, "FmodGlobalEventMap load error: {0}", ex3);
+			}
+			if (fmodGlobalEventMap == null || fmodGlobalEventMap.maps == null)
+			{
+				logger.Error("FmodGlobalEventMap is null or has no maps. Skipping map processing.");
+				return;
 			}
 			foreach (global::System.Collections.Generic.KeyValuePair<string, global::System.Collections.Generic.Dictionary<string, string>> map in fmodGlobalEventMap.maps)
 			{
@@ -339,7 +352,7 @@ namespace Kampai.Common.Service.Audio
 
 		private string GetStreamingBankPath(string bank)
 		{
-			return "file:///android_asset/" + bank + ".bytes";
+			return global::Kampai.Util.GameConstants.PRE_INSTALLED_FMOD_PATH + bank + ".bytes";
 		}
 
 		private global::System.Collections.IEnumerator LoadStreamingAudioBanks()

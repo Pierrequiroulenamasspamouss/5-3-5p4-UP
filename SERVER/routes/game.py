@@ -11,6 +11,7 @@ VIDEO_PATH = os.path.join(SERVER_DIR, "assets", "video.mp4")
 DEFINITIONS_PATH = os.path.join(SERVER_DIR, "definitions.json")
 CONFIG_PATH = os.path.join(SERVER_DIR, "config.json")
 MANIFEST_PATH = os.path.join(SERVER_DIR, "DLC_Manifest.json")
+MARKETPLACE_PATH = os.path.join(SERVER_DIR, "marketplace", "marketplace.json")
 DLC_DIR = os.path.join(SERVER_DIR, "DLC")
 
 @game_bp.route('/DLC/<path:filename>')
@@ -31,6 +32,12 @@ def serve_video():
 def get_config(path):
     if os.path.exists(CONFIG_PATH):
         return send_file(CONFIG_PATH, mimetype='application/json')
+    return jsonify({})
+
+@game_bp.route('/marketplace/marketplace.json', methods=['GET'])
+def get_marketplace():
+    if os.path.exists(MARKETPLACE_PATH):
+        return send_file(MARKETPLACE_PATH, mimetype='application/json')
     return jsonify({})
 
 @game_bp.route('/rest/dlc/manifests/<path:filename>', methods=['GET'])

@@ -28,7 +28,13 @@ namespace Kampai.Game
 				logger.Info("Loading marketplace overrides");
 				global::strange.extensions.signal.impl.Signal<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> signal = new global::strange.extensions.signal.impl.Signal<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse>();
 				signal.AddListener(OnDownloadComplete);
-				string uri = global::System.IO.Path.Combine(global::Kampai.Util.GameConstants.Marketplace.OVERRIDES_SERVER, global::System.IO.Path.Combine("marketplace", "marketplace.json"));
+				string serverUrl = global::Kampai.Util.GameConstants.Marketplace.OVERRIDES_SERVER;
+				if (string.IsNullOrEmpty(serverUrl))
+				{
+					logger.Error("Marketplace overrides: server URL is null or empty");
+					return;
+				}
+				string uri = string.Format("{0}/{1}/{2}", serverUrl.TrimEnd('/'), "marketplace", "marketplace.json");
 				downloadService.Perform(requestFactory.Resource(uri).WithResponseSignal(signal));
 			}
 		}
