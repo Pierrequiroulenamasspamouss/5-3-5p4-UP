@@ -34,7 +34,7 @@ namespace Kampai.Game
 			string text = localPersistService.GetData("dlcQuality");
 			if (string.IsNullOrEmpty(text))
 			{
-				text = global::Kampai.Util.TargetPerformance.LOW.ToString().ToLower();
+				text = global::Kampai.Util.TargetPerformance.MED.ToString().ToLower();
 			}
 			return text;
 		}

@@ -34,6 +34,24 @@ namespace Kampai.Game
 			}
 		}
 
+#if UNITY_EDITOR
+		private static global::System.Reflection.FieldInfo m_FingerIdField = typeof(global::UnityEngine.Touch).GetField("m_FingerId", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
+		private static global::System.Reflection.FieldInfo m_PositionField = typeof(global::UnityEngine.Touch).GetField("m_Position", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
+		private static global::System.Reflection.FieldInfo m_PositionDeltaField = typeof(global::UnityEngine.Touch).GetField("m_PositionDelta", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
+		private static global::System.Reflection.FieldInfo m_PhaseField = typeof(global::UnityEngine.Touch).GetField("m_Phase", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
+
+		public static global::UnityEngine.Touch CreateTouch(int fingerId, global::UnityEngine.Vector2 position, global::UnityEngine.Vector2 deltaPosition, global::UnityEngine.TouchPhase phase)
+		{
+			global::UnityEngine.Touch touch = default(global::UnityEngine.Touch);
+			object obj = touch;
+			m_FingerIdField.SetValue(obj, fingerId);
+			m_PositionField.SetValue(obj, position);
+			m_PositionDeltaField.SetValue(obj, deltaPosition);
+			m_PhaseField.SetValue(obj, phase);
+			return (global::UnityEngine.Touch)obj;
+		}
+#endif
+
 		private static void UpdateTouchStates()
 		{
 			frameUpdated = global::UnityEngine.Time.frameCount;
@@ -64,23 +82,20 @@ namespace Kampai.Game
 			{
 				if (global::UnityEngine.Input.GetMouseButtonDown(0) || global::UnityEngine.Input.GetMouseButton(0) || global::UnityEngine.Input.GetMouseButtonUp(0))
 				{
-					global::UnityEngine.Touch touch3 = default(global::UnityEngine.Touch);
-					touch3.position = global::UnityEngine.Input.mousePosition;
-					touch3.deltaPosition = global::UnityEngine.Vector2.zero;
-					touch3.fingerId = 99;
+					global::UnityEngine.TouchPhase phase2;
 					if (global::UnityEngine.Input.GetMouseButtonDown(0))
 					{
-						touch3.phase = global::UnityEngine.TouchPhase.Began;
+						phase2 = global::UnityEngine.TouchPhase.Began;
 					}
 					else if (global::UnityEngine.Input.GetMouseButtonUp(0))
 					{
-						touch3.phase = global::UnityEngine.TouchPhase.Ended;
+						phase2 = global::UnityEngine.TouchPhase.Ended;
 					}
 					else
 					{
-						touch3.phase = global::UnityEngine.TouchPhase.Moved;
+						phase2 = global::UnityEngine.TouchPhase.Moved;
 					}
-					touches[num] = touch3;
+					touches[num] = CreateTouch(99, global::UnityEngine.Input.mousePosition, global::UnityEngine.Vector2.zero, phase2);
 					num++;
 				}
 			}
