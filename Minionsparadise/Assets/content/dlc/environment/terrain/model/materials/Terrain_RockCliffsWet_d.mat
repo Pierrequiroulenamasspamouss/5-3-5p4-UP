@@ -10,7 +10,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: 713ebd16634085a449b3ba5dde448f70, type: 3}
   m_ShaderKeywords: TEXTURE_ALPHA
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 2099
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -32,68 +32,16 @@ Material:
     m_Floats:
       data:
         first:
-          name: _Alpha
-        second: 1
-      data:
-        first:
-          name: _AlphaClip
-        second: 0
-      data:
-        first:
-          name: _Boost
-        second: 1
-      data:
-        first:
-          name: _ColorMask
-        second: 15
-      data:
-        first:
-          name: _Cull
-        second: 2
+          name: _SrcBlend
+        second: 5
       data:
         first:
           name: _DstBlend
         second: 10
       data:
         first:
-          name: _FadeAlpha
-        second: 1
-      data:
-        first:
-          name: _LayerIndex
-        second: 99
-      data:
-        first:
-          name: _LightmapFade
-        second: 0
-      data:
-        first:
-          name: _Mode
-        second: 0
-      data:
-        first:
-          name: _OffsetFactor
-        second: 0
-      data:
-        first:
-          name: _OffsetUnits
-        second: 10
-      data:
-        first:
-          name: _Saturation
-        second: 1
-      data:
-        first:
           name: _Shininess
         second: 0.078125
-      data:
-        first:
-          name: _SrcBlend
-        second: 5
-      data:
-        first:
-          name: _VertexColor
-        second: 1
       data:
         first:
           name: _ZTest
@@ -108,18 +56,6 @@ Material:
         second: 0
       data:
         first:
-          name: __StencilComp
-        second: 8
-      data:
-        first:
-          name: __StencilFailOp
-        second: 0
-      data:
-        first:
-          name: __StencilPassOp
-        second: 0
-      data:
-        first:
           name: __StencilReadMask
         second: 255
       data:
@@ -128,20 +64,76 @@ Material:
         second: 255
       data:
         first:
+          name: __StencilComp
+        second: 8
+      data:
+        first:
+          name: __StencilPassOp
+        second: 0
+      data:
+        first:
+          name: __StencilFailOp
+        second: 0
+      data:
+        first:
           name: __StencilZFailOp
+        second: 0
+      data:
+        first:
+          name: _ColorMask
+        second: 15
+      data:
+        first:
+          name: _OffsetFactor
+        second: 0
+      data:
+        first:
+          name: _OffsetUnits
+        second: 10
+      data:
+        first:
+          name: _FadeAlpha
+        second: 1
+      data:
+        first:
+          name: _Mode
+        second: 0
+      data:
+        first:
+          name: _LayerIndex
+        second: 99
+      data:
+        first:
+          name: _Alpha
+        second: 1
+      data:
+        first:
+          name: _Cull
+        second: 2
+      data:
+        first:
+          name: _VertexColor
+        second: 1
+      data:
+        first:
+          name: _Boost
+        second: 1
+      data:
+        first:
+          name: _Saturation
+        second: 1
+      data:
+        first:
+          name: _AlphaClip
+        second: 0
+      data:
+        first:
+          name: _LightmapFade
         second: 0
     m_Colors:
       data:
         first:
-          name: _BlendedColor
-        second: {r: 0, g: 0, b: 0, a: 0}
-      data:
-        first:
           name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _LightmapColor
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
@@ -149,5 +141,13 @@ Material:
         second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
       data:
         first:
+          name: _BlendedColor
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
           name: _UVScroll
         second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _LightmapColor
+        second: {r: 1, g: 1, b: 1, a: 1}

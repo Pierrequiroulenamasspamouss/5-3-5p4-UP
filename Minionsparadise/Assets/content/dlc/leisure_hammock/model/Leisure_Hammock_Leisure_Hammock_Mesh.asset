@@ -2,11 +2,11 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
-  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Leisure_Hammock:Leisure_Hammock_Mesh
+  m_Name: Leisure_Hammock_Leisure_Hammock_Mesh
+  serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -25,7 +25,7 @@ Mesh:
     vertexCount: 347
     localAABB:
       m_Center: {x: 0.008834362, y: 0.012896584, z: 0.09529328}
-      m_Extent: {x: 2.9220407, y: 2.3283064E-09, z: 1.8596531}
+      m_Extent: {x: 2.9220407, y: 0.0000000023283064, z: 1.8596531}
   - serializedVersion: 2
     firstByte: 7422
     indexCount: 459
@@ -34,7 +34,7 @@ Mesh:
     vertexCount: 155
     localAABB:
       m_Center: {x: -0.29898977, y: 0.012896573, z: -0.34203458}
-      m_Extent: {x: 3.6433709, y: 1.1641532E-08, z: 2.7120523}
+      m_Extent: {x: 3.6433709, y: 0.000000011641532, z: 2.7120523}
   m_Shapes:
     vertices: []
     shapes: []
@@ -60,7 +60,7 @@ Mesh:
   - e00: 1
     e01: 0
     e02: 0
-    e03: -4.9303805E-34
+    e03: -4.9303805e-34
     e10: 0
     e11: 1
     e12: 0
@@ -68,7 +68,7 @@ Mesh:
     e20: 0
     e21: 0
     e22: 1
-    e23: -4.9303805E-34
+    e23: -4.9303805e-34
     e30: 0
     e31: 0
     e32: 0
@@ -89,13 +89,13 @@ Mesh:
     e31: 0
     e32: 0
     e33: 1
-  m_BoneNameHashes: 71660d661825ca-b4a8694/0
+  m_BoneNameHashes: 71660d661825cadb4a8694f0
   m_RootBoneNameHash: 4036265546
   m_MeshCompression: 3
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexBuffer:
+  m_KeepVertices: 0
+  m_KeepIndices: 0
+  m_IndexBuffer: 
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 0
@@ -134,7 +134,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 3603
@@ -152,13 +152,13 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 1282
@@ -166,11 +166,11 @@ Mesh:
       m_BitSize: 5
     m_NormalSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 4804
@@ -191,6 +191,6 @@ Mesh:
     m_Center: {x: -0.29898977, y: 2.1546, z: -0.34203458}
     m_Extent: {x: 3.6433709, y: 2.495022, z: 2.7120523}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 1

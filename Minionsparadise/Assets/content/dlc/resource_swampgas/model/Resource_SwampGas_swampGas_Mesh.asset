@@ -2,11 +2,11 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
-  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Resource_SwampGas:swampGas_Mesh
+  m_Name: Resource_SwampGas_swampGas_Mesh
+  serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -107,7 +107,7 @@ Mesh:
     e12: -0.57178575
     e13: -0.967531
     e20: -0.6203916
-    e21: -1.2342682E-08
+    e21: -0.000000012342682
     e22: 0.78429216
     e23: -1.9292823
     e30: 0
@@ -123,7 +123,7 @@ Mesh:
     e12: 0.40914658
     e13: -2.4892623
     e20: 0.44392687
-    e21: 1.91136E-10
+    e21: 1.91136e-10
     e22: 0.89606297
     e23: -0.5745053
     e30: 0
@@ -178,13 +178,13 @@ Mesh:
     e31: 0
     e32: 0
     e33: 1
-  m_BoneNameHashes: 0b069d*0d23cc85b2a1e9e6c79ede8*9f192f207497f3a,ba2772345aae8827d
+  m_BoneNameHashes: 0b069da0d23cc85b2a1e9e6c79ede8a9f192f207497f3acba2772345aae8827d
   m_RootBoneNameHash: 2105731242
   m_MeshCompression: 3
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexBuffer:
+  m_KeepVertices: 0
+  m_KeepIndices: 0
+  m_IndexBuffer: 
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 0
@@ -223,7 +223,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 6792
@@ -241,13 +241,13 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 2312
@@ -255,11 +255,11 @@ Mesh:
       m_BitSize: 5
     m_NormalSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 9056
@@ -280,6 +280,6 @@ Mesh:
     m_Center: {x: 0.07235992, y: 0.3790112, z: 0.26903045}
     m_Extent: {x: 2.0773273, y: 0.77522, z: 2.342008}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 1

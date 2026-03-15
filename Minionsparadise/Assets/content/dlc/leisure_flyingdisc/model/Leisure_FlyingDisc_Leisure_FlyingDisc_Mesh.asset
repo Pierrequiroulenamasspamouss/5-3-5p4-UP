@@ -2,11 +2,11 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
-  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Leisure_FlyingDisc:Leisure_FlyingDisc_Mesh
+  m_Name: Leisure_FlyingDisc_Leisure_FlyingDisc_Mesh
+  serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -25,7 +25,7 @@ Mesh:
     vertexCount: 100
     localAABB:
       m_Center: {x: 0.004524708, y: 0.0037499988, z: 0.02776438}
-      m_Extent: {x: 2.7210276, y: 6.4028427E-09, z: 1.8217916}
+      m_Extent: {x: 2.7210276, y: 0.0000000064028427, z: 1.8217916}
   - serializedVersion: 2
     firstByte: 2934
     indexCount: 300
@@ -34,7 +34,7 @@ Mesh:
     vertexCount: 99
     localAABB:
       m_Center: {x: -0.026219726, y: 0.0037499927, z: 0.09305346}
-      m_Extent: {x: 3.0981903, y: 5.820766E-10, z: 2.1660008}
+      m_Extent: {x: 3.0981903, y: 5.820766e-10, z: 2.1660008}
   - serializedVersion: 2
     firstByte: 3534
     indexCount: 729
@@ -86,9 +86,9 @@ Mesh:
   m_RootBoneNameHash: 1777447453
   m_MeshCompression: 3
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexBuffer:
+  m_KeepVertices: 0
+  m_KeepIndices: 0
+  m_IndexBuffer: 
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 0
@@ -127,7 +127,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 2349
@@ -145,13 +145,13 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 783
@@ -159,11 +159,11 @@ Mesh:
       m_BitSize: 5
     m_NormalSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 3132
@@ -184,6 +184,6 @@ Mesh:
     m_Center: {x: -0.026219726, y: 0.25231174, z: 0.09305346}
     m_Extent: {x: 3.0981903, y: 0.3723106, z: 2.1660008}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 1
