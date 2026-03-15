@@ -3,7 +3,7 @@
 qs.setBuildMenuEnabled(false)
 qs.enableCallButtons(false)
 
-tikiBarId = 313
+tikiBarId = qs.getInstanceId(3041)
 qs.disableCameraControls()
 qs.panCameraToInstance(tikiBarId)
 
@@ -12,7 +12,7 @@ qsutil.waitForDialog('ftue_01_commentarySign')
 
 -- XP granted
 qs.rewardPlayer(3)
-philId = 78
+philId = qs.getInstanceId(1080)
 qs.setCharacterAnimation(philId, "SignRepaired")
 
 -- end step 4

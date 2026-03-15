@@ -1,53 +1,57 @@
+using System;
+
 namespace Kampai.Wrappers
 {
-	public static class KampaiNativeLib
-	{
-		public struct DebugData
-		{
-			public string name;
+    public static class KampaiNativeLib
+    {
+        public struct DebugData
+        {
+            public string name;
+            public int line_number;
+        }
 
-			public int line_number;
-		}
+        // ON SUPPRIME LA CLASSE NativeMethods QUI FAISAIT LES DllImport 
+        // VERS LES FONCTIONS SPÉCIFIQUES D'EA ("kampai_create_debug", etc.)
 
-		private class NativeMethods
-		{
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern global::System.IntPtr kampai_create_debug();
+        public const string dllString = "lua52";
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void kampai_free_debug(global::System.IntPtr debug);
+        // --- REMPLACEMENTS C# PURS ---
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern global::Kampai.Wrappers.KampaiNativeLib.DebugData kampai_get_debug(global::System.IntPtr L, string what, global::System.IntPtr ar);
+        // EA utilisait cette fonction pour allouer de la mémoire pour la structure lua_Debug en C++.
+        // Vu qu'on ne l'a plus, on va simuler ça en retournant simplement un pointeur vide (IntPtr.Zero).
+        public static global::System.IntPtr kampai_create_debug()
+        {
+            // On retourne toujours IntPtr.Zero, même sur mobile.
+            return global::System.IntPtr.Zero;
+        }
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int kampai_push_cfunction_from_lib(global::System.IntPtr L, string name, string function_name);
-		}
+        // Idem, on ne libère rien puisqu'on n'a rien alloué.
+        public static void kampai_free_debug(global::System.IntPtr debug)
+        {
+            return;
+        }
 
-		public const string dllString = "lua52";
+        // EA utilisait ça pour lire la structure lua_Debug en C++ et la renvoyer au C#.
+        // Comme on n'a plus cette fonction C++, on renvoie une DebugData vide.
+        // Le seul impact : Si un script Lua plante, l'erreur dans la console sera moins détaillée 
+        // (tu n'auras pas le numéro de ligne exact), mais le jeu NE CRASHERA PAS.
+        public static global::Kampai.Wrappers.KampaiNativeLib.DebugData kampai_get_debug(global::Kampai.Wrappers.LuaState L, string what, global::System.IntPtr ar)
+        {
+            return default(global::Kampai.Wrappers.KampaiNativeLib.DebugData);
+        }
 
-		public static global::System.IntPtr kampai_create_debug()
-		{
-			if (global::UnityEngine.Application.isEditor) return global::System.IntPtr.Zero;
-			return global::Kampai.Wrappers.KampaiNativeLib.NativeMethods.kampai_create_debug();
-		}
+        // Cette fonction servait à charger des modules C natifs (fichiers .so ou .dll) depuis Lua.
+        // C'était utilisé par la fonction CSearcher dans LuaKernel.
+        // La plupart du temps, Minions Paradise n'en a pas besoin car tout est en C# ou en .lua.
+        // On retourne -1 (erreur) pour dire à Lua "module non trouvé", 
+        // ce qui forcera Lua à utiliser le LuaSearcher normal.
+        public static int kampai_push_cfunction_from_lib(global::Kampai.Wrappers.LuaState L, string name, string function_name)
+        {
+            if (L == null || L.IsInvalid) return -1;
 
-		public static void kampai_free_debug(global::System.IntPtr debug)
-		{
-			if (global::UnityEngine.Application.isEditor) return;
-			global::Kampai.Wrappers.KampaiNativeLib.NativeMethods.kampai_free_debug(debug);
-		}
-
-		public static global::Kampai.Wrappers.KampaiNativeLib.DebugData kampai_get_debug(global::Kampai.Wrappers.LuaState L, string what, global::System.IntPtr ar)
-		{
-			if (global::UnityEngine.Application.isEditor || L == null || L.IsInvalid) return default(global::Kampai.Wrappers.KampaiNativeLib.DebugData);
-			return global::Kampai.Wrappers.KampaiNativeLib.NativeMethods.kampai_get_debug(L.DangerousGetHandle(), what, ar);
-		}
-
-		public static int kampai_push_cfunction_from_lib(global::Kampai.Wrappers.LuaState L, string name, string function_name)
-		{
-			if (global::UnityEngine.Application.isEditor || L == null || L.IsInvalid) return -1;
-			return global::Kampai.Wrappers.KampaiNativeLib.NativeMethods.kampai_push_cfunction_from_lib(L.DangerousGetHandle(), name, function_name);
-		}
-	}
+            // Remplacement de secours : On simule l'échec de la fonction native
+            global::UnityEngine.Debug.LogWarning("[Lua] Tentative de chargement de module C natif (" + name + ") bloquée pour compatibilité.");
+            return -1;
+        }
+    }
 }

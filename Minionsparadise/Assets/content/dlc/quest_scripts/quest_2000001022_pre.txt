@@ -1,5 +1,5 @@
 -- Repair Stage Quest
-stageId = 370
+stageId = qs.getInstanceId(3054)
 qs.setBuildingState(stageId, qsutil.BuildingState.Broken)
 
 qs.showWayFinder(stageId, true)

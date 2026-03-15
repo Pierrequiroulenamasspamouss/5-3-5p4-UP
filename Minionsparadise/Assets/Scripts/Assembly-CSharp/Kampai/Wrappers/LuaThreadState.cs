@@ -24,7 +24,7 @@ namespace Kampai.Wrappers
 			: base(true)
 		{
 			strongState = L;
-			if (global::UnityEngine.Application.isEditor || L == null || L.IsInvalid)
+			if (L == null || L.IsInvalid)
 			{
 				handle = global::System.IntPtr.Zero;
 				threadReference = -1;

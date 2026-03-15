@@ -1,7 +1,7 @@
 -- FTUE Coconuts step 6
 coconutsToHarvest = 3
 coconutId = 200
-coconutTreeID = 342
+coconutTreeID = qs.getInstanceId(3142)
 if qs.getPlayerItemQuantity(coconutId) < coconutsToHarvest then 
 	if qs.getFtueLevelCompleted() < 8 then
 

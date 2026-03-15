@@ -42,6 +42,19 @@ namespace Kampai.Game.View
 
 		public override void CalculateBehaviour(global::UnityEngine.Vector3 position)
 		{
+			if (global::UnityEngine.Application.isEditor)
+			{
+				float axis = global::UnityEngine.Input.GetAxis("Mouse ScrollWheel");
+				if (axis != 0f)
+				{
+					velocity = new global::UnityEngine.Vector3(0f, axis * 100f, 0f);
+					return;
+				}
+			}
+			if (global::UnityEngine.Input.touchCount < 2)
+			{
+				return;
+			}
 			global::UnityEngine.Touch touch = global::UnityEngine.Input.GetTouch(0);
 			global::UnityEngine.Touch touch2 = global::UnityEngine.Input.GetTouch(1);
 			if (touch.phase == global::UnityEngine.TouchPhase.Moved || touch2.phase == global::UnityEngine.TouchPhase.Moved)

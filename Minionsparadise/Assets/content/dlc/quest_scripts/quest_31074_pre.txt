@@ -1,13 +1,13 @@
-tikiBarId = 313
+tikiBarId = qs.getInstanceId(3041)
 qs.panCameraToInstance(tikiBarId)
 qs.disableCameraControls()
 qs.wait(0.1)
 
-stageId = 370
+stageId = qs.getInstanceId(3054)
 qs.showWayFinder(stageId, false)
 
 -- wait for spy glass animation to complete
-philId = 78
+philId = qs.getInstanceId(1080)
 qs.setCharacterAnimation(philId, "SpyGlass")
 qs.wait(2)
 

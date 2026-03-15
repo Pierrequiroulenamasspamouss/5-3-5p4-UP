@@ -19,10 +19,12 @@ namespace Kampai.Wrappers
 			[global::System.Runtime.InteropServices.DllImport("lua52")]
 			public static extern int luaL_loadstring(global::System.IntPtr L, string s);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int luaL_loadbufferx(global::System.IntPtr L, string buff, int sz, string name, string mode);
+            //[global::System.Runtime.InteropServices.DllImport("lua52")]
+            //public static extern int luaL_loadbufferx(global::System.IntPtr L, string buff, int sz, string name, string mode);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+			public static extern int luaL_loadbufferx(global::System.IntPtr L, string buff, global::System.UIntPtr sz, string name, string mode);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
+            [global::System.Runtime.InteropServices.DllImport("lua52")]
 			public static extern void luaL_openlibs(global::System.IntPtr L);
 
 			[global::System.Runtime.InteropServices.DllImport("lua52")]
@@ -211,9 +213,10 @@ namespace Kampai.Wrappers
 			return global::Kampai.Wrappers.LuaState.NativeMethods.luaL_loadstring(handle, s);
 		}
 
-		public int luaL_loadbufferx(string buff, int sz, string name, string mode)
+		public int luaL_loadbufferx(string buff, global::System.UIntPtr sz, string name, string mode)
 		{
 			if (IsInvalid) return -1;
+			// On passe le UIntPtr à la méthode statique de NativeMethods
 			return global::Kampai.Wrappers.LuaState.NativeMethods.luaL_loadbufferx(handle, buff, sz, name, mode);
 		}
 

@@ -1,64 +1,57 @@
 namespace Kampai.Game
 {
-	public class LuaKernel : global::System.IDisposable
-	{
-		private readonly global::Kampai.Wrappers.NativeLibContext context;
+    public class LuaKernel : global::System.IDisposable
+    {
+        private readonly global::Kampai.Wrappers.NativeLibContext context;
+        public readonly global::Kampai.Wrappers.MasterLuaState L;
+        private readonly global::Kampai.Util.IKampaiLogger _logger = global::Elevation.Logging.LogManager.GetClassLogger("LuaKernel") as global::Kampai.Util.IKampaiLogger;
+        private readonly global::Kampai.Wrappers.SafeGCHandle luaSearcherHandle;
+        private readonly global::Kampai.Wrappers.SafeGCHandle cSearcherHandle;
 
-		public readonly global::Kampai.Wrappers.MasterLuaState L;
+        public LuaKernel()
+        {
+            _logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: Initializing engine...");
+            try
+            {
+                luaSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(LuaSearcher);
+                cSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(CSearcher);
 
-		private readonly global::Kampai.Util.IKampaiLogger _logger = global::Elevation.Logging.LogManager.GetClassLogger("LuaKernel") as global::Kampai.Util.IKampaiLogger;
+                // On initialise le contexte de log (V�rifie que tu as bien appliqu� ma rustine sur NativeLibContext.cs)
+                context = new global::Kampai.Wrappers.NativeLibContext(LogMethod, ErrorMethod);
 
-		private readonly global::Kampai.Wrappers.SafeGCHandle luaSearcherHandle;
+                L = new global::Kampai.Wrappers.MasterLuaState();
 
-		private readonly global::Kampai.Wrappers.SafeGCHandle cSearcherHandle;
+                // IMPORTANT : On charge les libs TOUJOURS, m�me en Editor
+                L.luaL_openlibs();
+                SetupState(L);
 
-		public LuaKernel()
-		{
-			if (global::UnityEngine.Application.isEditor)
-			{
-				_logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: Running in Editor. Native initialization will be guarded.");
-			}
-			try
-			{
-				if (!global::UnityEngine.Application.isEditor)
-				{
-					luaSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(LuaSearcher);
-					cSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(CSearcher);
-					context = new global::Kampai.Wrappers.NativeLibContext(LogMethod, ErrorMethod);
-				}
-				L = new global::Kampai.Wrappers.MasterLuaState();
-				if (!global::UnityEngine.Application.isEditor)
-				{
-					L.luaL_openlibs();
-					SetupState(L);
-				}
-			}
-			catch (global::System.Exception ex)
-			{
-				_logger.Error(ex.ToString());
-				_logger.Error(ex.Message);
-				throw;
-			}
-		}
+                _logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: Engine Ready.");
+            }
+            catch (global::System.Exception ex)
+            {
+                _logger.Error("LuaKernel Init Failed: " + ex.ToString());
+                throw;
+            }
+        }
 
-		private void SetupState(global::Kampai.Wrappers.LuaState state)
-		{
-			state.lua_createtable(2, 0);
-			state.lua_pushinteger(1);
-			state.lua_pushlightuserdata(luaSearcherHandle);
-			state.lua_pushcclosure(global::Kampai.Wrappers.LuaUtil.cfunc_CallDelegate, 1);
-			state.lua_settable(-3);
-			state.lua_pushinteger(2);
-			state.lua_pushlightuserdata(cSearcherHandle);
-			state.lua_pushcclosure(global::Kampai.Wrappers.LuaUtil.cfunc_CallDelegate, 1);
-			state.lua_settable(-3);
-			state.lua_getglobal("package");
-			state.lua_pushvalue(-2);
-			state.lua_setfield(-2, "searchers");
-			state.lua_pop(2);
-		}
+        private void SetupState(global::Kampai.Wrappers.LuaState state)
+        {
+            state.lua_createtable(2, 0);
+            state.lua_pushinteger(1);
+            state.lua_pushlightuserdata(luaSearcherHandle);
+            state.lua_pushcclosure(global::Kampai.Wrappers.LuaUtil.cfunc_CallDelegate, 1);
+            state.lua_settable(-3);
+            state.lua_pushinteger(2);
+            state.lua_pushlightuserdata(cSearcherHandle);
+            state.lua_pushcclosure(global::Kampai.Wrappers.LuaUtil.cfunc_CallDelegate, 1);
+            state.lua_settable(-3);
+            state.lua_getglobal("package");
+            state.lua_pushvalue(-2);
+            state.lua_setfield(-2, "searchers");
+            state.lua_pop(2);
+        }
 
-		private int LuaSearcher(global::Kampai.Wrappers.LuaState state)
+        private int LuaSearcher(global::Kampai.Wrappers.LuaState state)
 		{
 			string arg = state.lua_tostring(1);
 			string text = string.Format("LUA/{0}", arg);
@@ -68,7 +61,7 @@ namespace Kampai.Game
 				state.lua_pushstring("Failed to load asset " + text);
 				return 1;
 			}
-			state.luaL_loadbufferx(textAsset.text, textAsset.text.Length, text, null);
+			state.luaL_loadbufferx(textAsset.text, (global::System.UIntPtr)textAsset.text.Length, text, null);
 			return 1;
 		}
 
@@ -93,7 +86,7 @@ namespace Kampai.Game
 
 		protected virtual void Dispose(bool fromDispose)
 		{
-			if (fromDispose && !global::UnityEngine.Application.isEditor)
+			if (fromDispose)
 			{
 				L.Dispose();
 				context.Dispose();

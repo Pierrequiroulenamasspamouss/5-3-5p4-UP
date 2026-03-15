@@ -1,7 +1,7 @@
 -- FTUE Coconuts step 7
 coconutId = 200
 coconutsToHarvest = 3
-coconutTreeID = 342
+coconutTreeID = qs.getInstanceId(3142)
 
 qs.setFtueLevelCompleted(6)
 
@@ -12,7 +12,7 @@ if qs.getPlayerItemQuantity(coconutId) < coconutsToHarvest then
 
 		qs.enablePurchaseButton(false)
 
-		coconutTreeID = 342
+		coconutTreeID = qs.getInstanceId(3142)
 		coconutId = 200
 		coconutsToHarvest = 3
 

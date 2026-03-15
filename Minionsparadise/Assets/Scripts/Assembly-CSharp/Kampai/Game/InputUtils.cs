@@ -60,6 +60,30 @@ namespace Kampai.Game
 					}
 				}
 			}
+			else if (global::UnityEngine.Application.isEditor)
+			{
+				if (global::UnityEngine.Input.GetMouseButtonDown(0) || global::UnityEngine.Input.GetMouseButton(0) || global::UnityEngine.Input.GetMouseButtonUp(0))
+				{
+					global::UnityEngine.Touch touch3 = default(global::UnityEngine.Touch);
+					touch3.position = global::UnityEngine.Input.mousePosition;
+					touch3.deltaPosition = global::UnityEngine.Vector2.zero;
+					touch3.fingerId = 99;
+					if (global::UnityEngine.Input.GetMouseButtonDown(0))
+					{
+						touch3.phase = global::UnityEngine.TouchPhase.Began;
+					}
+					else if (global::UnityEngine.Input.GetMouseButtonUp(0))
+					{
+						touch3.phase = global::UnityEngine.TouchPhase.Ended;
+					}
+					else
+					{
+						touch3.phase = global::UnityEngine.TouchPhase.Moved;
+					}
+					touches[num] = touch3;
+					num++;
+				}
+			}
 			_touchCount = num;
 			if (_touchCount > 0)
 			{

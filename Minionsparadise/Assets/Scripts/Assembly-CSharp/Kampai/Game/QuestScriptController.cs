@@ -1298,8 +1298,17 @@ namespace Kampai.Game
 		public bool DispatchSignal(global::Kampai.Game.IArgRetriever args, global::Kampai.Game.ReturnValueContainer ret)
 		{
 			string text = args.GetString(1);
-			global::System.Type type = global::System.Reflection.Assembly.GetExecutingAssembly().GetType("Kampai.Game." + text, false);
-			if (type == null)
+
+            // --- DÉBUT DU FIX DE RÉFLEXION ---
+            global::System.Type type = null;
+            string fullTypeName = "Kampai.Game." + text;
+            foreach (global::System.Reflection.Assembly asm in global::System.AppDomain.CurrentDomain.GetAssemblies())
+            {
+                type = asm.GetType(fullTypeName, false, true);
+                if (type != null) break;
+            }
+            // --- FIN DU FIX ---
+            if (type == null)
 			{
 				logger.Error("qs.dispatchSignal: Cannot dispatch signal {0}, cannot find type.", text);
 				return true;
