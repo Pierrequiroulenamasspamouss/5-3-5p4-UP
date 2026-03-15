@@ -146,6 +146,13 @@ namespace Kampai.Common.Service.Audio
 
 		private string GetEventMapFilePath()
 		{
+#if UNITY_EDITOR
+			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android/Raw_FMOD_GlobalMap.json");
+			if (global::System.IO.File.Exists(path))
+			{
+				return path;
+			}
+#endif
 			string bundleByOriginalName = _manifestService.GetBundleByOriginalName("Raw_FMOD_GlobalMap");
 			return GetRawAssetPathByOriginalName(bundleByOriginalName);
 		}

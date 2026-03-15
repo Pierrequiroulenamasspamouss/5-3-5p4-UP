@@ -1,0 +1,53 @@
+-- FTUE Coconuts step 1
+qs.setFtueLevelCompleted(5)
+
+qs.enableCallButtons(true)
+qs.throbCallButtons(true)
+qs.enablePurchaseButton(false)
+
+coconutTreeID = 342
+minionsToTask = 3
+coconutId = 200
+coconutsToHarvest = 3
+
+--for KAMPAI-13209: do not need to wait for quest panel to close if we have already set building state to idle and can harvest.
+if qs.getBuildingState(coconutTreeID) == qsutil.BuildingState.Inaccessible then
+	qs.openTikiHut(true)
+	qs.throbGoToButton(true)
+
+	qs.waitSignal('FTUEProgressSignal', 0)
+
+	-- Leave Tikihut view and hide wayfinder
+	qs.openTikiHut(false)
+	qs.setLimitTikiBarWayFinders(true)
+
+	qs.showWayFinder(coconutTreeID,true)
+
+	-- Select the Go To button (or close the quest menu), Pan to the coconut tree
+	qs.waitSignal('FTUEQuestPanelCloseSignal', 0)
+
+	-- Coconut tree starts in an Idle state 
+	qs.setBuildingState(coconutTreeID, qsutil.BuildingState.Idle)
+else
+	qs.showWayFinder(coconutTreeID,true)
+end
+
+
+-- Pan to building and open the modal
+-- qs.panToBuildingAndOpen(coconutTreeID)  (commented out due to KAMPAI-12170)
+	
+-- Waits for the coconut tree's menu to open
+
+qsutil.waitForBuildingMenu("ShowBuildingDetailMenuSignal", coconutTreeID)
+
+-- Pause here until the coconut tree has minions tasked to it
+while qs.getTaskedMinionCount(coconutTreeID) < minionsToTask do
+	if qs.getPlayerItemQuantity(coconutId) >= coconutsToHarvest then
+		break
+	end
+	qs.wait(0.1)
+end
+
+qs.throbCallButtons(false)
+qs.throbGoToButton(false)
+

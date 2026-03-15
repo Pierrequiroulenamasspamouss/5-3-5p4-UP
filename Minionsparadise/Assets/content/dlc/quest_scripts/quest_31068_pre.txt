@@ -1,0 +1,34 @@
+-- Start of Q6
+
+qs.setFtueLevelCompleted(5)
+qs.setBuildMenuEnabled(false)
+qs.enableDeleteButton(false)
+qs.highlightTicket(true)
+
+-- Narrative dialog opens
+qs.setDialogType('Normal')
+qs.setCharacterImage(40000)
+qs.setDialogSound('Play_menu_popUp_01')
+qsutil.waitForDialog('ftue_q6_narrative_01')
+
+-- Enable way finder on order board
+local orderBoardDefId = 3022
+orderBoard = qs.getInstanceId(orderBoardDefId)
+qs.showWayFinder(orderBoard, true)
+
+-- Enable the menu again
+qs.setOrderBoardMenuEnabled(true)
+
+-- Wait for order board to open
+qs.waitSignal('OpenOrderBoardSignal', 0)
+qs.showWayFinder(orderBoard, false)
+
+-- wait for order selection
+qs.waitSignal('OrderBoardTicketClickedSignal', 0)
+qs.highlightTicket(false)
+
+-- wait for fill order button
+qs.highlightFillOrder(true)
+qs.waitSignal('OrderBoardFillOrderSignal', 0)
+
+qs.sendTelemetry('tutorial', '6')

@@ -56,6 +56,31 @@ namespace Kampai.Util
 
 		private static readonly global::Kampai.Util.KampaiResources.AssetsCache cachedObjects = new global::Kampai.Util.KampaiResources.AssetsCache();
 
+#if UNITY_EDITOR
+		private static global::System.Collections.Generic.Dictionary<string, string> editorAssetPathMap;
+
+		private static void InitializeEditorAssetMap()
+		{
+			if (editorAssetPathMap != null) return;
+			editorAssetPathMap = new global::System.Collections.Generic.Dictionary<string, string>(global::System.StringComparer.OrdinalIgnoreCase);
+			string contentPath = global::System.IO.Path.Combine(global::UnityEngine.Application.dataPath, "content");
+			if (!global::System.IO.Directory.Exists(contentPath)) return;
+
+			string[] files = global::System.IO.Directory.GetFiles(contentPath, "*.*", global::System.IO.SearchOption.AllDirectories);
+			foreach (string file in files)
+			{
+				if (file.EndsWith(".meta")) continue;
+				string fileName = global::System.IO.Path.GetFileNameWithoutExtension(file);
+				// Standard names or GUID names from manifest
+				if (!editorAssetPathMap.ContainsKey(fileName))
+				{
+					string relativePath = "Assets" + file.Substring(global::UnityEngine.Application.dataPath.Length).Replace('\\', '/');
+					editorAssetPathMap.Add(fileName, relativePath);
+				}
+			}
+		}
+#endif
+
 		public static void SetManifestService(global::Kampai.Common.IManifestService service)
 		{
 			manifestService = service;
@@ -156,6 +181,23 @@ namespace Kampai.Util
 				return null;
 			}
 			global::UnityEngine.AsyncOperation asyncOperation = null;
+
+#if UNITY_EDITOR
+			InitializeEditorAssetMap();
+			string fileName = global::System.IO.Path.GetFileNameWithoutExtension(path);
+			if (editorAssetPathMap.ContainsKey(fileName))
+			{
+				string assetPath = editorAssetPathMap[fileName];
+				global::UnityEngine.Object editorObj = global::UnityEditor.AssetDatabase.LoadAssetAtPath(assetPath, type);
+				if (editorObj != null)
+				{
+					cachedObjects.Add(path, editorObj, type);
+					if (onComplete != null) onComplete(editorObj);
+					return null;
+				}
+			}
+#endif
+
 			string assetLocation = manifestService.GetAssetLocation(path);
 			if (assetLocation.Length == 0)
 			{
@@ -212,6 +254,23 @@ namespace Kampai.Util
 			}
 			global::Kampai.Util.TimeProfiler.StartAssetLoadSection(path);
 			global::UnityEngine.Object obj2 = null;
+
+#if UNITY_EDITOR
+			InitializeEditorAssetMap();
+			string fileName = global::System.IO.Path.GetFileNameWithoutExtension(path);
+			if (editorAssetPathMap.ContainsKey(fileName))
+			{
+				string assetPath = editorAssetPathMap[fileName];
+				obj2 = global::UnityEditor.AssetDatabase.LoadAssetAtPath(assetPath, type);
+				if (obj2 != null)
+				{
+					cachedObjects.Add(path, obj2, type);
+					global::Kampai.Util.TimeProfiler.EndAssetLoadSection();
+					return obj2;
+				}
+			}
+#endif
+
 			string assetLocation = manifestService.GetAssetLocation(path);
 			bool flag = assetLocation.Length > 0 && manifestService.IsBundleTierTooHigh(assetLocation);
 			if (assetLocation.Length == 0)

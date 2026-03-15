@@ -1,0 +1,24 @@
+-- FTUE Quest 1, step 5
+
+qs.setBuildMenuEnabled(false)
+qs.enableCallButtons(false)
+
+
+-- if we are already level it is because the user quit while this quest was waiting for complete, so we just let it complete now
+if qsutil.waitForLevel(1) == 1 then
+	tikiBarId = 313
+	qs.disableCameraControls()
+	
+	qs.waitSignal('PromptReceivedSignal', 0)
+	
+	-- Wait for the greeting animation to play out
+	qs.wait(13.5)
+	
+end
+
+qs.enableCameraControls()
+qs.deselectAllMinions()
+
+qs.sendTelemetry('tutorial', '1')
+
+-- end step 5

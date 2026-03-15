@@ -14,6 +14,11 @@ namespace Kampai.Game
 
 		public LuaKernel()
 		{
+			if (global::UnityEngine.Application.isEditor)
+			{
+				_logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: Skipping native initialization in Editor.");
+				return;
+			}
 			try
 			{
 				luaSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(LuaSearcher);
@@ -83,7 +88,7 @@ namespace Kampai.Game
 
 		protected virtual void Dispose(bool fromDispose)
 		{
-			if (fromDispose)
+			if (fromDispose && !global::UnityEngine.Application.isEditor)
 			{
 				L.Dispose();
 				context.Dispose();
