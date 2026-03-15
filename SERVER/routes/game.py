@@ -92,7 +92,9 @@ def get_gamestate(user_id):
 @game_bp.route('/rest/gamestate/<user_id>', methods=['POST'])
 def save_gamestate(user_id):
     try:
-        player_data = request.get_json()
+        player_data = request.get_json(force=True, silent=True)
+        if player_data is None:
+            raise ValueError("No JSON data received or invalid JSON")
         player_data_dir = os.path.join(SERVER_DIR, 'player_data')
         os.makedirs(player_data_dir, exist_ok=True)
         player_file = os.path.join(player_data_dir, f'{user_id}.json')

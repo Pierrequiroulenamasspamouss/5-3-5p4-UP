@@ -25,8 +25,12 @@ namespace Kampai.Wrappers
 			errorAction = error_method;
 			thisHandle = global::System.Runtime.InteropServices.GCHandle.Alloc(this);
 			global::System.IntPtr instance = global::System.Runtime.InteropServices.GCHandle.ToIntPtr(thisHandle);
+#if !UNITY_EDITOR
 			global::Kampai.Wrappers.NativeLibContext.NativeMethods.lua_kampai_set_log_func(instance, HandleDebugLog);
 			global::Kampai.Wrappers.NativeLibContext.NativeMethods.lua_kampai_set_error_func(instance, HandleErrorLog);
+#else
+			global::UnityEngine.Debug.LogWarning("NativeLibContext: Skipping native lua_kampai_set log/error functions in Editor.");
+#endif
 		}
 
 		[global::AOT.MonoPInvokeCallback(typeof(global::Kampai.Wrappers.NativeLibContext.NativeCallbackDelegate))]
@@ -47,8 +51,10 @@ namespace Kampai.Wrappers
 
 		protected virtual void Dispose(bool fromDispose)
 		{
+#if !UNITY_EDITOR
 			global::Kampai.Wrappers.NativeLibContext.NativeMethods.lua_kampai_set_log_func(global::System.IntPtr.Zero, null);
 			global::Kampai.Wrappers.NativeLibContext.NativeMethods.lua_kampai_set_error_func(global::System.IntPtr.Zero, null);
+#endif
 			thisHandle.Free();
 		}
 

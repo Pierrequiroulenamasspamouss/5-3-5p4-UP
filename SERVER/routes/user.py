@@ -117,3 +117,23 @@ def tse_team_actions(event_id, team_id, user_id, action):
         json.dumps(data, separators=(', ', ': ')),
         mimetype='application/json'
     )
+@user_bp.route('/rest/v2/user/<user_id>/identity', methods=['POST'])
+def link_identity(user_id):
+    """
+    Mocks account linking.
+    Expects AccountLinkRequest: { "credentials": "...", "externalId": "...", "identityType": "..." }
+    Returns UserIdentity object.
+    """
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+    except Exception:
+        data = {}
+        
+    print(f"[IDENTITY] Linking user {user_id} with {data.get('identityType')} ID {data.get('externalId')}")
+    
+    # Return UserIdentity sequence
+    return jsonify({
+        "userId": user_id,
+        "externalId": data.get('externalId', 'mock_external_id'),
+        "type": data.get('identityType', 'facebook')
+    })

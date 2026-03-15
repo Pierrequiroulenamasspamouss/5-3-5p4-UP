@@ -191,7 +191,10 @@ namespace Kampai.Game
 			}
 			foreach (string item in list)
 			{
-				runners[item].Pause();
+				if (runners.ContainsKey(item) && runners[item] != null)
+				{
+					runners[item].Pause();
+				}
 			}
 		}
 
@@ -204,7 +207,10 @@ namespace Kampai.Game
 			}
 			foreach (string item in list)
 			{
-				runners[item].Resume();
+				if (runners.ContainsKey(item) && runners[item] != null)
+				{
+					runners[item].Resume();
+				}
 			}
 		}
 

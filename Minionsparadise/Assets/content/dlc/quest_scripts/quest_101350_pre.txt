@@ -1,0 +1,27 @@
+-- FTUE Quest 7, step 1
+
+-- Enable way finder on order board
+local orderBoardDefId = 3022
+orderBoard = qs.getInstanceId(orderBoardDefId)
+qs.showWayFinder(orderBoard, false)
+
+qs.setDialogSound('Play_menu_popUp_01')
+qsutil.waitForDialog('ftue_alligator_narrative_01')
+
+-- If Stuart doesn't exist yet, he is going to be spawned in a moment, and we wait for the prompt
+local isQuesting = qs.isStuartQuesting()
+if isQuesting == 0 then
+	qs.waitSignal('PromptReceivedSignal')
+	qs.setLimitTikiBarWayFinders(true)
+	qs.waitSignal('TeleportCharacterToTikiBarSignal', 0)
+	-- qs.setLimitTikiBarWayFinders(false)
+end
+
+qs.setBuildMenuEnabled(true)
+qs.enableDeleteButton(true)
+
+qs.openTikiHut(true)
+
+qs.sendTelemetry('tutorial', '7')
+
+-- end step 1

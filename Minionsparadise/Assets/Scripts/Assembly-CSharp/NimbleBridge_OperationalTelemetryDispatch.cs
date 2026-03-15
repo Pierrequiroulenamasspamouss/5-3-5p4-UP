@@ -23,6 +23,7 @@ public class NimbleBridge_OperationalTelemetryDispatch
 
 	public NimbleBridge_OperationalTelemetryEvent[] GetEvents(string type)
 	{
+#if !UNITY_EDITOR
 		global::System.Collections.Generic.List<NimbleBridge_OperationalTelemetryEvent> list = new global::System.Collections.Generic.List<NimbleBridge_OperationalTelemetryEvent>();
 		global::System.IntPtr intPtr = NimbleBridge_OperationalTelemetryDispatch_getEvents(type);
 		global::System.IntPtr intPtr2 = global::System.Runtime.InteropServices.Marshal.ReadIntPtr(intPtr);
@@ -35,11 +36,16 @@ public class NimbleBridge_OperationalTelemetryDispatch
 		}
 		NimbleBridge_OperationalTelemetryDispatch_deleteEventsArray(intPtr);
 		return list.ToArray();
+#else
+		return new NimbleBridge_OperationalTelemetryEvent[0];
+#endif
 	}
 
 	public void SetMaxEventCount(string type, int count)
 	{
+#if !UNITY_EDITOR
 		NimbleBridge_OperationalTelemetryDispatch_setMaxEventCount(type, count);
+#endif
 	}
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
@@ -47,7 +53,11 @@ public class NimbleBridge_OperationalTelemetryDispatch
 
 	public int GetMaxEventCount(string type)
 	{
+#if !UNITY_EDITOR
 		return NimbleBridge_OperationalTelemetryDispatch_getMaxEventCount(type);
+#else
+		return 0;
+#endif
 	}
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
