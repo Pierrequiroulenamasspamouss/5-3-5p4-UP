@@ -195,40 +195,62 @@ namespace Kampai.Splash
 			isRunning = false;
 		}
 
-		private void Init()
-		{
-			downloadTotalSize = 0L;
-			downloadStartTime = global::System.DateTime.Now;
-			pendingRequests = CreateNetworkRequests(dlcModel.NeededBundles, manifestService.GetDLCURL());
-			isNetworkWifi = global::Kampai.Util.NetworkUtil.IsNetworkWiFi();
-			isRunning = pendingRequests.Count != 0;
-			stopped = !isRunning;
-			logger.Info("[BDLC] Init :: pendingRequests.Count = {0}", pendingRequests.Count);
-			global::System.Collections.Generic.Dictionary<string, string> dictionary = new global::System.Collections.Generic.Dictionary<string, string>();
-			dictionary.Add("K-Platform", clientVersion.GetClientPlatform());
-			dictionary.Add("K-Device", deviceTypeUrlEscaped);
-			dictionary.Add("K-Version", clientVersion.GetClientVersion());
-			global::System.Collections.Generic.Dictionary<string, string> dictionary2 = dictionary;
-			nativeService = new global::UnityEngine.AndroidJavaClass("com.ea.gp.minions.nimble.BackgroundDownloadDlcService");
-			requestHeaders = new global::UnityEngine.AndroidJavaObject("java.util.HashMap");
-			foreach (global::System.Collections.Generic.KeyValuePair<string, string> item in dictionary2)
-			{
-				requestHeaders.Call<string>("put", new object[2] { item.Key, item.Value });
-			}
-			if (onRequestListener == null)
-			{
-				onRequestListener = new global::Kampai.Splash.BackgroundDownloadDlcService.OnRequestListener(OnRequestBundleCallbackProxy);
-			}
-#if !UNITY_WEBPLAYER
-			string dLC_PATH = global::Kampai.Util.GameConstants.DLC_PATH;
-			if (!global::System.IO.Directory.Exists(dLC_PATH))
-			{
-				global::System.IO.Directory.CreateDirectory(dLC_PATH);
-			}
-#endif
-		}
+        private void Init()
+        {
+            downloadTotalSize = 0L;
+            downloadStartTime = global::System.DateTime.Now;
+            pendingRequests = CreateNetworkRequests(dlcModel.NeededBundles, manifestService.GetDLCURL());
+            isNetworkWifi = global::Kampai.Util.NetworkUtil.IsNetworkWiFi();
+            isRunning = pendingRequests.Count != 0;
+            stopped = !isRunning;
+            logger.Info("[BDLC] Init :: pendingRequests.Count = {0}", pendingRequests.Count);
 
-		private void Run()
+            global::System.Collections.Generic.Dictionary<string, string> dictionary = new global::System.Collections.Generic.Dictionary<string, string>();
+            dictionary.Add("K-Platform", clientVersion.GetClientPlatform());
+            dictionary.Add("K-Device", deviceTypeUrlEscaped);
+            dictionary.Add("K-Version", clientVersion.GetClientVersion());
+            global::System.Collections.Generic.Dictionary<string, string> dictionary2 = dictionary;
+
+            // --- PATCH DÉBUT ---
+            nativeService = null;
+            requestHeaders = null;
+
+#if !UNITY_EDITOR && UNITY_ANDROID
+    try 
+    {
+        nativeService = new global::UnityEngine.AndroidJavaClass("com.ea.gp.minions.nimble.BackgroundDownloadDlcService");
+        requestHeaders = new global::UnityEngine.AndroidJavaObject("java.util.HashMap");
+        
+        foreach (global::System.Collections.Generic.KeyValuePair<string, string> item in dictionary2)
+        {
+            requestHeaders.Call<string>("put", new object[2] { item.Key, item.Value });
+        }
+    }
+    catch (global::System.Exception e) 
+    {
+        logger.Error("[BDLC] JNI Error: Could not initialize native service. " + e.Message);
+        nativeService = null;
+    }
+#else
+            logger.Warning("[BDLC] Native Android service skipped: Not on Android device.");
+#endif
+            // --- PATCH FIN ---
+
+            if (onRequestListener == null)
+            {
+                onRequestListener = new global::Kampai.Splash.BackgroundDownloadDlcService.OnRequestListener(OnRequestBundleCallbackProxy);
+            }
+
+#if !UNITY_WEBPLAYER
+            string dLC_PATH = global::Kampai.Util.GameConstants.DLC_PATH;
+            if (!global::System.IO.Directory.Exists(dLC_PATH))
+            {
+                global::System.IO.Directory.CreateDirectory(dLC_PATH);
+            }
+#endif
+        }
+
+        private void Run()
 		{
 			global::UnityEngine.AndroidJNI.AttachCurrentThread();
 			while (isRunning)
@@ -286,45 +308,59 @@ namespace Kampai.Splash
 			logger.Info("[BDLC] Stopped");
 		}
 
-		private bool ProcessQueue()
-		{
-			if (isRunning && pendingRequests.Count > 0 && runningRequests.Count < 5 && (global::Kampai.Util.NetworkUtil.IsNetworkWiFi() || dlcModel.AllowDownloadOnMobileNetwork))
-			{
-				global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest request = pendingRequests.Dequeue();
-				runningRequests.Add(request);
-				logger.Info("[BDLC] request: " + request.Uri);
-				PrepareDirectory(request);
-				nativeService.CallStatic("requestBundle", request.Uri, request.GetTempFilePath(), requestHeaders, request.UseGZip, onRequestListener);
-				return true;
-			}
-			return false;
-		}
+        private bool ProcessQueue()
+        {
+            if (isRunning && pendingRequests.Count > 0 && runningRequests.Count < 5 && (global::Kampai.Util.NetworkUtil.IsNetworkWiFi() || dlcModel.AllowDownloadOnMobileNetwork))
+            {
+                // --- PATCH SÉCURITÉ ---
+                if (nativeService == null)
+                {
+                    logger.Error("[BDLC] Cannot process queue: nativeService is null");
+                    return false;
+                }
 
-		private void AbortRunning()
-		{
-			foreach (global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest runningRequest in runningRequests)
-			{
-				runningRequest.Abort();
-			}
-			nativeService.CallStatic("abortRequest", string.Empty);
-			logger.Info("[BDLC] finalizing running requests");
-			int num = 100;
-			while (runningRequests.Count > 0 && num-- > 0)
-			{
-				logger.Info("[BDLC] exiting {0} request(s) [time left: {1:0.##} s]", runningRequests.Count, (float)num / 10f);
-				do
-				{
-					global::System.Threading.Thread.Sleep(100);
-				}
-				while (invoker.Update());
-			}
-			if (runningRequests.Count != 0)
-			{
-				logger.Error("[BDLC] unstopped requests: {0}", runningRequests.Count);
-			}
-		}
+                global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest request = pendingRequests.Dequeue();
+                runningRequests.Add(request);
+                logger.Info("[BDLC] request: " + request.Uri);
+                PrepareDirectory(request);
 
-		private void OnRequestBundleCallbackProxy(string url, string tempFilePath, bool isGZipped, long downloadedContentLength, long expectedContentLength, int statusCode, string error)
+                nativeService.CallStatic("requestBundle", request.Uri, request.GetTempFilePath(), requestHeaders, request.UseGZip, onRequestListener);
+                return true;
+            }
+            return false;
+        }
+
+        private void AbortRunning()
+        {
+            foreach (global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest runningRequest in runningRequests)
+            {
+                runningRequest.Abort();
+            }
+
+            // --- PATCH SÉCURITÉ ---
+            if (nativeService != null)
+            {
+                nativeService.CallStatic("abortRequest", string.Empty);
+            }
+
+            logger.Info("[BDLC] finalizing running requests");
+            int num = 100;
+            while (runningRequests.Count > 0 && num-- > 0)
+            {
+                logger.Info("[BDLC] exiting {0} request(s) [time left: {1:0.##} s]", runningRequests.Count, (float)num / 10f);
+                do
+                {
+                    global::System.Threading.Thread.Sleep(100);
+                }
+                while (invoker.Update());
+            }
+            if (runningRequests.Count != 0)
+            {
+                logger.Error("[BDLC] unstopped requests: {0}", runningRequests.Count);
+            }
+        }
+
+        private void OnRequestBundleCallbackProxy(string url, string tempFilePath, bool isGZipped, long downloadedContentLength, long expectedContentLength, int statusCode, string error)
 		{
 			invoker.Add(delegate
 			{
