@@ -8,6 +8,7 @@ game_bp = Blueprint('game', __name__)
 BASE_HOST = "http://localhost"
 SERVER_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VIDEO_PATH = os.path.join(SERVER_DIR, "assets", "video.mp4")
+INTRO_VIDEO_PATH = os.path.join(SERVER_DIR, "assets", "intro.mp4")
 DEFINITIONS_PATH = os.path.join(SERVER_DIR, "definitions.json")
 CONFIG_PATH = os.path.join(SERVER_DIR, "config.json")
 MANIFEST_PATH = os.path.join(SERVER_DIR, "DLC_Manifest.json")
@@ -25,6 +26,17 @@ def serve_dlc(filename):
 def serve_video():
     if os.path.exists(VIDEO_PATH): 
         return send_file(VIDEO_PATH, mimetype='video/mp4')
+    return "", 404
+
+@game_bp.route('/videos/<path:filename>')
+def serve_intro_video(filename):
+    file_path = os.path.join(SERVER_DIR, "assets", filename)
+    if os.path.exists(file_path):
+        return send_file(file_path)
+    
+    if filename.startswith('intro'):
+        if os.path.exists(INTRO_VIDEO_PATH):
+            return send_file(INTRO_VIDEO_PATH, mimetype='video/mp4')
     return "", 404
 
 @game_bp.route('/configs/<path:path>', methods=['GET'])

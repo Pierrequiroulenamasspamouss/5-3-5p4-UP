@@ -6,7 +6,7 @@ qs.enablePurchaseButton(false)
 
 qs.wait(1.5)
 
-coconutTreeID = 342
+coconutTreeID = qs.getInstanceId(3142)
 
 qs.throbRushButtons(true)
 qs.panToBuildingAndOpen(coconutTreeID)

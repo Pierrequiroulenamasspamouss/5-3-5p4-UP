@@ -3,7 +3,7 @@
 qs.setBuildMenuEnabled(false)
 qs.enableCallButtons(false)
 
-tikiBarId = 313
+tikiBarId = qs.getInstanceId(3041)
 qsutil.waitForDialog('ftue_q2_narrative_funflow')
 qs.stopMinionCamping()
 

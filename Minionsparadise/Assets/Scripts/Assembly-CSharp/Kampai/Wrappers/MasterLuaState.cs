@@ -14,14 +14,7 @@ namespace Kampai.Wrappers
 		public MasterLuaState()
 			: base(true)
 		{
-			if (global::UnityEngine.Application.isEditor)
-			{
-				handle = global::System.IntPtr.Zero;
-			}
-			else
-			{
-				handle = global::Kampai.Wrappers.MasterLuaState.NativeMethods.luaL_newstate();
-			}
+			handle = global::Kampai.Wrappers.MasterLuaState.NativeMethods.luaL_newstate();
 		}
 
 		protected override bool ReleaseHandle()

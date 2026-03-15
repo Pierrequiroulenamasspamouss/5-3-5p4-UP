@@ -1,7 +1,7 @@
 namespace Kampai.Game
 {
-	public class MasterPlanService : global::Kampai.Game.View.ActionableObjectManagerView, global::Kampai.Game.IMasterPlanService
-	{
+    public class MasterPlanService : global::Kampai.Game.IMasterPlanService
+    {
 		public global::Kampai.Util.IKampaiLogger logger = global::Elevation.Logging.LogManager.GetClassLogger("MasterPlanService") as global::Kampai.Util.IKampaiLogger;
 
 		private int _forceDefinitionID;

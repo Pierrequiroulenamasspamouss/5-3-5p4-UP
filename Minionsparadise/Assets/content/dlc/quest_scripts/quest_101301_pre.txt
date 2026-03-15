@@ -4,13 +4,13 @@ qs.setFtueLevelCompleted(8)
 qs.enableDeleteButton(false)
 
 -- wait for repair animation
-orderBoardId = 309
+orderBoardId = qs.getInstanceId(3022)
 
 -- disable the building till the animation is complete
 qs.setBuildingState(orderBoardId, qsutil.BuildingState.Disabled)
 qs.wait(2.5)
 qs.setBuildingState(orderBoardId, qsutil.BuildingState.Idle)
-philId = 78
+philId = qs.getInstanceId(1080)
 qs.setCharacterAnimation(philId, "bartender_OnCelebrate")
 
 qs.sendTelemetry('tutorial', '5')

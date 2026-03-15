@@ -78,7 +78,39 @@ namespace Kampai.Game
 
 		private void FakeTouches()
 		{
-			throw new global::System.NotImplementedException("Method FakeTouches is not implemented.");
+			global::UnityEngine.Touch touch = default(global::UnityEngine.Touch);
+			touch.position = global::UnityEngine.Input.mousePosition;
+			touch.deltaPosition = m_MousePosition - m_LastMousePosition;
+			touch.fingerId = -1;
+			if (global::UnityEngine.Input.GetMouseButtonDown(0))
+			{
+				touch.phase = global::UnityEngine.TouchPhase.Began;
+			}
+			else if (global::UnityEngine.Input.GetMouseButtonUp(0))
+			{
+				touch.phase = global::UnityEngine.TouchPhase.Ended;
+			}
+			else if (touch.deltaPosition.sqrMagnitude > 0f)
+			{
+				touch.phase = global::UnityEngine.TouchPhase.Moved;
+			}
+			else
+			{
+				touch.phase = global::UnityEngine.TouchPhase.Stationary;
+			}
+			bool pressed;
+			bool released;
+			global::UnityEngine.EventSystems.PointerEventData touchPointerEventData = GetTouchPointerEventData(touch, out pressed, out released);
+			ProcessTouchPress(touchPointerEventData, pressed, released);
+			if (!released)
+			{
+				ProcessMove(touchPointerEventData);
+				ProcessDrag(touchPointerEventData);
+			}
+			else
+			{
+				RemovePointerData(touchPointerEventData);
+			}
 		}
 
 		private void ProcessTouchEvents()

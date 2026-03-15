@@ -113,32 +113,38 @@ namespace Kampai.Util
 		{
 		}
 
-		protected virtual void LogIt(global::Kampai.Util.KampaiLogLevel level, string text, bool isFatal = false)
-		{
-			if (IsAllowedLevel(level))
-			{
-				switch (level)
-				{
-				case global::Kampai.Util.KampaiLogLevel.Info:
-					global::Kampai.Util.Native.LogInfo(text);
-					break;
-				case global::Kampai.Util.KampaiLogLevel.Debug:
-					global::Kampai.Util.Native.LogDebug(text);
-					break;
-				case global::Kampai.Util.KampaiLogLevel.Warning:
-					global::Kampai.Util.Native.LogWarning(text);
-					break;
-				case global::Kampai.Util.KampaiLogLevel.Error:
-					global::Kampai.Util.Native.LogError(text);
-					break;
-				default:
-					global::Kampai.Util.Native.LogVerbose(text);
-					break;
-				}
-			}
-		}
+        protected virtual void LogIt(global::Kampai.Util.KampaiLogLevel level, string text, bool isFatal = false)
+        {
+            if (IsAllowedLevel(level))
+            {
+                // --- HIJACK UNITY LOGS ---
+                switch (level)
+                {
+                    case global::Kampai.Util.KampaiLogLevel.Info:
+                        global::UnityEngine.Debug.Log("<color=cyan>[V1-INFO]</color> " + text);
+                        global::Kampai.Util.Native.LogInfo(text);
+                        break;
+                    case global::Kampai.Util.KampaiLogLevel.Debug:
+                        global::UnityEngine.Debug.Log("<color=silver>[V1-DEBUG]</color> " + text);
+                        global::Kampai.Util.Native.LogDebug(text);
+                        break;
+                    case global::Kampai.Util.KampaiLogLevel.Warning:
+                        global::UnityEngine.Debug.LogWarning("<color=orange>[V1-WARN]</color> " + text);
+                        global::Kampai.Util.Native.LogWarning(text);
+                        break;
+                    case global::Kampai.Util.KampaiLogLevel.Error:
+                        global::UnityEngine.Debug.LogError("<color=red>[V1-ERROR]</color> " + (isFatal ? "[FATAL] " : "") + text);
+                        global::Kampai.Util.Native.LogError(text);
+                        break;
+                    default:
+                        global::UnityEngine.Debug.Log("<color=white>[V1-VERBOSE]</color> " + text);
+                        global::Kampai.Util.Native.LogVerbose(text);
+                        break;
+                }
+            }
+        }
 
-		public void Fatal(global::Kampai.Util.FatalCode code, string format, params object[] args)
+        public void Fatal(global::Kampai.Util.FatalCode code, string format, params object[] args)
 		{
 			Fatal(code, 0, format, args);
 		}
@@ -151,7 +157,10 @@ namespace Kampai.Util
 		public virtual void FatalNoThrow(global::Kampai.Util.FatalCode code, int referencedId, string format, params object[] args)
 		{
 			string text = string.Format("[ERROR {0}-{1}] {2}", (int)code, referencedId, string.Format(format, args));
-			string text2 = new global::System.Diagnostics.StackTrace(1, true).ToString();
+            // --- HIJACK DU CRASH FATAL ---
+            global::UnityEngine.Debug.LogError("<color=red><b>[FATAL CRASH TRIGGERED]</b></color> Code: " + code.ToString() + " | Reason: " + text);
+            // -----------------------------
+            string text2 = new global::System.Diagnostics.StackTrace(1, true).ToString();
 			LogIt(global::Kampai.Util.KampaiLogLevel.Error, text, true);
 			LogIt(global::Kampai.Util.KampaiLogLevel.Error, text2, true);
 			string code2 = string.Format("{0}-{1}", (int)code, referencedId);

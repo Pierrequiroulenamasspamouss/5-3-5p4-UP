@@ -3,7 +3,7 @@
 qs.setBuildMenuEnabled(false)
 qs.enableCallButtons(false)
 
-tikiBarId = 313
+tikiBarId = qs.getInstanceId(3041)
 qs.disableCameraControls()
 qs.panCameraToInstance(tikiBarId)
 
@@ -15,7 +15,7 @@ qs.setDialogSound('Play_menu_popUp_01')
 qsutil.waitForDialog('ftue_01_tiki_complete')
 
 -- Animate phil noticing missing sign
-philId = 78
+philId = qs.getInstanceId(1080)
 qs.setCharacterAnimation(philId, "NoticeMissingSign")
 
 qs.panCameraToPosition(128.1388, 14.15816, 161.0463, 0.8)

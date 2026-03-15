@@ -3,7 +3,7 @@
 qs.setFtueLevelCompleted(7)
 qs.enableDeleteButton(false)
 
-tikiBarId = 313
+tikiBarId = qs.getInstanceId(3041)
 qs.panCameraToInstance(tikiBarId)
 qs.disableCameraControls()
 qs.wait(1)
@@ -14,7 +14,7 @@ qs.setCharacterImage(40000)
 qs.setDialogSound('Play_menu_popUp_01')
 qsutil.waitForDialog('ftue_orderboard_narrative_01')
 
-orderBoardId = 309
+orderBoardId = qs.getInstanceId(3022)
 qs.panCameraToInstance(orderBoardId)
 
 qs.wait(1)
