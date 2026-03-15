@@ -80,7 +80,7 @@ Shader "Kampai/Standard/Outline" {
                 float displacement = _Outline * (vColor.g * 0.01);
                 v.vertex.xyz += v.normal * displacement;
                 
-                o.pos = UnityObjectToClipPos(v.vertex);
+                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
                 return o;
             }
 

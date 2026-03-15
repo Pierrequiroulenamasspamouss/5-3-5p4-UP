@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: vignette_mesh_01_mat
-  m_Shader: {fileID: 4800000, guid: 8e8910b2b2a81b94ebae39845bbb2399, type: 3}
+  m_Shader: {fileID: 4800000, guid: 77bbd4315f083e34087c64850bfe9556, type: 3}
   m_ShaderKeywords: TEXTURE_ALPHA
   m_LightmapFlags: 5
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -18,72 +18,16 @@ Material:
     m_Floats:
       data:
         first:
-          name: _Boost
-        second: 1
-      data:
-        first:
-          name: _Cull
-        second: 2
-      data:
-        first:
-          name: _Cutoff
-        second: 0.5
+          name: _SrcBlend
+        second: 5
       data:
         first:
           name: _DstBlend
         second: 10
       data:
         first:
-          name: _Gradient
-        second: 3.881215
-      data:
-        first:
-          name: _LayerIndex
-        second: 0
-      data:
-        first:
-          name: _Max
+          name: _Cutoff
         second: 0.5
-      data:
-        first:
-          name: _Min
-        second: 0
-      data:
-        first:
-          name: _Mode
-        second: 2
-      data:
-        first:
-          name: _OffsetFactor
-        second: 0
-      data:
-        first:
-          name: _OffsetUnits
-        second: 0
-      data:
-        first:
-          name: _Size
-        second: -0.05850872
-      data:
-        first:
-          name: _SrcBlend
-        second: 5
-      data:
-        first:
-          name: _TransparentMaxVal
-        second: 0.5
-      data:
-        first:
-          name: _TransparentMinVal
-        second: 0
-      data:
-        first:
-          name: _VertexColor
-        second: 1
-      data:
-        first:
-          name: _VignetteSize
-        second: -0.05850872
       data:
         first:
           name: _ZTest
@@ -94,8 +38,64 @@ Material:
         second: 0
       data:
         first:
+          name: _OffsetFactor
+        second: 0
+      data:
+        first:
+          name: _OffsetUnits
+        second: 0
+      data:
+        first:
+          name: _Mode
+        second: 2
+      data:
+        first:
+          name: _LayerIndex
+        second: 0
+      data:
+        first:
+          name: _Cull
+        second: 2
+      data:
+        first:
+          name: _VertexColor
+        second: 1
+      data:
+        first:
+          name: _Boost
+        second: 1
+      data:
+        first:
+          name: _Gradient
+        second: 3.881215
+      data:
+        first:
+          name: _Size
+        second: -0.05850872
+      data:
+        first:
+          name: _Min
+        second: 0
+      data:
+        first:
+          name: _Max
+        second: 0.5
+      data:
+        first:
           name: _boost
         second: 0
+      data:
+        first:
+          name: _TransparentMaxVal
+        second: 0.5
+      data:
+        first:
+          name: _TransparentMinVal
+        second: 0
+      data:
+        first:
+          name: _VignetteSize
+        second: -0.05850872
       data:
         first:
           name: _gradient_falloff
