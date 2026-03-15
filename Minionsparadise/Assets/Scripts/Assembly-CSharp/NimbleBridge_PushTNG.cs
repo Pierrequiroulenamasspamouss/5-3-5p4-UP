@@ -107,6 +107,11 @@ public class NimbleBridge_PushTNG
 
 	public void Start(string userAlias, double dateOfBirth, bool sandbox, NimbleBridge_PushTNG.OnRegistrationSuccessDelegate registrationSuccessDelegate, NimbleBridge_PushTNG.OnConnectionErrorDelegate connectionErrorDelegate, NimbleBridge_PushTNG.OnTrackingSuccessDelegate trackingSuccessDelegate, NimbleBridge_PushTNG.OnGetInAppSuccessDelegate getInAppSuccessDelegate)
 	{
+		if (global::UnityEngine.Application.isEditor)
+		{
+			global::UnityEngine.Debug.Log("NimbleBridge_PushTNG: Skipping Start in Editor.");
+			return;
+		}
 		NimbleBridge_CallbackHelper nimbleBridge_CallbackHelper = NimbleBridge_CallbackHelper.Get();
 		global::System.IntPtr registrationSuccessData = nimbleBridge_CallbackHelper.MakeCallbackData(registrationSuccessDelegate);
 		global::System.IntPtr connectionErrorData = nimbleBridge_CallbackHelper.MakeCallbackData(connectionErrorDelegate);
@@ -117,6 +122,11 @@ public class NimbleBridge_PushTNG
 
 	public void StartDisabled(string userAlias, double dateOfBirth, NimbleBridge_PushTNG.DisabledReason disabledReason, bool sandbox, NimbleBridge_PushTNG.OnRegistrationSuccessDelegate registrationSuccessDelegate, NimbleBridge_PushTNG.OnConnectionErrorDelegate connectionErrorDelegate, NimbleBridge_PushTNG.OnTrackingSuccessDelegate trackingSuccessDelegate, NimbleBridge_PushTNG.OnGetInAppSuccessDelegate getInAppSuccessDelegate)
 	{
+		if (global::UnityEngine.Application.isEditor)
+		{
+			global::UnityEngine.Debug.Log("NimbleBridge_PushTNG: Skipping StartDisabled in Editor.");
+			return;
+		}
 		NimbleBridge_CallbackHelper nimbleBridge_CallbackHelper = NimbleBridge_CallbackHelper.Get();
 		global::System.IntPtr registrationSuccessData = nimbleBridge_CallbackHelper.MakeCallbackData(registrationSuccessDelegate);
 		global::System.IntPtr connectionErrorData = nimbleBridge_CallbackHelper.MakeCallbackData(connectionErrorDelegate);

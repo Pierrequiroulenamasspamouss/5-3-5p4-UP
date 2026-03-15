@@ -149,16 +149,19 @@ namespace Kampai.Wrappers
 
 		public int lua_pcall(int nargs, int nresults, int errfunc)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_pcallk(handle, nargs, nresults, errfunc, 0, null);
 		}
 
 		public void lua_pop(int n)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_settop(handle, -n - 1);
 		}
 
 		public int luaL_dostring(string s)
 		{
+			if (IsInvalid) return -1;
 			int num = global::Kampai.Wrappers.LuaState.NativeMethods.luaL_loadstring(handle, s);
 			if (num > 0)
 			{
@@ -169,6 +172,7 @@ namespace Kampai.Wrappers
 
 		public string lua_tostring(int idx)
 		{
+			if (IsInvalid) return string.Empty;
 			return global::System.Runtime.InteropServices.Marshal.PtrToStringAnsi(global::Kampai.Wrappers.LuaState.NativeMethods.lua_tolstring(handle, idx, global::System.IntPtr.Zero));
 		}
 
@@ -179,196 +183,235 @@ namespace Kampai.Wrappers
 
 		public int lua_gettop()
 		{
+			if (IsInvalid) return 0;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_gettop(handle);
 		}
 
 		public int lua_pcallk(int nargs, int nresults, int errfunc, int ctx, global::Kampai.Wrappers.LuaCFunction k)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_pcallk(handle, nargs, nresults, errfunc, ctx, k);
 		}
 
 		public void lua_settop(int n)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_settop(handle, n);
 		}
 
 		public void lua_createtable(int narr, int nrec)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_createtable(handle, narr, nrec);
 		}
 
 		public int luaL_loadstring(string s)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.luaL_loadstring(handle, s);
 		}
 
 		public int luaL_loadbufferx(string buff, int sz, string name, string mode)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.luaL_loadbufferx(handle, buff, sz, name, mode);
 		}
 
 		public void luaL_openlibs()
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.luaL_openlibs(handle);
 		}
 
 		public int luaL_ref(int t)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.luaL_ref(handle, t);
 		}
 
 		public void luaL_unref(int t, int reference)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.luaL_unref(handle, t, reference);
 		}
 
 		public int lua_pushvalue(int idx)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_pushvalue(handle, idx);
 		}
 
 		public global::Kampai.Wrappers.LuaType lua_type(int idx)
 		{
+			if (IsInvalid) return global::Kampai.Wrappers.LuaType.LUA_TNONE;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_type(handle, idx);
 		}
 
 		public double lua_tonumberx(int idx, global::System.IntPtr isnum)
 		{
+			if (IsInvalid) return 0.0;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_tonumberx(handle, idx, isnum);
 		}
 
 		public int lua_tointegerx(int idx, global::System.IntPtr isnum)
 		{
+			if (IsInvalid) return 0;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_tointegerx(handle, idx, isnum);
 		}
 
 		public global::System.IntPtr lua_tolstring(int idx, global::System.IntPtr len)
 		{
+			if (IsInvalid) return global::System.IntPtr.Zero;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_tolstring(handle, idx, len);
 		}
 
 		public global::Kampai.Wrappers.WeakGCHandle lua_touserdata(int idx)
 		{
+			if (IsInvalid) return default(global::Kampai.Wrappers.WeakGCHandle);
 			return new global::Kampai.Wrappers.WeakGCHandle(global::Kampai.Wrappers.LuaState.NativeMethods.lua_touserdata(handle, idx));
 		}
 
 		public bool lua_toboolean(int idx)
 		{
+			if (IsInvalid) return false;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_toboolean(handle, idx);
 		}
 
 		public void lua_pushnil()
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_pushnil(handle);
 		}
 
 		public void lua_pushnumber(double n)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_pushnumber(handle, n);
 		}
 
 		public void lua_pushinteger(int n)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_pushinteger(handle, n);
 		}
 
 		public int lua_pushstring(string s)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_pushstring(handle, s);
 		}
 
 		public void lua_pushcclosure(global::Kampai.Wrappers.LuaCFunction fn, int n)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_pushcclosure(handle, fn, n);
 		}
 
 		public int lua_pushboolean(bool b)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_pushboolean(handle, b);
 		}
 
 		public void lua_pushlightuserdata(global::Kampai.Wrappers.SafeGCHandle p)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_pushlightuserdata(handle, p.DangerousGetHandle());
 		}
 
 		public int lua_getglobal(string var)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_getglobal(handle, var);
 		}
 
 		public int lua_getfield(int idx, string k)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_getfield(handle, idx, k);
 		}
 
 		public void lua_rawget(int idx)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_rawget(handle, idx);
 		}
 
 		public void lua_rawgeti(int idx, int n)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_rawgeti(handle, idx, n);
 		}
 
 		public void lua_setglobal(string var)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_setglobal(handle, var);
 		}
 
 		public void lua_setfield(int idx, string k)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_setfield(handle, idx, k);
 		}
 
 		public void lua_rawset(int idx)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_rawset(handle, idx);
 		}
 
 		public void lua_rawseti(int idx, int n)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_rawseti(handle, idx, n);
 		}
 
 		public void lua_setmetatable(int objindex)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_setmetatable(handle, objindex);
 		}
 
 		public void lua_settable(int index)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_settable(handle, index);
 		}
 
 		public int lua_yieldk(int nresults, int ctx, global::Kampai.Wrappers.LuaCFunction k)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_yieldk(handle, nresults, ctx, k);
 		}
 
 		public global::Kampai.Wrappers.ThreadStatus lua_resume(global::Kampai.Wrappers.LuaState from, int narg)
 		{
+			if (IsInvalid) return global::Kampai.Wrappers.ThreadStatus.LUA_ERRRUN;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_resume(handle, from.DangerousGetHandle(), narg);
 		}
 
 		public int lua_getstack(int level, global::System.IntPtr ar)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_getstack(handle, level, ar);
 		}
 
 		public int lua_getinfo(string what, global::System.IntPtr ar)
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_getinfo(handle, what, ar);
 		}
 
 		public void lua_setupvalue(int funcindex, int n)
 		{
+			if (IsInvalid) return;
 			global::Kampai.Wrappers.LuaState.NativeMethods.lua_setupvalue(handle, funcindex, n);
 		}
 
 		public int lua_error()
 		{
+			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_error(handle);
 		}
 	}

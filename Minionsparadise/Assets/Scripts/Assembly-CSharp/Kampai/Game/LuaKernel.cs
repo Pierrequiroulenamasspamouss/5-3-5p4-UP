@@ -16,17 +16,22 @@ namespace Kampai.Game
 		{
 			if (global::UnityEngine.Application.isEditor)
 			{
-				_logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: Skipping native initialization in Editor.");
-				return;
+				_logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: Running in Editor. Native initialization will be guarded.");
 			}
 			try
 			{
-				luaSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(LuaSearcher);
-				cSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(CSearcher);
-				context = new global::Kampai.Wrappers.NativeLibContext(LogMethod, ErrorMethod);
+				if (!global::UnityEngine.Application.isEditor)
+				{
+					luaSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(LuaSearcher);
+					cSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(CSearcher);
+					context = new global::Kampai.Wrappers.NativeLibContext(LogMethod, ErrorMethod);
+				}
 				L = new global::Kampai.Wrappers.MasterLuaState();
-				L.luaL_openlibs();
-				SetupState(L);
+				if (!global::UnityEngine.Application.isEditor)
+				{
+					L.luaL_openlibs();
+					SetupState(L);
+				}
 			}
 			catch (global::System.Exception ex)
 			{
