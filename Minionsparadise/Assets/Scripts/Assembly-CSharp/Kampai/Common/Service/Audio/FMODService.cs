@@ -359,12 +359,38 @@ namespace Kampai.Common.Service.Audio
 
 		private string GetStreamingBankPath(string bank)
 		{
+#if UNITY_EDITOR
+			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android/" + bank + ".bank");
+			if (global::System.IO.File.Exists(path))
+			{
+				return path;
+			}
+#endif
 			return global::Kampai.Util.GameConstants.PRE_INSTALLED_FMOD_PATH + bank + ".bytes";
 		}
 
 		private global::System.Collections.IEnumerator LoadStreamingAudioBanks()
 		{
 			logger.Debug("Start Loading Streaming Audio Banks");
+#if UNITY_EDITOR
+			string fmodAndroidPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android");
+			if (global::System.IO.Directory.Exists(fmodAndroidPath))
+			{
+				string[] files = global::System.IO.Directory.GetFiles(fmodAndroidPath, "*.bank");
+				foreach (string file in files)
+				{
+					if (FMOD_StudioSystem.instance.IsPaused())
+					{
+						yield return null;
+					}
+					LoadLocalBankAsync(file);
+				}
+			}
+			else
+			{
+				logger.Error("LoadStreamingAudioBanks: FMOD/Android directory not found in StreamingAssets.");
+			}
+#else
 			global::System.Collections.Generic.List<string> streamingBanks = localContentService.GetStreamingAudioBanks();
 			foreach (string bankName in streamingBanks)
 			{
@@ -378,6 +404,8 @@ namespace Kampai.Common.Service.Audio
 					LoadLocalBankAsync(path);
 				}
 			}
+#endif
+			yield break;
 		}
 
 		private string GetRawAssetPathByOriginalName(string bundleName)

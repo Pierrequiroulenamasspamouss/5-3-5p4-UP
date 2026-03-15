@@ -28,21 +28,25 @@ namespace Kampai.Wrappers
 
 		public static global::System.IntPtr kampai_create_debug()
 		{
+			if (global::UnityEngine.Application.isEditor) return global::System.IntPtr.Zero;
 			return global::Kampai.Wrappers.KampaiNativeLib.NativeMethods.kampai_create_debug();
 		}
 
 		public static void kampai_free_debug(global::System.IntPtr debug)
 		{
+			if (global::UnityEngine.Application.isEditor) return;
 			global::Kampai.Wrappers.KampaiNativeLib.NativeMethods.kampai_free_debug(debug);
 		}
 
 		public static global::Kampai.Wrappers.KampaiNativeLib.DebugData kampai_get_debug(global::Kampai.Wrappers.LuaState L, string what, global::System.IntPtr ar)
 		{
+			if (global::UnityEngine.Application.isEditor || L == null || L.IsInvalid) return default(global::Kampai.Wrappers.KampaiNativeLib.DebugData);
 			return global::Kampai.Wrappers.KampaiNativeLib.NativeMethods.kampai_get_debug(L.DangerousGetHandle(), what, ar);
 		}
 
 		public static int kampai_push_cfunction_from_lib(global::Kampai.Wrappers.LuaState L, string name, string function_name)
 		{
+			if (global::UnityEngine.Application.isEditor || L == null || L.IsInvalid) return -1;
 			return global::Kampai.Wrappers.KampaiNativeLib.NativeMethods.kampai_push_cfunction_from_lib(L.DangerousGetHandle(), name, function_name);
 		}
 	}

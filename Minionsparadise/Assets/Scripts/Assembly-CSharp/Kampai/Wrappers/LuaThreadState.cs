@@ -24,8 +24,16 @@ namespace Kampai.Wrappers
 			: base(true)
 		{
 			strongState = L;
-			handle = global::Kampai.Wrappers.LuaThreadState.NativeMethods.lua_newthread(L.DangerousGetHandle());
-			threadReference = L.luaL_ref(-1001000);
+			if (global::UnityEngine.Application.isEditor || L == null || L.IsInvalid)
+			{
+				handle = global::System.IntPtr.Zero;
+				threadReference = -1;
+			}
+			else
+			{
+				handle = global::Kampai.Wrappers.LuaThreadState.NativeMethods.lua_newthread(L.DangerousGetHandle());
+				threadReference = L.luaL_ref(-1001000);
+			}
 		}
 
 		protected override bool ReleaseHandle()
