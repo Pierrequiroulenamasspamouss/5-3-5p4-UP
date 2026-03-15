@@ -78,26 +78,24 @@ namespace Kampai.Game
 
 		private void FakeTouches()
 		{
-			global::UnityEngine.Touch touch = default(global::UnityEngine.Touch);
-			touch.position = global::UnityEngine.Input.mousePosition;
-			touch.deltaPosition = m_MousePosition - m_LastMousePosition;
-			touch.fingerId = -1;
+			global::UnityEngine.TouchPhase phase;
 			if (global::UnityEngine.Input.GetMouseButtonDown(0))
 			{
-				touch.phase = global::UnityEngine.TouchPhase.Began;
+				phase = global::UnityEngine.TouchPhase.Began;
 			}
 			else if (global::UnityEngine.Input.GetMouseButtonUp(0))
 			{
-				touch.phase = global::UnityEngine.TouchPhase.Ended;
+				phase = global::UnityEngine.TouchPhase.Ended;
 			}
-			else if (touch.deltaPosition.sqrMagnitude > 0f)
+			else if ((m_MousePosition - m_LastMousePosition).sqrMagnitude > 0f)
 			{
-				touch.phase = global::UnityEngine.TouchPhase.Moved;
+				phase = global::UnityEngine.TouchPhase.Moved;
 			}
 			else
 			{
-				touch.phase = global::UnityEngine.TouchPhase.Stationary;
+				phase = global::UnityEngine.TouchPhase.Stationary;
 			}
+			global::UnityEngine.Touch touch = global::Kampai.Game.InputUtils.CreateTouch(-1, global::UnityEngine.Input.mousePosition, m_MousePosition - m_LastMousePosition, phase);
 			bool pressed;
 			bool released;
 			global::UnityEngine.EventSystems.PointerEventData touchPointerEventData = GetTouchPointerEventData(touch, out pressed, out released);

@@ -61,7 +61,11 @@ namespace Kampai.Common
 			{
 				controlMode = global::UnityEngine.FullScreenMovieControlMode.CancelOnInput;
 			}
+#if !UNITY_EDITOR
 			global::UnityEngine.Handheld.PlayFullScreenMovie(urlOrFilename, global::UnityEngine.Color.black, controlMode, global::UnityEngine.FullScreenMovieScalingMode.AspectFit);
+#else
+			logger.Info("[Video] Handheld.PlayFullScreenMovie skipped in Editor. Simulated playback.");
+#endif
 		}
 
 		public void playIntro(bool showControls, bool closeOnTouch, global::System.Action videoPlayingCallback = null, string videoUriTemplate = null)

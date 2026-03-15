@@ -36,7 +36,23 @@ namespace Kampai.Util
 
 		public static void AggregateSkinnedMeshes(global::UnityEngine.Transform parent, string skeletonName, global::System.Collections.Generic.IEnumerable<string> meshNames, string targetLOD)
 		{
-			global::UnityEngine.GameObject original = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>(string.Format("{0}_{1}", skeletonName, targetLOD));
+			string text = string.Format("{0}_{1}", skeletonName, targetLOD);
+			global::UnityEngine.GameObject original = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>(text);
+			if (original == null && targetLOD != "MED")
+			{
+				text = string.Format("{0}_MED", skeletonName);
+				original = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>(text);
+			}
+			if (original == null && targetLOD != "HIGH")
+			{
+				text = string.Format("{0}_HIGH", skeletonName);
+				original = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>(text);
+			}
+			if (original == null && targetLOD != "LOW")
+			{
+				text = string.Format("{0}_LOW", skeletonName);
+				original = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>(text);
+			}
 			global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(original);
 			while (gameObject.transform.childCount > 0)
 			{
@@ -63,7 +79,24 @@ namespace Kampai.Util
 			}
 			foreach (string meshName in meshNames)
 			{
-				global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load(string.Format("{0}_{1}", meshName, targetLOD))) as global::UnityEngine.GameObject;
+				string text = string.Format("{0}_{1}", meshName, targetLOD);
+				global::UnityEngine.Object obj = global::Kampai.Util.KampaiResources.Load(text);
+				if (obj == null && targetLOD != "MED")
+				{
+					text = string.Format("{0}_MED", meshName);
+					obj = global::Kampai.Util.KampaiResources.Load(text);
+				}
+				if (obj == null && targetLOD != "HIGH")
+				{
+					text = string.Format("{0}_HIGH", meshName);
+					obj = global::Kampai.Util.KampaiResources.Load(text);
+				}
+				if (obj == null && targetLOD != "LOW")
+				{
+					text = string.Format("{0}_LOW", meshName);
+					obj = global::Kampai.Util.KampaiResources.Load(text);
+				}
+				global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(obj) as global::UnityEngine.GameObject;
 				global::UnityEngine.SkinnedMeshRenderer[] componentsInChildren = gameObject.GetComponentsInChildren<global::UnityEngine.SkinnedMeshRenderer>();
 				for (int i = 0; i < componentsInChildren.Length; i++)
 				{
