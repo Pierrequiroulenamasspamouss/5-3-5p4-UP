@@ -2,11 +2,11 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
-  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Resource_Ice:Resource_Ice_Mesh
+  m_Name: Resource_Ice_Resource_Ice_Mesh
+  serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -56,7 +56,7 @@ Mesh:
     e03: -0.7126506
     e10: 0.76604444
     e11: 0.6427876
-    e12: 4.8052144E-09
+    e12: 0.0000000048052144
     e13: -1.0414557
     e20: -0.32139382
     e21: 0.38302225
@@ -162,13 +162,13 @@ Mesh:
     e31: 0
     e32: 0
     e33: 1
-  m_BoneNameHashes: 553f13/e2a0cd5+0bbe4b9(6d20f5e16660429+0fb1ec1(17c74ed)3
+  m_BoneNameHashes: 553f13fe2a0cd5b0bbe4b986d20f5e16660429b0fb1ec1817c74ed93
   m_RootBoneNameHash: 2481812604
   m_MeshCompression: 3
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexBuffer:
+  m_KeepVertices: 0
+  m_KeepIndices: 0
+  m_IndexBuffer: 
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 0
@@ -207,7 +207,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 6357
@@ -231,7 +231,7 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 2119
@@ -243,7 +243,7 @@ Mesh:
       m_BitSize: 1
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 8476
@@ -264,6 +264,6 @@ Mesh:
     m_Center: {x: -0.20245826, y: 1.9289572, z: 0.017994523}
     m_Extent: {x: 2.253718, y: 2.3558972, z: 2.530767}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 1

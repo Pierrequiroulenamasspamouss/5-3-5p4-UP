@@ -2,11 +2,11 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
-  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Leisure_FirePit:Leisure_FirePit_Mesh
+  m_Name: Leisure_FirePit_Leisure_FirePit_Mesh
+  serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -58,15 +58,15 @@ Mesh:
     e32: 0
     e33: 1
   - e00: 1.0000001
-    e01: 1.1641532E-08
-    e02: -2.2555469E-08
+    e01: 0.000000011641532
+    e02: -0.000000022555469
     e03: 0.14508295
-    e10: 1.1641532E-08
+    e10: 0.000000011641532
     e11: 0.9999999
     e12: 0
     e13: 9.918555
-    e20: 5.5297278E-08
-    e21: 8.731149E-09
+    e20: 0.000000055297278
+    e21: 0.000000008731149
     e22: 1
     e23: 0.59756285
     e30: 0
@@ -75,30 +75,30 @@ Mesh:
     e33: 1
   - e00: 0
     e01: -1
-    e02: -1.1641532E-08
+    e02: -0.000000011641532
     e03: -9.9758625
     e10: 1
     e11: 0
-    e12: -2.3283064E-08
+    e12: -0.000000023283064
     e13: -1.0518662
     e20: 0
-    e21: -2.3283064E-08
+    e21: -0.000000023283064
     e22: 1.0000001
     e23: 1.1629586
     e30: 0
     e31: 0
     e32: 0
     e33: 1
-  - e00: 4.656613E-08
+  - e00: 0.00000004656613
     e01: -1
-    e02: 4.656613E-08
+    e02: 0.00000004656613
     e03: -9.964605
     e10: 1.0000001
-    e11: -4.656613E-08
-    e12: 2.3283064E-08
+    e11: -0.00000004656613
+    e12: 0.000000023283064
     e13: -1.1500583
     e20: 0
-    e21: -2.3283064E-08
+    e21: -0.000000023283064
     e22: 1
     e23: 0.5832949
     e30: 0
@@ -121,13 +121,13 @@ Mesh:
     e31: 0
     e32: 0
     e33: 1
-  m_BoneNameHashes: 2b9cb3.d9db3ae589e7ddc049b33ea54b434c6,7
+  m_BoneNameHashes: 2b9cb3ed9db3ae589e7ddc049b33ea54b434c6c7
   m_RootBoneNameHash: 3351655604
   m_MeshCompression: 3
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexBuffer:
+  m_KeepVertices: 0
+  m_KeepIndices: 0
+  m_IndexBuffer: 
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 0
@@ -166,7 +166,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 3942
@@ -184,13 +184,13 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 1314
@@ -198,11 +198,11 @@ Mesh:
       m_BitSize: 5
     m_NormalSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 5256
@@ -223,6 +223,6 @@ Mesh:
     m_Center: {x: -0.042762697, y: -4.7802753, z: 0.051039398}
     m_Extent: {x: 1.685384, y: 5.227685, z: 1.6263726}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 1

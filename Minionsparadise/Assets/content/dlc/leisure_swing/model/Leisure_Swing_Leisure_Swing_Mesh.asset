@@ -2,11 +2,11 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
-  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Leisure_Swing:Leisure_Swing_Mesh
+  m_Name: Leisure_Swing_Leisure_Swing_Mesh
+  serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -16,7 +16,7 @@ Mesh:
     vertexCount: 187
     localAABB:
       m_Center: {x: -0.0129106045, y: 0.004822887, z: 0.03284192}
-      m_Extent: {x: 1.8710465, y: 6.0535967E-09, z: 1.9292955}
+      m_Extent: {x: 1.8710465, y: 0.0000000060535967, z: 1.9292955}
   - serializedVersion: 2
     firstByte: 1206
     indexCount: 234
@@ -25,7 +25,7 @@ Mesh:
     vertexCount: 80
     localAABB:
       m_Center: {x: -0.6236407, y: 0.004823553, z: 0.12866944}
-      m_Extent: {x: 2.619638, y: 6.6589564E-07, z: 2.0743544}
+      m_Extent: {x: 2.619638, y: 0.00000066589564, z: 2.0743544}
   - serializedVersion: 2
     firstByte: 1674
     indexCount: 1275
@@ -89,13 +89,13 @@ Mesh:
     e31: 0
     e32: 0
     e33: 1
-  m_BoneNameHashes: b1b89504c592fd/020faa87a
+  m_BoneNameHashes: b1b89504c592fdf020faa87a
   m_RootBoneNameHash: 2057894432
   m_MeshCompression: 3
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexBuffer:
+  m_KeepVertices: 0
+  m_KeepIndices: 0
+  m_IndexBuffer: 
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 0
@@ -134,7 +134,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 1860
@@ -152,13 +152,13 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 640
@@ -166,11 +166,11 @@ Mesh:
       m_BitSize: 5
     m_NormalSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 2480
@@ -191,6 +191,6 @@ Mesh:
     m_Center: {x: -0.6236407, y: 1.4272685, z: 0.032782435}
     m_Extent: {x: 2.619638, y: 1.4272685, z: 2.1702414}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 1

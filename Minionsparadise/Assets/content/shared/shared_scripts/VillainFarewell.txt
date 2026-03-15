@@ -1,0 +1,31 @@
+
+-- Flow for Villain Farewell
+
+local kevinFarewellSignal = 'KevinWaveFarewellSignal'
+local villainFarewellSignal = 'VillainPlayFarewellSignal'
+
+local function setWaveAnimations(enabled, villain_id)
+    qs.dispatchSignal(kevinFarewellSignal, enabled);
+    qs.dispatchSignal(villainFarewellSignal, villain_id, enabled)
+end
+
+function villainFarewell(narrative_key, villain_id, resource_id)
+
+    -- Snap camera to villain on ship
+    --TODO
+
+    -- Wave Goodbye!
+    -- setWaveAnimations(true, villain_id)
+
+    -- Show narrative
+   	-- qs.setDialogType('Villain')
+	-- qs.setDialogSound('Play_menu_popUp_01')
+	-- qs.setCharacterImage(resource_id)
+	-- qsutil.waitForDialog(narrative_key)
+
+    -- Stop waving
+    -- setWaveAnimations(false, villain_id)
+
+    -- Resume ship
+    --TODO
+end

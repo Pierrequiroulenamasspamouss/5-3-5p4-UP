@@ -2,11 +2,11 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
-  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Resource_Piranha:Resource_Piranha_Mesh
+  m_Name: Resource_Piranha_Resource_Piranha_Mesh
+  serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -58,7 +58,7 @@ Mesh:
     e11: -0.011528548
     e12: -0.21997781
     e13: 0.60219747
-    e20: 1.2097712E-09
+    e20: 0.0000000012097712
     e21: 0.99862945
     e22: -0.05233595
     e23: -0.14206289
@@ -74,7 +74,7 @@ Mesh:
     e11: -0.011528548
     e12: -0.21997781
     e13: 0.60219747
-    e20: 1.2097712E-09
+    e20: 0.0000000012097712
     e21: 0.99862945
     e22: -0.05233595
     e23: -0.14206289
@@ -210,13 +210,13 @@ Mesh:
     e31: 0
     e32: 0
     e33: 1
-  m_BoneNameHashes: 7ac8f5/3fc285e1e5911c12aa7fb35264b45e660c8a1206135a69f70361da8)b55bbc850d9ebd8*e
+  m_BoneNameHashes: 7ac8f5f3fc285e1e5911c12aa7fb35264b45e660c8a1206135a69f70361da89b55bbc850d9ebd8ae
   m_RootBoneNameHash: 2933451737
   m_MeshCompression: 3
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexBuffer:
+  m_KeepVertices: 0
+  m_KeepIndices: 0
+  m_IndexBuffer: 
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 0
@@ -255,7 +255,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 6288
@@ -273,13 +273,13 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 2204
@@ -287,11 +287,11 @@ Mesh:
       m_BitSize: 5
     m_NormalSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 8384
@@ -312,6 +312,6 @@ Mesh:
     m_Center: {x: -0.024718046, y: 0.123394966, z: 0.0067572594}
     m_Extent: {x: 2.1509814, y: 1.2220858, z: 2.1468742}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 1

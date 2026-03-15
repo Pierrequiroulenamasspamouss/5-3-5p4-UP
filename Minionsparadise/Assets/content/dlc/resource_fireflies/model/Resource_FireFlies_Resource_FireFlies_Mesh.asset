@@ -2,11 +2,11 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
-  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Resource_FireFlies:Resource_FireFlies_Mesh
+  m_Name: Resource_FireFlies_Resource_FireFlies_Mesh
+  serializedVersion: 8
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -34,7 +34,7 @@ Mesh:
     vertexCount: 185
     localAABB:
       m_Center: {x: -0.31329763, y: 0.009999847, z: -0.8431524}
-      m_Extent: {x: 2.400237, y: 1.5320256E-07, z: 2.8105402}
+      m_Extent: {x: 2.400237, y: 0.00000015320256, z: 2.8105402}
   - serializedVersion: 2
     firstByte: 12786
     indexCount: 2592
@@ -125,7 +125,7 @@ Mesh:
     e20: 0
     e21: 0
     e22: 1
-    e23: 7.499778E-14
+    e23: 7.499778e-14
     e30: 0
     e31: 0
     e32: 0
@@ -146,13 +146,13 @@ Mesh:
     e31: 0
     e32: 0
     e33: 1
-  m_BoneNameHashes: 91fb0c(473451218edffd817bf2f64*210dba631a4f66540
+  m_BoneNameHashes: 91fb0c8473451218edffd817bf2f64a210dba631a4f66540
   m_RootBoneNameHash: 2215443345
   m_MeshCompression: 2
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
-  m_IndexBuffer:
+  m_KeepVertices: 0
+  m_KeepIndices: 0
+  m_IndexBuffer: 
   m_Skin: []
   m_VertexData:
     m_CurrentChannels: 0
@@ -191,7 +191,7 @@ Mesh:
       format: 0
       dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 7305
@@ -215,7 +215,7 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 2461
@@ -227,7 +227,7 @@ Mesh:
       m_BitSize: 1
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 9740
@@ -248,6 +248,6 @@ Mesh:
     m_Center: {x: -0.31329763, y: 2.3199887, z: -0.8431524}
     m_Extent: {x: 2.400237, y: 2.7469287, z: 2.8105402}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 1
