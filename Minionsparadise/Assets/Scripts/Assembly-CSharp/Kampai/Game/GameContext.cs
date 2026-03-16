@@ -217,8 +217,6 @@ namespace Kampai.Game
 			injectionBinder.Bind<global::Kampai.Game.PlayGlobalSoundFXCommand>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.Game.UpdatePlayerDLCTierSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.Game.UpdateMarketplaceRepairStateSignal>().ToSingleton();
-			injectionBinder.Bind<global::Kampai.Common.AppResumeCompletedSignal>().ToSingleton().CrossContext();
-			injectionBinder.Bind<global::Kampai.Common.AppFocusGainedCompletedSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.Game.IHelpTipTrackingService>().To<global::Kampai.Game.HelpTipTrackingService>().ToSingleton()
 				.CrossContext();
 			injectionBinder.Bind<global::Kampai.Game.GotoSignal>().ToSingleton().CrossContext();

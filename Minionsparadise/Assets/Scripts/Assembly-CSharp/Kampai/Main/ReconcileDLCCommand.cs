@@ -19,62 +19,25 @@ namespace Kampai.Main
 		public override void Execute()
 		{
 			global::Kampai.Util.TimeProfiler.StartSection("reconcile dlc");
-			global::System.Collections.Generic.List<global::Kampai.Util.BundleInfo> bundles = manifestService.GetBundles();
-			global::System.Collections.Generic.List<global::Kampai.Util.BundleInfo> list = new global::System.Collections.Generic.List<global::Kampai.Util.BundleInfo>();
-			ulong num = 0uL;
-			int playerDLCTier = dlcService.GetPlayerDLCTier();
-			int num2 = playerDLCTier;
-			foreach (global::Kampai.Util.BundleInfo item in bundles)
-			{
-				string name = item.name;
-				if (IsValidBundle(item))
-				{
-					continue;
-				}
-				if (playerDLCTier >= item.tier)
-				{
-					list.Add(item);
-					num += item.size;
-					if (num2 >= item.tier)
-					{
-						num2 = item.tier - 1;
-					}
-#if !UNITY_WEBPLAYER
-					if (purge && BundleExists(name))
-					{
-						global::System.IO.File.Delete(GetBundlePath(name));
-					}
-#endif
-				}
-				else
-				{
-					logger.Debug("Unable to download: " + name + "    Tier is too high for this user");
-				}
-			}
-#if !UNITY_WEBPLAYER
-			if (purge && global::System.IO.Directory.Exists(global::Kampai.Util.GameConstants.DLC_PATH))
-			{
-				string[] files = global::System.IO.Directory.GetFiles(global::Kampai.Util.GameConstants.DLC_PATH);
-				foreach (string text in files)
-				{
-					string fileNameWithoutExtension = global::System.IO.Path.GetFileNameWithoutExtension(text);
-					if (!text.Equals(".DS_Store") && !manifestService.ContainsBundle(fileNameWithoutExtension))
-					{
-						global::System.IO.File.Delete(text);
-					}
-				}
-			}
-#endif
-			model.NeededBundles = list;
-			model.HighestTierDownloaded = num2;
-			model.TotalSize = num;
-			logger.Debug("ReconcileDLCCommand BundlesNeeded: {0} {1} Mb", list.Count, (double)num / 1024.0 / 1024.0);
+			
+			// Always report zero needed bundles to achieve DLC independence.
+			model.NeededBundles = new global::System.Collections.Generic.List<global::Kampai.Util.BundleInfo>();
+			model.TotalSize = 0uL;
+			model.HighestTierDownloaded = 999;
+			
+			logger.Info("ReconcileDLCCommand: DLC reconciliation disabled. Reporting 0 needed bundles.");
+			
 			global::Kampai.Util.TimeProfiler.EndSection("reconcile dlc");
 		}
 
 		private string GetBundlePath(string name)
 		{
-			return global::System.IO.Path.Combine(global::Kampai.Util.GameConstants.DLC_PATH, name + ".unity3d");
+			string bundleLocation = manifestService.GetBundleLocation(name);
+			if (string.IsNullOrEmpty(bundleLocation))
+			{
+				return global::System.IO.Path.Combine(global::Kampai.Util.GameConstants.DLC_PATH, name + ".unity3d");
+			}
+			return global::System.IO.Path.Combine(bundleLocation, name + ".unity3d");
 		}
 
 		private bool BundleExists(string name)

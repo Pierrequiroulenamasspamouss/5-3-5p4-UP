@@ -137,17 +137,28 @@ namespace Kampai.Common.Service.Audio
 		{
 			logger.Debug("Starting Load of Audio Assets from Bundles");
 			allBanksAsyncSW = global::System.Diagnostics.Stopwatch.StartNew();
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+			logger.Debug("LoadAllFromAssetBundles: Skipping DLC audio bundle loading on Windows/Editor. Banks will be loaded from StreamingAssets/FMOD.");
+			StartAsyncBankLoadingProcessing();
+#else
 			foreach (string audioBundle in _manifestService.GetAudioBundles())
 			{
 				LoadFromAssetBundleAsync(audioBundle);
 			}
 			StartAsyncBankLoadingProcessing();
+#endif
 		}
 
 		private string GetEventMapFilePath()
 		{
 #if UNITY_EDITOR
 			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android/Raw_FMOD_GlobalMap.json");
+			if (global::System.IO.File.Exists(path))
+			{
+				return path;
+			}
+#elif UNITY_STANDALONE_WIN
+			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Windows/Raw_FMOD_GlobalMap.json");
 			if (global::System.IO.File.Exists(path))
 			{
 				return path;
@@ -249,7 +260,8 @@ namespace Kampai.Common.Service.Audio
 
 		private global::System.Collections.IEnumerator ProcessAsyncBankLoading()
 		{
-			while (true)
+			int maxIterations = 300; // ~5 minutes at 60fps before giving up
+			while (maxIterations-- > 0)
 			{
 				int queueCount = pendingBanks.Count;
 				while (queueCount-- != 0)
@@ -290,6 +302,15 @@ namespace Kampai.Common.Service.Audio
 					break;
 				}
 				yield return null;
+			}
+			if (pendingBanks.Count > 0)
+			{
+				logger.Error("{0}: Timed out waiting for {1} audio bank(s) to load. Clearing to unblock game start.", "FMODService", pendingBanks.Count);
+				while (pendingBanks.Count > 0)
+				{
+					var pb = pendingBanks.Dequeue();
+					if (pb.Bank != null) pb.Bank.unload();
+				}
 			}
 			logger.Debug("{0}: All banks are loaded asynchronously in : {1}", "FMODService", allBanksAsyncSW.Elapsed);
 		}
@@ -373,10 +394,14 @@ namespace Kampai.Common.Service.Audio
 		{
 			logger.Debug("Start Loading Streaming Audio Banks");
 #if UNITY_EDITOR
-			string fmodAndroidPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android");
-			if (global::System.IO.Directory.Exists(fmodAndroidPath))
+			string fmodPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android");
+#elif UNITY_STANDALONE_WIN
+			string fmodPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Windows");
+#endif
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+			if (global::System.IO.Directory.Exists(fmodPath))
 			{
-				string[] files = global::System.IO.Directory.GetFiles(fmodAndroidPath, "*.bank");
+				string[] files = global::System.IO.Directory.GetFiles(fmodPath, "*.bank");
 				foreach (string file in files)
 				{
 					if (FMOD_StudioSystem.instance.IsPaused())
@@ -388,7 +413,7 @@ namespace Kampai.Common.Service.Audio
 			}
 			else
 			{
-				logger.Error("LoadStreamingAudioBanks: FMOD/Android directory not found in StreamingAssets.");
+				logger.Error("LoadStreamingAudioBanks: FMOD directory not found at: {0}", fmodPath);
 			}
 #else
 			global::System.Collections.Generic.List<string> streamingBanks = localContentService.GetStreamingAudioBanks();

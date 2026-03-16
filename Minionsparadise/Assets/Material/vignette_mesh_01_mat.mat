@@ -7,14 +7,28 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: vignette_mesh_01_mat
-  m_Shader: {fileID: 4800000, guid: 77bbd4315f083e34087c64850bfe9556, type: 3}
+  m_Shader: {fileID: 4800000, guid: 6e6ccdc8d3e3a5045a5319e5f0bf5da6, type: 3}
   m_ShaderKeywords: TEXTURE_ALPHA
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
-    m_TexEnvs: {}
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MatCap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -30,12 +44,16 @@ Material:
         second: 0.5
       data:
         first:
-          name: _ZTest
-        second: 4
-      data:
-        first:
           name: _ZWrite
         second: 0
+      data:
+        first:
+          name: _Mode
+        second: 2
+      data:
+        first:
+          name: _ZTest
+        second: 4
       data:
         first:
           name: _OffsetFactor
@@ -46,8 +64,8 @@ Material:
         second: 0
       data:
         first:
-          name: _Mode
-        second: 2
+          name: _FadeAlpha
+        second: 1
       data:
         first:
           name: _LayerIndex
@@ -66,6 +84,10 @@ Material:
         second: 1
       data:
         first:
+          name: _boost
+        second: 0
+      data:
+        first:
           name: _Gradient
         second: 3.881215
       data:
@@ -80,10 +102,6 @@ Material:
         first:
           name: _Max
         second: 0.5
-      data:
-        first:
-          name: _boost
-        second: 0
       data:
         first:
           name: _TransparentMaxVal
@@ -128,6 +146,14 @@ Material:
         first:
           name: _vignette_size
         second: -0.089285694
+      data:
+        first:
+          name: _NumFrames
+        second: 4
+      data:
+        first:
+          name: _ScrollSpeed
+        second: 4
     m_Colors:
       data:
         first:

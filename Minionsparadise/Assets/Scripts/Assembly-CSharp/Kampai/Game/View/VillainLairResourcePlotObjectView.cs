@@ -332,12 +332,16 @@ namespace Kampai.Game.View
 				vFXScript.Init();
 				vFXScript.TriggerState("OnStop");
 			}
-			if (componentsInChildren.Length == 1)
+			if (componentsInChildren.Length > 0)
 			{
+				if (componentsInChildren.Length > 1)
+				{
+					logger.Warning("Multiple VFX Scripts ({0}) found on {1}. Using the first one.", componentsInChildren.Length, base.name);
+				}
 				TrackVFX(componentsInChildren[0]);
 				return;
 			}
-			logger.Warning("Invalid number of VFX Scripts on this object: {0}", componentsInChildren.Length);
+			logger.Info("No VFX Scripts found on this object: {0}", base.name);
 		}
 
 		private void SetSiblingVFXScript(global::UnityEngine.GameObject sibling, global::Kampai.Util.VFXScript vfxScript)

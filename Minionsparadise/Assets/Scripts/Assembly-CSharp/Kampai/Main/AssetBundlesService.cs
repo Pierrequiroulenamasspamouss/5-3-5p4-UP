@@ -23,6 +23,14 @@ namespace Kampai.Main
 				logger.Fatal(global::Kampai.Util.FatalCode.DLC_DEPENDENCY_MANIFEST_ERROR, 1);
 			}
 			string bundlePath = GetBundlePath(bundleByOriginalName);
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+			if (!global::System.IO.File.Exists(bundlePath))
+			{
+				logger.Warning("Dependency manifest bundle '{0}' not found at '{1}'. Initializing empty manifest.", bundleByOriginalName, bundlePath);
+				dependencyManifest = new global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.List<string>>();
+				return;
+			}
+#endif
 			try
 			{
 #if !UNITY_WEBPLAYER
@@ -43,11 +51,12 @@ namespace Kampai.Main
 			}
 			catch (global::System.Exception ex)
 			{
-				logger.Fatal(global::Kampai.Util.FatalCode.DLC_DEPENDENCY_MANIFEST_ERROR, 2, "Failed to load '{0}': {1}'", bundleByOriginalName, ex.ToString());
+				logger.Error("Failed to load '{0}': {1}'", bundleByOriginalName, ex.ToString());
+				dependencyManifest = new global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.List<string>>();
 			}
 			if (dependencyManifest == null)
 			{
-				logger.Fatal(global::Kampai.Util.FatalCode.DLC_DEPENDENCY_MANIFEST_ERROR, 3);
+				dependencyManifest = new global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.List<string>>();
 			}
 		}
 
@@ -124,13 +133,24 @@ namespace Kampai.Main
 			string bundlePath = GetBundlePath(bundleName);
 #if !UNITY_WEBPLAYER
 			if (!global::System.IO.File.Exists(bundlePath))
+			{
+				string fallbackPath = global::System.IO.Path.Combine(global::Kampai.Util.GameConstants.PRE_INSTALLED_DLC_PATH, bundleName + ".unity3d");
+				if (global::System.IO.File.Exists(fallbackPath))
+				{
+					logger.Info("Falling back to pre-installed bundle for '{0}'", bundleName);
+					bundlePath = fallbackPath;
+				}
+				else
+				{
+					logger.Error("Content bundle '{0}' was not found. ('{1}')", manifestService.GetBundleOriginalName(bundleName), bundlePath);
+					return null;
+				}
+			}
 #else
 			if (false)
-#endif
 			{
-				logger.Error("Content bundle '{0}' was not found. ('{1}')", manifestService.GetBundleOriginalName(bundleName), bundlePath);
-				return null;
 			}
+#endif
 			global::UnityEngine.AssetBundle assetBundle = global::UnityEngine.AssetBundle.LoadFromFile(bundlePath);
 			if (null == assetBundle)
 			{

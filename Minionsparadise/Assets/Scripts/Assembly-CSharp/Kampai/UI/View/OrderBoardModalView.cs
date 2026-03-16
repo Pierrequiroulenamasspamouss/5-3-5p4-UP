@@ -111,7 +111,7 @@ namespace Kampai.UI.View
 				component.HighlightTicket(true);
 			}
 			TicketSlots.Add(component);
-			rectTransform.parent = base.transform;
+			rectTransform.SetParent(base.transform, false);
 		}
 
 		internal void SetupDeleteOrderButton(bool active)

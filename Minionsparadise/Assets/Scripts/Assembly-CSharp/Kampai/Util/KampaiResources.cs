@@ -1,332 +1,401 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
+using Kampai.Common;
+using Kampai.Main;
+using Kampai.Splash;
+using Object = UnityEngine.Object;
+
 namespace Kampai.Util
 {
-	public static class KampaiResources
-	{
-		private sealed class AssetsCache
-		{
-			private readonly global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.Dictionary<global::System.Type, global::UnityEngine.Object>> cache = new global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.Dictionary<global::System.Type, global::UnityEngine.Object>>(4096);
+    public static class KampaiResources
+    {
+        private sealed class AssetsCache
+        {
+            private readonly Dictionary<string, Dictionary<Type, Object>> _cache = new Dictionary<string, Dictionary<Type, Object>>(4096);
 
-			public global::UnityEngine.Object Get(string name, global::System.Type type)
-			{
-				global::System.Collections.Generic.Dictionary<global::System.Type, global::UnityEngine.Object> value;
-				if (name == null || !cache.TryGetValue(name, out value))
-				{
-					return null;
-				}
-				global::UnityEngine.Object value2;
-				return (!value.TryGetValue(type, out value2)) ? null : value2;
-			}
+            public Object Get(string name, Type type)
+            {
+                if (string.IsNullOrEmpty(name)) return null;
+                
+                Dictionary<Type, Object> typeDict;
+                if (!_cache.TryGetValue(name, out typeDict)) return null;
+                
+                Object obj;
+                return typeDict.TryGetValue(type, out obj) ? obj : null;
+            }
 
-			public void Clear()
-			{
-				foreach (global::System.Collections.Generic.KeyValuePair<string, global::System.Collections.Generic.Dictionary<global::System.Type, global::UnityEngine.Object>> item in cache)
-				{
-					foreach (global::System.Collections.Generic.KeyValuePair<global::System.Type, global::UnityEngine.Object> item2 in item.Value)
-					{
-						if (!(item2.Value is global::UnityEngine.GameObject))
-						{
-							global::UnityEngine.Resources.UnloadAsset(item2.Value);
-						}
-					}
-				}
-				cache.Clear();
-				global::System.GC.Collect();
-				global::System.GC.WaitForPendingFinalizers();
-			}
+            public void Add(string name, Object obj, Type type)
+            {
+                if (obj == null || string.IsNullOrEmpty(name)) return;
+                
+                Dictionary<Type, Object> typeDict;
+                if (!_cache.TryGetValue(name, out typeDict))
+                {
+                    typeDict = new Dictionary<Type, Object>(1);
+                    _cache.Add(name, typeDict);
+                }
+                
+                typeDict[type] = obj;
+            }
 
-			public void Add(string name, global::UnityEngine.Object obj, global::System.Type type)
-			{
-				global::System.Collections.Generic.Dictionary<global::System.Type, global::UnityEngine.Object> value;
-				if (!cache.TryGetValue(name, out value))
-				{
-					value = new global::System.Collections.Generic.Dictionary<global::System.Type, global::UnityEngine.Object>(1);
-					cache.Add(name, value);
-				}
-				value.Add(type, obj);
-			}
-		}
+            public void Clear()
+            {
+                foreach (Dictionary<Type, Object> typeDict in _cache.Values)
+                {
+                    foreach (Object obj in typeDict.Values)
+                    {
+                        if (obj != null && !(obj is GameObject) && !(obj is Component))
+                        {
+                            Resources.UnloadAsset(obj);
+                        }
+                    }
+                }
+                _cache.Clear();
+            }
+        }
 
-		private static global::Kampai.Common.IManifestService manifestService;
+        private static IManifestService _manifestService;
+        private static IAssetBundlesService _assetBundlesService;
+        private static ILocalContentService _localContentService;
+        private static IKampaiLogger _logger;
+        private static readonly AssetsCache _cachedObjects = new AssetsCache();
 
-		private static global::Kampai.Main.IAssetBundlesService assetBundlesService;
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+        private static Dictionary<string, string> _editorAssetPathMap;
 
-		private static global::Kampai.Main.ILocalContentService localContentService;
+        private static void InitializeEditorAssetMap()
+        {
+            if (_editorAssetPathMap != null) return;
+            
+            _editorAssetPathMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            string dataPath = Application.dataPath.Replace('\\', '/');
+            
+            // List of directories to scan for local assets
+            string[] searchDirs = { "/content", "/Shader", "/Resources" };
 
-		private static global::Kampai.Util.IKampaiLogger logger;
+            foreach (string searchDir in searchDirs)
+            {
+                string fullPath = dataPath + searchDir;
+                if (!Directory.Exists(fullPath))
+                {
+                    // Try fallback relative to executable for standalone
+                    string parentPath = Path.GetDirectoryName(dataPath);
+                    if (parentPath != null)
+                    {
+                        fullPath = parentPath.Replace('\\', '/') + "/Assets" + searchDir;
+                    }
+                }
 
-		private static readonly global::Kampai.Util.KampaiResources.AssetsCache cachedObjects = new global::Kampai.Util.KampaiResources.AssetsCache();
+                if (Directory.Exists(fullPath))
+                {
+                    if (_logger != null) _logger.Debug(string.Format("KampaiResources: Scanning local directory '{0}'", fullPath));
+                    string[] files = Directory.GetFiles(fullPath, "*.*", SearchOption.AllDirectories);
+                    foreach (string file in files)
+                    {
+                        string normalizedFile = file.Replace('\\', '/');
+                        if (normalizedFile.EndsWith(".meta")) continue;
 
-#if UNITY_EDITOR
-		private static global::System.Collections.Generic.Dictionary<string, string> editorAssetPathMap;
-
-		private static void InitializeEditorAssetMap()
-		{
-			if (editorAssetPathMap != null) return;
-			editorAssetPathMap = new global::System.Collections.Generic.Dictionary<string, string>(global::System.StringComparer.OrdinalIgnoreCase);
-			string contentPath = global::System.IO.Path.Combine(global::UnityEngine.Application.dataPath, "content");
-			if (!global::System.IO.Directory.Exists(contentPath)) return;
-
-			string[] files = global::System.IO.Directory.GetFiles(contentPath, "*.*", global::System.IO.SearchOption.AllDirectories);
-			foreach (string file in files)
-			{
-				if (file.EndsWith(".meta")) continue;
-				string fileName = global::System.IO.Path.GetFileNameWithoutExtension(file);
-				// Standard names or GUID names from manifest
-				if (!editorAssetPathMap.ContainsKey(fileName))
-				{
-					string relativePath = "Assets" + file.Substring(global::UnityEngine.Application.dataPath.Length).Replace('\\', '/');
-					editorAssetPathMap.Add(fileName, relativePath);
-				}
-			}
-		}
+                        string fileName = Path.GetFileNameWithoutExtension(normalizedFile);
+                        if (!_editorAssetPathMap.ContainsKey(fileName))
+                        {
+                            int assetsIdx = normalizedFile.IndexOf("/Assets/", StringComparison.OrdinalIgnoreCase);
+                            if (assetsIdx >= 0)
+                            {
+                                string relativePath = normalizedFile.Substring(assetsIdx + 1);
+                                _editorAssetPathMap.Add(fileName, relativePath);
+                            }
+                            else
+                            {
+                                // If mapping failed to find /Assets/, try a simpler "Assets/..." path
+                                string relativePath = "Assets" + searchDir + normalizedFile.Substring(fullPath.Length);
+                                _editorAssetPathMap.Add(fileName, relativePath);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (_logger != null) _logger.Warning(string.Format("KampaiResources: Local directory '{0}' NOT FOUND", fullPath));
+                }
+            }
+            if (_logger != null) _logger.Info(string.Format("KampaiResources: Initialized local asset map with {0} entries", _editorAssetPathMap.Count));
+        }
 #endif
 
-		public static void SetManifestService(global::Kampai.Common.IManifestService service)
-		{
-			manifestService = service;
-		}
+        public static void SetManifestService(IManifestService service) 
+        { 
+            _manifestService = service; 
+        }
+        
+        public static void SetAssetBundlesService(IAssetBundlesService service) 
+        { 
+            _assetBundlesService = service; 
+        }
+        
+        public static void SetLocalContentService(ILocalContentService service) 
+        { 
+            _localContentService = service; 
+        }
+        
+        public static void SetLogger() 
+        {
+            _logger = Elevation.Logging.LogManager.GetClassLogger("KampaiResources") as IKampaiLogger;
+        }
 
-		public static void SetAssetBundlesService(global::Kampai.Main.IAssetBundlesService service)
-		{
-			assetBundlesService = service;
-		}
+        public static void ClearCache() 
+        { 
+            _cachedObjects.Clear(); 
+        }
 
-		public static void SetLocalContentService(global::Kampai.Main.ILocalContentService service)
-		{
-			localContentService = service;
-		}
+        public static bool FileExists(string path)
+        {
+            if (_manifestService == null || _localContentService == null) return false;
+            return _manifestService.GetAssetLocation(path).Length > 0 || _localContentService.IsLocalAsset(path);
+        }
 
-		public static void SetLogger()
-		{
-			logger = global::Elevation.Logging.LogManager.GetClassLogger("KampaiResources") as global::Kampai.Util.IKampaiLogger;
-		}
+        public static bool FileDownloaded(string path, DLCModel dlcModel)
+        {
+            string assetLocation = _manifestService.GetAssetLocation(path);
+            if (string.IsNullOrEmpty(assetLocation))
+            {
+                return _localContentService.IsLocalAsset(path);
+            }
+            int bundleTier = _manifestService.GetBundleTier(assetLocation);
+            return dlcModel.HighestTierDownloaded >= bundleTier;
+        }
 
-		public static void ClearCache()
-		{
-			cachedObjects.Clear();
-		}
+        public static bool IsAssetTierGated(string asset) 
+        {
+            return _manifestService.IsAssetTierTooHigh(asset);
+        }
 
-		public static bool FileExists(string path)
-		{
-			return manifestService.GetAssetLocation(path).Length > 0 || localContentService.IsLocalAsset(path);
-		}
+        public static T Load<T>(string path) where T : class 
+        {
+            return Load(path, typeof(T)) as T;
+        }
 
-		public static T Load<T>(string path) where T : class
-		{
-			object obj = Load(path, typeof(T));
-			return obj as T;
-		}
+        public static Object Load(string path) 
+        {
+            return Load(path, typeof(Object));
+        }
 
-		public static global::UnityEngine.Object Load(string path)
-		{
-			return Load(path, typeof(global::UnityEngine.Object));
-		}
+        public static Object Load(string path, Type type)
+        {
+            if (_logger != null) _logger.Debug(string.Format("KampaiResources.Load('{0}', type={1})", path, type != null ? type.Name : "null"));
+            
+            Object cached = _cachedObjects.Get(path, type);
+            if (cached != null) return cached;
 
-		public static global::UnityEngine.AsyncOperation LoadAsync(string path, global::Kampai.Util.IRoutineRunner routineRunner, global::System.Action<global::UnityEngine.Object> onComplete = null)
-		{
-			return LoadAsync(path, typeof(global::UnityEngine.Object), routineRunner, onComplete);
-		}
+            TimeProfiler.StartAssetLoadSection(path);
+            Object result = null;
+            string resolvedPath;
+            bool isEditorDatabasePath;
 
-		public static bool FileDownloaded(string path, global::Kampai.Splash.DLCModel dlcModel)
-		{
-			string assetLocation = manifestService.GetAssetLocation(path);
-			if (assetLocation.Length == 0)
-			{
-				return localContentService.IsLocalAsset(path);
-			}
-			int bundleTier = manifestService.GetBundleTier(assetLocation);
-			return dlcModel.HighestTierDownloaded >= bundleTier;
-		}
-
-		public static global::System.Collections.IEnumerator LoadAsyncWait(global::UnityEngine.AsyncOperation request, global::System.Action<global::UnityEngine.Object> onComplete, string name, global::System.Type type)
-		{
-			if (request == null)
-			{
-				yield break;
-			}
-			yield return request;
-			global::UnityEngine.Object obj = null;
-			global::UnityEngine.ResourceRequest resourceRequest = request as global::UnityEngine.ResourceRequest;
-			if (resourceRequest != null)
-			{
-				obj = resourceRequest.asset;
-			}
-			else
-			{
-				global::UnityEngine.AssetBundleRequest assetRequest = request as global::UnityEngine.AssetBundleRequest;
-				if (assetRequest != null)
-				{
-					obj = assetRequest.asset;
-				}
-			}
-			if (obj != null)
-			{
-				cachedObjects.Add(name, obj, type);
-				if (onComplete != null)
-				{
-					onComplete(obj);
-				}
-			}
-		}
-
-		public static global::UnityEngine.AsyncOperation LoadAsync(string path, global::System.Type type, global::Kampai.Util.IRoutineRunner routineRunner, global::System.Action<global::UnityEngine.Object> onComplete = null)
-		{
-			global::UnityEngine.Object obj = cachedObjects.Get(path, type);
-			if (obj != null)
-			{
-				if (onComplete != null)
-				{
-					onComplete(obj);
-				}
-				return null;
-			}
-			global::UnityEngine.AsyncOperation asyncOperation = null;
-
+            if (TryGetLocalAssetPath(path, out resolvedPath, out isEditorDatabasePath))
+            {
+                if (_logger != null) _logger.Debug(string.Format("  - Local path found: '{0}' (isEditor={1})", resolvedPath, isEditorDatabasePath));
 #if UNITY_EDITOR
-			InitializeEditorAssetMap();
-			string fileName = global::System.IO.Path.GetFileNameWithoutExtension(path);
-			if (editorAssetPathMap.ContainsKey(fileName))
-			{
-				string assetPath = editorAssetPathMap[fileName];
-				global::UnityEngine.Object editorObj = global::UnityEditor.AssetDatabase.LoadAssetAtPath(assetPath, type);
-				if (editorObj != null)
-				{
-					cachedObjects.Add(path, editorObj, type);
-					if (onComplete != null) onComplete(editorObj);
-					return null;
-				}
-			}
+                if (isEditorDatabasePath)
+                {
+                    result = UnityEditor.AssetDatabase.LoadAssetAtPath(resolvedPath, type);
+                    if (result == null && _logger != null) _logger.Warning(string.Format("  - AssetDatabase failed to load at '{0}'", resolvedPath));
+                }
 #endif
+                if (result == null)
+                {
+                    result = Resources.Load(resolvedPath, type);
+                    if (result != null && _logger != null) _logger.Debug(string.Format("  - Resources.Load success: '{0}'", resolvedPath));
+                }
 
-			string assetLocation = manifestService.GetAssetLocation(path);
-			if (assetLocation.Length == 0)
-			{
-				global::UnityEngine.Object obj2 = Load(path, type);
-				if (onComplete != null)
-				{
-					onComplete(obj2);
-				}
-				return null;
-			}
-			global::UnityEngine.AssetBundle assetBundle;
-			if (assetBundlesService.IsSharedBundle(assetLocation))
-			{
-				assetBundle = assetBundlesService.GetSharedBundle(assetLocation);
-				if (assetBundle == null)
-				{
-					logger.Debug(string.Format("assetBundlesService.GetSharedBundle({0}) returned a null bundle", assetLocation));
-				}
-			}
-			else
-			{
-				assetBundle = assetBundlesService.GetDLCBundle(assetLocation);
-				if (assetBundle == null)
-				{
-					logger.Debug(string.Format("assetBundlesService.GetDLCBundle({0}) returned a null bundle", assetLocation));
-				}
-			}
-			if (assetBundle != null)
-			{
-				asyncOperation = assetBundle.LoadAssetAsync(path, type);
-			}
-			if (asyncOperation != null)
-			{
-				routineRunner.StartCoroutine(LoadAsyncWait(asyncOperation, onComplete, path, type));
-			}
-			else
-			{
-				logger.Error("KampaiResources.Load is returning NULL for object " + path);
-			}
-			return asyncOperation;
-		}
+                if (result != null)
+                {
+                    _cachedObjects.Add(path, result, type);
+                    TimeProfiler.EndAssetLoadSection();
+                    return result;
+                }
+            }
+            else
+            {
+                if (_logger != null) _logger.Debug(string.Format("  - No local path for '{0}'", path));
+            }
 
-		public static bool IsAssetTierGated(string asset)
-		{
-			return manifestService.IsAssetTierTooHigh(asset);
-		}
+            string assetLocation = _manifestService.GetAssetLocation(path);
+            if (_logger != null) _logger.Debug(string.Format("  - Manifest location: '{0}'", assetLocation));
+            
+            bool isGated = !string.IsNullOrEmpty(assetLocation) && _manifestService.IsBundleTierTooHigh(assetLocation);
 
-		public static global::UnityEngine.Object Load(string path, global::System.Type type)
-		{
-			global::UnityEngine.Object obj = cachedObjects.Get(path, type);
-			if (null != obj)
-			{
-				return obj;
-			}
-			global::Kampai.Util.TimeProfiler.StartAssetLoadSection(path);
-			global::UnityEngine.Object obj2 = null;
+            if (string.IsNullOrEmpty(assetLocation))
+            {
+                _logger.Error(string.Format("Unable to find bundle or local asset for '{0}'.", path));
+            }
+            else if (!isGated)
+            {
+                AssetBundle bundle = GetBundleFromService(assetLocation);
+                if (bundle != null)
+                {
+                    result = bundle.LoadAsset(path, type);
+                }
+            }
 
+            if (result != null)
+            {
+                _cachedObjects.Add(path, result, type);
+            }
+            else if (!isGated)
+            {
+                _logger.Error(string.Format("KampaiResources.Load is returning NULL for object '{0}'", path));
+            }
+            else
+            {
+                _logger.Info(string.Format("Asset '{0}' is not available for the current tier", path));
+            }
+
+            TimeProfiler.EndAssetLoadSection();
+            return result;
+        }
+
+        public static AsyncOperation LoadAsync(string path, IRoutineRunner routineRunner, Action<Object> onComplete = null)
+        {
+            return LoadAsync(path, typeof(Object), routineRunner, onComplete);
+        }
+
+        public static AsyncOperation LoadAsync(string path, Type type, IRoutineRunner routineRunner, Action<Object> onComplete = null)
+        {
+            Object cached = _cachedObjects.Get(path, type);
+            if (cached != null)
+            {
+                if (onComplete != null) onComplete(cached);
+                return null;
+            }
+
+            string resolvedPath;
+            bool isEditorPath;
+
+            if (TryGetLocalAssetPath(path, out resolvedPath, out isEditorPath))
+            {
 #if UNITY_EDITOR
-			InitializeEditorAssetMap();
-			string fileName = global::System.IO.Path.GetFileNameWithoutExtension(path);
-			if (editorAssetPathMap.ContainsKey(fileName))
-			{
-				string assetPath = editorAssetPathMap[fileName];
-				obj2 = global::UnityEditor.AssetDatabase.LoadAssetAtPath(assetPath, type);
-				if (obj2 != null)
-				{
-					cachedObjects.Add(path, obj2, type);
-					global::Kampai.Util.TimeProfiler.EndAssetLoadSection();
-					return obj2;
-				}
-			}
+                if (isEditorPath)
+                {
+                    Object editorObj = UnityEditor.AssetDatabase.LoadAssetAtPath(resolvedPath, type);
+                    _cachedObjects.Add(path, editorObj, type);
+                    if (onComplete != null) onComplete(editorObj);
+                    return null;
+                }
 #endif
+                ResourceRequest request = Resources.LoadAsync(resolvedPath, type);
+                routineRunner.StartCoroutine(LoadAsyncWait(request, onComplete, path, type));
+                return request;
+            }
 
-			string assetLocation = manifestService.GetAssetLocation(path);
-			bool flag = assetLocation.Length > 0 && manifestService.IsBundleTierTooHigh(assetLocation);
-			if (assetLocation.Length == 0)
-			{
-				if (localContentService.IsLocalAsset(path))
-				{
-					string assetPath = localContentService.GetAssetPath(path);
-					obj2 = global::UnityEngine.Resources.Load(assetPath, type);
-					if (obj2 == null)
-					{
-						logger.Error(string.Format("Resources.Load( {0}, {1}) returned a null value", assetPath, type.ToString()));
-					}
-				}
-				else
-				{
-					logger.Error(string.Format("Unable to find bundle for '{0}'. This should only be an issue if you see it on device.", path));
-				}
-			}
-			else if (!flag)
-			{
-				global::UnityEngine.AssetBundle assetBundle;
-				if (assetBundlesService.IsSharedBundle(assetLocation))
-				{
-					assetBundle = assetBundlesService.GetSharedBundle(assetLocation);
-					if (assetBundle == null)
-					{
-						logger.Error(string.Format("assetBundlesService.GetSharedBundle({0}) returned a null bundle", assetLocation));
-					}
-				}
-				else
-				{
-					assetBundle = assetBundlesService.GetDLCBundle(assetLocation);
-					if (assetBundle == null)
-					{
-						logger.Error(string.Format("assetBundlesService.GetDLCBundle({0}) returned a null bundle", assetLocation));
-					}
-				}
-				if (null != assetBundle)
-				{
-					obj2 = assetBundle.LoadAsset(path, type);
-				}
-			}
-			if (null != obj2)
-			{
-				cachedObjects.Add(path, obj2, type);
-			}
-			else if (!flag)
-			{
-				logger.Error("KampaiResources.Load is returning NULL for object '{0}'", path);
-			}
-			else
-			{
-				logger.Info("Asset '{0}' is not available for the current tier", path);
-			}
-			global::Kampai.Util.TimeProfiler.EndAssetLoadSection();
-			return obj2;
-		}
-	}
+            string assetLocation = _manifestService.GetAssetLocation(path);
+            if (string.IsNullOrEmpty(assetLocation))
+            {
+                Object obj = Load(path, type); 
+                if (onComplete != null) onComplete(obj);
+                return null;
+            }
+
+            AssetBundle bundle = GetBundleFromService(assetLocation);
+            AsyncOperation bundleOp = null;
+            
+            if (bundle != null) 
+            {
+                bundleOp = bundle.LoadAssetAsync(path, type);
+            }
+
+            if (bundleOp != null)
+            {
+                routineRunner.StartCoroutine(LoadAsyncWait(bundleOp, onComplete, path, type));
+            }
+            else
+            {
+                _logger.Error(string.Format("KampaiResources.LoadAsync failed for {0}", path));
+            }
+
+            return bundleOp;
+        }
+
+        private static IEnumerator LoadAsyncWait(AsyncOperation request, Action<Object> onComplete, string name, Type type)
+        {
+            if (request == null) yield break;
+            yield return request;
+
+            Object obj = null;
+            
+            ResourceRequest resReq = request as ResourceRequest;
+            if (resReq != null)
+            {
+                obj = resReq.asset;
+            }
+            else 
+            {
+                AssetBundleRequest abReq = request as AssetBundleRequest;
+                if (abReq != null)
+                {
+                    obj = abReq.asset;
+                }
+            }
+
+            if (obj != null)
+            {
+                _cachedObjects.Add(name, obj, type);
+                if (onComplete != null) onComplete(obj);
+            }
+        }
+
+        private static bool TryGetLocalAssetPath(string path, out string resolvedPath, out bool isEditorPath)
+        {
+            resolvedPath = null;
+            isEditorPath = false;
+
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+            InitializeEditorAssetMap();
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            
+            string editorPath;
+            if (_editorAssetPathMap != null && _editorAssetPathMap.TryGetValue(fileName, out editorPath))
+            {
+#if UNITY_EDITOR
+                resolvedPath = editorPath;
+                isEditorPath = true;
+                return true;
+#else
+                if (editorPath.Contains("/Resources/"))
+                {
+                    int resIndex = editorPath.IndexOf("/Resources/", StringComparison.Ordinal) + 11;
+                    resolvedPath = Path.ChangeExtension(editorPath.Substring(resIndex), null);
+                    return true;
+                }
+#endif
+            }
+
+            string localKey = Path.GetFileName(path);
+            if (_localContentService != null && _localContentService.IsLocalAsset(localKey))
+            {
+                resolvedPath = _localContentService.GetAssetPath(localKey);
+                return true;
+            }
+#endif
+            return false;
+        }
+
+        private static AssetBundle GetBundleFromService(string location)
+        {
+            if (_assetBundlesService.IsSharedBundle(location))
+            {
+                AssetBundle b = _assetBundlesService.GetSharedBundle(location);
+                if (b == null) _logger.Debug(string.Format("Shared bundle {0} is null", location));
+                return b;
+            }
+            else
+            {
+                AssetBundle b = _assetBundlesService.GetDLCBundle(location);
+                if (b == null) _logger.Debug(string.Format("DLC bundle {0} is null", location));
+                return b;
+            }
+        }
+    }
 }

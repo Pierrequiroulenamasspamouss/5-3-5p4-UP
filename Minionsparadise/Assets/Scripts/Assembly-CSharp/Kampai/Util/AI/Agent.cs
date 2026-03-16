@@ -188,6 +188,14 @@ namespace Kampai.Util.AI
 
 		protected virtual void Update()
 		{
+			if (Transform == null)
+			{
+				Transform = GetComponent<global::UnityEngine.Transform>();
+				if (Transform == null)
+				{
+					return;
+				}
+			}
 			if (lastUpdateFrame != global::UnityEngine.Time.frameCount)
 			{
 				if (Agents == null)
@@ -202,7 +210,7 @@ namespace Kampai.Util.AI
 			}
 			Position = Transform.position;
 			Forward = VectorUtils.ZeroY(Transform.forward);
-			if (MaxSpeed > 0f)
+			if (MaxSpeed > 0f && environment != null)
 			{
 				global::Kampai.Util.Point p = global::Kampai.Util.Point.FromVector3(Position);
 				if (environment.IsOccupied(p.x, p.y) && !environment.IsWalkable(p.x, p.y))
@@ -213,6 +221,10 @@ namespace Kampai.Util.AI
 				{
 					UpdateNormally(p);
 				}
+			}
+			else if (MaxSpeed > 0f)
+			{
+				// environment not ready yet, skip logic but allow update later
 			}
 			else
 			{
