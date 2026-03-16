@@ -57,10 +57,15 @@ namespace Kampai.Game
 
 		private void ActivateChild(global::UnityEngine.GameObject parent, string childName)
 		{
+			if (parent == null)
+			{
+				logger.Warning("LoadPartyAssetsCommand: Parent is null when trying to activate child: " + childName);
+				return;
+			}
 			global::UnityEngine.GameObject gameObject = parent.FindChild(childName);
 			if (gameObject == null)
 			{
-				logger.Error("LoadPartyAssetsCommand: can't find expected child: " + childName + " in parent: " + parent.name);
+				logger.Warning("LoadPartyAssetsCommand: can't find expected child: " + childName + " in parent: " + parent.name + ". This might happen if the party was unloaded prematurely.");
 			}
 			else
 			{

@@ -17,12 +17,12 @@ namespace Kampai.Game
 
 		public bool Contains(int x, int z)
 		{
-			return x >= 0 && x < PlayerGrid.GetLength(0) && z >= 0 && z < PlayerGrid.GetLength(1);
+			return PlayerGrid != null && x >= 0 && x < PlayerGrid.GetLength(0) && z >= 0 && z < PlayerGrid.GetLength(1);
 		}
 
 		public bool IsOccupied(int x, int z)
 		{
-			return Contains(x, z) && PlayerGrid[x, z].Occupied;
+			return PlayerGrid != null && Contains(x, z) && PlayerGrid[x, z].Occupied;
 		}
 
 		public bool IsOccupied(global::Kampai.Game.Location location)
@@ -32,7 +32,7 @@ namespace Kampai.Game
 
 		public bool IsUnlocked(int x, int z)
 		{
-			return Contains(x, z) && PlayerGrid[x, z].Unlocked;
+			return PlayerGrid != null && Contains(x, z) && PlayerGrid[x, z].Unlocked;
 		}
 
 		public bool IsUnlocked(global::Kampai.Game.Location location)
@@ -42,7 +42,7 @@ namespace Kampai.Game
 
 		public bool IsWalkable(int x, int z)
 		{
-			return Contains(x, z) && PlayerGrid[x, z].Walkable;
+			return PlayerGrid != null && Contains(x, z) && PlayerGrid[x, z].Walkable;
 		}
 
 		public bool IsWalkable(global::Kampai.Game.Location location)
@@ -52,7 +52,7 @@ namespace Kampai.Game
 
 		public bool IsCharacterWalkable(int x, int z)
 		{
-			return Contains(x, z) && PlayerGrid[x, z].CharacterWalkable;
+			return PlayerGrid != null && Contains(x, z) && PlayerGrid[x, z].CharacterWalkable;
 		}
 
 		public bool IsCharacterWalkable(global::Kampai.Game.Location location)
@@ -67,7 +67,7 @@ namespace Kampai.Game
 
 		public bool CompareModifiers(int x, int z, int modifier)
 		{
-			return Contains(x, z) && (PlayerGrid[x, z].Modifier & modifier) == modifier;
+			return PlayerGrid != null && Contains(x, z) && (PlayerGrid[x, z].Modifier & modifier) == modifier;
 		}
 
 		public global::Kampai.Game.Building GetBuilding(int x, int z)

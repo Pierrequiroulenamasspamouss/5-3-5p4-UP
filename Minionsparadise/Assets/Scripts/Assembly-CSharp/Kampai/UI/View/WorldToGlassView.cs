@@ -150,7 +150,7 @@ namespace Kampai.UI.View
 
 		internal virtual bool CanUpdate()
 		{
-			if (targetObject == null)
+			if (targetObject == null || positionService == null)
 			{
 				TargetObjectNullResponse();
 				return false;
@@ -172,7 +172,7 @@ namespace Kampai.UI.View
 
 		internal void LateUpdate()
 		{
-			if (!CanUpdate())
+			if (positionService == null || targetObject == null || !CanUpdate())
 			{
 				Hide();
 				return;
