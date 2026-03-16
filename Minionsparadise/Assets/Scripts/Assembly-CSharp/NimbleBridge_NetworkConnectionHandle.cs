@@ -31,6 +31,7 @@ public class NimbleBridge_NetworkConnectionHandle : global::System.Runtime.Inter
 		});
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_NetworkConnectionHandleWrapper_Dispose(NimbleBridge_NetworkConnectionHandle handleWrapper);
 
@@ -63,66 +64,99 @@ public class NimbleBridge_NetworkConnectionHandle : global::System.Runtime.Inter
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_NetworkConnectionHandle_setCompletionCallback(NimbleBridge_NetworkConnectionHandle networkConnectionHandleWrapper, BridgeNetworkConnectionCallback callback, global::System.IntPtr callbackData);
+#endif
 
 	protected override bool ReleaseHandle()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_NetworkConnectionHandleWrapper_Dispose(this);
+#endif
 		return true;
 	}
 
 	public void Wait()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_NetworkConnectionHandle_wait(this);
+#endif
 	}
 
 	public void Cancel()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_NetworkConnectionHandle_cancel(this);
+#endif
 	}
 
 	public NimbleBridge_HttpRequest GetRequest()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_NetworkConnectionHandle_getRequest(this);
+#else
+		return null;
+#endif
 	}
 
 	public NimbleBridge_HttpResponse GetResponse()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_NetworkConnectionHandle_getResponse(this);
+#else
+		return null;
+#endif
 	}
 
 	public NetworkConnectionCallback GetHeaderCallback()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr dataPtr = NimbleBridge_NetworkConnectionHandle_getHeaderCallback(this);
 		return (NetworkConnectionCallback)NimbleBridge_CallbackHelper.Get().GetData(dataPtr);
+#else
+		return null;
+#endif
 	}
 
 	public void SetHeaderCallback(NetworkConnectionCallback networkConnectionCallback)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr callbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(networkConnectionCallback);
 		NimbleBridge_NetworkConnectionHandle_setHeaderCallback(this, OnNetworkConnectionCallback, callbackData);
+#endif
 	}
 
 	public NetworkConnectionCallback GetProgressCallback()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr dataPtr = NimbleBridge_NetworkConnectionHandle_getProgressCallback(this);
 		return (NetworkConnectionCallback)NimbleBridge_CallbackHelper.Get().GetData(dataPtr);
+#else
+		return null;
+#endif
 	}
 
 	public void SetProgressCallback(NetworkConnectionCallback networkConnectionCallback)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr callbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(networkConnectionCallback);
 		NimbleBridge_NetworkConnectionHandle_setProgressCallback(this, OnNetworkConnectionCallback, callbackData);
+#endif
 	}
 
 	public NetworkConnectionCallback GetCompletionCallback()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr dataPtr = NimbleBridge_NetworkConnectionHandle_getCompletionCallback(this);
 		return (NetworkConnectionCallback)NimbleBridge_CallbackHelper.Get().GetData(dataPtr);
+#else
+		return null;
+#endif
 	}
 
 	public void SetCompletionCallback(NetworkConnectionCallback networkConnectionCallback)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr callbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(networkConnectionCallback);
 		NimbleBridge_NetworkConnectionHandle_setCompletionCallback(this, OnNetworkConnectionCallback, callbackData);
+#endif
 	}
 }

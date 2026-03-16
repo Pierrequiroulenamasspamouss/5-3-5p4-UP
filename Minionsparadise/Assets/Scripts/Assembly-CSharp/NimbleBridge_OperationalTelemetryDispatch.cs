@@ -10,11 +10,13 @@ public class NimbleBridge_OperationalTelemetryDispatch
 	{
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_OperationalTelemetryDispatch_deleteEventsArray(global::System.IntPtr array);
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern global::System.IntPtr NimbleBridge_OperationalTelemetryDispatch_getEvents(string type);
+#endif
 
 	public static NimbleBridge_OperationalTelemetryDispatch GetComponent()
 	{
@@ -23,7 +25,7 @@ public class NimbleBridge_OperationalTelemetryDispatch
 
 	public NimbleBridge_OperationalTelemetryEvent[] GetEvents(string type)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.Collections.Generic.List<NimbleBridge_OperationalTelemetryEvent> list = new global::System.Collections.Generic.List<NimbleBridge_OperationalTelemetryEvent>();
 		global::System.IntPtr intPtr = NimbleBridge_OperationalTelemetryDispatch_getEvents(type);
 		global::System.IntPtr intPtr2 = global::System.Runtime.InteropServices.Marshal.ReadIntPtr(intPtr);
@@ -43,23 +45,27 @@ public class NimbleBridge_OperationalTelemetryDispatch
 
 	public void SetMaxEventCount(string type, int count)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_OperationalTelemetryDispatch_setMaxEventCount(type, count);
 #endif
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_OperationalTelemetryDispatch_setMaxEventCount(string type, int count);
+#endif
 
 	public int GetMaxEventCount(string type)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_OperationalTelemetryDispatch_getMaxEventCount(type);
 #else
 		return 0;
 #endif
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern int NimbleBridge_OperationalTelemetryDispatch_getMaxEventCount(string type);
+#endif
 }

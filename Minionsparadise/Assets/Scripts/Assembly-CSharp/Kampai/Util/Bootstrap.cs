@@ -12,7 +12,9 @@ namespace Kampai.Util
 		{
 			if (HasBuggyBinarysShader())
 			{
+#if UNITY_IOS || UNITY_ANDROID
 				global::UnityEngine.Handheld.ClearShaderCache();
+#endif
 			}
 			global::FMOD.Studio.UnityUtil.ForceLoadLowLevelBinary();
 			global::UnityEngine.Screen.sleepTimeout = -2;

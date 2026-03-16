@@ -53,15 +53,19 @@ public class NimbleBridge_NotificationListener : global::System.Runtime.InteropS
 		});
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_NotificationListener_Dispose(NimbleBridge_NotificationListener listenerWrapper);
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern global::System.IntPtr NimbleBridge_NotificationListener_NotificationListener(NimbleBridge_NotificationListener.BridgeNotificationCallback callback, global::System.IntPtr callbackData);
+#endif
 
 	protected override bool ReleaseHandle()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_NotificationListener_Dispose(this);
+#endif
 		return true;
 	}
 
@@ -70,7 +74,9 @@ public class NimbleBridge_NotificationListener : global::System.Runtime.InteropS
 		if (m_dataPtr == global::System.IntPtr.Zero)
 		{
 			m_dataPtr = NimbleBridge_CallbackHelper.Get().MakeCallbackData(this);
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 			SetHandle(NimbleBridge_NotificationListener_NotificationListener(OnNotificationCallback, m_dataPtr));
+#endif
 		}
 	}
 
@@ -78,7 +84,9 @@ public class NimbleBridge_NotificationListener : global::System.Runtime.InteropS
 	{
 		if (m_dataPtr != global::System.IntPtr.Zero)
 		{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 			NimbleBridge_NotificationListener_Dispose(this);
+#endif
 			m_dataPtr = global::System.IntPtr.Zero;
 			SetHandle(global::System.IntPtr.Zero);
 		}

@@ -263,7 +263,9 @@ namespace Kampai.Game
 			{
 				return;
 			}
+#if UNITY_IOS || UNITY_ANDROID
 			global::UnityEngine.Handheld.Vibrate();
+#endif
 			model.SelectedBuilding = id;
 			model.CurrentMode = global::Kampai.Common.PickControllerModel.Mode.DragAndDrop;
 			global::Kampai.Game.DragOffsetType type = global::Kampai.Game.DragOffsetType.NONE;

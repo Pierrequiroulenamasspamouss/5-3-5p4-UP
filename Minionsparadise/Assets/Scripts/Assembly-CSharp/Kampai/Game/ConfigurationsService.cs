@@ -42,6 +42,9 @@ namespace Kampai.Game
 		[Inject]
 		public global::Kampai.Game.LoadConfigurationSignal loadConfigurationSignal { get; set; }
 
+		[Inject]
+		public global::Kampai.UI.View.ShowOfflinePopupSignal showOfflinePopupSignal { get; set; }
+
 		private global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<global::Kampai.Game.KillSwitch, bool>> killswitchOverrides { get; set; }
 
 		public global::Kampai.Game.ConfigurationDefinition GetConfigurations()
@@ -117,7 +120,7 @@ namespace Kampai.Game
 			{
 				if (!IgnoreError())
 				{
-					logger.Fatal(global::Kampai.Util.FatalCode.CONFIG_NETWORK_FAIL);
+					showOfflinePopupSignal.Dispatch(true);
 					return;
 				}
 				logger.Warning("Network error (code {0}) on non initial configuration request.", response.Code);

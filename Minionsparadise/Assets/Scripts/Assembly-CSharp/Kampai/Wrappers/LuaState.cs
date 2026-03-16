@@ -121,6 +121,15 @@ namespace Kampai.Wrappers
 			public static extern void lua_setupvalue(global::System.IntPtr L, int funcindex, int n);
 
 			[global::System.Runtime.InteropServices.DllImport("lua52")]
+			public static extern void lua_insert(global::System.IntPtr L, int idx);
+			
+			[global::System.Runtime.InteropServices.DllImport("lua52")]
+			public static extern void lua_remove(global::System.IntPtr L, int idx);
+			
+			[global::System.Runtime.InteropServices.DllImport("lua52")]
+			public static extern void lua_replace(global::System.IntPtr L, int idx);
+
+			[global::System.Runtime.InteropServices.DllImport("lua52")]
 			public static extern int lua_error(global::System.IntPtr L);
 		}
 
@@ -416,6 +425,24 @@ namespace Kampai.Wrappers
 		{
 			if (IsInvalid) return -1;
 			return global::Kampai.Wrappers.LuaState.NativeMethods.lua_error(handle);
+		}
+
+		public void lua_insert(int idx)
+		{
+			if (IsInvalid) return;
+			global::Kampai.Wrappers.LuaState.NativeMethods.lua_insert(handle, idx);
+		}
+
+		public void lua_remove(int idx)
+		{
+			if (IsInvalid) return;
+			global::Kampai.Wrappers.LuaState.NativeMethods.lua_remove(handle, idx);
+		}
+
+		public void lua_replace(int idx)
+		{
+			if (IsInvalid) return;
+			global::Kampai.Wrappers.LuaState.NativeMethods.lua_replace(handle, idx);
 		}
 	}
 }

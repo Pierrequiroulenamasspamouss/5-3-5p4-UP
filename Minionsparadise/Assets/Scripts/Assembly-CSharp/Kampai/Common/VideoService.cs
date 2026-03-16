@@ -52,6 +52,7 @@ namespace Kampai.Common
 		public void playVideo(string urlOrFilename, bool showControls, bool closeOnTouch)
 		{
 			logger.Info("[Video] Playing {0}", urlOrFilename);
+#if UNITY_IOS || UNITY_ANDROID
 			global::UnityEngine.FullScreenMovieControlMode controlMode = global::UnityEngine.FullScreenMovieControlMode.Hidden;
 			if (showControls)
 			{
@@ -65,6 +66,15 @@ namespace Kampai.Common
 			global::UnityEngine.Handheld.PlayFullScreenMovie(urlOrFilename, global::UnityEngine.Color.black, controlMode, global::UnityEngine.FullScreenMovieScalingMode.AspectFit);
 #else
 			logger.Info("[Video] Handheld.PlayFullScreenMovie skipped in Editor. Simulated playback.");
+#endif
+#else
+			logger.Info("[Video] Standalone/Editor: Opening video via Application.OpenURL");
+			string path = urlOrFilename;
+			if (!path.Contains("://") && global::System.IO.File.Exists(path))
+			{
+				path = "file://" + global::System.IO.Path.GetFullPath(path);
+			}
+			global::UnityEngine.Application.OpenURL(path);
 #endif
 		}
 

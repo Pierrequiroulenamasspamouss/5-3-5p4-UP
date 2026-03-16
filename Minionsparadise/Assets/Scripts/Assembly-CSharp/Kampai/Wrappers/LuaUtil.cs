@@ -11,7 +11,13 @@ namespace Kampai.Wrappers
 		public static int cfunc_CallDelegate(global::System.IntPtr Lptr)
 		{
 			global::Kampai.Wrappers.LuaState luaState = new global::Kampai.Wrappers.WeakLuaState(Lptr);
-			global::Kampai.Wrappers.LuaDelegate luaDelegate = luaState.lua_touserdata(global::Kampai.Wrappers.LuaState.lua_upvalueindex(1)).Target as global::Kampai.Wrappers.LuaDelegate;
+			object target = luaState.lua_touserdata(global::Kampai.Wrappers.LuaState.lua_upvalueindex(1)).Target;
+			global::Kampai.Wrappers.LuaDelegate luaDelegate = target as global::Kampai.Wrappers.LuaDelegate;
+			if (luaDelegate == null)
+			{
+				global::UnityEngine.Debug.LogError("[Lua] cfunc_CallDelegate: Native handle target is null or not a LuaDelegate!");
+				return 0;
+			}
 			return luaDelegate(luaState);
 		}
 
@@ -19,7 +25,13 @@ namespace Kampai.Wrappers
 		public static int cfunc_CallDelegateFromStackTop(global::System.IntPtr Lptr)
 		{
 			global::Kampai.Wrappers.LuaState luaState = new global::Kampai.Wrappers.WeakLuaState(Lptr);
-			global::Kampai.Wrappers.LuaDelegate luaDelegate = luaState.lua_touserdata(-1).Target as global::Kampai.Wrappers.LuaDelegate;
+			object target = luaState.lua_touserdata(-1).Target;
+			global::Kampai.Wrappers.LuaDelegate luaDelegate = target as global::Kampai.Wrappers.LuaDelegate;
+			if (luaDelegate == null)
+			{
+				global::UnityEngine.Debug.LogError("[Lua] cfunc_CallDelegateFromStackTop: Stack top handle target is null or not a LuaDelegate!");
+				return 0;
+			}
 			return luaDelegate(luaState);
 		}
 	}

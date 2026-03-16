@@ -22,7 +22,7 @@ namespace Kampai.Game
 
 		private static int frameUpdated;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
 		private static global::UnityEngine.Vector2 lastMousePosition;
 		private static float lastZoomDistance;
 #endif
@@ -39,7 +39,7 @@ namespace Kampai.Game
 			}
 		}
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
 		private static global::System.Reflection.FieldInfo m_FingerIdField = typeof(global::UnityEngine.Touch).GetField("m_FingerId", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
 		private static global::System.Reflection.FieldInfo m_PositionField = typeof(global::UnityEngine.Touch).GetField("m_Position", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
 		private static global::System.Reflection.FieldInfo m_PositionDeltaField = typeof(global::UnityEngine.Touch).GetField("m_PositionDelta", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
@@ -87,7 +87,8 @@ namespace Kampai.Game
 					}
 				}
 			}
-			else if (global::UnityEngine.Application.isEditor)
+#if UNITY_EDITOR || UNITY_STANDALONE
+			else
 			{
 				float axis = global::UnityEngine.Input.GetAxis("Mouse ScrollWheel");
 				bool flag = global::UnityEngine.Input.GetKey(global::UnityEngine.KeyCode.LeftControl) || global::UnityEngine.Input.GetKey(global::UnityEngine.KeyCode.RightControl);
@@ -180,3 +181,4 @@ namespace Kampai.Game
 		}
 	}
 }
+#endif
