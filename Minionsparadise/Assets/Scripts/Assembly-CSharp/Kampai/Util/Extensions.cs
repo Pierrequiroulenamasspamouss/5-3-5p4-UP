@@ -35,5 +35,26 @@ namespace Kampai.Util
 			}
 			return false;
 		}
+
+		public static bool IsReady(this global::UnityEngine.Animator animator)
+		{
+			return animator != null && animator.runtimeAnimatorController != null && animator.isActiveAndEnabled;
+		}
+
+		public static bool HasParameter(this global::UnityEngine.Animator animator, string paramName)
+		{
+			if (animator == null)
+			{
+				return false;
+			}
+			foreach (global::UnityEngine.AnimatorControllerParameter animatorControllerParameter in animator.parameters)
+			{
+				if (animatorControllerParameter.name == paramName)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }

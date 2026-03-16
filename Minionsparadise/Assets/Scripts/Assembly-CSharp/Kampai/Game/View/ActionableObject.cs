@@ -1,5 +1,6 @@
 namespace Kampai.Game.View
 {
+	using Kampai.Util;
 	public abstract class ActionableObject : global::UnityEngine.MonoBehaviour, global::Kampai.Game.IDefinitionsHotSwapHandler, global::Kampai.Game.View.Actionable, global::Kampai.Game.View.Animatable, global::Kampai.Game.View.VisuallyEffective, global::Kampai.Game.View.Audible, global::Kampai.Util.Identifiable
 	{
 		protected global::Kampai.Util.KampaiQueue<global::Kampai.Game.View.KampaiAction> actionQueue = new global::Kampai.Util.KampaiQueue<global::Kampai.Game.View.KampaiAction>();
@@ -531,7 +532,10 @@ namespace Kampai.Game.View
 				while (enumerator.MoveNext())
 				{
 					global::UnityEngine.Animator current = enumerator.Current;
-					current.SetTrigger(name);
+					if (current.IsReady() && current.HasParameter(name))
+					{
+						current.SetTrigger(name);
+					}
 				}
 			}
 			finally
@@ -565,7 +569,10 @@ namespace Kampai.Game.View
 				while (enumerator.MoveNext())
 				{
 					global::UnityEngine.Animator current = enumerator.Current;
-					current.SetBool(name, state);
+					if (current.IsReady() && current.HasParameter(name))
+					{
+						current.SetBool(name, state);
+					}
 				}
 			}
 			finally
@@ -582,7 +589,10 @@ namespace Kampai.Game.View
 				while (enumerator.MoveNext())
 				{
 					global::UnityEngine.Animator current = enumerator.Current;
-					current.SetFloat(name, state);
+					if (current.IsReady() && current.HasParameter(name))
+					{
+						current.SetFloat(name, state);
+					}
 				}
 			}
 			finally
@@ -599,7 +609,10 @@ namespace Kampai.Game.View
 				while (enumerator.MoveNext())
 				{
 					global::UnityEngine.Animator current = enumerator.Current;
-					current.SetInteger(name, state);
+					if (current.IsReady() && current.HasParameter(name))
+					{
+						current.SetInteger(name, state);
+					}
 				}
 			}
 			finally
