@@ -81,7 +81,11 @@ namespace Kampai.UI.View
 			view.soundValue.text = ((int)(100f * view.SFXSlider.value)).ToString();
 			view.volumeSliderChangedSignal.AddListener(OnVolumeChanged);
 			view.buildNumber.raycastTarget = true;
-			global::UnityEngine.UI.Button button = view.buildNumber.gameObject.AddComponent<global::UnityEngine.UI.Button>();
+			global::UnityEngine.UI.Button button = view.buildNumber.GetComponent<global::UnityEngine.UI.Button>();
+			if (button == null)
+			{
+				button = view.buildNumber.gameObject.AddComponent<global::UnityEngine.UI.Button>();
+			}
 			button.transition = global::UnityEngine.UI.Selectable.Transition.None;
 			button.onClick.AddListener(OnBuildNumberClicked);
 		}

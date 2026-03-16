@@ -1,3 +1,4 @@
+using Kampai.Util;
 public class ScrollableButtonView : global::Kampai.Util.KampaiView, global::UnityEngine.EventSystems.IPointerDownHandler, global::UnityEngine.EventSystems.IDragHandler, global::UnityEngine.EventSystems.IPointerUpHandler, global::UnityEngine.EventSystems.IEventSystemHandler, global::Kampai.UI.View.IDoubleConfirmHandler
 {
 	public global::strange.extensions.signal.impl.Signal ClickedSignal = new global::strange.extensions.signal.impl.Signal();
@@ -121,7 +122,7 @@ public class ScrollableButtonView : global::Kampai.Util.KampaiView, global::Unit
 	public void ResetTapState()
 	{
 		tapCount = 0;
-		if (animator != null)
+		if (animator.IsReady() && animator.HasParameter("Pressed_Confirm"))
 		{
 			animator.SetBool("Pressed_Confirm", false);
 		}
@@ -156,7 +157,7 @@ public class ScrollableButtonView : global::Kampai.Util.KampaiView, global::Unit
 	public virtual void ShowConfirmMessage()
 	{
 		bool flag = doubleTap && localPersistService.GetDataIntPlayer("DoublePurchaseConfirm") != 0;
-		if (animator != null && flag)
+		if (animator.IsReady() && animator.HasParameter("Pressed_Confirm") && flag)
 		{
 			animator.SetBool("Pressed_Confirm", flag);
 			isInConfirmState = flag;
