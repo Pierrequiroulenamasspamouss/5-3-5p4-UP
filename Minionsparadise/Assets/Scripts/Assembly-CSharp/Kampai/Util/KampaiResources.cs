@@ -222,6 +222,7 @@ namespace Kampai.Util
                 if (_logger != null) _logger.Debug(string.Format("  - No local path for '{0}'", path));
             }
 
+#if !(UNITY_EDITOR || UNITY_STANDALONE_WIN)
             string assetLocation = _manifestService.GetAssetLocation(path);
             if (_logger != null) _logger.Debug(string.Format("  - Manifest location: '{0}'", assetLocation));
             
@@ -252,6 +253,9 @@ namespace Kampai.Util
             {
                 _logger.Info(string.Format("Asset '{0}' is not available for the current tier", path));
             }
+#else
+            if (_logger != null) _logger.Debug(string.Format("  - Skipping bundle check for '{0}' on Windows/Editor", path));
+#endif
 
             TimeProfiler.EndAssetLoadSection();
             return result;
@@ -290,6 +294,7 @@ namespace Kampai.Util
                 return request;
             }
 
+#if !(UNITY_EDITOR || UNITY_STANDALONE_WIN)
             string assetLocation = _manifestService.GetAssetLocation(path);
             if (string.IsNullOrEmpty(assetLocation))
             {
@@ -316,6 +321,11 @@ namespace Kampai.Util
             }
 
             return bundleOp;
+#else
+            if (_logger != null) _logger.Debug(string.Format("  - Skipping bundle check (async) for '{0}' on Windows/Editor", path));
+            if (onComplete != null) onComplete(null);
+            return null;
+#endif
         }
 
         private static IEnumerator LoadAsyncWait(AsyncOperation request, Action<Object> onComplete, string name, Type type)
