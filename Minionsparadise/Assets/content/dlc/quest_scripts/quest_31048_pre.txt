@@ -4,14 +4,14 @@ qs.setFtueLevelCompleted(4)
 qs.setBuildMenuEnabled(false)
 qs.enableDeleteButton(false)
 
-tikiBarId = qs.getInstanceId(3041)
+tikiBarId = 313
 qs.panCameraToInstance(tikiBarId)
 qs.disableCameraControls()
 qs.wait(1)
 
 -- play spy glass animation
 -- wait for spy glass animation to complete
-philId = qs.getInstanceId(1080)
+philId = 78
 qs.setCharacterAnimation(philId, "SpyGlass")
 qs.wait(2)
 
@@ -21,7 +21,7 @@ qs.setCharacterImage(40000)
 qs.setDialogSound('Play_menu_popUp_01')
 qsutil.waitForDialog('ftue_05_start')
 
-orderBoardId = qs.getInstanceId(3022)
+orderBoardId = 309
 qs.panCameraToInstance(orderBoardId)
 
 qs.wait(1)

@@ -3,9 +3,9 @@
 qs.setBuildMenuEnabled(false)
 qs.enableCallButtons(false)
 qs.setStorageMenuEnabled(false)
-local philId = qs.getInstanceId(1080)
-local tikiBarId = qs.getInstanceId(3041)
-philId = qs.getInstanceId(1080)
+
+tikiBarId = 313
+philId = 78
 
 if qs.getBuildingState(tikiBarId) ~= qsutil.BuildingState.Idle then
 

@@ -3,8 +3,8 @@
 qs.setBuildMenuEnabled(false)
 qs.enableCallButtons(false)
 
-local philId = qs.getInstanceId(1080)
-local tikiBarId = qs.getInstanceId(3041)
+tikiBarId = 313
+philId = 78
 qs.setBuildingState(tikiBarId, qsutil.BuildingState.Disabled)
 
 -- wait for building repair animation to complete

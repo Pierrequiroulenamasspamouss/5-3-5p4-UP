@@ -6,7 +6,7 @@ qs.enableCallButtons(false)
 
 -- if we are already level it is because the user quit while this quest was waiting for complete, so we just let it complete now
 if qsutil.waitForLevel(1) == 1 then
-	tikiBarId = qs.getInstanceId(3041)
+	tikiBarId = 313
 	qs.disableCameraControls()
 	
 	qs.waitSignal('PromptReceivedSignal', 0)
