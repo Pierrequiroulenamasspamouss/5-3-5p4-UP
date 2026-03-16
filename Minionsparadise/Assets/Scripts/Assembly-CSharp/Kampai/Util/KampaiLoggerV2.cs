@@ -145,7 +145,7 @@ namespace Kampai.Util
                     Log(global::Elevation.Logging.LogEvent.Info(format, args));
                     break;
                 case global::Kampai.Util.KampaiLogLevel.Debug:
-                    global::UnityEngine.Debug.Log("<color=grey>[V2-DEBUG]</color> " + text);
+                    // global::UnityEngine.Debug.Log("<color=grey>[V2-DEBUG]</color> " + text);
                     Log(global::Elevation.Logging.LogEvent.Debug(format, args));
                     break;
                 case global::Kampai.Util.KampaiLogLevel.Warning:
@@ -157,7 +157,7 @@ namespace Kampai.Util
                     Log(global::Elevation.Logging.LogEvent.Error(format, args));
                     break;
                 case global::Kampai.Util.KampaiLogLevel.Verbose:
-                    global::UnityEngine.Debug.Log("<color=white>[V2-TRACE]</color> " + text);
+                    // global::UnityEngine.Debug.Log("<color=white>[V2-TRACE]</color> " + text);
                     Log(global::Elevation.Logging.LogEvent.Trace(format, args));
                     break;
                 default:

@@ -65,6 +65,7 @@ namespace Kampai.Game
 			if (response.Success)
 			{
 				string body = response.Body;
+				global::UnityEngine.Debug.Log(string.Format("<color=cyan>[DEBUG] Login Response Body:</color> {0}", body));
 				global::Kampai.Game.UserSession userSession = (UserSession = global::Newtonsoft.Json.JsonConvert.DeserializeObject<global::Kampai.Game.UserSession>(body));
 				userSessionGrantedSignal.Dispatch();
 				LocalPersistService.PutData("LoadMode", "remote");
@@ -103,6 +104,7 @@ namespace Kampai.Game
 			if (response.Success)
 			{
 				string body = response.Body;
+				global::UnityEngine.Debug.Log(string.Format("<color=cyan>[DEBUG] Register Response Body:</color> {0}", body));
 				global::Kampai.Game.UserIdentity userIdentity = global::Newtonsoft.Json.JsonConvert.DeserializeObject<global::Kampai.Game.UserIdentity>(body);
 				setupHockeyAppUser.Dispatch(userIdentity.UserID);
 				userRegisteredSignal.Dispatch(userIdentity);

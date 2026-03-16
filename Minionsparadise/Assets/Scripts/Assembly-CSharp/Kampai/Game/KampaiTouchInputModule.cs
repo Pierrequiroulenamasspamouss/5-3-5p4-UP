@@ -66,7 +66,7 @@ namespace Kampai.Game
 
 		public override void Process()
 		{
-			if (UseFakeInput())
+			if (UseFakeInput() && global::Kampai.Game.InputUtils.touchCount <= 1)
 			{
 				FakeTouches();
 			}

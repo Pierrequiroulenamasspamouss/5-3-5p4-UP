@@ -12,8 +12,8 @@ qs.setStorageMenuEnabled(false)
 qs.setDialogType('Normal')
 qs.setDialogSound('Play_menu_popUp_01')
 
-local philId = qs.getInstanceId(1080)
-local tikiBarId = qs.getInstanceId(3041)
+philId = 78
+animId = 6707
 qs.disableCameraControls()
 qs.panCameraToPosition(117, 0.0, 179, 1.09, true)
 
@@ -31,7 +31,7 @@ qs.wait(2)
 qsutil.waitForDialog('ftue_01_intro')
 qsutil.waitForDialog('ftue_01_tikibar')
 
-tikiBarId = qs.getInstanceId(3041)
+tikiBarId = 313
 qs.setBuildingState(tikiBarId, qsutil.BuildingState.Broken)
 
 qs.panCameraToPosition(132.2101, 13.86038, 159.776, 0.9)
