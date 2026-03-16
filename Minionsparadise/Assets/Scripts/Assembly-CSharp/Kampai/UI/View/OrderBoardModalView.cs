@@ -222,5 +222,6 @@ namespace Kampai.UI.View
 				}
 			}
 		}
+
 	}
 }

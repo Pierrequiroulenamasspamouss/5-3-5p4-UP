@@ -8,7 +8,7 @@ internal class NimbleBridge_CallbackHelper : global::UnityEngine.MonoBehaviour
 
 	private volatile bool m_callbacksPending;
 
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_setDisposeCallback(NimbleBridge_CallbackHelper.BridgeDisposeCallback callback);
 #endif
@@ -28,7 +28,7 @@ internal class NimbleBridge_CallbackHelper : global::UnityEngine.MonoBehaviour
 			}
 			global::UnityEngine.GameObject gameObject = new global::UnityEngine.GameObject("NimbleCallbackHelper");
 			s_instance = gameObject.AddComponent<NimbleBridge_CallbackHelper>();
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 			NimbleBridge_setDisposeCallback(DisposeCallback);
 #endif
 		}

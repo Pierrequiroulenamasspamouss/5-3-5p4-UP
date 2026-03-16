@@ -126,3 +126,20 @@ def reset_gamestate(user_id):
         os.remove(player_file)
         print(f"[GAME] RESET PROFILE for user {user_id}")
     return jsonify({"success": True})
+@game_bp.route('/contents/featured', methods=['GET'])
+def get_featured_contents():
+    print("[GAME] REQUESTING FEATURED CONTENTS", flush=True)
+    return jsonify({
+        "id": 1,
+        "title": "Featured Content",
+        "description": "Featured content for DCN",
+        "type": "featured",
+        "mime_type": "text/html",
+        "created_at": "2026-03-16T17:00:00Z",
+        "updated_at": "2026-03-16T17:00:00Z",
+        "expires_in": "2026-03-17T17:00:00Z",
+        "urls": {
+            "html5": "https://www.google.com" # Dummy URL, but must be present and non-empty
+        },
+        "featured": True
+    })

@@ -46,20 +46,33 @@ public class NimbleBridge_Error : global::System.Runtime.InteropServices.SafeHan
 	}
 
 	public NimbleBridge_Error(NimbleBridge_Error.Code code, string reason)
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		: this(NimbleBridge_Error_Error((int)code, reason))
+#else
+		: this(global::System.IntPtr.Zero)
+#endif
 	{
 	}
 
 	public NimbleBridge_Error(NimbleBridge_Error.Code code, string reason, NimbleBridge_Error cause)
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		: this(NimbleBridge_Error_ErrorWithCause((int)code, reason, cause))
+#else
+		: this(global::System.IntPtr.Zero)
+#endif
 	{
 	}
 
 	public NimbleBridge_Error(NimbleBridge_Error.Code code, string reason, NimbleBridge_Error cause, string domain)
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		: this(NimbleBridge_Error_ErrorWithDomain((int)code, reason, cause, domain))
+#else
+		: this(global::System.IntPtr.Zero)
+#endif
 	{
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern global::System.IntPtr NimbleBridge_Error_Error(int code, string reason);
 
@@ -86,36 +99,59 @@ public class NimbleBridge_Error : global::System.Runtime.InteropServices.SafeHan
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern string NimbleBridge_Error_getDomain(NimbleBridge_Error errorWrapper);
+#endif
 
 	protected override bool ReleaseHandle()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Error_Dispose(this);
+#endif
 		return true;
 	}
 
 	public bool IsNull()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Error_isNull(this);
+#else
+		return handle == global::System.IntPtr.Zero;
+#endif
 	}
 
 	public NimbleBridge_Error.Code GetCode()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return (NimbleBridge_Error.Code)NimbleBridge_Error_getCode(this);
+#else
+		return Code.OK;
+#endif
 	}
 
 	public string GetReason()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Error_getReason(this);
+#else
+		return string.Empty;
+#endif
 	}
 
 	public NimbleBridge_Error GetCause()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Error_getCause(this);
+#else
+		return null;
+#endif
 	}
 
 	public string GetDomain()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Error_getDomain(this);
+#else
+		return string.Empty;
+#endif
 	}
 
 	public override string ToString()

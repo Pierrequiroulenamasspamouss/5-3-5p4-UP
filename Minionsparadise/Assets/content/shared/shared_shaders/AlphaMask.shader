@@ -93,12 +93,13 @@ varying lowp vec4 vcolor;
 
 void main()
 {
- lowp vec3 col = texture2D(_MainTex, uv0).rgb * vcolor.rgb;
+ lowp vec4 mainCol = texture2D(_MainTex, uv0);
+ lowp vec3 col = mainCol.rgb * vcolor.rgb;
 
  mediump float lum = dot(col, unity_ColorSpaceLuminance.xyz);
  col = mix(col, vec3(lum), _Desaturation);
 
- lowp float alpha = texture2D(_AlphaTex, uv1).r * vcolor.a;
+ lowp float alpha = mainCol.a * texture2D(_AlphaTex, uv1).r * vcolor.a;
 
  gl_FragData[0] = vec4(col, alpha);
 }
@@ -188,12 +189,13 @@ SubShader
 
   fixed4 frag(v2f i) : SV_Target
   {
-   fixed3 col = tex2D(_MainTex, i.uv).rgb * i.color.rgb;
+   fixed4 mainCol = tex2D(_MainTex, i.uv);
+   fixed3 col = mainCol.rgb * i.color.rgb;
 
    float lum = dot(col, fixed3(0.222, 0.707, 0.071));
    col = lerp(col, fixed3(lum, lum, lum), _Desaturation);
 
-   fixed alpha = tex2D(_AlphaTex, i.uv2).r * i.color.a;
+   fixed alpha = mainCol.a * tex2D(_AlphaTex, i.uv2).r * i.color.a;
 
    return fixed4(col, alpha);
   }

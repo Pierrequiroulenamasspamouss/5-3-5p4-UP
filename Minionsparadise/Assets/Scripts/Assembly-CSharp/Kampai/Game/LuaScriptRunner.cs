@@ -200,7 +200,7 @@ namespace Kampai.Game
             string text = L.lua_tostring(global::Kampai.Wrappers.LuaState.lua_upvalueindex(2));
             
             // --- RADAR LUA ---
-            global::UnityEngine.Debug.Log("<color=orange>[LUA RADAR]</color> qs." + text);
+            // global::UnityEngine.Debug.Log(string.Format("<color=orange>[LUA RADAR]</color> qs.{0} (Stack before: {1})", text, L.lua_gettop()));
 
             global::System.Func<global::Kampai.Game.QuestScriptController, global::Kampai.Game.IArgRetriever, global::Kampai.Game.ReturnValueContainer, bool> apiFunction = qsKernel.GetApiFunction(text);
             if (apiFunction == null)
@@ -226,7 +226,7 @@ namespace Kampai.Game
 
         public void Start(global::Kampai.Game.QuestScriptInstance questScriptInstance, string scriptText, string filename, string startMethodName)
         {
-            global::UnityEngine.Debug.Log("<color=magenta>[LUA START]</color> Loading: " + filename);
+            // global::UnityEngine.Debug.Log("<color=magenta>[LUA START]</color> Loading: " + filename);
             DisposedCheck();
             questInstance = questScriptInstance;
             fileName = filename;
@@ -296,6 +296,7 @@ namespace Kampai.Game
                 hasRanMethod = true;
                 threadState.lua_rawgeti(-1001000, envTableRef);
                 threadState.lua_getfield(-1, startMethodName);
+                threadState.lua_remove(-2); // Pop envTable
                 canContinue = true;
                 int nargs = _invokationValues.PushArrayValuesToStack(threadState);
                 Continue(nargs);

@@ -31,6 +31,7 @@ public class NimbleBridge_SynergyNetworkConnectionHandle : global::System.Runtim
 		});
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_SynergyNetworkConnectionHandleWrapper_Dispose(NimbleBridge_SynergyNetworkConnectionHandle handleWrapper);
 
@@ -63,66 +64,99 @@ public class NimbleBridge_SynergyNetworkConnectionHandle : global::System.Runtim
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_SynergyNetworkConnectionHandle_setCompletionCallback(NimbleBridge_SynergyNetworkConnectionHandle synergyNetworkConnectionHandleWrapper, BridgeSynergyNetworkConnectionCallback callback, global::System.IntPtr callbackData);
+#endif
 
 	protected override bool ReleaseHandle()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_SynergyNetworkConnectionHandleWrapper_Dispose(this);
+#endif
 		return true;
 	}
 
 	public void Wait()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_SynergyNetworkConnectionHandle_wait(this);
+#endif
 	}
 
 	public void Cancel()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_SynergyNetworkConnectionHandle_cancel(this);
+#endif
 	}
 
 	public NimbleBridge_SynergyRequest GetRequest()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyNetworkConnectionHandle_getRequest(this);
+#else
+		return null;
+#endif
 	}
 
 	public NimbleBridge_SynergyResponse GetResponse()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyNetworkConnectionHandle_getResponse(this);
+#else
+		return null;
+#endif
 	}
 
 	public SynergyNetworkConnectionCallback GetHeaderCallback()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr dataPtr = NimbleBridge_SynergyNetworkConnectionHandle_getHeaderCallback(this);
 		return (SynergyNetworkConnectionCallback)NimbleBridge_CallbackHelper.Get().GetData(dataPtr);
+#else
+		return null;
+#endif
 	}
 
 	public void SetHeaderCallback(SynergyNetworkConnectionCallback synergyNetworkConnectionCallback)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr callbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(synergyNetworkConnectionCallback);
 		NimbleBridge_SynergyNetworkConnectionHandle_setHeaderCallback(this, OnSynergyNetworkConnectionCallback, callbackData);
+#endif
 	}
 
 	public SynergyNetworkConnectionCallback GetProgressCallback()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr dataPtr = NimbleBridge_SynergyNetworkConnectionHandle_getProgressCallback(this);
 		return (SynergyNetworkConnectionCallback)NimbleBridge_CallbackHelper.Get().GetData(dataPtr);
+#else
+		return null;
+#endif
 	}
 
 	public void SetProgressCallback(SynergyNetworkConnectionCallback synergyNetworkConnectionCallback)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr callbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(synergyNetworkConnectionCallback);
 		NimbleBridge_SynergyNetworkConnectionHandle_setProgressCallback(this, OnSynergyNetworkConnectionCallback, callbackData);
+#endif
 	}
 
 	public SynergyNetworkConnectionCallback GetCompletionCallback()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr dataPtr = NimbleBridge_SynergyNetworkConnectionHandle_getCompletionCallback(this);
 		return (SynergyNetworkConnectionCallback)NimbleBridge_CallbackHelper.Get().GetData(dataPtr);
+#else
+		return null;
+#endif
 	}
 
 	public void SetCompletionCallback(SynergyNetworkConnectionCallback synergyNetworkConnectionCallback)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr callbackData = NimbleBridge_CallbackHelper.Get().MakeCallbackData(synergyNetworkConnectionCallback);
 		NimbleBridge_SynergyNetworkConnectionHandle_setCompletionCallback(this, OnSynergyNetworkConnectionCallback, callbackData);
+#endif
 	}
 }

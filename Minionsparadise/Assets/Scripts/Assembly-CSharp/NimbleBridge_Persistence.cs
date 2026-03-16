@@ -34,6 +34,7 @@ public class NimbleBridge_Persistence : global::System.Runtime.InteropServices.S
 	{
 	}
 
+#if UNITY_IOS || UNITY_ANDROID
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_PersistenceWrapper_Dispose(NimbleBridge_Persistence persistenceWrapper);
 
@@ -63,10 +64,11 @@ public class NimbleBridge_Persistence : global::System.Runtime.InteropServices.S
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_Persistence_synchronize(NimbleBridge_Persistence persistenceWrapper);
+#endif
 
 	protected override bool ReleaseHandle()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_PersistenceWrapper_Dispose(this);
 #endif
 		return true;
@@ -74,7 +76,7 @@ public class NimbleBridge_Persistence : global::System.Runtime.InteropServices.S
 
 	public string GetIdentifier()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Persistence_getIdentifier(this);
 #else
 		return string.Empty;
@@ -83,7 +85,7 @@ public class NimbleBridge_Persistence : global::System.Runtime.InteropServices.S
 
 	public NimbleBridge_Persistence.Storage GetStorage()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return (NimbleBridge_Persistence.Storage)NimbleBridge_Persistence_getStorage(this);
 #else
 		return Storage.STORAGE_DOCUMENT;
@@ -92,7 +94,7 @@ public class NimbleBridge_Persistence : global::System.Runtime.InteropServices.S
 
 	public bool GetEncryption()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Persistence_getEncryption(this);
 #else
 		return false;
@@ -101,21 +103,21 @@ public class NimbleBridge_Persistence : global::System.Runtime.InteropServices.S
 
 	public void SetEncryption(bool encryption)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Persistence_setEncryption(this, encryption);
 #endif
 	}
 
 	public void SetValue(string key, string value)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Persistence_setValue(this, key, value);
 #endif
 	}
 
 	public string GetStringValue(string key)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Persistence_getStringValue(this, key);
 #else
 		return string.Empty;
@@ -124,7 +126,7 @@ public class NimbleBridge_Persistence : global::System.Runtime.InteropServices.S
 
 	public void AddEntries(global::System.Collections.Generic.Dictionary<string, string> dictionary)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr intPtr = global::System.IntPtr.Zero;
 		try
 		{
@@ -143,14 +145,14 @@ public class NimbleBridge_Persistence : global::System.Runtime.InteropServices.S
 
 	public void Clean()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Persistence_clean(this);
 #endif
 	}
 
 	public void Synchronize()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Persistence_synchronize(this);
 #endif
 	}

@@ -59,6 +59,7 @@ public class NimbleBridge_SynergyEnvironment
 	{
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern string NimbleBridge_SynergyEnvironment_getEADeviceId();
 
@@ -88,6 +89,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern NimbleBridge_Error NimbleBridge_SynergyEnvironment_checkAndInitiateSynergyEnvironmentUpdate();
+#endif
 
 	public static NimbleBridge_SynergyEnvironment GetComponent()
 	{
@@ -96,7 +98,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	public string GetEADeviceId()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getEADeviceId();
 #else
 		return string.Empty;
@@ -105,7 +107,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	public string GetSynergyId()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getSynergyId();
 #else
 		return "mock_synergy_id";
@@ -114,7 +116,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	public string GetSellId()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getSellId();
 #else
 		return string.Empty;
@@ -123,7 +125,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	public string GetProductId()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getProductId();
 #else
 		return string.Empty;
@@ -132,7 +134,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	public string GetEAHardwareId()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getEAHardwareId();
 #else
 		return string.Empty;
@@ -141,7 +143,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	public string GetServerUrlWithKey(string key)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_getServerUrlWithKey(key);
 #else
 		return string.Empty;
@@ -150,7 +152,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	public NimbleBridge_SynergyEnvironment.SynergyAppVersionCheckResult GetLatestAppVersionCheckResult()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return (NimbleBridge_SynergyEnvironment.SynergyAppVersionCheckResult)NimbleBridge_SynergyEnvironment_getLatestAppVersionCheckResult();
 #else
 		return SynergyAppVersionCheckResult.SYNERGY_APP_VERSION_OK;
@@ -159,7 +161,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	public bool IsDataAvailable()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_isDataAvailable();
 #else
 		return true;
@@ -168,7 +170,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	public bool IsUpdateInProgress()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_isUpdateInProgress();
 #else
 		return false;
@@ -177,7 +179,7 @@ public class NimbleBridge_SynergyEnvironment
 
 	public NimbleBridge_Error CheckAndInitiateSynergyEnvironmentUpdate()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyEnvironment_checkAndInitiateSynergyEnvironmentUpdate();
 #else
 		return null;

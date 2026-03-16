@@ -358,9 +358,40 @@ namespace Newtonsoft.Json.Utilities
 		{
 			if (_genericDictionary != null)
 			{
-				return _genericDictionary.GetEnumerator();
+				foreach (global::System.Collections.Generic.KeyValuePair<TKey, TValue> item in _genericDictionary)
+				{
+					yield return item;
+				}
+				yield break;
 			}
-			return global::System.Linq.Enumerable.Select(global::System.Linq.Enumerable.Cast<global::System.Collections.DictionaryEntry>(_dictionary), (global::System.Collections.DictionaryEntry de) => new global::System.Collections.Generic.KeyValuePair<TKey, TValue>((TKey)de.Key, (TValue)de.Value)).GetEnumerator();
+
+			global::System.Collections.IEnumerator enumerator = _dictionary.GetEnumerator();
+			while (enumerator.MoveNext())
+			{
+				object current = enumerator.Current;
+				if (current is global::System.Collections.DictionaryEntry)
+				{
+					global::System.Collections.DictionaryEntry de = (global::System.Collections.DictionaryEntry)current;
+					yield return new global::System.Collections.Generic.KeyValuePair<TKey, TValue>((TKey)de.Key, (TValue)de.Value);
+				}
+				else if (current is global::System.Collections.Generic.KeyValuePair<TKey, TValue>)
+				{
+					yield return (global::System.Collections.Generic.KeyValuePair<TKey, TValue>)current;
+				}
+				else
+				{
+					// Fallback for other potential types or just try to cast key/value if possible
+					// Reflection or dynamic could be used but let's stick to these two for now
+					// as they cover the known cases.
+					global::System.Type type = current.GetType();
+					global::System.Reflection.PropertyInfo keyProp = type.GetProperty("Key");
+					global::System.Reflection.PropertyInfo valueProp = type.GetProperty("Value");
+					if (keyProp != null && valueProp != null)
+					{
+						yield return new global::System.Collections.Generic.KeyValuePair<TKey, TValue>((TKey)keyProp.GetValue(current, null), (TValue)valueProp.GetValue(current, null));
+					}
+				}
+			}
 		}
 
 		global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()
