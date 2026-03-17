@@ -2177,108 +2177,133 @@ public class SwrveSDK
 		return text;
 	}
 
-	private global::System.Collections.IEnumerator GetCampaignsAndResources_Coroutine(string getRequest)
-	{
-		SwrveLog.Log("Campaigns and resources request: " + getRequest);
-		yield return Container.StartCoroutine(restClient.Get(getRequest, delegate(global::Swrve.REST.RESTResponse response)
-		{
-			if (response.Error == global::Swrve.Helpers.WwwDeducedError.NoError)
-			{
-				string value = null;
-				if (response.Headers != null)
-				{
-					response.Headers.TryGetValue("ETAG", out value);
-					if (!string.IsNullOrEmpty(value))
-					{
-						lastETag = value;
-						storage.Save("cmpg_etag", value, userId);
-					}
-				}
-				if (!string.IsNullOrEmpty(response.Body))
-				{
-					global::System.Collections.Generic.Dictionary<string, object> dictionary = (global::System.Collections.Generic.Dictionary<string, object>)global::SwrveMiniJSON.Json.Deserialize(response.Body);
-					if (dictionary != null)
-					{
-						if (dictionary.ContainsKey("flush_frequency"))
-						{
-							string text = global::Swrve.Helpers.MiniJsonHelper.GetString(dictionary, "flush_frequency");
-							if (!string.IsNullOrEmpty(text) && float.TryParse(text, out campaignsAndResourcesFlushFrequency))
-							{
-								campaignsAndResourcesFlushFrequency /= 1000f;
-								storage.Save("swrve_cr_flush_frequency", text, userId);
-							}
-						}
-						if (dictionary.ContainsKey("flush_refresh_delay"))
-						{
-							string text2 = global::Swrve.Helpers.MiniJsonHelper.GetString(dictionary, "flush_refresh_delay");
-							if (!string.IsNullOrEmpty(text2) && float.TryParse(text2, out campaignsAndResourcesFlushRefreshDelay))
-							{
-								campaignsAndResourcesFlushRefreshDelay /= 1000f;
-								storage.Save("swrve_cr_flush_delay", text2, userId);
-							}
-						}
-						if (dictionary.ContainsKey("user_resources"))
-						{
-							global::System.Collections.Generic.IList<object> obj = (global::System.Collections.Generic.IList<object>)dictionary["user_resources"];
-							string data = global::SwrveMiniJSON.Json.Serialize(obj);
-							storage.SaveSecure("srcngt2", data, userId);
-							userResources = ProcessUserResources(obj);
-							userResourcesRaw = data;
-							if (campaignsAndResourcesInitialized)
-							{
-								NotifyUpdateUserResources();
-							}
-						}
-						if (config.TalkEnabled && dictionary.ContainsKey("campaigns"))
-						{
-							global::System.Collections.Generic.Dictionary<string, object> dictionary2 = (global::System.Collections.Generic.Dictionary<string, object>)dictionary["campaigns"];
-							string cacheContent = global::SwrveMiniJSON.Json.Serialize(dictionary2);
-							SaveCampaignsCache(cacheContent);
-							AutoShowMessages();
-							ProcessCampaigns(dictionary2);
-							global::System.Text.StringBuilder stringBuilder = new global::System.Text.StringBuilder();
-							int i = 0;
-							for (int count = campaigns.Count; i < count; i++)
-							{
-								global::Swrve.Messaging.SwrveCampaign swrveCampaign = campaigns[i];
-								if (i != 0)
-								{
-									stringBuilder.Append(',');
-								}
-								stringBuilder.Append(swrveCampaign.Id);
-							}
-							global::System.Collections.Generic.Dictionary<string, string> payload = new global::System.Collections.Generic.Dictionary<string, string>
-							{
-								{
-									"ids",
-									stringBuilder.ToString()
-								},
-								{
-									"count",
-									(campaigns != null) ? campaigns.Count.ToString() : "0"
-								}
-							};
-							NamedEventInternal("Swrve.Messages.campaigns_downloaded", payload);
-						}
-					}
-				}
-			}
-			else
-			{
-				SwrveLog.LogError("Resources and campaigns request error: " + response.Error.ToString() + ":" + response.Body);
-			}
-			if (!campaignsAndResourcesInitialized)
-			{
-				campaignsAndResourcesInitialized = true;
-				AutoShowMessages();
-				NotifyUpdateUserResources();
-			}
-			campaignsConnecting = false;
-			TaskFinished("GetCampaignsAndResources_Coroutine");
-		}));
-	}
+    private global::System.Collections.IEnumerator GetCampaignsAndResources_Coroutine(string getRequest)
+    {
+        SwrveLog.Log("Campaigns and resources request: " + getRequest);
 
-	private void SaveCampaignsCache(string cacheContent)
+        // Utilisation du délégué pour traiter la réponse du serveur
+        yield return Container.StartCoroutine(restClient.Get(getRequest, delegate (global::Swrve.REST.RESTResponse response)
+        {
+            if (response.Error == global::Swrve.Helpers.WwwDeducedError.NoError)
+            {
+                // --- Traitement des Headers (ETag) ---
+                string value = null;
+                if (response.Headers != null)
+                {
+                    response.Headers.TryGetValue("ETAG", out value);
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        lastETag = value;
+                        storage.Save("cmpg_etag", value, userId);
+                    }
+                }
+
+                // --- Traitement du Corps (JSON) ---
+                if (!string.IsNullOrEmpty(response.Body))
+                {
+                    // CORRECTION : On désérialise en 'object' d'abord pour éviter le crash
+                    object deserializedObject = global::SwrveMiniJSON.Json.Deserialize(response.Body);
+
+                    // Utilisation de l'opérateur 'as' (C# 4.0 compatible)
+                    // Si deserializedObject n'est pas un Dictionary, 'dictionary' sera simplement null au lieu de lever une exception.
+                    global::System.Collections.Generic.Dictionary<string, object> dictionary = deserializedObject as global::System.Collections.Generic.Dictionary<string, object>;
+
+                    if (dictionary != null)
+                    {
+                        // 1. Flush Frequency
+                        if (dictionary.ContainsKey("flush_frequency"))
+                        {
+                            string text = global::Swrve.Helpers.MiniJsonHelper.GetString(dictionary, "flush_frequency");
+                            if (!string.IsNullOrEmpty(text) && float.TryParse(text, out campaignsAndResourcesFlushFrequency))
+                            {
+                                campaignsAndResourcesFlushFrequency /= 1000f;
+                                storage.Save("swrve_cr_flush_frequency", text, userId);
+                            }
+                        }
+
+                        // 2. Flush Refresh Delay
+                        if (dictionary.ContainsKey("flush_refresh_delay"))
+                        {
+                            string text2 = global::Swrve.Helpers.MiniJsonHelper.GetString(dictionary, "flush_refresh_delay");
+                            if (!string.IsNullOrEmpty(text2) && float.TryParse(text2, out campaignsAndResourcesFlushRefreshDelay))
+                            {
+                                campaignsAndResourcesFlushRefreshDelay /= 1000f;
+                                storage.Save("swrve_cr_flush_delay", text2, userId);
+                            }
+                        }
+
+                        // 3. User Resources
+                        if (dictionary.ContainsKey("user_resources"))
+                        {
+                            // Safe cast pour la liste de ressources
+                            global::System.Collections.Generic.IList<object> obj = dictionary["user_resources"] as global::System.Collections.Generic.IList<object>;
+                            if (obj != null)
+                            {
+                                string data = global::SwrveMiniJSON.Json.Serialize(obj);
+                                storage.SaveSecure("srcngt2", data, userId);
+                                userResources = ProcessUserResources(obj);
+                                userResourcesRaw = data;
+                                if (campaignsAndResourcesInitialized)
+                                {
+                                    NotifyUpdateUserResources();
+                                }
+                            }
+                        }
+
+                        // 4. Campaigns (Talk)
+                        if (config.TalkEnabled && dictionary.ContainsKey("campaigns"))
+                        {
+                            global::System.Collections.Generic.Dictionary<string, object> dictionary2 = dictionary["campaigns"] as global::System.Collections.Generic.Dictionary<string, object>;
+
+                            if (dictionary2 != null)
+                            {
+                                string cacheContent = global::SwrveMiniJSON.Json.Serialize(dictionary2);
+                                SaveCampaignsCache(cacheContent);
+                                AutoShowMessages();
+                                ProcessCampaigns(dictionary2);
+
+                                global::System.Text.StringBuilder stringBuilder = new global::System.Text.StringBuilder();
+                                for (int i = 0; i < campaigns.Count; i++)
+                                {
+                                    global::Swrve.Messaging.SwrveCampaign swrveCampaign = campaigns[i];
+                                    if (i != 0) stringBuilder.Append(',');
+                                    stringBuilder.Append(swrveCampaign.Id);
+                                }
+
+                                global::System.Collections.Generic.Dictionary<string, string> payload = new global::System.Collections.Generic.Dictionary<string, string>();
+                                payload.Add("ids", stringBuilder.ToString());
+                                payload.Add("count", (campaigns != null) ? campaigns.Count.ToString() : "0");
+
+                                NamedEventInternal("Swrve.Messages.campaigns_downloaded", payload);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Si on arrive ici, c'est que le JSON reçu n'était pas un objet { } 
+                        // (C'était probablement une liste [ ] ou un message d'erreur texte)
+                        SwrveLog.LogError("Swrve Error: Expected JSON Dictionary but received " + deserializedObject.GetType().Name + ". Content: " + response.Body);
+                    }
+                }
+            }
+            else
+            {
+                SwrveLog.LogError("Resources and campaigns request error: " + response.Error.ToString() + ":" + response.Body);
+            }
+
+            // --- Finalisation ---
+            if (!campaignsAndResourcesInitialized)
+            {
+                campaignsAndResourcesInitialized = true;
+                AutoShowMessages();
+                NotifyUpdateUserResources();
+            }
+            campaignsConnecting = false;
+            TaskFinished("GetCampaignsAndResources_Coroutine");
+        }));
+    }
+
+    private void SaveCampaignsCache(string cacheContent)
 	{
 		try
 		{

@@ -215,21 +215,33 @@ namespace Kampai.Game
 
 		private void RetrySocialInit(int tries)
 		{
-			routineRunner.StartCoroutine(WaitSomeTime(1f, delegate
+			routineRunner.StartCoroutine(WaitSomeTime(2f, delegate
 			{
-				if (userSessionService.UserSession != null && !string.IsNullOrEmpty(userSessionService.UserSession.SessionID))
+				if (userSessionService.UserSession != null)
 				{
-					socialInitSignal.Dispatch();
+					if (!string.IsNullOrEmpty(userSessionService.UserSession.SessionID))
+					{
+						socialInitSignal.Dispatch();
+					}
+					else
+					{
+						logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "User Session exists but SessionID is empty, waiting...");
+						if (tries < 5)
+						{
+							tries++;
+							RetrySocialInit(tries);
+						}
+					}
 				}
-				else if (tries < 3)
+				else if (tries < 5)
 				{
 					tries++;
-					logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "User Session was not available, will retry to initialize social networks in " + 1f + " second");
+					logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "User Session was not available, will retry to initialize social networks in 2 seconds (try {0}/5)", tries);
 					RetrySocialInit(tries);
 				}
 				else
 				{
-					logger.Log(global::Kampai.Util.KampaiLogLevel.Error, "User Session was never initilized so social services will not be initialized");
+					logger.Log(global::Kampai.Util.KampaiLogLevel.Error, "User Session was never initialized after multiple retries, social services will not be initialized");
 				}
 			}));
 		}
@@ -296,6 +308,10 @@ namespace Kampai.Game
 
 		private global::System.Collections.IEnumerator StartGame()
 		{
+			while (userSessionService.UserSession == null)
+			{
+				yield return null;
+			}
 			playerService.ID = global::System.Convert.ToInt64(userSessionService.UserSession.UserID);
 			global::UnityEngine.GameObject footprint = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load("Footprint")) as global::UnityEngine.GameObject;
 			footprint.transform.parent = contextView.transform;

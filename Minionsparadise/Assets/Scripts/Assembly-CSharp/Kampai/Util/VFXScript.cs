@@ -170,7 +170,7 @@ namespace Kampai.Util
 				}
 				return;
 			}
-			global::UnityEngine.Debug.LogError("No such AnimVFX trigger: " + key);
+			global::UnityEngine.Debug.LogWarning("No such AnimVFX trigger, skipping: " + key);
 		}
 
 		private void UpdateFX(global::System.Collections.Generic.IEnumerable<global::UnityEngine.ParticleSystem> enabled, global::System.Collections.Generic.IEnumerable<global::UnityEngine.ParticleSystem> disabled)

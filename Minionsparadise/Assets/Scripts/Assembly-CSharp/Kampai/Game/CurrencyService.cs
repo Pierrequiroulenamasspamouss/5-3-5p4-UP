@@ -62,6 +62,14 @@ namespace Kampai.Game
 			pendingTransactions.Push(pendingTransaction);
 		}
 
+		public virtual bool IsRefreshingCatalog
+		{
+			get
+			{
+				return false;
+			}
+		}
+
 		public virtual void RefreshCatalog()
 		{
 		}

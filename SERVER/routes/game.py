@@ -143,3 +143,66 @@ def get_featured_contents():
         },
         "featured": True
     })
+
+# --- SWRVE MOCKS ---
+@game_bp.route('/api/1/user_resources_and_campaigns', methods=['GET'])
+def swrve_resources_and_campaigns():
+    """
+    Returns a dummy Swrve campaign that triggers on orderboard completion.
+    """
+    return jsonify({
+        "version": 1,
+        "cdn_root": "http://localhost:44733/assets/",
+        "game_data": {
+            "1": { "app_store_url": "http://localhost" }
+        },
+        "rules": {
+            "delay_first_message": 0,
+            "max_messages_per_session": 99999,
+            "min_delay_between_messages": 0
+        },
+        "campaigns": [
+            {
+                "id": 12345,
+                "name": "Mock Social Quest Message",
+                "rules": {
+                    "show_at_session_start": False,
+                    "triggers": [
+                        { "event_name": "gameplay.orderboard.none.completed" },
+                        { "event_name": "gameplay.orderboard.completed" }
+                    ]
+                },
+                "messages": [
+                    {
+                        "id": 1,
+                        "name": "SocialQuestMessage",
+                        "priority": 1,
+                        "formats": [
+                            {
+                                "name": "landscape",
+                                "orientation": "landscape",
+                                "size": {"x": 1024, "y": 768},
+                                "images": [],
+                                "buttons": [
+                                    {
+                                        "id": 1,
+                                        "name": "close",
+                                        "type": "dismiss",
+                                        "rect": {"x": 0, "y": 0, "w": 50, "h": 50}
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    })
+
+@game_bp.route('/api/1/user_resources_diff', methods=['GET'])
+def swrve_resources_diff():
+    return jsonify([])
+
+@game_bp.route('/1/batch', methods=['POST'])
+def swrve_batch():
+    return "", 200

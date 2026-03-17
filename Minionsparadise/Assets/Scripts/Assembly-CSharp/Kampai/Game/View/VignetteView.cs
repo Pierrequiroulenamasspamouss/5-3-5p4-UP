@@ -9,6 +9,10 @@ namespace Kampai.Game.View
 		internal void SetVignetteSize(float? size)
 		{
 			global::UnityEngine.Material material = GetComponent<global::UnityEngine.Renderer>().material;
+			if (!material.HasProperty("_Size"))
+			{
+				return;
+			}
 			if (!initialVignetteSize.HasValue)
 			{
 				initialVignetteSize = material.GetFloat("_Size");
