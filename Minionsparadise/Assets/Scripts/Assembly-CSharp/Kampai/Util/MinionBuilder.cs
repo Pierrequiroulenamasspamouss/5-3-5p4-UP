@@ -4,7 +4,7 @@ namespace Kampai.Util
 	{
 		private global::Kampai.Util.Boxed<global::Kampai.Util.TargetPerformance> FORCE_LOD;
 
-		private global::Kampai.Util.TargetPerformance TargetLOD = global::Kampai.Util.TargetPerformance.LOW;
+		private global::Kampai.Util.TargetPerformance TargetLOD = global::Kampai.Util.TargetPerformance.MED;
 
 		private bool restart;
 
@@ -162,8 +162,8 @@ namespace Kampai.Util
 			}
 			else
 			{
-				TargetLOD = global::Kampai.Util.TargetPerformance.LOW;
-				logger.Error("Unsupported/Unknown device: {0}, setting to LOW", targetPerformance);
+				TargetLOD = global::Kampai.Util.TargetPerformance.MED;
+				logger.Error("Unsupported/Unknown device: {0}, setting to MED", targetPerformance);
 			}
 			if (restart)
 			{

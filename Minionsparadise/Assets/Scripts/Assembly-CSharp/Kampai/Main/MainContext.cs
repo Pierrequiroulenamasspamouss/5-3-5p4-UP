@@ -157,6 +157,9 @@ namespace Kampai.Main
 				.ToSingleton();
 			injectionBinder.Bind<global::Kampai.Main.ISupersonicService>().To<global::Kampai.Main.SupersonicService>().CrossContext()
 				.ToSingleton();
+			// Ensure AppResumeCompletedSignal is available in the main context for HindsightService
+			injectionBinder.Bind<global::Kampai.Common.AppResumeCompletedSignal>().ToSingleton().CrossContext();
+			injectionBinder.Bind<global::Kampai.Common.AppFocusGainedCompletedSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.Main.ReloadGameSignal>().CrossContext().ToSingleton();
 			injectionBinder.Bind<global::Kampai.Main.MignetteCallMinionsSignal>().CrossContext().ToSingleton();
 			injectionBinder.Bind<global::Kampai.Game.MignetteCallMinionsModel>().ToSingleton().CrossContext();

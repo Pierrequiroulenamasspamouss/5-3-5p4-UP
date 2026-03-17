@@ -388,8 +388,14 @@ namespace Kampai.Game.View
 				renderer.receiveShadows = false;
 			}
 			lodRenderers.Sort((global::Kampai.Game.View.DummyCharacterObject.LOD x, global::Kampai.Game.View.DummyCharacterObject.LOD y) => x.Number - y.Number);
-			int index = ((!forceHigh) ? (lodRenderers.Count - 1) : 0);
-			lodRenderers[index].Enable();
+			if (lodRenderers.Count > 0)
+			{
+				int index = ((!forceHigh) ? (lodRenderers.Count - 1) : 0);
+				if (index >= 0 && index < lodRenderers.Count)
+				{
+					lodRenderers[index].Enable();
+				}
+			}
 		}
 
 		public override void SetAnimController(global::UnityEngine.RuntimeAnimatorController controller)

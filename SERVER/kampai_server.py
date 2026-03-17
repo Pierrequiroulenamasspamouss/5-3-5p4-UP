@@ -1,10 +1,11 @@
-﻿from flask import Flask
+from flask import Flask
 import threading
 import logging
 
 from routes.user import user_bp
 from routes.game import game_bp
 from routes.metrics import metrics_bp
+from routes.sales import sales_bp
 
 # Disable verbose logs
 log = logging.getLogger('werkzeug')
@@ -20,6 +21,7 @@ def create_app(port):
     app.register_blueprint(user_bp)
     app.register_blueprint(game_bp)
     app.register_blueprint(metrics_bp)
+    app.register_blueprint(sales_bp)
 
     from flask import request
     @app.before_request

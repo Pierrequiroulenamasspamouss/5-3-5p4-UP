@@ -249,6 +249,11 @@ namespace Kampai.Game.View
 			}
 		}
 
+		public void animEvent(string state)
+		{
+			AnimVFX(state);
+		}
+
 		public void AnimVFX(string state)
 		{
 			ResolveBindings();

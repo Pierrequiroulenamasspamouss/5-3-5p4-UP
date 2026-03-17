@@ -8,6 +8,7 @@ public class NimbleBridge_SynergyIdManager
 	{
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern string NimbleBridge_SynergyIdManager_getSynergyId();
 
@@ -19,6 +20,7 @@ public class NimbleBridge_SynergyIdManager
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern NimbleBridge_Error NimbleBridge_SynergyIdManager_logout(string authenticatorIdentifier);
+#endif
 
 	public static NimbleBridge_SynergyIdManager GetComponent()
 	{
@@ -27,7 +29,7 @@ public class NimbleBridge_SynergyIdManager
 
 	public string GetSynergyId()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyIdManager_getSynergyId();
 #else
 		return "mock_synergy_id";
@@ -36,7 +38,7 @@ public class NimbleBridge_SynergyIdManager
 
 	public string GetAnonymousSynergyId()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyIdManager_getAnonymousSynergyId();
 #else
 		return "mock_anon_id";
@@ -45,7 +47,7 @@ public class NimbleBridge_SynergyIdManager
 
 	public NimbleBridge_Error Login(string userSynergyId, string authenticatorIdentifier)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyIdManager_login(userSynergyId, authenticatorIdentifier);
 #else
 		return null;
@@ -54,7 +56,7 @@ public class NimbleBridge_SynergyIdManager
 
 	public NimbleBridge_Error Logout(string authenticatorIdentifier)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_SynergyIdManager_logout(authenticatorIdentifier);
 #else
 		return null;

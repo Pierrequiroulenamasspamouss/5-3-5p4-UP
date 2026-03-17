@@ -217,43 +217,43 @@ namespace Kampai.Main
 			{
 				text = languageCode.Split('-')[0];
 			}
-			if (text.Equals("en"))
+			if (text.Equals("en") || text.Equals("english"))
 			{
 				return "EN-US";
 			}
-			if (text.Equals("fr"))
+			if (text.Equals("fr") || text.Equals("french"))
 			{
 				return "FR-FR";
 			}
-			if (text.Equals("de"))
+			if (text.Equals("de") || text.Equals("german"))
 			{
 				return "DE-DE";
 			}
-			if (text.Equals("es"))
+			if (text.Equals("es") || text.Equals("spanish"))
 			{
 				return "ES-ES";
 			}
-			if (text.Equals("it"))
+			if (text.Equals("it") || text.Equals("italian"))
 			{
 				return "IT-IT";
 			}
-			if (text.Equals("pt"))
+			if (text.Equals("pt") || text.Equals("portuguese"))
 			{
 				return "PT-BR";
 			}
-			if (text.Equals("nl"))
+			if (text.Equals("nl") || text.Equals("dutch"))
 			{
 				return "NL-NL";
 			}
-			if (text.Equals("ko"))
+			if (text.Equals("ko") || text.Equals("korean"))
 			{
 				return "KO-KR";
 			}
-			if (text.Equals("ru"))
+			if (text.Equals("ru") || text.Equals("russian"))
 			{
 				return "RU-RU";
 			}
-			if (text.Equals("ja"))
+			if (text.Equals("ja") || text.Equals("japanese"))
 			{
 				return "JA";
 			}

@@ -40,8 +40,26 @@ namespace Kampai.Common
 			eventNameConverters = PrepareEventConverters();
 		}
 
+		private bool IsSwrveAvailable
+		{
+			get
+			{
+#if UNITY_EDITOR
+				return false;
+#else
+				return SwrveComponent.Instance != null && SwrveComponent.Instance.SDK != null;
+#endif
+			}
+		}
+
 		public void UpdateResources()
 		{
+			if (!IsSwrveAvailable)
+			{
+				logger.Debug("{0}UpdateResources(): Swrve is disabled.", "Swrve: ");
+				abTestResourcesUpdatedSignal.Dispatch(false);
+				return;
+			}
 			logger.Debug("{0}UpdateResources(): initiate Swrve resources update request", "Swrve: ");
 			resourcesResponseReceived = false;
 			resourcesResponseWaitTimerExpired = false;
@@ -59,6 +77,10 @@ namespace Kampai.Common
 
 		public void SendInAppPurchaseEventOnProductDelivery(string sku, global::Kampai.Game.Transaction.TransactionDefinition reward)
 		{
+			if (!IsSwrveAvailable)
+			{
+				return;
+			}
 			logger.Debug("{0}SendInAppPurchaseEventOnProductDelivery()...: sku = {1}", "Swrve: ", sku);
 			if (sku == null)
 			{
@@ -100,6 +122,10 @@ namespace Kampai.Common
 
 		private void SendEventHandler(global::Kampai.Common.TelemetryEvent gameEvent)
 		{
+			if (!IsSwrveAvailable)
+			{
+				return;
+			}
 			SwrveSDK sDK = SwrveComponent.Instance.SDK;
 			if (!sDK.Initialised || sDK.Container == null)
 			{
@@ -381,6 +407,10 @@ namespace Kampai.Common
 
 		public void SendUserStatsUpdate()
 		{
+			if (!IsSwrveAvailable)
+			{
+				return;
+			}
 			if (!PlayServiceReady())
 			{
 				logger.Log(global::Kampai.Util.KampaiLogLevel.Debug, "SwrveSendUserStatsUpdate - PlayService is not Ready Yet");

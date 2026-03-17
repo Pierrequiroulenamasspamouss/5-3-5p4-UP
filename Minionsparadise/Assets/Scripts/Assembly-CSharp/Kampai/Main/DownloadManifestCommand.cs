@@ -92,7 +92,12 @@ namespace Kampai.Main
 			{
 				if (!response.Success)
 				{
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+					logger.Error("Unable to download manifest, but continuing due to DLC independence policy.");
+					postSignal.Dispatch();
+#else
 					logger.Fatal(global::Kampai.Util.FatalCode.GS_ERROR_DOWNLOAD_MANIFEST, "Unable to download manifest");
+#endif
 				}
 				else
 				{

@@ -100,6 +100,8 @@ namespace Kampai.Main
 		{
 			logger.Debug("[Manifest] TryPlayVideoStartDownloadDLC");
 			bool flag = dlcModel.NeededBundles.Count == 0;
+			// Force flag to true to skip DLC download and proceed to login
+			flag = true; 
 			if (ShouldPlayVideo())
 			{
 				PlayVideo((!flag) ? new global::System.Action(VideoStartedPlayingCallback) : null);

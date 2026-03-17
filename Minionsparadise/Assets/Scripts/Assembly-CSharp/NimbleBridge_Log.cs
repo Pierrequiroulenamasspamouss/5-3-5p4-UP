@@ -14,6 +14,7 @@ public class NimbleBridge_Log
 	{
 	}
 
+#if UNITY_IOS || UNITY_ANDROID
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_Log_setThreshold(int level);
 
@@ -25,6 +26,7 @@ public class NimbleBridge_Log
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_Log_writeWithTitle(int level, string title, string message);
+#endif
 
 	public static NimbleBridge_Log GetComponent()
 	{
@@ -33,27 +35,41 @@ public class NimbleBridge_Log
 
 	public void WriteWithSource(NimbleBridge_Log.NimbleBridge_Log_Level level, NimbleBridge_LogSource source, string message)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Log_writeWithTitle((int)level, source.GetLogSourceTitle(), message);
+#endif
 	}
 
 	public void WriteWithTitle(NimbleBridge_Log.NimbleBridge_Log_Level level, string title, string message)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Log_writeWithTitle((int)level, title, message);
+#endif
 	}
 
 	public string GetLogFilePath()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Log_getLogFilePath();
+#else
+		return string.Empty;
+#endif
 	}
 
 	public int GetThreshold()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Log_getThresholdLevel();
+#else
+		return (int)NimbleBridge_Log_Level.LEVEL_INFO;
+#endif
 	}
 
 	public void SetThreshold(int level)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Log_setThreshold(level);
+#endif
 	}
 
 	public static void LOGV(NimbleBridge_LogSource source, string message)

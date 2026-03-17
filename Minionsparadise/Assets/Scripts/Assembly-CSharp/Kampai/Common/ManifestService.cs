@@ -103,13 +103,17 @@ namespace Kampai.Common
 		private global::Kampai.Util.BundleInfo AddBundle(global::Kampai.Util.BundleInfo bundle)
 		{
 			global::Kampai.Util.BundleInfo packagedAssetBundleInfo = dlcModel.GetPackagedAssetBundleInfo(bundle.originalName);
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+			bool flag = true;
+#else
 			bool flag = packagedAssetBundleInfo != null && packagedAssetBundleInfo.sum == bundle.sum && packagedAssetBundleInfo.size == bundle.size;
-			bool flag2 = flag && packagedAssetBundleInfo.isStreamable;
+#endif
+			bool flag2 = flag && (packagedAssetBundleInfo == null || packagedAssetBundleInfo.isStreamable);
 			string value = ((!flag2) ? global::Kampai.Util.GameConstants.DLC_PATH : ((!bundle.audio) ? global::Kampai.Util.GameConstants.PRE_INSTALLED_DLC_PATH : global::Kampai.Util.GameConstants.PRE_INSTALLED_FMOD_PATH));
-			global::Kampai.Util.BundleInfo bundleInfo = ((!flag) ? bundle : packagedAssetBundleInfo);
+			global::Kampai.Util.BundleInfo bundleInfo = ((!flag || packagedAssetBundleInfo == null) ? bundle : packagedAssetBundleInfo);
 			bundleManifest.Add(bundleInfo.name, value);
 			bundleInfoMap.Add(bundleInfo.name, bundleInfo);
-			if (flag && !packagedAssetBundleInfo.isStreamable)
+			if (flag && packagedAssetBundleInfo != null && !packagedAssetBundleInfo.isStreamable)
 			{
 				unstreamablePackagedBundles.Add(packagedAssetBundleInfo);
 			}
@@ -174,7 +178,11 @@ namespace Kampai.Common
 
 		public global::System.Collections.Generic.IList<string> GetShaderBundles()
 		{
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+			return new global::System.Collections.Generic.List<string>();
+#else
 			return shaderBundles;
+#endif
 		}
 
 		public global::System.Collections.Generic.IList<string> GetAudioBundles()

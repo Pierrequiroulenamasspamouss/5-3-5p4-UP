@@ -53,7 +53,7 @@ namespace Kampai.Game
 						global::Kampai.Util.ScreenUtils.ToggleAutoRotation(true);
 					}
 				}
-				else if (isDeviceSamsung)
+				else if (isDeviceSamsung || global::UnityEngine.Application.isEditor)
 				{
 					bool isStylusActive = global::UnityEngine.Input.GetMouseButton(0);
 					if (isStylusActive || wasStylusActive)

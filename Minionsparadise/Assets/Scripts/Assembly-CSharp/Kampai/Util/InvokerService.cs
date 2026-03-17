@@ -11,7 +11,7 @@ namespace Kampai.Util
 			{
 				work.Enqueue(a);
 			}
-			global::UnityEngine.Debug.LogFormat("InvokerService: Action enqueued. Current count: {0}", work.Count);
+			//global::UnityEngine.Debug.LogFormat("InvokerService: Action enqueued. Current count: {0}", work.Count);
 		}
 
 		public void Update()

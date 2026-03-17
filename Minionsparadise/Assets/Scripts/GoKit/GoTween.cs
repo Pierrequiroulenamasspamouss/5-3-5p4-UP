@@ -100,7 +100,7 @@ public class GoTween : AbstractGoTween
 		}
 		if (Go.validateTargetObjectsEachTick && (target == null || target.Equals(null)))
 		{
-			global::UnityEngine.Debug.LogWarning("target validation failed. destroying the tween to avoid errors. Target type: " + targetType);
+			Go.warn("target validation failed. destroying the tween to avoid errors. Target type: " + targetType);
 			base.autoRemoveOnComplete = true;
 			return true;
 		}

@@ -14,10 +14,14 @@ namespace Kampai.Main
 		{
 			logger.Debug("Start Loading Shared Bundles");
 			global::Kampai.Util.TimeProfiler.StartSection("loading shared bundles");
+#if !UNITY_EDITOR && !UNITY_STANDALONE_WIN
 			foreach (string shaderBundle in manifestService.GetShaderBundles())
 			{
 				assetBundlesService.LoadSharedBundle(shaderBundle);
 			}
+#else
+			logger.Info("Bypassing shader bundle loading on Windows/Editor");
+#endif
 			global::Kampai.Util.TimeProfiler.EndSection("loading shared bundles");
 		}
 	}

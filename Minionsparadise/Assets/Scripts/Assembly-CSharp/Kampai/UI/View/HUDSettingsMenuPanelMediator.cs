@@ -51,7 +51,7 @@ namespace Kampai.UI.View
 			settingsMenuPanelGO = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>("screen_HUD_Panel_Settings_Menu"));
 			settingsMenuPanelGO.transform.SetParent(base.transform, false);
 			settingsMenuPanelGO.SetActive(false);
-			if (global::Kampai.Util.GameConstants.StaticConfig.DEBUG_ENABLED)
+			if (global::Kampai.Util.GameConstants.StaticConfig.DEBUG_ENABLED || global::UnityEngine.PlayerPrefs.GetInt("DebugConsoleEnabled", 0) == 1)
 			{
 				global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>("DebugConsoleButton"));
 				gameObject.transform.SetParent(base.transform, false);

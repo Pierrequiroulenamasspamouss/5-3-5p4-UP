@@ -6,6 +6,7 @@ public class NimbleBridge_ApplicationEnvironment
 	{
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern string NimbleBridge_ApplicationEnvironment_getApplicationBundleId();
 
@@ -59,6 +60,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern bool NimbleBridge_ApplicationEnvironment_getIadAttribution();
+#endif
 
 	public static NimbleBridge_ApplicationEnvironment GetComponent()
 	{
@@ -67,7 +69,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public string GetApplicationBundleId()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getApplicationBundleId();
 #else
 		return "com.ea.minions";
@@ -76,14 +78,14 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public void SetApplicationBundleId(string bundleId)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_ApplicationEnvironment_setApplicationBundleId(bundleId);
 #endif
 	}
 
 	public string GetApplicationName()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getApplicationName();
 #else
 		return "Minions";
@@ -92,7 +94,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public string GetApplicationVersion()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getApplicationVersion();
 #else
 		return "1.0.0";
@@ -101,7 +103,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public string GetApplicationLanguageCode()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getApplicationLanguageCode();
 #else
 		return "en";
@@ -110,14 +112,14 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public void SetApplicationLanguageCode(string languageCode)
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_ApplicationEnvironment_setApplicationLanguageCode(languageCode);
 #endif
 	}
 
 	public string GetDocumentPath()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getDocumentPath();
 #else
 		return global::UnityEngine.Application.persistentDataPath;
@@ -126,7 +128,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public string GetCachePath()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getCachePath();
 #else
 		return global::UnityEngine.Application.temporaryCachePath;
@@ -135,7 +137,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public string GetTempPath()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getTempPath();
 #else
 		return global::System.IO.Path.GetTempPath();
@@ -144,7 +146,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public string GetCarrier()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getCarrier();
 #else
 		return "Wifi";
@@ -153,7 +155,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public string GetDeviceString()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getDeviceString();
 #else
 		return global::UnityEngine.SystemInfo.deviceModel;
@@ -162,7 +164,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public string GetMACAddress()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getMACAddress();
 #else
 		return "00:00:00:00:00:00";
@@ -171,7 +173,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public string GetIPAddress()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getIPAddress();
 #else
 		return "127.0.0.1";
@@ -180,7 +182,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public bool IsAppCracked()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_isAppCracked();
 #else
 		return false;
@@ -189,7 +191,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public bool IsDeviceJailbroken()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_isDeviceJailbroken();
 #else
 		return false;
@@ -198,7 +200,7 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public int GetAgeCompliance()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getAgeCompliance();
 #else
 		return 0;
@@ -207,14 +209,14 @@ public class NimbleBridge_ApplicationEnvironment
 
 	public void RefreshAgeCompliance()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_ApplicationEnvironment_refreshAgeCompliance();
 #endif
 	}
 
 	public bool GetIadAttribution()
 	{
-#if !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_ApplicationEnvironment_getIadAttribution();
 #else
 		return false;

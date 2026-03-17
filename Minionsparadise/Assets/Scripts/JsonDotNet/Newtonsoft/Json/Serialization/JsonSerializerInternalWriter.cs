@@ -417,8 +417,10 @@ namespace Newtonsoft.Json.Serialization
 			}
 			global::Newtonsoft.Json.Serialization.JsonContract collectionValueContract2 = base.Serializer.ContractResolver.ResolveContract(contract.DictionaryValueType ?? typeof(object));
 			int top = writer.Top;
-			foreach (global::System.Collections.DictionaryEntry value2 in values)
+			global::System.Collections.IDictionaryEnumerator enumerator = values.GetEnumerator();
+			while (enumerator.MoveNext())
 			{
+				global::System.Collections.DictionaryEntry value2 = enumerator.Entry;
 				string propertyName = GetPropertyName(value2);
 				propertyName = ((contract.PropertyNameResolver != null) ? contract.PropertyNameResolver(propertyName) : propertyName);
 				try

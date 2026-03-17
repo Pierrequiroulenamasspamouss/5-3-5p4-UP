@@ -1,0 +1,18 @@
+-- Start of Q4
+
+qs.setFtueLevelCompleted(3)
+
+qs.setBuildMenuEnabled(false)
+qs.enablePurchaseButton(false)
+
+coconutTreeID = 342
+
+-- Pan replaced this wayfinder
+qs.panCameraToInstance(coconutTreeID)
+
+-- Harvest icon pulses
+qs.highlightHarvest(true)
+qsutil.waitForBuilding(coconutTreeID, qsutil.BuildingState.Idle)
+qs.showWayFinder(coconutTreeID, false)
+qs.enablePurchaseButton(true)
+qs.highlightHarvest(false)

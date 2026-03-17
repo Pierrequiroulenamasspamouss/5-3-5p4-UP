@@ -8,42 +8,55 @@ namespace Kampai.Game.View
 
 		protected override bool IsInputStationary()
 		{
-			int touchCount = global::UnityEngine.Input.touchCount;
+			int touchCount = global::Kampai.Game.InputUtils.touchCount;
 			if (touchCount <= 0)
 			{
 				return false;
 			}
 			if (touchCount == 1)
 			{
-				global::UnityEngine.Touch touch = global::UnityEngine.Input.GetTouch(0);
+				global::UnityEngine.Touch touch = global::Kampai.Game.InputUtils.GetTouch(0);
 				return touch.phase == global::UnityEngine.TouchPhase.Stationary || touch.phase == global::UnityEngine.TouchPhase.Began;
 			}
-			global::UnityEngine.Touch touch2 = global::UnityEngine.Input.GetTouch(0);
-			global::UnityEngine.Touch touch3 = global::UnityEngine.Input.GetTouch(1);
+			global::UnityEngine.Touch touch2 = global::Kampai.Game.InputUtils.GetTouch(0);
+			global::UnityEngine.Touch touch3 = global::Kampai.Game.InputUtils.GetTouch(1);
 			return ((touch2.phase == global::UnityEngine.TouchPhase.Stationary || touch2.phase == global::UnityEngine.TouchPhase.Began) && touch3.phase != global::UnityEngine.TouchPhase.Moved) || ((touch3.phase == global::UnityEngine.TouchPhase.Stationary || touch3.phase == global::UnityEngine.TouchPhase.Began) && touch2.phase != global::UnityEngine.TouchPhase.Moved);
 		}
-
+ 
 		protected override bool IsInputDone()
 		{
-			int touchCount = global::UnityEngine.Input.touchCount;
+			int touchCount = global::Kampai.Game.InputUtils.touchCount;
 			if (touchCount <= 0)
 			{
 				return true;
 			}
 			if (touchCount == 1)
 			{
-				global::UnityEngine.Touch touch = global::UnityEngine.Input.GetTouch(0);
+				global::UnityEngine.Touch touch = global::Kampai.Game.InputUtils.GetTouch(0);
 				return touch.phase == global::UnityEngine.TouchPhase.Ended || touch.phase == global::UnityEngine.TouchPhase.Canceled;
 			}
-			global::UnityEngine.Touch touch2 = global::UnityEngine.Input.GetTouch(0);
-			global::UnityEngine.Touch touch3 = global::UnityEngine.Input.GetTouch(1);
+			global::UnityEngine.Touch touch2 = global::Kampai.Game.InputUtils.GetTouch(0);
+			global::UnityEngine.Touch touch3 = global::Kampai.Game.InputUtils.GetTouch(1);
 			return (touch2.phase == global::UnityEngine.TouchPhase.Ended || touch2.phase == global::UnityEngine.TouchPhase.Canceled) && (touch3.phase == global::UnityEngine.TouchPhase.Ended || touch3.phase == global::UnityEngine.TouchPhase.Canceled);
 		}
 
 		public override void CalculateBehaviour(global::UnityEngine.Vector3 position)
 		{
-			global::UnityEngine.Touch touch = global::UnityEngine.Input.GetTouch(0);
-			global::UnityEngine.Touch touch2 = global::UnityEngine.Input.GetTouch(1);
+			if (global::UnityEngine.Application.isEditor)
+			{
+				float axis = global::UnityEngine.Input.GetAxis("Mouse ScrollWheel");
+				if (axis != 0f)
+				{
+					velocity = new global::UnityEngine.Vector3(0f, axis * 100f, 0f);
+					return;
+				}
+			}
+			if (global::Kampai.Game.InputUtils.touchCount < 2)
+			{
+				return;
+			}
+			global::UnityEngine.Touch touch = global::Kampai.Game.InputUtils.GetTouch(0);
+			global::UnityEngine.Touch touch2 = global::Kampai.Game.InputUtils.GetTouch(1);
 			if (touch.phase == global::UnityEngine.TouchPhase.Moved || touch2.phase == global::UnityEngine.TouchPhase.Moved)
 			{
 				if (touch1PreviousPosition == global::UnityEngine.Vector3.zero && touch2PreviousPosition == global::UnityEngine.Vector3.zero)
