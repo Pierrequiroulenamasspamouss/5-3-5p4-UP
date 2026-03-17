@@ -27,6 +27,7 @@ public class NimbleBridge_PushTNG
 	{
 	}
 
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_PushTNG_start(string userAlias, double dateOfBirth, bool sandbox, NimbleBridge_PushTNG.BridgeOnRegistrationSuccessDelegate registrationSuccessDelegate, global::System.IntPtr registrationSuccessData, NimbleBridge_PushTNG.BridgeOnConnectionErrorDelegate connectionErrorDelegate, global::System.IntPtr connectionErrorData, NimbleBridge_PushTNG.BridgeOnTrackingSuccessDelegate trackingSuccessDelegate, global::System.IntPtr trackingSuccessData, NimbleBridge_PushTNG.BridgeOnGetInAppSuccessDelegate getInAppSuccessDelegate, global::System.IntPtr getInAppSuccessData);
 
@@ -38,6 +39,7 @@ public class NimbleBridge_PushTNG
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern string NimbleBridge_PushTNG_getDisableStatus();
+#endif
 
 	[global::AOT.MonoPInvokeCallback(typeof(NimbleBridge_PushTNG.BridgeOnRegistrationSuccessDelegate))]
 	private static void OnRegistrationSuccess(int statusCode, string registrationToken, global::System.IntPtr callbackData)
@@ -107,31 +109,43 @@ public class NimbleBridge_PushTNG
 
 	public void Start(string userAlias, double dateOfBirth, bool sandbox, NimbleBridge_PushTNG.OnRegistrationSuccessDelegate registrationSuccessDelegate, NimbleBridge_PushTNG.OnConnectionErrorDelegate connectionErrorDelegate, NimbleBridge_PushTNG.OnTrackingSuccessDelegate trackingSuccessDelegate, NimbleBridge_PushTNG.OnGetInAppSuccessDelegate getInAppSuccessDelegate)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_CallbackHelper nimbleBridge_CallbackHelper = NimbleBridge_CallbackHelper.Get();
 		global::System.IntPtr registrationSuccessData = nimbleBridge_CallbackHelper.MakeCallbackData(registrationSuccessDelegate);
 		global::System.IntPtr connectionErrorData = nimbleBridge_CallbackHelper.MakeCallbackData(connectionErrorDelegate);
 		global::System.IntPtr trackingSuccessData = nimbleBridge_CallbackHelper.MakeCallbackData(trackingSuccessDelegate);
 		global::System.IntPtr getInAppSuccessData = nimbleBridge_CallbackHelper.MakeCallbackData(getInAppSuccessDelegate);
 		NimbleBridge_PushTNG_start(userAlias, dateOfBirth, sandbox, OnRegistrationSuccess, registrationSuccessData, OnConnectionError, connectionErrorData, OnTrackingSuccess, trackingSuccessData, OnGetInAppSuccess, getInAppSuccessData);
+#endif
 	}
 
 	public void StartDisabled(string userAlias, double dateOfBirth, NimbleBridge_PushTNG.DisabledReason disabledReason, bool sandbox, NimbleBridge_PushTNG.OnRegistrationSuccessDelegate registrationSuccessDelegate, NimbleBridge_PushTNG.OnConnectionErrorDelegate connectionErrorDelegate, NimbleBridge_PushTNG.OnTrackingSuccessDelegate trackingSuccessDelegate, NimbleBridge_PushTNG.OnGetInAppSuccessDelegate getInAppSuccessDelegate)
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_CallbackHelper nimbleBridge_CallbackHelper = NimbleBridge_CallbackHelper.Get();
 		global::System.IntPtr registrationSuccessData = nimbleBridge_CallbackHelper.MakeCallbackData(registrationSuccessDelegate);
 		global::System.IntPtr connectionErrorData = nimbleBridge_CallbackHelper.MakeCallbackData(connectionErrorDelegate);
 		global::System.IntPtr trackingSuccessData = nimbleBridge_CallbackHelper.MakeCallbackData(trackingSuccessDelegate);
 		global::System.IntPtr getInAppSuccessData = nimbleBridge_CallbackHelper.MakeCallbackData(getInAppSuccessDelegate);
 		NimbleBridge_PushTNG_startDisabled(userAlias, dateOfBirth, (int)disabledReason, sandbox, OnRegistrationSuccess, registrationSuccessData, OnConnectionError, connectionErrorData, OnTrackingSuccess, trackingSuccessData, OnGetInAppSuccess, getInAppSuccessData);
+#endif
 	}
 
 	public bool getRegistrationStatus()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_PushTNG_getRegistrationStatus();
+#else
+		return false;
+#endif
 	}
 
 	public string getDisableStatus()
 	{
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_PushTNG_getDisableStatus();
+#else
+		return string.Empty;
+#endif
 	}
 }

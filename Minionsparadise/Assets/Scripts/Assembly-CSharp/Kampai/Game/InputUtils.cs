@@ -22,6 +22,11 @@ namespace Kampai.Game
 
 		private static int frameUpdated;
 
+#if UNITY_EDITOR || UNITY_STANDALONE
+		private static global::UnityEngine.Vector2 lastMousePosition;
+		private static float lastZoomDistance;
+#endif
+
 		public static int touchCount
 		{
 			get
@@ -33,6 +38,28 @@ namespace Kampai.Game
 				return _touchCount;
 			}
 		}
+
+#if UNITY_EDITOR || UNITY_STANDALONE
+		private static global::System.Reflection.FieldInfo m_FingerIdField = typeof(global::UnityEngine.Touch).GetField("m_FingerId", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
+		private static global::System.Reflection.FieldInfo m_PositionField = typeof(global::UnityEngine.Touch).GetField("m_Position", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
+		private static global::System.Reflection.FieldInfo m_PositionDeltaField = typeof(global::UnityEngine.Touch).GetField("m_PositionDelta", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
+		private static global::System.Reflection.FieldInfo m_PhaseField = typeof(global::UnityEngine.Touch).GetField("m_Phase", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic);
+
+		private static float editorZoomDistance = 200f;
+
+		private static bool editorIsZooming = false;
+
+		public static global::UnityEngine.Touch CreateTouch(int fingerId, global::UnityEngine.Vector2 position, global::UnityEngine.Vector2 deltaPosition, global::UnityEngine.TouchPhase phase)
+		{
+			global::UnityEngine.Touch touch = default(global::UnityEngine.Touch);
+			object obj = touch;
+			m_FingerIdField.SetValue(obj, fingerId);
+			m_PositionField.SetValue(obj, position);
+			m_PositionDeltaField.SetValue(obj, deltaPosition);
+			m_PhaseField.SetValue(obj, phase);
+			return (global::UnityEngine.Touch)obj;
+		}
+#endif
 
 		private static void UpdateTouchStates()
 		{
@@ -57,6 +84,70 @@ namespace Kampai.Game
 					{
 						touches[num] = touch2;
 						num++;
+					}
+				}
+			}
+#if UNITY_EDITOR || UNITY_STANDALONE
+			else
+			{
+				float axis = global::UnityEngine.Input.GetAxis("Mouse ScrollWheel");
+				bool flag = global::UnityEngine.Input.GetKey(global::UnityEngine.KeyCode.LeftControl) || global::UnityEngine.Input.GetKey(global::UnityEngine.KeyCode.RightControl);
+				global::UnityEngine.Vector2 vector = global::UnityEngine.Input.mousePosition;
+				if (flag && (axis != 0f || editorIsZooming))
+				{
+					global::UnityEngine.TouchPhase phase2;
+					if (!editorIsZooming)
+					{
+						phase2 = global::UnityEngine.TouchPhase.Began;
+						editorIsZooming = true;
+						lastZoomDistance = editorZoomDistance;
+					}
+					else if (axis != 0f)
+					{
+						phase2 = global::UnityEngine.TouchPhase.Moved;
+						lastZoomDistance = editorZoomDistance;
+						editorZoomDistance += axis * 1000f;
+					}
+					else
+					{
+						phase2 = global::UnityEngine.TouchPhase.Stationary;
+					}
+					global::UnityEngine.Vector2 vector2 = new global::UnityEngine.Vector2(editorZoomDistance, 0f);
+					global::UnityEngine.Vector2 vectorDelta = new global::UnityEngine.Vector2(editorZoomDistance - lastZoomDistance, 0f);
+					touches[num++] = CreateTouch(10, vector - vector2, -vectorDelta, phase2);
+					touches[num++] = CreateTouch(11, vector + vector2, vectorDelta, phase2);
+				}
+				else
+				{
+					if (editorIsZooming)
+					{
+						global::UnityEngine.Vector2 vector3 = global::UnityEngine.Input.mousePosition;
+						global::UnityEngine.Vector2 vector4 = new global::UnityEngine.Vector2(editorZoomDistance, 0f);
+						touches[num++] = CreateTouch(10, vector3 - vector4, global::UnityEngine.Vector2.zero, global::UnityEngine.TouchPhase.Ended);
+						touches[num++] = CreateTouch(11, vector3 + vector4, global::UnityEngine.Vector2.zero, global::UnityEngine.TouchPhase.Ended);
+						editorIsZooming = false;
+					}
+					if (global::UnityEngine.Input.GetMouseButtonDown(0) || global::UnityEngine.Input.GetMouseButton(0) || global::UnityEngine.Input.GetMouseButtonUp(0))
+					{
+						global::UnityEngine.TouchPhase phase3;
+						global::UnityEngine.Vector2 delta = global::UnityEngine.Vector2.zero;
+						if (global::UnityEngine.Input.GetMouseButtonDown(0))
+						{
+							phase3 = global::UnityEngine.TouchPhase.Began;
+							lastMousePosition = vector;
+						}
+						else if (global::UnityEngine.Input.GetMouseButtonUp(0))
+						{
+							phase3 = global::UnityEngine.TouchPhase.Ended;
+							delta = vector - lastMousePosition;
+						}
+						else
+						{
+							phase3 = global::UnityEngine.TouchPhase.Moved;
+							delta = vector - lastMousePosition;
+							lastMousePosition = vector;
+						}
+						touches[num++] = CreateTouch(99, vector, delta, phase3);
 					}
 				}
 			}
@@ -90,3 +181,4 @@ namespace Kampai.Game
 		}
 	}
 }
+#endif

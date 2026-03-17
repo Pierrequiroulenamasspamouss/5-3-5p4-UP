@@ -1244,11 +1244,55 @@ namespace Kampai.Game
 		[global::Kampai.Game.QuestScriptAPI("placeCharacterInBuilding")]
 		public bool placeCharacterInBuilding(global::Kampai.Game.IArgRetriever args, global::Kampai.Game.ReturnValueContainer ret)
 		{
-			int id = args.GetInt(1);
-			global::Kampai.Game.NamedCharacter byInstanceId = playerService.GetByInstanceId<global::Kampai.Game.NamedCharacter>(id);
-			if (byInstanceId is global::Kampai.Game.PhilCharacter)
+			int charId = args.GetInt(1);
+			int buildingId = args.GetInt(2);
+			logger.Info("placeCharacterInBuilding: charId={0}, buildingId={1}", charId, buildingId);
+			global::UnityEngine.GameObject buildingManagerObj = gameContext.injectionBinder.GetInstance<global::UnityEngine.GameObject>(global::Kampai.Game.GameElement.BUILDING_MANAGER);
+			global::Kampai.Game.View.BuildingObject buildingObject = buildingManagerObj.GetComponent<global::Kampai.Game.View.BuildingManagerView>().GetBuildingObject(buildingId);
+			if (buildingObject == null)
 			{
-				gameContext.injectionBinder.GetInstance<global::Kampai.Game.PhilGoToTikiBarSignal>().Dispatch(true);
+				logger.Error("placeCharacterInBuilding: Building {0} not found!", buildingId);
+				return false;
+			}
+			global::Kampai.Game.View.ActionableObject characterView = null;
+			global::UnityEngine.GameObject namedCharManagerObj = gameContext.injectionBinder.GetInstance<global::UnityEngine.GameObject>(global::Kampai.Game.GameElement.NAMED_CHARACTER_MANAGER);
+			if (namedCharManagerObj != null)
+			{
+				characterView = namedCharManagerObj.GetComponent<global::Kampai.Game.View.NamedCharacterManagerView>().Get(charId);
+			}
+			if (characterView == null)
+			{
+				global::UnityEngine.GameObject minionManagerObj = gameContext.injectionBinder.GetInstance<global::UnityEngine.GameObject>(global::Kampai.Game.GameElement.MINION_MANAGER);
+				if (minionManagerObj != null)
+				{
+					characterView = minionManagerObj.GetComponent<global::Kampai.Game.View.MinionManagerView>().Get(charId);
+				}
+			}
+			if (characterView != null)
+			{
+				if (characterView is global::Kampai.Game.View.PhilView && (buildingId == 313 || buildingId == 3041))
+				{
+					logger.Debug("placeCharacterInBuilding: Phil + TikiBar detected, using specialized GotoTikiBar");
+					gameContext.injectionBinder.GetInstance<global::Kampai.Game.PhilGoToTikiBarSignal>().Dispatch(true);
+				}
+				else
+				{
+					global::UnityEngine.Transform transform = buildingObject.transform.Find("route0");
+					if (transform != null)
+					{
+						characterView.transform.position = transform.position;
+						characterView.transform.eulerAngles = transform.eulerAngles;
+					}
+					else
+					{
+						characterView.transform.position = buildingObject.Center;
+					}
+					logger.Debug("placeCharacterInBuilding: {0} teleported to building {1} at {2}", characterView.name, buildingId, characterView.transform.position);
+				}
+			}
+			else
+			{
+				logger.Error("placeCharacterInBuilding: Character {0} not found!", charId);
 			}
 			return true;
 		}
@@ -1298,8 +1342,17 @@ namespace Kampai.Game
 		public bool DispatchSignal(global::Kampai.Game.IArgRetriever args, global::Kampai.Game.ReturnValueContainer ret)
 		{
 			string text = args.GetString(1);
-			global::System.Type type = global::System.Reflection.Assembly.GetExecutingAssembly().GetType("Kampai.Game." + text, false);
-			if (type == null)
+
+            // --- DÉBUT DU FIX DE RÉFLEXION ---
+            global::System.Type type = null;
+            string fullTypeName = "Kampai.Game." + text;
+            foreach (global::System.Reflection.Assembly asm in global::System.AppDomain.CurrentDomain.GetAssemblies())
+            {
+                type = asm.GetType(fullTypeName, false, true);
+                if (type != null) break;
+            }
+            // --- FIN DU FIX ---
+            if (type == null)
 			{
 				logger.Error("qs.dispatchSignal: Cannot dispatch signal {0}, cannot find type.", text);
 				return true;

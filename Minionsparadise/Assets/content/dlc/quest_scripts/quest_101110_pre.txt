@@ -1,0 +1,8 @@
+-- Start of Leisure Quest Step 1a
+
+qs.setFtueLevelCompleted(2)
+
+qs.setBuildMenuEnabled(false)
+qs.enableCallButtons(false)
+
+qsutil.waitForDialog('ftue_q2_narrative_funflow')

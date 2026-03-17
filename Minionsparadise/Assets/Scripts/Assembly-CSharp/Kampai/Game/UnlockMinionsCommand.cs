@@ -49,6 +49,9 @@ namespace Kampai.Game
 		[Inject(global::Kampai.Game.GameElement.MINION_MANAGER)]
 		public global::UnityEngine.GameObject minionManager { get; set; }
 
+		[Inject]
+		public global::Kampai.Game.GetNewQuestSignal getNewQuestSignal { get; set; }
+
 		public override void Execute()
 		{
 			if (characterModel.characterUnlocks.Count == 0 && characterModel.minionUnlocks.Count == 0)

@@ -100,57 +100,73 @@ namespace Kampai.Util
 		{
 		}
 
-		protected void LogIt(global::Kampai.Util.KampaiLogLevel level, string text)
-		{
-			switch (level)
-			{
-			case global::Kampai.Util.KampaiLogLevel.Info:
-				Log(global::Elevation.Logging.LogEvent.Info(text));
-				break;
-			case global::Kampai.Util.KampaiLogLevel.Debug:
-				Log(global::Elevation.Logging.LogEvent.Debug(text));
-				break;
-			case global::Kampai.Util.KampaiLogLevel.Warning:
-				Log(global::Elevation.Logging.LogEvent.Warn(text));
-				break;
-			case global::Kampai.Util.KampaiLogLevel.Error:
-				Log(global::Elevation.Logging.LogEvent.Error(text));
-				break;
-			case global::Kampai.Util.KampaiLogLevel.Verbose:
-				Log(global::Elevation.Logging.LogEvent.Trace(text));
-				break;
-			default:
-				Log(global::Elevation.Logging.LogEvent.Error(text));
-				break;
-			}
-		}
+        protected void LogIt(global::Kampai.Util.KampaiLogLevel level, string text)
+        {
+            // --- HIJACK UNITY LOGS ---
+            switch (level)
+            {
+                case global::Kampai.Util.KampaiLogLevel.Info:
+                    global::UnityEngine.Debug.Log("<color=lightblue>[V2-INFO]</color> " + text);
+                    Log(global::Elevation.Logging.LogEvent.Info(text));
+                    break;
+                case global::Kampai.Util.KampaiLogLevel.Debug:
+                    // global::UnityEngine.Debug.Log("<color=grey>[V2-DEBUG]</color> " + text); // removed because polluting
+                    Log(global::Elevation.Logging.LogEvent.Debug(text));
+                    break;
+                case global::Kampai.Util.KampaiLogLevel.Warning:
+                    global::UnityEngine.Debug.LogWarning("<color=yellow>[V2-WARN]</color> " + text);
+                    Log(global::Elevation.Logging.LogEvent.Warn(text));
+                    break;
+                case global::Kampai.Util.KampaiLogLevel.Error:
+                    global::UnityEngine.Debug.LogError("<color=red>[V2-ERROR]</color> " + text);
+                    Log(global::Elevation.Logging.LogEvent.Error(text));
+                    break;
+                case global::Kampai.Util.KampaiLogLevel.Verbose:
+                    // global::UnityEngine.Debug.Log("<color=white>[V2-TRACE]</color> " + text); // removed because polluting
+                    Log(global::Elevation.Logging.LogEvent.Trace(text));
+                    break;
+                default:
+                    global::UnityEngine.Debug.LogError("<color=red>[V2-UNKNOWN]</color> " + text);
+                    Log(global::Elevation.Logging.LogEvent.Error(text));
+                    break;
+            }
+        }
 
-		protected void LogIt(global::Kampai.Util.KampaiLogLevel level, string format, params object[] args)
-		{
-			switch (level)
-			{
-			case global::Kampai.Util.KampaiLogLevel.Info:
-				Log(global::Elevation.Logging.LogEvent.Info(format, args));
-				break;
-			case global::Kampai.Util.KampaiLogLevel.Debug:
-				Log(global::Elevation.Logging.LogEvent.Debug(format, args));
-				break;
-			case global::Kampai.Util.KampaiLogLevel.Warning:
-				Log(global::Elevation.Logging.LogEvent.Warn(format, args));
-				break;
-			case global::Kampai.Util.KampaiLogLevel.Error:
-				Log(global::Elevation.Logging.LogEvent.Error(format, args));
-				break;
-			case global::Kampai.Util.KampaiLogLevel.Verbose:
-				Log(global::Elevation.Logging.LogEvent.Trace(format, args));
-				break;
-			default:
-				Log(global::Elevation.Logging.LogEvent.Error(format, args));
-				break;
-			}
-		}
+        protected void LogIt(global::Kampai.Util.KampaiLogLevel level, string format, params object[] args)
+        {
+            // On formate la chaîne avant de l'envoyer à Unity
+            string text = string.Format(format, args);
 
-		public void Fatal(global::Kampai.Util.FatalCode code, string format, params object[] args)
+            // --- HIJACK UNITY LOGS ---
+            switch (level)
+            {
+                case global::Kampai.Util.KampaiLogLevel.Info:
+                    //global::UnityEngine.Debug.Log("<color=lightblue>[V2-INFO]</color> " + text);
+                    Log(global::Elevation.Logging.LogEvent.Info(format, args));
+                    break;
+                case global::Kampai.Util.KampaiLogLevel.Debug:
+                    // global::UnityEngine.Debug.Log("<color=grey>[V2-DEBUG]</color> " + text);
+                    Log(global::Elevation.Logging.LogEvent.Debug(format, args));
+                    break;
+                case global::Kampai.Util.KampaiLogLevel.Warning:
+                    global::UnityEngine.Debug.LogWarning("<color=yellow>[V2-WARN]</color> " + text);
+                    Log(global::Elevation.Logging.LogEvent.Warn(format, args));
+                    break;
+                case global::Kampai.Util.KampaiLogLevel.Error:
+                    global::UnityEngine.Debug.LogError("<color=red>[V2-ERROR]</color> " + text);
+                    Log(global::Elevation.Logging.LogEvent.Error(format, args));
+                    break;
+                case global::Kampai.Util.KampaiLogLevel.Verbose:
+                    // global::UnityEngine.Debug.Log("<color=white>[V2-TRACE]</color> " + text);
+                    Log(global::Elevation.Logging.LogEvent.Trace(format, args));
+                    break;
+                default:
+                    global::UnityEngine.Debug.LogError("<color=red>[V2-UNKNOWN]</color> " + text);
+                    Log(global::Elevation.Logging.LogEvent.Error(format, args));
+                    break;
+            }
+        }
+        public void Fatal(global::Kampai.Util.FatalCode code, string format, params object[] args)
 		{
 			Fatal(code, 0, format, args);
 		}

@@ -117,3 +117,43 @@ def tse_team_actions(event_id, team_id, user_id, action):
         json.dumps(data, separators=(', ', ': ')),
         mimetype='application/json'
     )
+@user_bp.route('/rest/v2/user/<user_id>/identity', methods=['POST'])
+def link_identity(user_id):
+    """
+    Mocks account linking.
+    Expects AccountLinkRequest: { "credentials": "...", "externalId": "...", "identityType": "..." }
+    Returns UserIdentity object.
+    """
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+    except Exception:
+        data = {}
+        
+    print(f"[IDENTITY] Linking user {user_id} with {data.get('identityType')} ID {data.get('externalId')}")
+    
+    # Return UserIdentity sequence
+    return jsonify({
+        "userId": user_id,
+        "externalId": data.get('externalId', 'mock_external_id'),
+        "type": data.get('identityType', 'facebook')
+    })
+@user_bp.route('/token', methods=['POST'])
+def get_dcn_token():
+    """
+    Mocks the DCN token endpoint.
+    Expects json with app_token.
+    Returns Token and Expires_In.
+    """
+    from datetime import datetime, timedelta
+    
+    # Mock token valid for 24 hours
+    expires_at = datetime.now() + timedelta(hours=24)
+    # The client expects ISO format that .NET can parse
+    expires_str = expires_at.strftime('%Y-%m-%dT%H:%M:%S')
+    
+    print(f"[DCN] Token requested. Returning mock token.")
+    
+    return jsonify({
+        "Token": "mock_dcn_token_12345",
+        "Expires_In": expires_str
+    })

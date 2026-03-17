@@ -4,7 +4,7 @@ public class NimbleBridge_Tracking
 	{
 	}
 
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern void NimbleBridge_Tracking_logEvent(string type, global::System.IntPtr map);
 
@@ -43,7 +43,7 @@ public class NimbleBridge_Tracking
 
 	public void LogEvent(string type, global::System.Collections.Generic.Dictionary<string, string> parameters)
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR && UNITY_ANDROID
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		global::System.IntPtr intPtr = global::System.IntPtr.Zero;
 		try
 		{
@@ -62,7 +62,7 @@ public class NimbleBridge_Tracking
 
 	public bool IsEnabled()
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Tracking_isEnabled();
 #else
 		return false;
@@ -71,21 +71,21 @@ public class NimbleBridge_Tracking
 
 	public void SetEnabled(bool enable)
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Tracking_setEnabled(enable);
 #endif
 	}
 
 	public void AddCustomSessionValue(string key, string value)
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Tracking_addCustomSessionData(key, value);
 #endif
 	}
 
 	public void RemoveCustomSessionValue(string key)
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Tracking_removeCustomSessionData(key);
 #endif
 	}
@@ -96,14 +96,14 @@ public class NimbleBridge_Tracking
 
 	public void SetTrackingAttribute(string key, string value)
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		NimbleBridge_Tracking_setTrackingAttribute(key, value);
 #endif
 	}
 
 	public string GetSessionId()
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Tracking_getSessionId();
 #else
 		return string.Empty;
@@ -112,7 +112,7 @@ public class NimbleBridge_Tracking
 
 	public static bool IsNimbleStandardEvent(string type)
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Tracking_isNimbleStandardEvent(type);
 #else
 		return false;
@@ -121,7 +121,7 @@ public class NimbleBridge_Tracking
 
 	public static bool IsEventTypeEqual(string _event, string otherEvent)
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		return NimbleBridge_Tracking_isEventTypeEqual(_event, otherEvent);
 #else
 		return _event == otherEvent;
@@ -130,7 +130,7 @@ public class NimbleBridge_Tracking
 
 	public static bool IsEventTypeMemberOfSet(string _event, global::System.Collections.Generic.List<string> eventTypeSet)
 	{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR && UNITY_ANDROID
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
 		string[] array = new string[eventTypeSet.Count + 1];
 		eventTypeSet.CopyTo(array);
 		array[eventTypeSet.Count] = null;

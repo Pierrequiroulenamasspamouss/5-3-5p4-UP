@@ -20,6 +20,10 @@ namespace Kampai.Main
 
 		public override void Execute()
 		{
+			// Only initialize HockeyApp on real Android devices; skip on Windows/Editor to avoid crashes and unnecessary telemetry
+#if !UNITY_ANDROID || UNITY_EDITOR
+			return;
+#else
 			logger.EventStart("SetupHockeyAppCommand.Execute");
 			global::UnityEngine.GameObject gameObject = new global::UnityEngine.GameObject("HockeyApp");
 			gameObject.SetActive(false);
@@ -38,6 +42,7 @@ namespace Kampai.Main
 			hockeyAppAndroid.telemetryService = telemetryService;
 			gameObject.SetActive(true);
 			logger.EventStop("SetupHockeyAppCommand.Execute");
+#endif
 		}
 	}
 }

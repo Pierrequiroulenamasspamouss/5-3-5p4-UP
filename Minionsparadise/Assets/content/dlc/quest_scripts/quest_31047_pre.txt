@@ -1,0 +1,19 @@
+-- FTUE Quest 3, step 2
+
+local storageId = 314
+
+qs.setBuildMenuEnabled(false)
+qs.enablePurchaseButton(false)
+-- Disable storage building immediatley so user can't harvest all their coconuts
+-- while the animation is playing.
+qs.setBuildingState(storageId, qsutil.BuildingState.Disabled)
+
+-- wait for repair animation
+qs.wait(2)
+
+-- Now re-enable storage.
+qs.setBuildingState(storageId, qsutil.BuildingState.Idle)
+
+qs.sendTelemetry('tutorial', '3')
+
+-- end step 2

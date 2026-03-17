@@ -8,6 +8,7 @@ game_bp = Blueprint('game', __name__)
 BASE_HOST = "http://localhost"
 SERVER_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VIDEO_PATH = os.path.join(SERVER_DIR, "assets", "video.mp4")
+INTRO_VIDEO_PATH = os.path.join(SERVER_DIR, "assets", "intro.mp4")
 DEFINITIONS_PATH = os.path.join(SERVER_DIR, "definitions.json")
 CONFIG_PATH = os.path.join(SERVER_DIR, "config.json")
 MANIFEST_PATH = os.path.join(SERVER_DIR, "DLC_Manifest.json")
@@ -25,6 +26,17 @@ def serve_dlc(filename):
 def serve_video():
     if os.path.exists(VIDEO_PATH): 
         return send_file(VIDEO_PATH, mimetype='video/mp4')
+    return "", 404
+
+@game_bp.route('/videos/<path:filename>')
+def serve_intro_video(filename):
+    file_path = os.path.join(SERVER_DIR, "assets", filename)
+    if os.path.exists(file_path):
+        return send_file(file_path)
+    
+    if filename.startswith('intro'):
+        if os.path.exists(INTRO_VIDEO_PATH):
+            return send_file(INTRO_VIDEO_PATH, mimetype='video/mp4')
     return "", 404
 
 @game_bp.route('/configs/<path:path>', methods=['GET'])
@@ -92,7 +104,9 @@ def get_gamestate(user_id):
 @game_bp.route('/rest/gamestate/<user_id>', methods=['POST'])
 def save_gamestate(user_id):
     try:
-        player_data = request.get_json()
+        player_data = request.get_json(force=True, silent=True)
+        if player_data is None:
+            raise ValueError("No JSON data received or invalid JSON")
         player_data_dir = os.path.join(SERVER_DIR, 'player_data')
         os.makedirs(player_data_dir, exist_ok=True)
         player_file = os.path.join(player_data_dir, f'{user_id}.json')
@@ -112,3 +126,20 @@ def reset_gamestate(user_id):
         os.remove(player_file)
         print(f"[GAME] RESET PROFILE for user {user_id}")
     return jsonify({"success": True})
+@game_bp.route('/contents/featured', methods=['GET'])
+def get_featured_contents():
+    print("[GAME] REQUESTING FEATURED CONTENTS", flush=True)
+    return jsonify({
+        "id": 1,
+        "title": "Featured Content",
+        "description": "Featured content for DCN",
+        "type": "featured",
+        "mime_type": "text/html",
+        "created_at": "2026-03-16T17:00:00Z",
+        "updated_at": "2026-03-16T17:00:00Z",
+        "expires_in": "2026-03-17T17:00:00Z",
+        "urls": {
+            "html5": "https://www.google.com" # Dummy URL, but must be present and non-empty
+        },
+        "featured": True
+    })

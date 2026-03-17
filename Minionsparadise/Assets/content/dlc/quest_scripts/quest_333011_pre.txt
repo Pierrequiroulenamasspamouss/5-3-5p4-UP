@@ -1,0 +1,41 @@
+-- FTUE Quest 1, step 3
+
+qs.setBuildMenuEnabled(false)
+qs.enableCallButtons(false)
+
+tikiBarId = 313
+qs.disableCameraControls()
+qs.panCameraToInstance(tikiBarId)
+
+qs.setBuildingState(tikiBarId, qsutil.BuildingState.Disabled)
+-- dialog sequence
+qs.setDialogType('Normal')
+qs.setCharacterImage(40000)
+qs.setDialogSound('Play_menu_popUp_01')
+qsutil.waitForDialog('ftue_01_tiki_complete')
+
+-- Animate phil noticing missing sign
+philId = 78
+qs.setCharacterAnimation(philId, "NoticeMissingSign")
+
+qs.panCameraToPosition(128.1388, 14.15816, 161.0463, 0.8)
+
+qs.wait(1)
+
+qsutil.waitForDialog('ftue_01_missingSign')
+
+qs.showWayFinder(tikiBarId, true)
+qs.setBuildingState(tikiBarId, qsutil.BuildingState.Broken)
+
+-- Allow pick controller to interact with tikibar again
+qs.setIgnoreInstance(tikiBarId, false);
+
+qsutil.waitForBuilding(tikiBarId, qsutil.BuildingState.Idle)
+qs.philFixedSign()
+
+-- Ignore tikibar in pick controller
+qs.setIgnoreInstance(tikiBarId, true);
+
+qs.wait(3)
+
+-- end step 3

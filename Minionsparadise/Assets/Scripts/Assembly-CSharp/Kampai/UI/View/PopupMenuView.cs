@@ -70,6 +70,11 @@ namespace Kampai.UI.View
 			StopAllCoroutines();
 		}
 
+		public void DestroyMenu()
+		{
+			FinishClosing();
+		}
+
 		internal virtual void Open()
 		{
 			if (controller != null)

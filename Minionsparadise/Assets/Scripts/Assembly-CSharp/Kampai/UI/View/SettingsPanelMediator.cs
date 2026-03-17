@@ -51,6 +51,13 @@ namespace Kampai.UI.View
 		[Inject]
 		public global::Kampai.UI.View.CloseAllOtherMenuSignal closeSignal { get; set; }
 
+		[Inject]
+		public global::Kampai.UI.View.PopupMessageSignal popupMessageSignal { get; set; }
+
+		private int buildNumberClickCount;
+
+		private float lastBuildNumberClickTime;
+
 		private void OnEnable()
 		{
 			if (view != null)
@@ -73,6 +80,14 @@ namespace Kampai.UI.View
 			view.musicValue.text = ((int)(100f * view.MusicSlider.value)).ToString();
 			view.soundValue.text = ((int)(100f * view.SFXSlider.value)).ToString();
 			view.volumeSliderChangedSignal.AddListener(OnVolumeChanged);
+			view.buildNumber.raycastTarget = true;
+			global::UnityEngine.UI.Button button = view.buildNumber.GetComponent<global::UnityEngine.UI.Button>();
+			if (button == null)
+			{
+				button = view.buildNumber.gameObject.AddComponent<global::UnityEngine.UI.Button>();
+			}
+			button.transition = global::UnityEngine.UI.Selectable.Transition.None;
+			button.onClick.AddListener(OnBuildNumberClicked);
 		}
 
 		private void OnDisable()
@@ -200,6 +215,25 @@ namespace Kampai.UI.View
 		private void setBuild(string buildID)
 		{
 			view.buildNumber.text = localService.GetString("buildNumber") + buildID;
+		}
+
+		private void OnBuildNumberClicked()
+		{
+			if (global::UnityEngine.Time.time - lastBuildNumberClickTime > 2f)
+			{
+				buildNumberClickCount = 0;
+			}
+			buildNumberClickCount++;
+			lastBuildNumberClickTime = global::UnityEngine.Time.time;
+			if (buildNumberClickCount >= 7)
+			{
+				int num = global::UnityEngine.PlayerPrefs.GetInt("DebugConsoleEnabled", 0);
+				int num2 = (num == 0) ? 1 : 0;
+				global::UnityEngine.PlayerPrefs.SetInt("DebugConsoleEnabled", num2);
+				global::UnityEngine.PlayerPrefs.Save();
+				buildNumberClickCount = 0;
+				popupMessageSignal.Dispatch("Debug Console " + ((num2 == 1) ? "Enabled" : "Disabled") + "\nPlease re-open settings menu.", global::Kampai.UI.View.PopupMessageType.NORMAL);
+			}
 		}
 	}
 }
