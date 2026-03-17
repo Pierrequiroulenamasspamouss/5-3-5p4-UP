@@ -24,7 +24,10 @@ namespace Kampai.Main
 
 		public override void Execute()
 		{
-			currencyService.RefreshCatalog();
+			if (!currencyService.IsRefreshingCatalog)
+			{
+				currencyService.RefreshCatalog();
+			}
 			localPersistanceService.PutData("ExternalLinkOpened", "False");
 			if (!localPersistanceService.GetData("SocialInProgress").Equals("True"))
 			{

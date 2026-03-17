@@ -332,7 +332,7 @@ namespace Kampai.UI.View
 			string gUILabel = command.GUILabel;
 			if (!instances.ContainsKey(gUILabel))
 			{
-				logger.Error("Unable to unload instance: {0}", gUILabel);
+				logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "Unable to unload instance: {0} (it might have been closed already)", gUILabel);
 				return;
 			}
 			global::UnityEngine.GameObject gameObject = instances[gUILabel];

@@ -32,7 +32,7 @@ namespace Kampai.Common
 			}
 			if (configurationsService.GetConfigurations().rateAppAfter == null)
 			{
-				logger.Log(global::Kampai.Util.KampaiLogLevel.Error, "No rate app configurations.");
+				logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "No rate app configurations available yet.");
 				return;
 			}
 			bool value = false;

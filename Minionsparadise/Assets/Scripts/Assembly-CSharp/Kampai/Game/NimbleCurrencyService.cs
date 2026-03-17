@@ -464,7 +464,14 @@ namespace Kampai.Game
 		public override void RefreshCatalog()
 		{
 			CheckDisposed();
-			RefreshAvailableCatalogItems();
+		}
+
+		public override bool IsRefreshingCatalog
+		{
+			get
+			{
+				return CurrentState == global::Kampai.Game.NimbleCurrencyService.State.CatalogRefresh;
+			}
 		}
 
 		private void RefreshAvailableCatalogItems()
