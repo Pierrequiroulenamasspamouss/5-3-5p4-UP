@@ -1,6 +1,0 @@
--- Repair Welcome Booth Quest
-qs.markVillainIslandAsUnlocked()
-welcomeHutId = 372
-
-qs.setBuildingState(welcomeHutId, qsutil.BuildingState.Broken)
-qs.showWayFinder(welcomeHutId, true)

@@ -155,13 +155,13 @@ namespace Kampai.Game
 		{
 			string uid = localPersistence.GetData("UserID");
 			if (string.IsNullOrEmpty(uid)) { uid = "1000000000"; }
-			global::UnityEngine.Application.OpenURL("http://localhost:44733/auth/facebook/login?uid=" + uid);
+			global::UnityEngine.Application.OpenURL(global::Kampai.Util.GameConstants.Server.CDN_METADATA_URL + "/auth/facebook/login?uid=" + uid);
 			logger.Info("Facebook: Opened Server Facebook Login for {0}. Polling for token...", uid);
 			bool solved = false;
 			while (!solved)
 			{
 				yield return new global::UnityEngine.WaitForSeconds(2f);
-				global::UnityEngine.WWW www = new global::UnityEngine.WWW("http://localhost:44733/auth/facebook/status?uid=" + uid);
+				global::UnityEngine.WWW www = new global::UnityEngine.WWW(global::Kampai.Util.GameConstants.Server.CDN_METADATA_URL + "/auth/facebook/status?uid=" + uid);
 				yield return www;
 				if (string.IsNullOrEmpty(www.error) && !string.IsNullOrEmpty(www.text))
 				{
