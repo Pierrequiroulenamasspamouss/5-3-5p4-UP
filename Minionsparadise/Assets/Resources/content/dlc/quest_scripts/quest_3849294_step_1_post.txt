@@ -1,0 +1,8 @@
+-- free all leveled-up minions from current tasks
+qs.liberateLeveledUpMinions()
+
+-- give the mystery box unlock
+qs.runTransaction(15051)
+
+-- Disable throb
+qs.throbCallButtons(false)

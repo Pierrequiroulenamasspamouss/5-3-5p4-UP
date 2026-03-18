@@ -1,0 +1,10 @@
+-- Kevin To Welcome Booth Quest
+
+welcomeHutId = 372
+
+kevinInstance = qs.getInstanceId(70003)
+qs.wait(5.0)
+qs.setCharacterAnimation(kevinInstance,'idle')
+qs.placeCharacterInBuilding(kevinInstance)
+qs.panCameraToInstance(welcomeHutId)
+
