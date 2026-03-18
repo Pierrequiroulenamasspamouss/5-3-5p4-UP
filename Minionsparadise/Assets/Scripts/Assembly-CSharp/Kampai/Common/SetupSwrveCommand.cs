@@ -93,8 +93,8 @@ namespace Kampai.Common
 			config.AutoDownloadCampaignsAndResources = false;
 			
 			// Force local server URLs
-			config.EventsServer = "http://localhost:44732";
-			config.ContentServer = "http://localhost:44732";
+			config.EventsServer = global::Kampai.Util.GameConstants.Server.SERVER_URL;
+			config.ContentServer = global::Kampai.Util.GameConstants.Server.SERVER_URL;
 
 			InitSwrveLog();
 			swrveComponent.Init(result, global::Kampai.Util.GameConstants.StaticConfig.SWRVE_API_KEY);

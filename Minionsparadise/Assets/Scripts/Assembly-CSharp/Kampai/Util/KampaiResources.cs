@@ -76,52 +76,100 @@ namespace Kampai.Util
             // List of directories to scan for local assets
             string[] searchDirs = { "/content", "/Shader", "/Resources" };
 
-            foreach (string searchDir in searchDirs)
-            {
-                string fullPath = dataPath + searchDir;
-                if (!Directory.Exists(fullPath))
+                foreach (string searchDir in searchDirs)
                 {
-                    // Try fallback relative to executable for standalone
-                    string parentPath = Path.GetDirectoryName(dataPath);
-                    if (parentPath != null)
+                    string fullPath = dataPath + searchDir;
+                    if (!Directory.Exists(fullPath))
                     {
-                        fullPath = parentPath.Replace('\\', '/') + "/Assets" + searchDir;
-                    }
-                }
-
-                if (Directory.Exists(fullPath))
-                {
-                    if (_logger != null) _logger.Debug(string.Format("KampaiResources: Scanning local directory '{0}'", fullPath));
-                    string[] files = Directory.GetFiles(fullPath, "*.*", SearchOption.AllDirectories);
-                    foreach (string file in files)
-                    {
-                        string normalizedFile = file.Replace('\\', '/');
-                        if (normalizedFile.EndsWith(".meta")) continue;
-
-                        string fileName = Path.GetFileNameWithoutExtension(normalizedFile);
-                        if (!_editorAssetPathMap.ContainsKey(fileName))
+                        // Try fallback relative to executable for standalone
+                        string parentPath = Path.GetDirectoryName(dataPath);
+                        if (parentPath != null)
                         {
-                            int assetsIdx = normalizedFile.IndexOf("/Assets/", StringComparison.OrdinalIgnoreCase);
-                            if (assetsIdx >= 0)
+                            // Check if it's in the root directly (some custom builds/5.3 behavior)
+                            string rootPath = parentPath.Replace('\\', '/') + searchDir;
+                            if (Directory.Exists(rootPath)) 
                             {
-                                string relativePath = normalizedFile.Substring(assetsIdx + 1);
-                                _editorAssetPathMap.Add(fileName, relativePath);
+                                fullPath = rootPath;
                             }
                             else
                             {
-                                // If mapping failed to find /Assets/, try a simpler "Assets/..." path
-                                string relativePath = "Assets" + searchDir + normalizedFile.Substring(fullPath.Length);
-                                _editorAssetPathMap.Add(fileName, relativePath);
+                                // Try Assets relative path (old behavior)
+                                string fallbackPath = parentPath.Replace('\\', '/') + "/Assets" + searchDir;
+                                if (Directory.Exists(fallbackPath)) fullPath = fallbackPath;
                             }
                         }
                     }
+
+                    if (Directory.Exists(fullPath))
+                    {
+                        if (_logger != null) _logger.Debug(string.Format("KampaiResources: Scanning local directory '{0}'", fullPath));
+                        string[] files = Directory.GetFiles(fullPath, "*.*", SearchOption.AllDirectories);
+                        foreach (string file in files)
+                        {
+                            string normalizedFile = file.Replace('\\', '/');
+                            if (normalizedFile.EndsWith(".meta")) continue;
+
+                            string fileName = Path.GetFileNameWithoutExtension(normalizedFile);
+                            if (!_editorAssetPathMap.ContainsKey(fileName))
+                            {
+                                int assetsIdx = normalizedFile.IndexOf("/Assets/", StringComparison.OrdinalIgnoreCase);
+                                if (assetsIdx >= 0)
+                                {
+                                    string relativePath = normalizedFile.Substring(assetsIdx + 1);
+                                    _editorAssetPathMap.Add(fileName, relativePath);
+                                }
+                                else if (normalizedFile.Contains("/Resources/"))
+                                {
+                                    // If it's in a physical Resources folder in a build, treat as Resource path
+                                    _editorAssetPathMap.Add(fileName, normalizedFile);
+                                }
+                                else
+                                {
+                                    // If mapping failed to find /Assets/, try a path relative to scanDir
+                                    string relativePath = "Assets" + searchDir + normalizedFile.Substring(fullPath.Length);
+                                    _editorAssetPathMap.Add(fileName, relativePath);
+                                }
+                                if (_logger != null) _logger.Debug(string.Format("KampaiResources: Mapped '{0}' -> '{1}'", fileName, _editorAssetPathMap[fileName]));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (_logger != null) _logger.Warning(string.Format("KampaiResources: Local directory '{0}' NOT FOUND", fullPath));
+                    }
                 }
-                else
+            if (_logger != null) _logger.Info(string.Format("KampaiResources: Initialized local asset map with {0} entries", _editorAssetPathMap.Count));
+
+            // Load manifest if it exists
+            TextAsset manifest = Resources.Load<TextAsset>("KampaiAssetManifest");
+            if (manifest != null)
+            {
+                try
                 {
-                    if (_logger != null) _logger.Warning(string.Format("KampaiResources: Local directory '{0}' NOT FOUND", fullPath));
+                    Dictionary<string, string> savedMap = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(manifest.text);
+                    if (savedMap != null)
+                    {
+                        int addedCount = 0;
+                        foreach (KeyValuePair<string, string> kvp in savedMap)
+                        {
+                            if (!_editorAssetPathMap.ContainsKey(kvp.Key))
+                            {
+                                _editorAssetPathMap.Add(kvp.Key, kvp.Value);
+                                addedCount++;
+                            }
+                        }
+                        if (_logger != null) _logger.Info(string.Format("KampaiResources: Loaded {0} entries from KampaiAssetManifest ({1} new)", savedMap.Count, addedCount));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (_logger != null) _logger.Error(string.Format("KampaiResources: Failed to parse KampaiAssetManifest: {0}", ex.Message));
                 }
             }
-            if (_logger != null) _logger.Info(string.Format("KampaiResources: Initialized local asset map with {0} entries", _editorAssetPathMap.Count));
+            else
+            {
+                if (_logger != null) _logger.Warning("KampaiResources: KampaiAssetManifest.json not found in Resources. Build asset loading may fail.");
+            }
         }
 #endif
 
