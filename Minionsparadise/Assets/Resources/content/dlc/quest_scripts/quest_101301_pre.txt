@@ -1,0 +1,18 @@
+-- FTUE Repair Order Board, step 2
+
+qs.setFtueLevelCompleted(8)
+qs.enableDeleteButton(false)
+
+-- wait for repair animation
+orderBoardId = 309
+
+-- disable the building till the animation is complete
+qs.setBuildingState(orderBoardId, qsutil.BuildingState.Disabled)
+qs.wait(2.5)
+qs.setBuildingState(orderBoardId, qsutil.BuildingState.Idle)
+philId = 78
+qs.setCharacterAnimation(philId, "bartender_OnCelebrate")
+
+qs.sendTelemetry('tutorial', '5')
+
+-- end step 2

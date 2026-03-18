@@ -1,0 +1,6 @@
+-- Start throbbing call buttons
+minionUpgradeBuildingID = 375
+
+qs.setBuildingState(minionUpgradeBuildingID, qsutil.BuildingState.Idle)
+
+qs.throbCallButtons(true)

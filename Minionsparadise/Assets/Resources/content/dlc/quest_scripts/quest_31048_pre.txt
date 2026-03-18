@@ -1,0 +1,38 @@
+-- FTUE Quest 5, step 1
+
+qs.setFtueLevelCompleted(4)
+qs.setBuildMenuEnabled(false)
+qs.enableDeleteButton(false)
+
+tikiBarId = 313
+qs.panCameraToInstance(tikiBarId)
+qs.disableCameraControls()
+qs.wait(1)
+
+-- play spy glass animation
+-- wait for spy glass animation to complete
+philId = 78
+qs.setCharacterAnimation(philId, "SpyGlass")
+qs.wait(2)
+
+-- Narrative dialog opens
+qs.setDialogType('Normal')
+qs.setCharacterImage(40000)
+qs.setDialogSound('Play_menu_popUp_01')
+qsutil.waitForDialog('ftue_05_start')
+
+orderBoardId = 309
+qs.panCameraToInstance(orderBoardId)
+
+qs.wait(1)
+qsutil.waitForDialog('ftue_05_prep')
+
+qs.enableCameraControls()
+
+qs.setBuildingState(orderBoardId, qsutil.BuildingState.Broken)
+-- This is enabled again in 31068
+qs.setOrderBoardMenuEnabled(false)
+qs.showWayFinder(orderBoardId, true)
+qsutil.waitForBuilding(orderBoardId, qsutil.BuildingState.Idle)
+
+-- end step 1

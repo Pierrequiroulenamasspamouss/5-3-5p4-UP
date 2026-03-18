@@ -1,0 +1,20 @@
+-- Start of Leisure Quest Step 1c: after Mystery Minion Teaser, resume regular quest flow
+
+tikiBarID = 313
+qs.stopMinionCamping()
+
+-- Camera pan to the Tikibar
+qs.panCameraToInstance(tikiBarID)
+
+qs.wait(1)
+
+qs.setDialogType('Normal')
+qs.setCharacterImage(40000)
+qs.setDialogSound('Play_menu_popUp_01')
+qsutil.waitForDialog('ftue_leisure_narrative_01')
+
+qs.openTikiHut(true)
+
+-- Activate tikibar in pick controller again
+qs.setIgnoreInstance(tikiBarID, false)
+

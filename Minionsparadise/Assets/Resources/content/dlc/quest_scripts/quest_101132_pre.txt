@@ -1,0 +1,23 @@
+-- Leisure Quest Step 4
+
+qs.setBuildMenuEnabled(false)
+qs.enableCallButtons(true)
+qs.enablePurchaseButton(false)
+
+pinataID = qs.getInstanceId(pinataDefID)
+qs.showWayFinder(pinataID,true)
+
+-- Narrative dialogue introduces rushing and free premium
+
+-- Hide the Settings Menu
+qs.showSettingsMenuButton(false)
+
+-- Prompt the player to rush.
+qs.setDialogType('Normal')
+qs.setCharacterImage(40000)
+qs.setDialogSound('Play_menu_popUp_01')
+
+-- Free premium currency
+qsutil.waitForDialog('ftue_leisure_narrative_04')
+
+qs.seedPremiumCurrency(2)

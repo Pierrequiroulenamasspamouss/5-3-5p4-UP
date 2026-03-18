@@ -1,0 +1,265 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Hologram_LightIris
+  m_Shader: {fileID: 4800000, guid: 4dbfedd289b5f2f42a187bbfcca0a3a0, type: 3}
+  m_ShaderKeywords:
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: 2002
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _AlphaMask
+        second:
+          m_Texture: {fileID: 2800000, guid: 7c2530950125d774bb6f3353a5e3af1c, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Diffuse
+        second:
+          m_Texture: {fileID: 2800000, guid: 504e3e343f436b747aa3cb028c018134, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _AlphaScalar
+        second: 1
+      data:
+        first:
+          name: _Boost
+        second: 0.25
+      data:
+        first:
+          name: _Cols
+        second: 8
+      data:
+        first:
+          name: _CubeMap_slider
+        second: 0
+      data:
+        first:
+          name: _Cutoff
+        second: 0.5
+      data:
+        first:
+          name: _Diffuse_Power
+        second: 0
+      data:
+        first:
+          name: _Distance
+        second: 10
+      data:
+        first:
+          name: _Distortion
+        second: 0.1
+      data:
+        first:
+          name: _Env_Map_Spec
+        second: 0.8945918
+      data:
+        first:
+          name: _Env_Power
+        second: 0.8222858
+      data:
+        first:
+          name: _FadeAlpha
+        second: 1
+      data:
+        first:
+          name: _FlowDistance
+        second: 10
+      data:
+        first:
+          name: _FlowSpeed
+        second: 5
+      data:
+        first:
+          name: _FoamPower
+        second: 0.1
+      data:
+        first:
+          name: _Gloss
+        second: 1
+      data:
+        first:
+          name: _Gloss_Slider
+        second: 0.323937
+      data:
+        first:
+          name: _LayerIndex
+        second: 2
+      data:
+        first:
+          name: _LightmapDistort
+        second: 0.1
+      data:
+        first:
+          name: _MaxIntensity
+        second: 0.5
+      data:
+        first:
+          name: _Mode
+        second: 0
+      data:
+        first:
+          name: _Noise
+        second: 1
+      data:
+        first:
+          name: _Reflectivity
+        second: 0.5
+      data:
+        first:
+          name: _Rows
+        second: 8
+      data:
+        first:
+          name: _Spec
+        second: 1
+      data:
+        first:
+          name: _Spec_Slider
+        second: 0.4121342
+      data:
+        first:
+          name: _Speed
+        second: -0.5
+      data:
+        first:
+          name: _TransparentSpread
+        second: 1
+      data:
+        first:
+          name: _WavePower
+        second: 0.25
+      data:
+        first:
+          name: _boost
+        second: 0
+      data:
+        first:
+          name: _matcap_multiplier
+        second: 0.3
+      data:
+        first:
+          name: _node_1075
+        second: 0
+      data:
+        first:
+          name: _node_3060
+        second: 0
+      data:
+        first:
+          name: _node_5
+        second: 0
+      data:
+        first:
+          name: _node_7100
+        second: 10
+      data:
+        first:
+          name: _node_8055
+        second: 0
+      data:
+        first:
+          name: _node_9114
+        second: 0
+      data:
+        first:
+          name: _time_scale_Alpha
+        second: 0.1
+      data:
+        first:
+          name: _time_scale_B
+        second: 0.1
+      data:
+        first:
+          name: _time_scale_G
+        second: 0.15
+      data:
+        first:
+          name: _time_scale_R
+        second: 0.1
+      data:
+        first:
+          name: _uvscaleB
+        second: 0.5
+      data:
+        first:
+          name: _uvscaleG
+        second: 2
+      data:
+        first:
+          name: _uvscale_R
+        second: 1
+    m_Colors:
+      data:
+        first:
+          name: _Base_Tint
+        second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      data:
+        first:
+          name: _Blend_Tint
+        second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      data:
+        first:
+          name: _Color
+        second: {r: 0, g: 0.56799984, b: 1, a: 1}
+      data:
+        first:
+          name: _DarkColor
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _GlassColor
+        second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      data:
+        first:
+          name: _LightColor
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _MedColor
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _ShoreBreak_Color
+        second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      data:
+        first:
+          name: _UVScroll
+        second: {r: 0, g: 3, b: 0, a: 0}
+      data:
+        first:
+          name: _Wave_Color
+        second: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      data:
+        first:
+          name: _color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _node_5500
+        second: {r: 0.5887424, g: 0.7413793, b: 0.7413793, a: 1}
+      data:
+        first:
+          name: _node_5829
+        second: {r: 0.83137256, g: 1, b: 0.99607843, a: 1}
+      data:
+        first:
+          name: _node_6772
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _node_8340
+        second: {r: 0.54509807, g: 1, b: 1, a: 1}
