@@ -341,7 +341,11 @@ namespace Kampai.Game
 			if (quest.state == global::Kampai.Game.QuestState.RunningTasks)
 			{
 				int questStepID = questScriptInstance.QuestStepID;
-				if (questStepID < 0 || questStepID > quest.Steps.Count)
+				if (questStepID == -1)
+				{
+					return;
+				}
+				if (questStepID < 0 || questStepID >= quest.Steps.Count)
 				{
 					logger.Error("QuestService:OnQuestScriptComplete: QuestStepId {0} is out of range! Can't mark as complete!", questStepID);
 				}

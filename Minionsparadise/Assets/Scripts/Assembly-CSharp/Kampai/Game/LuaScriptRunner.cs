@@ -113,9 +113,9 @@ namespace Kampai.Game
             global::UnityEngine.TextAsset utilAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>("LUA/Utilities");
             if (utilAsset != null)
             {
-                string text = utilAsset.text;
-                // Fix 64-bit : cast manuel pour compatibilité Unity 5
-                if (luaThreadState.luaL_loadbufferx(text, (global::System.UIntPtr)text.Length, "LUA/Utilities.txt", null) > 0)
+                // Fix: Pass bytes directly to the loadbuffer function instead of string
+                byte[] scriptBytes = utilAsset.bytes;
+                if (luaThreadState.luaL_loadbufferx(scriptBytes, (global::System.UIntPtr)scriptBytes.Length, "LUA/Utilities.txt", null) > 0)
                 {
                     LogLuaRuntimeError();
                     luaThreadState.lua_pushnil();
@@ -236,7 +236,9 @@ namespace Kampai.Game
             controller.ContinueSignal.AddListener(ContinueFromYield);
             CreateLuaThread();
 
-            if (threadState.luaL_loadbufferx(scriptText, (global::System.UIntPtr)scriptText.Length, filename, null) > 0)
+            // Fix: Convert the incoming string to a UTF-8 byte array before passing it to Lua
+            byte[] scriptBytes = global::System.Text.Encoding.UTF8.GetBytes(scriptText);
+            if (threadState.luaL_loadbufferx(scriptBytes, (global::System.UIntPtr)scriptBytes.Length, filename, null) > 0)
             {
                 string message = (threadState.lua_type(-1) == global::Kampai.Wrappers.LuaType.LUA_TSTRING) ? threadState.lua_tostring(-1) : "Unknown Syntax Error";
                 threadState.lua_pop(1);

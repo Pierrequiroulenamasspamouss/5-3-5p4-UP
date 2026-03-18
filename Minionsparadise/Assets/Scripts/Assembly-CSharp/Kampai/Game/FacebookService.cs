@@ -26,6 +26,10 @@ namespace Kampai.Game
 
 		private bool killSwitchFlag;
 
+		private bool _useServerLogin = false;
+		private string _serverAccessToken = string.Empty;
+		private string _serverUserID = string.Empty;
+
 		[Inject]
 		public ILocalPersistanceService localPersistence { get; set; }
 
@@ -48,6 +52,7 @@ namespace Kampai.Game
 		{
 			get
 			{
+				if (_useServerLogin) return !string.IsNullOrEmpty(_serverAccessToken);
 				return global::Facebook.Unity.FB.IsLoggedIn;
 			}
 		}
@@ -64,6 +69,7 @@ namespace Kampai.Game
 		{
 			get
 			{
+				if (_useServerLogin) return _serverUserID;
 				return (!isLoggedIn) ? string.Empty : global::Facebook.Unity.AccessToken.CurrentAccessToken.UserId;
 			}
 		}
@@ -88,6 +94,7 @@ namespace Kampai.Game
 		{
 			get
 			{
+				if (_useServerLogin) return _serverAccessToken;
 				return (!isLoggedIn) ? string.Empty : global::Facebook.Unity.AccessToken.CurrentAccessToken.TokenString;
 			}
 		}
@@ -118,7 +125,14 @@ namespace Kampai.Game
 					localPersistence.PutData("SocialInProgress", "True");
 					_loginSuccessSignal = successSignal;
 					_loginFailureSignal = failureSignal;
-					routineRunner.StartCoroutine(LogInWithReadPermissions("public_profile", "user_friends"));
+					if (_useServerLogin)
+					{
+						routineRunner.StartCoroutine(LogInViaServer());
+					}
+					else
+					{
+						routineRunner.StartCoroutine(LogInWithReadPermissions("public_profile", "user_friends"));
+					}
 				}
 				else
 				{
@@ -137,6 +151,33 @@ namespace Kampai.Game
 			global::Facebook.Unity.FB.LogInWithReadPermissions(permissions, AuthCallback);
 		}
 
+		private global::System.Collections.IEnumerator LogInViaServer()
+		{
+			string uid = localPersistence.GetData("UserID");
+			if (string.IsNullOrEmpty(uid)) { uid = "1000000000"; }
+			global::UnityEngine.Application.OpenURL(global::Kampai.Util.GameConstants.Server.CDN_METADATA_URL + "/auth/facebook/login?uid=" + uid);
+			logger.Info("Facebook: Opened Server Facebook Login for {0}. Polling for token...", uid);
+			bool solved = false;
+			while (!solved)
+			{
+				yield return new global::UnityEngine.WaitForSeconds(2f);
+				global::UnityEngine.WWW www = new global::UnityEngine.WWW(global::Kampai.Util.GameConstants.Server.CDN_METADATA_URL + "/auth/facebook/status?uid=" + uid);
+				yield return www;
+				if (string.IsNullOrEmpty(www.error) && !string.IsNullOrEmpty(www.text))
+				{
+					global::System.Collections.Generic.Dictionary<string, object> result = global::Facebook.MiniJSON.Json.Deserialize(www.text) as global::System.Collections.Generic.Dictionary<string, object>;
+					if (result != null && result.ContainsKey("status") && result["status"].ToString() == "success")
+					{
+						_serverAccessToken = result["token"].ToString();
+						_serverUserID = result["uid"].ToString();
+						solved = true;
+					}
+				}
+			}
+			localPersistence.PutData("SocialInProgress", "False");
+			_loginSuccessSignal.Dispatch(this);
+		}
+
 		public void Init(global::strange.extensions.signal.impl.Signal<global::Kampai.Game.ISocialService> successSignal, global::strange.extensions.signal.impl.Signal<global::Kampai.Game.ISocialService> failureSignal)
 		{
 			logger.Debug("Facebook: Init Called");
@@ -145,13 +186,22 @@ namespace Kampai.Game
 			_initFailSignal = failureSignal;
 			friends = new global::System.Collections.Generic.Dictionary<string, global::Kampai.Game.FBUser>();
 			userPictures = new global::System.Collections.Generic.Dictionary<string, global::UnityEngine.Texture>();
-			if (!global::Facebook.Unity.FB.IsInitialized)
+			try
 			{
-				global::Facebook.Unity.FB.Init(global::Kampai.Util.GameConstants.Facebook.APP_ID, true, true, true, false, true, null, "en_US", null, SetInit);
+				if (!global::Facebook.Unity.FB.IsInitialized)
+				{
+					global::Facebook.Unity.FB.Init(global::Kampai.Util.GameConstants.Facebook.APP_ID, true, true, true, false, true, null, "en_US", null, SetInit);
+				}
+				else
+				{
+					SetInit();
+				}
 			}
-			else
+			catch (global::System.NotImplementedException)
 			{
-				SetInit();
+				logger.Warning("Facebook SDK implies NotImplementedException. Falling back to Server Login.");
+				_useServerLogin = true;
+				_initSuccessSignal.Dispatch(this);
 			}
 			localPersistence.PutData("SocialInProgress", "False");
 		}

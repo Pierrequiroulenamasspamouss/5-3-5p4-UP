@@ -39,14 +39,10 @@ namespace Kampai.Game
 		{
 			stateChangeSignal.Dispatch(building.ID, global::Kampai.Game.BuildingState.Working);
 			global::Kampai.Game.StuartCharacter firstInstanceByDefinitionId = playerService.GetFirstInstanceByDefinitionId<global::Kampai.Game.StuartCharacter>(70001);
-			if (firstInstanceByDefinitionId != null)
+			if (firstInstanceByDefinitionId != null || timedSocialEventService.GetCurrentSocialEvent() != null)
 			{
-				global::Kampai.Game.Prestige prestigeFromMinionInstance = prestigeService.GetPrestigeFromMinionInstance(firstInstanceByDefinitionId);
-				if ((prestigeFromMinionInstance.state == global::Kampai.Game.PrestigeState.Taskable && prestigeFromMinionInstance.CurrentPrestigeLevel == 1) || prestigeFromMinionInstance.CurrentPrestigeLevel > 1)
-				{
-					OpenGUI();
-					return;
-				}
+				OpenGUI();
+				return;
 			}
 			string aspirationalMessage = building.Definition.AspirationalMessage;
 			uiContext.injectionBinder.GetInstance<global::Kampai.UI.View.PopupMessageSignal>().Dispatch(localeService.GetString(aspirationalMessage), global::Kampai.UI.View.PopupMessageType.NORMAL);

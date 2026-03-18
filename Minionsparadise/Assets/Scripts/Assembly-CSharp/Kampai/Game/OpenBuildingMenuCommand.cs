@@ -151,7 +151,7 @@ namespace Kampai.Game
 			}
 			else
 			{
-				if (((state != global::Kampai.Game.BuildingState.Idle && state != global::Kampai.Game.BuildingState.Working && state != global::Kampai.Game.BuildingState.Cooldown) || pickControllerModel.SelectedBuilding.HasValue || pickControllerModel.HeldTimer >= 0.75f) && !(building is global::Kampai.Game.CraftingBuilding))
+				if (((state != global::Kampai.Game.BuildingState.Idle && state != global::Kampai.Game.BuildingState.Working && state != global::Kampai.Game.BuildingState.Cooldown && state != global::Kampai.Game.BuildingState.SocialAvailable && state != global::Kampai.Game.BuildingState.SocialComplete) || pickControllerModel.SelectedBuilding.HasValue || pickControllerModel.HeldTimer >= 0.75f) && !(building is global::Kampai.Game.CraftingBuilding))
 				{
 					return;
 				}
