@@ -28,6 +28,8 @@ namespace Kampai.Game
 
 		void RefreshCatalog();
 
+		bool IsRefreshingCatalog { get; }
+
 		bool TransactionProcessingEnabled();
 	}
 }

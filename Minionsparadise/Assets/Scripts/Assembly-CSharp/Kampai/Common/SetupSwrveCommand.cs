@@ -32,11 +32,13 @@ namespace Kampai.Common
 
 		public override void Execute()
 		{
+			/*
 #if UNITY_EDITOR
 			logger.Info("Swrve is disabled in Unity Editor.");
 			MoveForwardWithoutSwrve();
 			return;
 #endif
+			*/
 			if (configurationsService.isKillSwitchOn(global::Kampai.Game.KillSwitch.SWRVE))
 			{
 				logger.Info("Swrve is disabled by kill switch.");
@@ -89,6 +91,11 @@ namespace Kampai.Common
 			config.UserId = kampaiUserID;
 			config.Orientation = global::Swrve.Messaging.SwrveOrientation.Landscape;
 			config.AutoDownloadCampaignsAndResources = false;
+			
+			// Force local server URLs
+			config.EventsServer = global::Kampai.Util.GameConstants.Server.SERVER_URL;
+			config.ContentServer = global::Kampai.Util.GameConstants.Server.SERVER_URL;
+
 			InitSwrveLog();
 			swrveComponent.Init(result, global::Kampai.Util.GameConstants.StaticConfig.SWRVE_API_KEY);
 			logger.Debug("SetupSwrveCommand:Init SWRVE GameObject initialized");

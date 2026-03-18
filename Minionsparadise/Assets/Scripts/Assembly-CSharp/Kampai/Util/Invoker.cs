@@ -22,7 +22,7 @@ namespace Kampai.Util
 				frameCounter++;
 				if (frameCounter >= 300)
 				{
-					global::UnityEngine.Debug.Log("Invoker: Main thread pulse alive.");
+					// global::UnityEngine.Debug.Log("Invoker: Main thread pulse alive.");
 					frameCounter = 0;
 				}
 			}

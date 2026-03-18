@@ -2,136 +2,141 @@ namespace Kampai.Wrappers
 {
 	public abstract class LuaState : global::System.Runtime.InteropServices.SafeHandle
 	{
-		private static class NativeMethods
-		{
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_gettop(global::System.IntPtr L);
-
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_pcallk(global::System.IntPtr L, int nargs, int nresults, int errfunc, int ctx, global::Kampai.Wrappers.LuaCFunction k);
-
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_settop(global::System.IntPtr L, int n);
-
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_createtable(global::System.IntPtr L, int narr, int nrec);
-
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int luaL_loadstring(global::System.IntPtr L, string s);
-
-            //[global::System.Runtime.InteropServices.DllImport("lua52")]
-            //public static extern int luaL_loadbufferx(global::System.IntPtr L, string buff, int sz, string name, string mode);
+        private static class NativeMethods
+        {
             [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
-			public static extern int luaL_loadbufferx(global::System.IntPtr L, string buff, global::System.UIntPtr sz, string name, string mode);
+            public static extern int lua_gettop(global::System.IntPtr L);
 
-            [global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void luaL_openlibs(global::System.IntPtr L);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_pcallk(global::System.IntPtr L, int nargs, int nresults, int errfunc, int ctx, global::Kampai.Wrappers.LuaCFunction k);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int luaL_ref(global::System.IntPtr L, int t);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_settop(global::System.IntPtr L, int n);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void luaL_unref(global::System.IntPtr L, int t, int reference);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_createtable(global::System.IntPtr L, int narr, int nrec);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_pushvalue(global::System.IntPtr L, int idx);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int luaL_loadstring(global::System.IntPtr L, string s);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern global::Kampai.Wrappers.LuaType lua_type(global::System.IntPtr L, int idx);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int luaL_loadbufferx(global::System.IntPtr L, byte[] buff, global::System.UIntPtr sz, string name, string mode);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern double lua_tonumberx(global::System.IntPtr L, int idx, global::System.IntPtr isnum);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void luaL_openlibs(global::System.IntPtr L);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_tointegerx(global::System.IntPtr L, int idx, global::System.IntPtr isnum);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int luaL_ref(global::System.IntPtr L, int t);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern global::System.IntPtr lua_tolstring(global::System.IntPtr L, int idx, global::System.IntPtr len);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void luaL_unref(global::System.IntPtr L, int t, int reference);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern global::System.IntPtr lua_touserdata(global::System.IntPtr L, int idx);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_pushvalue(global::System.IntPtr L, int idx);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern bool lua_toboolean(global::System.IntPtr L, int idx);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern global::Kampai.Wrappers.LuaType lua_type(global::System.IntPtr L, int idx);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_pushnil(global::System.IntPtr L);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern double lua_tonumberx(global::System.IntPtr L, int idx, global::System.IntPtr isnum);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_pushnumber(global::System.IntPtr L, double n);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_tointegerx(global::System.IntPtr L, int idx, global::System.IntPtr isnum);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_pushinteger(global::System.IntPtr L, int n);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern global::System.IntPtr lua_tolstring(global::System.IntPtr L, int idx, global::System.IntPtr len);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_pushstring(global::System.IntPtr L, string s);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern global::System.IntPtr lua_touserdata(global::System.IntPtr L, int idx);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_pushcclosure(global::System.IntPtr L, global::Kampai.Wrappers.LuaCFunction fn, int n);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern bool lua_toboolean(global::System.IntPtr L, int idx);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_pushboolean(global::System.IntPtr L, bool b);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_pushnil(global::System.IntPtr L);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_pushlightuserdata(global::System.IntPtr L, global::System.IntPtr p);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_pushnumber(global::System.IntPtr L, double n);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_getglobal(global::System.IntPtr L, string var);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_pushinteger(global::System.IntPtr L, int n);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_getfield(global::System.IntPtr L, int idx, string k);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_pushstring(global::System.IntPtr L, string s);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_rawget(global::System.IntPtr L, int idx);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_pushcclosure(global::System.IntPtr L, global::Kampai.Wrappers.LuaCFunction fn, int n);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_rawgeti(global::System.IntPtr L, int idx, int n);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_pushboolean(global::System.IntPtr L, bool b);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_setglobal(global::System.IntPtr L, string var);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_pushlightuserdata(global::System.IntPtr L, global::System.IntPtr p);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_setfield(global::System.IntPtr L, int idx, string k);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_getglobal(global::System.IntPtr L, string var);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_rawset(global::System.IntPtr L, int idx);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_getfield(global::System.IntPtr L, int idx, string k);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_rawseti(global::System.IntPtr L, int idx, int n);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_rawget(global::System.IntPtr L, int idx);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_setmetatable(global::System.IntPtr L, int objindex);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_rawgeti(global::System.IntPtr L, int idx, int n);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_settable(global::System.IntPtr L, int index);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_setglobal(global::System.IntPtr L, string var);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_yieldk(global::System.IntPtr L, int nresults, int ctx, global::Kampai.Wrappers.LuaCFunction k);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_setfield(global::System.IntPtr L, int idx, string k);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern global::Kampai.Wrappers.ThreadStatus lua_resume(global::System.IntPtr L, global::System.IntPtr from, int narg);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_rawset(global::System.IntPtr L, int idx);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_getstack(global::System.IntPtr L, int level, global::System.IntPtr ar);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_rawseti(global::System.IntPtr L, int idx, int n);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_getinfo(global::System.IntPtr L, string what, global::System.IntPtr ar);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_setmetatable(global::System.IntPtr L, int objindex);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_setupvalue(global::System.IntPtr L, int funcindex, int n);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_settable(global::System.IntPtr L, int index);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_insert(global::System.IntPtr L, int idx);
-			
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_remove(global::System.IntPtr L, int idx);
-			
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern void lua_replace(global::System.IntPtr L, int idx);
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_yieldk(global::System.IntPtr L, int nresults, int ctx, global::Kampai.Wrappers.LuaCFunction k);
 
-			[global::System.Runtime.InteropServices.DllImport("lua52")]
-			public static extern int lua_error(global::System.IntPtr L);
-		}
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern global::Kampai.Wrappers.ThreadStatus lua_resume(global::System.IntPtr L, global::System.IntPtr from, int narg);
+
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_getstack(global::System.IntPtr L, int level, global::System.IntPtr ar);
+
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_getinfo(global::System.IntPtr L, string what, global::System.IntPtr ar);
+
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_setupvalue(global::System.IntPtr L, int funcindex, int n);
+
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_insert(global::System.IntPtr L, int idx);
+
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_remove(global::System.IntPtr L, int idx);
+
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern void lua_replace(global::System.IntPtr L, int idx);
+
+            [global::System.Runtime.InteropServices.DllImport("lua52", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+            public static extern int lua_error(global::System.IntPtr L);
+        }
+
+        // Updated wrapper method to use byte array
+        public int luaL_loadbufferx(byte[] buff, global::System.UIntPtr sz, string name, string mode)
+        {
+            if (IsInvalid) return -1;
+            return global::Kampai.Wrappers.LuaState.NativeMethods.luaL_loadbufferx(handle, buff, sz, name, mode);
+        }
 
 		protected const string dllString = "lua52";
 
@@ -222,12 +227,12 @@ namespace Kampai.Wrappers
 			return global::Kampai.Wrappers.LuaState.NativeMethods.luaL_loadstring(handle, s);
 		}
 
-		public int luaL_loadbufferx(string buff, global::System.UIntPtr sz, string name, string mode)
-		{
-			if (IsInvalid) return -1;
-			// On passe le UIntPtr à la méthode statique de NativeMethods
-			return global::Kampai.Wrappers.LuaState.NativeMethods.luaL_loadbufferx(handle, buff, sz, name, mode);
-		}
+		// public int luaL_loadbufferx(string buff, global::System.UIntPtr sz, string name, string mode)
+		// {
+		// 	if (IsInvalid) return -1;
+		// 	// On passe le UIntPtr à la méthode statique de NativeMethods
+		// 	return global::Kampai.Wrappers.LuaState.NativeMethods.luaL_loadbufferx(handle, buff, sz, name, mode);
+		// }
 
 		public void luaL_openlibs()
 		{

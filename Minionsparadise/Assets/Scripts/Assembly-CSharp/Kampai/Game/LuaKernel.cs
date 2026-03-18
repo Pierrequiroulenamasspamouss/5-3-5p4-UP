@@ -52,20 +52,30 @@ namespace Kampai.Game
         }
 
         private int LuaSearcher(global::Kampai.Wrappers.LuaState state)
-		{
-			string arg = state.lua_tostring(1);
-			string text = string.Format("LUA/{0}", arg);
-			global::UnityEngine.TextAsset textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>(text);
-			if (textAsset == null)
-			{
-				state.lua_pushstring("Failed to load asset " + text);
-				return 1;
-			}
-			state.luaL_loadbufferx(textAsset.text, (global::System.UIntPtr)textAsset.text.Length, text, null);
-			return 1;
-		}
+        {
+            string arg = state.lua_tostring(1);
+            string text = string.Format("LUA/{0}", arg);
 
-		private int CSearcher(global::Kampai.Wrappers.LuaState state)
+            // Load as TextAsset from Unity Resources
+            global::UnityEngine.TextAsset textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>(text);
+
+            if (textAsset == null)
+            {
+                state.lua_pushstring("Failed to load asset " + text);
+                return 1;
+            }
+
+            // CRITICAL: We use .bytes (byte[]) instead of .text (string) 
+            // to prevent encoding-related memory crashes in the Lua DLL.
+            byte[] scriptBytes = textAsset.bytes;
+
+            // We pass the length as a UIntPtr to match the 32-bit C++ size_t
+            state.luaL_loadbufferx(scriptBytes, (global::System.UIntPtr)scriptBytes.Length, text, null);
+
+            return 1;
+        }
+
+        private int CSearcher(global::Kampai.Wrappers.LuaState state)
 		{
 			string text = state.lua_tostring(1);
 			string[] value = text.Split('.');

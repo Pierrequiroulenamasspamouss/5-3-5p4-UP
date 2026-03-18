@@ -44,11 +44,7 @@ namespace Kampai.Common
 		{
 			get
 			{
-#if UNITY_EDITOR
-				return false;
-#else
 				return SwrveComponent.Instance != null && SwrveComponent.Instance.SDK != null;
-#endif
 			}
 		}
 
@@ -364,6 +360,11 @@ namespace Kampai.Common
 			{
 				string value3 = GetValue(gameEvent.Parameters, global::Kampai.Common.ParameterName.USER_CHOICE, "unknown");
 				return string.Format("gameplay.rateapp.userchoise.{0}", value3);
+			});
+			dictionary.Add(SynergyTrackingEventType.EVT_GAME_BUTTON_PRESSED, delegate(global::Kampai.Common.TelemetryEvent gameEvent)
+			{
+				string value3 = GetValue(gameEvent.Parameters, global::Kampai.Common.ParameterName.BUTTON_ID, "unknown");
+				return string.Format("ui.button.{0}.pressed", value3);
 			});
 			dictionary.Add(SynergyTrackingEventType.EVT_ORDER_COMPLETED_SUM, delegate(global::Kampai.Common.TelemetryEvent gameEvent)
 			{

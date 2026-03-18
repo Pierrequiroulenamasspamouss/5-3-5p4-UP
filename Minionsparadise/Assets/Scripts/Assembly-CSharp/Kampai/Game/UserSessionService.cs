@@ -67,6 +67,10 @@ namespace Kampai.Game
 				string body = response.Body;
 				global::UnityEngine.Debug.Log(string.Format("<color=cyan>[DEBUG] Login Response Body:</color> {0}", body));
 				global::Kampai.Game.UserSession userSession = (UserSession = global::Newtonsoft.Json.JsonConvert.DeserializeObject<global::Kampai.Game.UserSession>(body));
+				if (string.IsNullOrEmpty(userSession.SessionID))
+				{
+					userSession.SessionID = global::System.Guid.NewGuid().ToString();
+				}
 				userSessionGrantedSignal.Dispatch();
 				LocalPersistService.PutData("LoadMode", "remote");
 				updateSynergyId(userSession);
