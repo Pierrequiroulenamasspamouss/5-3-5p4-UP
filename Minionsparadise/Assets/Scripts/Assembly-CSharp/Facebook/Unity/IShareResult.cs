@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	public interface IShareResult : global::Facebook.Unity.IResult
+	public interface IShareResult : global::Discord.Unity.IResult
 	{
 		string PostId { get; }
 	}

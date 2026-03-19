@@ -344,7 +344,7 @@ namespace Kampai.UI.View
 			{
 				view.orderClosedNoLoginImageCheck.gameObject.SetActive(true);
 				view.orderClosedImagePicture.gameObject.SetActive(false);
-				logger.Warning("OnFacebookPictureComplete texture is null for Facebook ID: {0}", id);
+				logger.Warning("OnFacebookPictureComplete texture is null for Discord ID: {0}", id);
 			}
 		}
 

@@ -1,8 +1,8 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	public class AccessToken
 	{
-		public static global::Facebook.Unity.AccessToken CurrentAccessToken { get; internal set; }
+		public static global::Discord.Unity.AccessToken CurrentAccessToken { get; internal set; }
 
 		public string TokenString { get; private set; }
 
@@ -41,7 +41,7 @@ namespace Facebook.Unity
 
 		public override string ToString()
 		{
-			return global::Facebook.Unity.Utilities.FormatToString(null, GetType().Name, new global::System.Collections.Generic.Dictionary<string, string>
+			return global::Discord.Unity.Utilities.FormatToString(null, GetType().Name, new global::System.Collections.Generic.Dictionary<string, string>
 			{
 				{
 					"ExpirationTime",
@@ -65,15 +65,15 @@ namespace Facebook.Unity
 		internal string ToJson()
 		{
 			global::System.Collections.Generic.Dictionary<string, string> dictionary = new global::System.Collections.Generic.Dictionary<string, string>();
-			dictionary[global::Facebook.Unity.LoginResult.PermissionsKey] = string.Join(",", global::System.Linq.Enumerable.ToArray(Permissions));
-			dictionary[global::Facebook.Unity.LoginResult.ExpirationTimestampKey] = ExpirationTime.TotalSeconds().ToString();
-			dictionary[global::Facebook.Unity.LoginResult.AccessTokenKey] = TokenString;
-			dictionary[global::Facebook.Unity.LoginResult.UserIdKey] = UserId;
+			dictionary[global::Discord.Unity.LoginResult.PermissionsKey] = string.Join(",", global::System.Linq.Enumerable.ToArray(Permissions));
+			dictionary[global::Discord.Unity.LoginResult.ExpirationTimestampKey] = ExpirationTime.TotalSeconds().ToString();
+			dictionary[global::Discord.Unity.LoginResult.AccessTokenKey] = TokenString;
+			dictionary[global::Discord.Unity.LoginResult.UserIdKey] = UserId;
 			if (LastRefresh.HasValue)
 			{
 				dictionary["last_refresh"] = LastRefresh.Value.TotalSeconds().ToString();
 			}
-			return global::Facebook.MiniJSON.Json.Serialize(dictionary);
+			return global::Discord.MiniJSON.Json.Serialize(dictionary);
 		}
 	}
 }

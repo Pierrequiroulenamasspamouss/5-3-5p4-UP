@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Canvas
+namespace Discord.Unity.Canvas
 {
-	internal class CanvasJSWrapper : global::Facebook.Unity.Canvas.ICanvasJSWrapper
+	internal class CanvasJSWrapper : global::Discord.Unity.Canvas.ICanvasJSWrapper
 	{
 		private const string JSSDKBindingFileName = "JSSDKBindings";
 

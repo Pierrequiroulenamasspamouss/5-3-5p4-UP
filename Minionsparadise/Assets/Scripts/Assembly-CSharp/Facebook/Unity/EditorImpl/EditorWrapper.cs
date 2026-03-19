@@ -1,10 +1,10 @@
-namespace Facebook.Unity.Editor
+namespace Discord.Unity.Editor
 {
-	internal class EditorWrapper : global::Facebook.Unity.Editor.IEditorWrapper
+	internal class EditorWrapper : global::Discord.Unity.Editor.IEditorWrapper
 	{
-		private global::Facebook.Unity.IFacebookCallbackHandler callbackHandler;
+		private global::Discord.Unity.IFacebookCallbackHandler callbackHandler;
 
-		public EditorWrapper(global::Facebook.Unity.IFacebookCallbackHandler callbackHandler)
+		public EditorWrapper(global::Discord.Unity.IFacebookCallbackHandler callbackHandler)
 		{
 			this.callbackHandler = callbackHandler;
 		}
@@ -14,49 +14,49 @@ namespace Facebook.Unity.Editor
 			callbackHandler.OnInitComplete(string.Empty);
 		}
 
-		public void ShowLoginMockDialog(global::Facebook.Unity.Utilities.Callback<global::Facebook.Unity.ResultContainer> callback, string callbackId, string permsisions)
+		public void ShowLoginMockDialog(global::Discord.Unity.Utilities.Callback<global::Discord.Unity.ResultContainer> callback, string callbackId, string permsisions)
 		{
-			global::Facebook.Unity.Editor.Dialogs.MockLoginDialog component = global::Facebook.Unity.ComponentFactory.GetComponent<global::Facebook.Unity.Editor.Dialogs.MockLoginDialog>();
+			global::Discord.Unity.Editor.Dialogs.MockLoginDialog component = global::Discord.Unity.ComponentFactory.GetComponent<global::Discord.Unity.Editor.Dialogs.MockLoginDialog>();
 			component.Callback = callback;
 			component.CallbackID = callbackId;
 		}
 
-		public void ShowAppRequestMockDialog(global::Facebook.Unity.Utilities.Callback<global::Facebook.Unity.ResultContainer> callback, string callbackId)
+		public void ShowAppRequestMockDialog(global::Discord.Unity.Utilities.Callback<global::Discord.Unity.ResultContainer> callback, string callbackId)
 		{
 			ShowEmptyMockDialog(callback, callbackId, "Mock App Request");
 		}
 
-		public void ShowGameGroupCreateMockDialog(global::Facebook.Unity.Utilities.Callback<global::Facebook.Unity.ResultContainer> callback, string callbackId)
+		public void ShowGameGroupCreateMockDialog(global::Discord.Unity.Utilities.Callback<global::Discord.Unity.ResultContainer> callback, string callbackId)
 		{
 			ShowEmptyMockDialog(callback, callbackId, "Mock Game Group Create");
 		}
 
-		public void ShowGameGroupJoinMockDialog(global::Facebook.Unity.Utilities.Callback<global::Facebook.Unity.ResultContainer> callback, string callbackId)
+		public void ShowGameGroupJoinMockDialog(global::Discord.Unity.Utilities.Callback<global::Discord.Unity.ResultContainer> callback, string callbackId)
 		{
 			ShowEmptyMockDialog(callback, callbackId, "Mock Game Group Join");
 		}
 
-		public void ShowAppInviteMockDialog(global::Facebook.Unity.Utilities.Callback<global::Facebook.Unity.ResultContainer> callback, string callbackId)
+		public void ShowAppInviteMockDialog(global::Discord.Unity.Utilities.Callback<global::Discord.Unity.ResultContainer> callback, string callbackId)
 		{
 			ShowEmptyMockDialog(callback, callbackId, "Mock App Invite");
 		}
 
-		public void ShowPayMockDialog(global::Facebook.Unity.Utilities.Callback<global::Facebook.Unity.ResultContainer> callback, string callbackId)
+		public void ShowPayMockDialog(global::Discord.Unity.Utilities.Callback<global::Discord.Unity.ResultContainer> callback, string callbackId)
 		{
 			ShowEmptyMockDialog(callback, callbackId, "Mock Pay");
 		}
 
-		public void ShowMockShareDialog(global::Facebook.Unity.Utilities.Callback<global::Facebook.Unity.ResultContainer> callback, string subTitle, string callbackId)
+		public void ShowMockShareDialog(global::Discord.Unity.Utilities.Callback<global::Discord.Unity.ResultContainer> callback, string subTitle, string callbackId)
 		{
-			global::Facebook.Unity.Editor.Dialogs.MockShareDialog component = global::Facebook.Unity.ComponentFactory.GetComponent<global::Facebook.Unity.Editor.Dialogs.MockShareDialog>();
+			global::Discord.Unity.Editor.Dialogs.MockShareDialog component = global::Discord.Unity.ComponentFactory.GetComponent<global::Discord.Unity.Editor.Dialogs.MockShareDialog>();
 			component.SubTitle = subTitle;
 			component.Callback = callback;
 			component.CallbackID = callbackId;
 		}
 
-		private void ShowEmptyMockDialog(global::Facebook.Unity.Utilities.Callback<global::Facebook.Unity.ResultContainer> callback, string callbackId, string title)
+		private void ShowEmptyMockDialog(global::Discord.Unity.Utilities.Callback<global::Discord.Unity.ResultContainer> callback, string callbackId, string title)
 		{
-			global::Facebook.Unity.Editor.Dialogs.EmptyMockDialog component = global::Facebook.Unity.ComponentFactory.GetComponent<global::Facebook.Unity.Editor.Dialogs.EmptyMockDialog>();
+			global::Discord.Unity.Editor.Dialogs.EmptyMockDialog component = global::Discord.Unity.ComponentFactory.GetComponent<global::Discord.Unity.Editor.Dialogs.EmptyMockDialog>();
 			component.Callback = callback;
 			component.CallbackID = callbackId;
 			component.EmptyDialogTitle = title;

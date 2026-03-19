@@ -1,7 +1,7 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	public interface IAccessTokenRefreshResult : global::Facebook.Unity.IResult
+	public interface IAccessTokenRefreshResult : global::Discord.Unity.IResult
 	{
-		global::Facebook.Unity.AccessToken AccessToken { get; }
+		global::Discord.Unity.AccessToken AccessToken { get; }
 	}
 }

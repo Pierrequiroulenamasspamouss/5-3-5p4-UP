@@ -1,21 +1,21 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal class AccessTokenRefreshResult : global::Facebook.Unity.ResultBase, global::Facebook.Unity.IAccessTokenRefreshResult, global::Facebook.Unity.IResult
+	internal class AccessTokenRefreshResult : global::Discord.Unity.ResultBase, global::Discord.Unity.IAccessTokenRefreshResult, global::Discord.Unity.IResult
 	{
-		public global::Facebook.Unity.AccessToken AccessToken { get; private set; }
+		public global::Discord.Unity.AccessToken AccessToken { get; private set; }
 
-		public AccessTokenRefreshResult(global::Facebook.Unity.ResultContainer resultContainer)
+		public AccessTokenRefreshResult(global::Discord.Unity.ResultContainer resultContainer)
 			: base(resultContainer)
 		{
-			if (ResultDictionary != null && ResultDictionary.ContainsKey(global::Facebook.Unity.LoginResult.AccessTokenKey))
+			if (ResultDictionary != null && ResultDictionary.ContainsKey(global::Discord.Unity.LoginResult.AccessTokenKey))
 			{
-				AccessToken = global::Facebook.Unity.Utilities.ParseAccessTokenFromResult(ResultDictionary);
+				AccessToken = global::Discord.Unity.Utilities.ParseAccessTokenFromResult(ResultDictionary);
 			}
 		}
 
 		public override string ToString()
 		{
-			return global::Facebook.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string> { 
+			return global::Discord.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string> { 
 			{
 				"AccessToken",
 				AccessToken.ToStringNullOk()

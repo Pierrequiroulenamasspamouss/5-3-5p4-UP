@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Mobile.IOS
+namespace Discord.Unity.Mobile.IOS
 {
-	internal class IOSWrapper : global::Facebook.Unity.Mobile.IOS.IIOSWrapper
+	internal class IOSWrapper : global::Discord.Unity.Mobile.IOS.IIOSWrapper
 	{
 		public void Init(string appId, bool frictionlessRequests, string urlSuffix, string unityUserAgentSuffix)
 		{

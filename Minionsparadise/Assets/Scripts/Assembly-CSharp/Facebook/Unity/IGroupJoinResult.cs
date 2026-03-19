@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	public interface IGroupJoinResult : global::Facebook.Unity.IResult
+	public interface IGroupJoinResult : global::Discord.Unity.IResult
 	{
 	}
 }

@@ -7,7 +7,7 @@ namespace Kampai.UI.View
 			CreateNew = 0,
 			Pending = 1,
 			Sold = 2,
-			Facebook = 3,
+			Discord = 3,
 			Premium = 4
 		}
 
@@ -93,7 +93,7 @@ namespace Kampai.UI.View
 				bool flag2 = slot.Definition.type == global::Kampai.Game.MarketplaceSaleSlotDefinition.SlotType.PREMIUM_UNLOCKABLE;
 				if (flag)
 				{
-					SetSlotState(global::Kampai.UI.View.StorageBuildingSaleSlotView.SaleSlotState.Facebook);
+					SetSlotState(global::Kampai.UI.View.StorageBuildingSaleSlotView.SaleSlotState.Discord);
 				}
 				else if (flag2)
 				{
@@ -200,10 +200,10 @@ namespace Kampai.UI.View
 				SetupCreateState();
 				CreateButtonView.gameObject.SetActive(true);
 				break;
-			case global::Kampai.UI.View.StorageBuildingSaleSlotView.SaleSlotState.Facebook:
+			case global::Kampai.UI.View.StorageBuildingSaleSlotView.SaleSlotState.Discord:
 			case global::Kampai.UI.View.StorageBuildingSaleSlotView.SaleSlotState.Premium:
 				SetupCreateState();
-				if (state == global::Kampai.UI.View.StorageBuildingSaleSlotView.SaleSlotState.Facebook)
+				if (state == global::Kampai.UI.View.StorageBuildingSaleSlotView.SaleSlotState.Discord)
 				{
 					FacebookButtonView.gameObject.SetActive(true);
 					break;

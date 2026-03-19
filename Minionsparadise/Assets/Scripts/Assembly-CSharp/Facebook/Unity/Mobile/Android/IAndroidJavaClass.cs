@@ -1,4 +1,4 @@
-namespace Facebook.Unity.Mobile.Android
+namespace Discord.Unity.Mobile.Android
 {
 	internal interface IAndroidJavaClass
 	{

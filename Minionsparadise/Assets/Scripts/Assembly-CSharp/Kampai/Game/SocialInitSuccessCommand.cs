@@ -31,7 +31,7 @@ namespace Kampai.Game
 			switch (type)
 			{
 			case global::Kampai.Game.SocialServices.FACEBOOK:
-				clientHealth.MarkMeterEvent("External.Facebook.Login");
+				clientHealth.MarkMeterEvent("External.Discord.Login");
 				break;
 			case global::Kampai.Game.SocialServices.GAMECENTER:
 				clientHealth.MarkMeterEvent("External.GameCenter.Login");
@@ -97,7 +97,9 @@ namespace Kampai.Game
 		private void LinkAccount(global::Kampai.Game.SocialServices socialType)
 		{
 			logger.Debug("Calling link from {0} Init", socialType.ToString());
-			linkAccountSignal.Dispatch(socialService, false);
+			// If LoginSource is not empty, it's a manual login from settings/social menu, so we should reload
+			bool shouldReload = !string.IsNullOrEmpty(socialService.LoginSource);
+			linkAccountSignal.Dispatch(socialService, shouldReload);
 		}
 	}
 }

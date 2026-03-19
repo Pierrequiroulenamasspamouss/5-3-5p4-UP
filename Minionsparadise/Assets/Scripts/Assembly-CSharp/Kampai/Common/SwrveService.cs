@@ -325,7 +325,7 @@ namespace Kampai.Common
 			dictionary.Add(SynergyTrackingEventType.EVT_GP_LEVEL_PROMOTION, (global::Kampai.Common.TelemetryEvent gameEvent) => "game.progression.levelup");
 			dictionary.Add(SynergyTrackingEventType.EVT_GC_SIGNON, (global::Kampai.Common.TelemetryEvent gameEvent) => "social.login.gamecenter");
 			dictionary.Add(SynergyTrackingEventType.EVT_GP_SIGNON, (global::Kampai.Common.TelemetryEvent gameEvent) => "social.login.googleplay");
-			dictionary.Add(SynergyTrackingEventType.EVT_FB_SIGNON, (global::Kampai.Common.TelemetryEvent gameEvent) => "social.login.facebook");
+			dictionary.Add(SynergyTrackingEventType.EVT_FB_SIGNON, (global::Kampai.Common.TelemetryEvent gameEvent) => "social.login.discord");
 			dictionary.Add(SynergyTrackingEventType.EVT_IPAD_UPSELL_MESSAGE_DISPLAYED, delegate(global::Kampai.Common.TelemetryEvent gameEvent)
 			{
 				string value3 = GetValue(gameEvent.Parameters, global::Kampai.Common.ParameterName.IN_APP_MESSAGE_NAME, "unknown");

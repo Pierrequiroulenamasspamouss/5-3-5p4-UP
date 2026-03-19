@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Editor.Dialogs
+namespace Discord.Unity.Editor.Dialogs
 {
-	internal class MockLoginDialog : global::Facebook.Unity.Editor.EditorFacebookMockDialog
+	internal class MockLoginDialog : global::Discord.Unity.Editor.EditorFacebookMockDialog
 	{
 		private string accessToken = string.Empty;
 
@@ -21,7 +21,7 @@ namespace Facebook.Unity.Editor.Dialogs
 			global::UnityEngine.GUILayout.Space(10f);
 			if (global::UnityEngine.GUILayout.Button("Find Access Token"))
 			{
-				global::UnityEngine.Application.OpenURL(string.Format("https://developers.facebook.com/tools/accesstoken/?app_id={0}", global::Facebook.Unity.FB.AppId));
+				global::UnityEngine.Application.OpenURL(string.Format("https://developers.discord.com/tools/accesstoken/?app_id={0}", global::Discord.Unity.FB.AppId));
 			}
 			global::UnityEngine.GUILayout.Space(20f);
 		}
@@ -33,7 +33,7 @@ namespace Facebook.Unity.Editor.Dialogs
 				SendErrorResult("Empty Access token string");
 				return;
 			}
-			global::Facebook.Unity.FB.API("/me?fields=id&access_token=" + accessToken, global::Facebook.Unity.HttpMethod.GET, delegate(global::Facebook.Unity.IGraphResult graphResult)
+			global::Discord.Unity.FB.API("/me?fields=id&access_token=" + accessToken, global::Discord.Unity.HttpMethod.GET, delegate(global::Discord.Unity.IGraphResult graphResult)
 			{
 				if (!string.IsNullOrEmpty(graphResult.Error))
 				{
@@ -42,7 +42,7 @@ namespace Facebook.Unity.Editor.Dialogs
 				else
 				{
 					string facebookID = graphResult.ResultDictionary["id"] as string;
-					global::Facebook.Unity.FB.API("/me/permissions?access_token=" + accessToken, global::Facebook.Unity.HttpMethod.GET, delegate(global::Facebook.Unity.IGraphResult permResult)
+					global::Discord.Unity.FB.API("/me/permissions?access_token=" + accessToken, global::Discord.Unity.HttpMethod.GET, delegate(global::Discord.Unity.IGraphResult permResult)
 					{
 						if (!string.IsNullOrEmpty(permResult.Error))
 						{
@@ -64,8 +64,8 @@ namespace Facebook.Unity.Editor.Dialogs
 									list2.Add(item["permission"] as string);
 								}
 							}
-							global::Facebook.Unity.AccessToken newAccessToken = new global::Facebook.Unity.AccessToken(this.accessToken, facebookID, global::System.DateTime.UtcNow.AddDays(60.0), list, global::System.DateTime.UtcNow);
-							global::System.Collections.Generic.IDictionary<string, object> dictionary2 = (global::System.Collections.Generic.IDictionary<string, object>)global::Facebook.MiniJSON.Json.Deserialize(newAccessToken.ToJson());
+							global::Discord.Unity.AccessToken newAccessToken = new global::Discord.Unity.AccessToken(this.accessToken, facebookID, global::System.DateTime.UtcNow.AddDays(60.0), list, global::System.DateTime.UtcNow);
+							global::System.Collections.Generic.IDictionary<string, object> dictionary2 = (global::System.Collections.Generic.IDictionary<string, object>)global::Discord.MiniJSON.Json.Deserialize(newAccessToken.ToJson());
 							dictionary2.Add("granted_permissions", list);
 							dictionary2.Add("declined_permissions", list2);
 							if (!string.IsNullOrEmpty(base.CallbackID))
@@ -74,7 +74,7 @@ namespace Facebook.Unity.Editor.Dialogs
 							}
 							if (base.Callback != null)
 							{
-								base.Callback(new global::Facebook.Unity.ResultContainer(dictionary2));
+								base.Callback(new global::Discord.Unity.ResultContainer(dictionary2));
 							}
 						}
 					}, (global::System.Collections.Generic.IDictionary<string, string>)null);

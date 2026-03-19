@@ -1,14 +1,14 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	internal static class FacebookLogger
 	{
-		private class CustomLogger : global::Facebook.Unity.IFacebookLogger
+		private class CustomLogger : global::Discord.Unity.IFacebookLogger
 		{
-			private global::Facebook.Unity.IFacebookLogger logger;
+			private global::Discord.Unity.IFacebookLogger logger;
 
 			public CustomLogger()
 			{
-				logger = new global::Facebook.Unity.FacebookLogger.AndroidLogger();
+				logger = new global::Discord.Unity.FacebookLogger.AndroidLogger();
 			}
 
 			public void Log(string msg)
@@ -39,13 +39,13 @@ namespace Facebook.Unity
 			}
 		}
 
-		private class AndroidLogger : global::Facebook.Unity.IFacebookLogger
+		private class AndroidLogger : global::Discord.Unity.IFacebookLogger
 		{
 			public void Log(string msg)
 			{
 				using (global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("android.util.Log"))
 				{
-					androidJavaClass.CallStatic<int>("v", new object[2] { "Facebook.Unity.FBDebug", msg });
+					androidJavaClass.CallStatic<int>("v", new object[2] { "Discord.Unity.FBDebug", msg });
 				}
 			}
 
@@ -53,7 +53,7 @@ namespace Facebook.Unity
 			{
 				using (global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("android.util.Log"))
 				{
-					androidJavaClass.CallStatic<int>("i", new object[2] { "Facebook.Unity.FBDebug", msg });
+					androidJavaClass.CallStatic<int>("i", new object[2] { "Discord.Unity.FBDebug", msg });
 				}
 			}
 
@@ -61,7 +61,7 @@ namespace Facebook.Unity
 			{
 				using (global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("android.util.Log"))
 				{
-					androidJavaClass.CallStatic<int>("w", new object[2] { "Facebook.Unity.FBDebug", msg });
+					androidJavaClass.CallStatic<int>("w", new object[2] { "Discord.Unity.FBDebug", msg });
 				}
 			}
 
@@ -69,18 +69,18 @@ namespace Facebook.Unity
 			{
 				using (global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("android.util.Log"))
 				{
-					androidJavaClass.CallStatic<int>("e", new object[2] { "Facebook.Unity.FBDebug", msg });
+					androidJavaClass.CallStatic<int>("e", new object[2] { "Discord.Unity.FBDebug", msg });
 				}
 			}
 		}
 
-		private const string UnityAndroidTag = "Facebook.Unity.FBDebug";
+		private const string UnityAndroidTag = "Discord.Unity.FBDebug";
 
-		internal static global::Facebook.Unity.IFacebookLogger Instance { private get; set; }
+		internal static global::Discord.Unity.IFacebookLogger Instance { private get; set; }
 
 		static FacebookLogger()
 		{
-			Instance = new global::Facebook.Unity.FacebookLogger.CustomLogger();
+			Instance = new global::Discord.Unity.FacebookLogger.CustomLogger();
 		}
 
 		public static void Log(string msg)

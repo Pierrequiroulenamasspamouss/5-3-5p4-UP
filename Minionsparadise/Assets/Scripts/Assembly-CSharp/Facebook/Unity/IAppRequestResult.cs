@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	public interface IAppRequestResult : global::Facebook.Unity.IResult
+	public interface IAppRequestResult : global::Discord.Unity.IResult
 	{
 		string RequestID { get; }
 

@@ -1287,7 +1287,7 @@ namespace Kampai.Util
 			public const string RelinkingAccount = "RelinkingAccount";
 		}
 
-		public static class Facebook
+		public static class Discord
 		{
 			public const bool COOKIE = true;
 
@@ -2641,7 +2641,7 @@ namespace Kampai.Util
 
 				public const string RESUME = "AppFlow.Resume";
 
-				public const string FBLOGIN = "External.Facebook.Login";
+				public const string FBLOGIN = "External.Discord.Login";
 
 				public const string GPLOGIN = "External.Google.Login";
 

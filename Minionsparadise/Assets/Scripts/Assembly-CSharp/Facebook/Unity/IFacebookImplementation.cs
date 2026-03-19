@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal interface IFacebookImplementation : global::Facebook.Unity.IFacebook, global::Facebook.Unity.IFacebookResultHandler
+	internal interface IFacebookImplementation : global::Discord.Unity.IFacebook, global::Discord.Unity.IFacebookResultHandler
 	{
 	}
 }

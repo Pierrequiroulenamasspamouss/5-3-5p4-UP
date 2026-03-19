@@ -248,7 +248,7 @@ namespace Kampai.UI.View
 			int num = global::UnityEngine.Mathf.Min(list.Count, 4);
 			foreach (global::Kampai.Game.UserIdentity item in list)
 			{
-				if (item != null && item.ExternalID != null && item.Type == global::Kampai.Game.IdentityType.facebook)
+				if (item != null && item.ExternalID != null && item.Type == global::Kampai.Game.IdentityType.discord)
 				{
 					friends.Add(facebookService.GetFriend(item.ExternalID) ?? new global::Kampai.Game.FBUser(string.Empty, item.ExternalID));
 					global::strange.extensions.signal.impl.Signal<string> signal = new global::strange.extensions.signal.impl.Signal<string>();
@@ -267,7 +267,7 @@ namespace Kampai.UI.View
 			global::Kampai.Game.FacebookService facebookService = this.facebookService as global::Kampai.Game.FacebookService;
 			if (facebookService.GetUserPicture(id) == null)
 			{
-				logger.Warning("OnFacebookPictureComplete texture is null for Facebook ID: {0}", id);
+				logger.Warning("OnFacebookPictureComplete texture is null for Discord ID: {0}", id);
 			}
 			picturesComplete++;
 			if (picturesComplete == friends.Count)

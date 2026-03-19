@@ -1,10 +1,10 @@
-namespace Facebook.Unity.Canvas
+namespace Discord.Unity.Canvas
 {
-	internal interface ICanvasFacebookResultHandler : global::Facebook.Unity.IFacebookResultHandler
+	internal interface ICanvasFacebookResultHandler : global::Discord.Unity.IFacebookResultHandler
 	{
-		void OnPayComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnPayComplete(global::Discord.Unity.ResultContainer resultContainer);
 
-		void OnFacebookAuthResponseChange(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnFacebookAuthResponseChange(global::Discord.Unity.ResultContainer resultContainer);
 
 		void OnUrlResponse(string message);
 
