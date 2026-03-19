@@ -1,13 +1,13 @@
-namespace Facebook.Unity.Editor
+namespace Discord.Unity.Editor
 {
-	internal class EditorFacebookLoader : global::Facebook.Unity.FB.CompiledFacebookLoader
+	internal class EditorFacebookLoader : global::Discord.Unity.FB.CompiledFacebookLoader
 	{
-		protected override global::Facebook.Unity.FacebookGameObject FBGameObject
+		protected override global::Discord.Unity.FacebookGameObject FBGameObject
 		{
 			get
 			{
-				global::Facebook.Unity.Editor.EditorFacebookGameObject component = global::Facebook.Unity.ComponentFactory.GetComponent<global::Facebook.Unity.Editor.EditorFacebookGameObject>();
-				component.Facebook = new global::Facebook.Unity.Editor.EditorFacebook();
+				global::Discord.Unity.Editor.EditorFacebookGameObject component = global::Discord.Unity.ComponentFactory.GetComponent<global::Discord.Unity.Editor.EditorFacebookGameObject>();
+				component.Discord = new global::Discord.Unity.Editor.EditorFacebook();
 				return component;
 			}
 		}

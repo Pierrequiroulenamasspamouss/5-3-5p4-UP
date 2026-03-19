@@ -1,8 +1,11 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 import uuid
 import os
 import random
 import json
+import requests
+from utils.db import player_exists, link_discord_to_player, get_uid_by_discord_id
+
 
 user_bp = Blueprint('user', __name__)
 
@@ -17,10 +20,8 @@ def login():
     print(f"[LOGIN] Raw Request Data: {request.data.decode('utf-8', errors='ignore')}")
     uid_str = data.get('userId', data.get('UserID', '1000000000'))
     
-    # Check if this user already has a save file
-    # This determines if they get the intro video or skip straight to the game
-    player_file = os.path.join(os.path.dirname(__file__), '..', 'player_data', f'{uid_str}.json')
-    is_new = not os.path.exists(player_file)
+    # Check if this user already has an entry in the database
+    is_new = not player_exists(uid_str)
     
     print(f"[LOGIN] UserID={uid_str} | isNewUser={is_new}")
     
@@ -64,8 +65,6 @@ def get_tse_event_team(event_id, user_id):
     Mocks the Timed Social Event / Team Request for the user.
     Simulates "fake friends" if a team is created or joined.
     """
-    from flask import current_app
-    
     # Simple state persistence
     if event_id not in tse_teams:
         tse_teams[event_id] = {}
@@ -124,7 +123,6 @@ def get_tse_event_team(event_id, user_id):
 
 @user_bp.route('/rest/tse/event/<int:event_id>/teams', methods=['GET', 'POST'])
 def get_tse_teams(event_id):
-    from flask import current_app
     # Return few random teams if needed
     return current_app.response_class(
         json.dumps({}, separators=(', ', ': ')),
@@ -133,8 +131,6 @@ def get_tse_teams(event_id):
 
 @user_bp.route('/rest/tse/event/<int:event_id>/team/<int:team_id>/user/<user_id>/<action>', methods=['GET', 'POST'])
 def tse_team_actions(event_id, team_id, user_id, action):
-    from flask import current_app
-    
     team = tse_teams.get(event_id, {}).get(team_id)
     if not team and action != "join":
         return jsonify({"error": "Team not found"}), 404
@@ -178,6 +174,7 @@ def tse_team_actions(event_id, team_id, user_id, action):
         json.dumps(data, separators=(', ', ': ')),
         mimetype='application/json'
     )
+
 @user_bp.route('/rest/v2/user/<user_id>/identity', methods=['POST'])
 def link_identity(user_id):
     """
@@ -196,8 +193,9 @@ def link_identity(user_id):
     return jsonify({
         "userId": user_id,
         "externalId": data.get('externalId', 'mock_external_id'),
-        "type": data.get('identityType', 'facebook')
+        "type": data.get('identityType', 'discord')
     })
+
 @user_bp.route('/token', methods=['POST'])
 def get_dcn_token():
     """
@@ -219,73 +217,127 @@ def get_dcn_token():
         "Expires_In": expires_str
     })
 
-# --- FACEBOOK SERVER-DRIVEN LOGIN MOCKS ---
-fb_tokens = {}
+# --- DISCORD LIVE LOGIN ---
+def get_discord_config():
+    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    config = {}
+    if os.path.exists(env_path):
+        with open(env_path, 'r') as f:
+            for line in f:
+                if '=' in line:
+                    k, v = line.strip().split('=', 1)
+                    config[k] = v
+    return config
 
+def get_discord_redirect_uri(request):
+    config = get_discord_config()
+    # If the request comes from bluebridge.homeonthewater.com, use the public redirect URI
+    if request.host and 'bluebridge.homeonthewater.com' in request.host:
+        return config.get('DISCORD_REDIRECT_URI_public')
+    return config.get('DISCORD_REDIRECT_URI')
+
+@user_bp.route('/auth/discord/login', methods=['GET'])
+def discord_login():
+    config = get_discord_config()
+    client_id = config.get('DISCORD_CLIENT_ID')
+    redirect_uri = get_discord_redirect_uri(request)
+    
+    # uid is passed from the game client to link the account
+    uid = request.args.get('uid', '')
+    
+    auth_url = (
+        f"https://discord.com/api/oauth2/authorize"
+        f"?client_id={client_id}"
+        f"&redirect_uri={requests.utils.quote(redirect_uri)}"
+        f"&response_type=code"
+        f"&scope=identify"
+        f"&state={uid}" # Passing uid in state to retrieve it in callback
+    )
+    return f"<html><body><script>window.location.href='{auth_url}';</script></body></html>"
+
+@user_bp.route('/auth/discord/callback', methods=['GET'])
+def discord_callback():
+    config = get_discord_config()
+    client_id = config.get('DISCORD_CLIENT_ID')
+    client_secret = config.get('DISCORD_CLIENT_SECRET')
+    redirect_uri = get_discord_redirect_uri(request)
+    
+    code = request.args.get('code')
+    uid = request.args.get('state') # This is the internal game UID
+    
+    if not code:
+        return "Error: No code provided", 400
+        
+    # 1. Exchange code for token
+    token_url = "https://discord.com/api/oauth2/token"
+    data = {
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'grant_type': 'authorization_code',
+        'code': code,
+        'redirect_uri': redirect_uri
+    }
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    
+    token_response = requests.post(token_url, data=data, headers=headers)
+    token_data = token_response.json()
+    
+    if 'access_token' not in token_data:
+        return f"Error: Failed to get token - {token_data.get('error_description', token_data.get('error', 'Unknown error'))}", 400
+        
+    access_token = token_data['access_token']
+    
+    # 2. Fetch user profile
+    user_url = "https://discord.com/api/users/@me"
+    user_headers = {'Authorization': f"Bearer {access_token}"}
+    user_response = requests.get(user_url, headers=user_headers)
+    user_profile = user_response.json()
+    
+    discord_id = user_profile.get('id')
+    if not discord_id:
+        return "Error: Failed to fetch Discord profile", 400
+        
+    # 3. Link to player in DB
+    # If uid is empty, it means the user logged in directly without a pending game account.
+    target_uid = uid if uid else get_uid_by_discord_id(discord_id)
+    if not target_uid:
+        target_uid = discord_id
+        
+    link_discord_to_player(target_uid, user_profile)
+    
+    print(f"[DISCORD] Linked user {target_uid} with Discord {user_profile.get('username')} ({discord_id})")
+    
+    return """
+    <html>
+    <body>
+        <h2>Login Complete!</h2>
+        <p>You can close this window and return to the game.</p>
+        <script>setTimeout(() => window.close(), 3000);</script>
+    </body>
+    </html>
+    """
+
+# --- LEGACY FACEBOOK MOCKS (Redirected to Discord) ---
 @user_bp.route('/auth/facebook/login', methods=['GET'])
 def fb_login():
-    uid = request.args.get('uid', '1000000000')
-    html = f"""
-    <html>
-    <body>
-        <h2>Mock Facebook Login</h2>
-        <p>Logging in for user: {uid}</p>
-        <button onclick="login()">Log In to Facebook</button>
-        <script>
-            function login() {{
-                window.location.href = '/auth/facebook/callback#access_token=SERVER_MOCK_TOKEN_FOR_{uid}&expires_in=5184000&state={uid}';
-            }}
-        </script>
-    </body>
-    </html>
-    """
-    return html
+    return discord_login()
 
-@user_bp.route('/auth/facebook/callback', methods=['GET'])
-def fb_callback():
-    html = """
-    <html>
-    <body>
-        <h2>Processing Login...</h2>
-        <script>
-            var hash = window.location.hash.substring(1);
-            var params = new URLSearchParams(hash.replace(/&/g, '&amp;'));
-            // simple parse since URLSearchParams might not like fragment
-            var parsed = {};
-            hash.split('&').forEach(function(pair) {
-                var kv = pair.split('=');
-                parsed[kv[0]] = kv[1];
-            });
-            var token = parsed['access_token'];
-            var state = parsed['state'];
-            
-            fetch('/auth/facebook/save', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ uid: state, token: token })
-            }).then(() => {
-                document.body.innerHTML = "<h2>Login Complete! You can close this window and return to the game.</h2>";
-            });
-        </script>
-    </body>
-    </html>
-    """
-    return html
-
-@user_bp.route('/auth/facebook/save', methods=['POST'])
-def fb_save():
-    data = request.get_json(force=True, silent=True) or {}
-    uid = data.get('uid')
-    token = data.get('token')
-    if uid and token:
-        fb_tokens[uid] = token
-    return jsonify({"success": True})
-
+@user_bp.route('/auth/discord/status', methods=['GET'])
 @user_bp.route('/auth/facebook/status', methods=['GET'])
-def fb_status():
+def discord_status_check():
+    """Checks for Discord linkage status for a given UID."""
     uid = request.args.get('uid', '')
-    token = fb_tokens.get(uid)
-    if token:
-        fb_tokens.pop(uid, None) # one time use
-        return jsonify({"status": "success", "token": token, "uid": uid})
+    if not uid:
+        return jsonify({"status": "pending"})
+        
+    from utils.db import resolve_master_uid, get_db_connection
+    master_uid = resolve_master_uid(uid)
+    
+    conn = get_db_connection()
+    row = conn.execute("SELECT DISCORD FROM players WHERE uid = ?", (str(master_uid),)).fetchone()
+    conn.close()
+    
+    if row and row['DISCORD']:
+        # Return success with the MASTER UID
+        return jsonify({"status": "success", "token": "discord_linked", "uid": master_uid})
     return jsonify({"status": "pending"})

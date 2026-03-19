@@ -1,54 +1,54 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal abstract class FacebookGameObject : global::UnityEngine.MonoBehaviour, global::Facebook.Unity.IFacebookCallbackHandler
+	internal abstract class FacebookGameObject : global::UnityEngine.MonoBehaviour, global::Discord.Unity.IFacebookCallbackHandler
 	{
-		public global::Facebook.Unity.IFacebookImplementation Facebook { get; set; }
+		public global::Discord.Unity.IFacebookImplementation Discord { get; set; }
 
 		public void Awake()
 		{
 			global::UnityEngine.Object.DontDestroyOnLoad(this);
-			global::Facebook.Unity.AccessToken.CurrentAccessToken = null;
+			global::Discord.Unity.AccessToken.CurrentAccessToken = null;
 			OnAwake();
 		}
 
 		public void OnInitComplete(string message)
 		{
-			Facebook.OnInitComplete(new global::Facebook.Unity.ResultContainer(message));
+			Discord.OnInitComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 
 		public void OnLoginComplete(string message)
 		{
-			Facebook.OnLoginComplete(new global::Facebook.Unity.ResultContainer(message));
+			Discord.OnLoginComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 
 		public void OnLogoutComplete(string message)
 		{
-			Facebook.OnLogoutComplete(new global::Facebook.Unity.ResultContainer(message));
+			Discord.OnLogoutComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 
 		public void OnGetAppLinkComplete(string message)
 		{
-			Facebook.OnGetAppLinkComplete(new global::Facebook.Unity.ResultContainer(message));
+			Discord.OnGetAppLinkComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 
 		public void OnGroupCreateComplete(string message)
 		{
-			Facebook.OnGroupCreateComplete(new global::Facebook.Unity.ResultContainer(message));
+			Discord.OnGroupCreateComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 
 		public void OnGroupJoinComplete(string message)
 		{
-			Facebook.OnGroupJoinComplete(new global::Facebook.Unity.ResultContainer(message));
+			Discord.OnGroupJoinComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 
 		public void OnAppRequestsComplete(string message)
 		{
-			Facebook.OnAppRequestsComplete(new global::Facebook.Unity.ResultContainer(message));
+			Discord.OnAppRequestsComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 
 		public void OnShareLinkComplete(string message)
 		{
-			Facebook.OnShareLinkComplete(new global::Facebook.Unity.ResultContainer(message));
+			Discord.OnShareLinkComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 
 		protected virtual void OnAwake()

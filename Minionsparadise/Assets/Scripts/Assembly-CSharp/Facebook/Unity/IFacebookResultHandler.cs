@@ -1,21 +1,21 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	internal interface IFacebookResultHandler
 	{
-		void OnInitComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnInitComplete(global::Discord.Unity.ResultContainer resultContainer);
 
-		void OnLoginComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnLoginComplete(global::Discord.Unity.ResultContainer resultContainer);
 
-		void OnLogoutComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnLogoutComplete(global::Discord.Unity.ResultContainer resultContainer);
 
-		void OnGetAppLinkComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnGetAppLinkComplete(global::Discord.Unity.ResultContainer resultContainer);
 
-		void OnGroupCreateComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnGroupCreateComplete(global::Discord.Unity.ResultContainer resultContainer);
 
-		void OnGroupJoinComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnGroupJoinComplete(global::Discord.Unity.ResultContainer resultContainer);
 
-		void OnAppRequestsComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnAppRequestsComplete(global::Discord.Unity.ResultContainer resultContainer);
 
-		void OnShareLinkComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnShareLinkComplete(global::Discord.Unity.ResultContainer resultContainer);
 	}
 }

@@ -10,7 +10,7 @@ window.FBUnity = {
         }
 
         // load js sdk
-        var js, id = 'facebook-jssdk', ref = document.getElementsByTagName('script')[0];
+        var js, id = 'discord-jssdk', ref = document.getElementsByTagName('script')[0];
         if (document.getElementById(id)) {return;}
         js = document.createElement('script'); js.id = id; js.async = true;
         js.src = connectFacebookUrl + '/' + locale + '/sdk' + (debug ? '/debug' : '') + '.js';
@@ -76,7 +76,7 @@ window.FBUnity = {
     logLoadingTime: function(response) {
         FB.Canvas.setDoneLoading(
           function (result) {
-            // send implicitly event to log the time from the canvas pages load to facebook init being called.
+            // send implicitly event to log the time from the canvas pages load to discord init being called.
             FBUnity.logAppEvent('fb_canvas_time_till_init_complete', result.time_delta_ms / 1000, null);
           }
         );

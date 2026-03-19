@@ -1,8 +1,8 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal class AppInviteResult : global::Facebook.Unity.ResultBase, global::Facebook.Unity.IAppInviteResult, global::Facebook.Unity.IResult
+	internal class AppInviteResult : global::Discord.Unity.ResultBase, global::Discord.Unity.IAppInviteResult, global::Discord.Unity.IResult
 	{
-		public AppInviteResult(global::Facebook.Unity.ResultContainer resultContainer)
+		public AppInviteResult(global::Discord.Unity.ResultContainer resultContainer)
 			: base(resultContainer)
 		{
 		}

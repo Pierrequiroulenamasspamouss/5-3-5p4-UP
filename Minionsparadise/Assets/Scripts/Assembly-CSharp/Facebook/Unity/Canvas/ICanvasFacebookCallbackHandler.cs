@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Canvas
+namespace Discord.Unity.Canvas
 {
-	internal interface ICanvasFacebookCallbackHandler : global::Facebook.Unity.IFacebookCallbackHandler
+	internal interface ICanvasFacebookCallbackHandler : global::Discord.Unity.IFacebookCallbackHandler
 	{
 		void OnPayComplete(string message);
 

@@ -1,28 +1,28 @@
-namespace Facebook.Unity.Mobile
+namespace Discord.Unity.Mobile
 {
-	internal abstract class MobileFacebookGameObject : global::Facebook.Unity.FacebookGameObject, global::Facebook.Unity.IFacebookCallbackHandler, global::Facebook.Unity.Mobile.IMobileFacebookCallbackHandler
+	internal abstract class MobileFacebookGameObject : global::Discord.Unity.FacebookGameObject, global::Discord.Unity.IFacebookCallbackHandler, global::Discord.Unity.Mobile.IMobileFacebookCallbackHandler
 	{
-		private global::Facebook.Unity.Mobile.IMobileFacebookImplementation MobileFacebook
+		private global::Discord.Unity.Mobile.IMobileFacebookImplementation MobileFacebook
 		{
 			get
 			{
-				return (global::Facebook.Unity.Mobile.IMobileFacebookImplementation)base.Facebook;
+				return (global::Discord.Unity.Mobile.IMobileFacebookImplementation)base.Discord;
 			}
 		}
 
 		public void OnAppInviteComplete(string message)
 		{
-			MobileFacebook.OnAppInviteComplete(new global::Facebook.Unity.ResultContainer(message));
+			MobileFacebook.OnAppInviteComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 
 		public void OnFetchDeferredAppLinkComplete(string message)
 		{
-			MobileFacebook.OnFetchDeferredAppLinkComplete(new global::Facebook.Unity.ResultContainer(message));
+			MobileFacebook.OnFetchDeferredAppLinkComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 
 		public void OnRefreshCurrentAccessTokenComplete(string message)
 		{
-			MobileFacebook.OnRefreshCurrentAccessTokenComplete(new global::Facebook.Unity.ResultContainer(message));
+			MobileFacebook.OnRefreshCurrentAccessTokenComplete(new global::Discord.Unity.ResultContainer(message));
 		}
 	}
 }

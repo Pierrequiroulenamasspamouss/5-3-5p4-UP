@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal abstract class ResultBase : global::Facebook.Unity.IInternalResult, global::Facebook.Unity.IResult
+	internal abstract class ResultBase : global::Discord.Unity.IInternalResult, global::Discord.Unity.IResult
 	{
 		internal const long CancelDialogCode = 4201L;
 
@@ -20,7 +20,7 @@ namespace Facebook.Unity
 
 		protected long? CanvasErrorCode { get; private set; }
 
-		internal ResultBase(global::Facebook.Unity.ResultContainer result)
+		internal ResultBase(global::Discord.Unity.ResultContainer result)
 		{
 			string errorValue = GetErrorValue(result.ResultDictionary);
 			bool cancelledValue = GetCancelledValue(result.ResultDictionary);
@@ -28,14 +28,14 @@ namespace Facebook.Unity
 			Init(result, errorValue, cancelledValue, callbackId);
 		}
 
-		internal ResultBase(global::Facebook.Unity.ResultContainer result, string error, bool cancelled)
+		internal ResultBase(global::Discord.Unity.ResultContainer result, string error, bool cancelled)
 		{
 			Init(result, error, cancelled, null);
 		}
 
 		public override string ToString()
 		{
-			return global::Facebook.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string>
+			return global::Discord.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string>
 			{
 				{ "Error", Error },
 				{ "RawResult", RawResult },
@@ -46,7 +46,7 @@ namespace Facebook.Unity
 			});
 		}
 
-		protected void Init(global::Facebook.Unity.ResultContainer result, string error, bool cancelled, string callbackId)
+		protected void Init(global::Discord.Unity.ResultContainer result, string error, bool cancelled, string callbackId)
 		{
 			RawResult = result.RawResult;
 			ResultDictionary = result.ResultDictionary;

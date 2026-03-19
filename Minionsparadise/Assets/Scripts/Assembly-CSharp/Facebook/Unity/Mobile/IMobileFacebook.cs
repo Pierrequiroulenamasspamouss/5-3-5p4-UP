@@ -1,13 +1,13 @@
-namespace Facebook.Unity.Mobile
+namespace Discord.Unity.Mobile
 {
-	internal interface IMobileFacebook : global::Facebook.Unity.IFacebook
+	internal interface IMobileFacebook : global::Discord.Unity.IFacebook
 	{
-		global::Facebook.Unity.ShareDialogMode ShareDialogMode { get; set; }
+		global::Discord.Unity.ShareDialogMode ShareDialogMode { get; set; }
 
-		void AppInvite(global::System.Uri appLinkUrl, global::System.Uri previewImageUrl, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppInviteResult> callback);
+		void AppInvite(global::System.Uri appLinkUrl, global::System.Uri previewImageUrl, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppInviteResult> callback);
 
-		void FetchDeferredAppLink(global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppLinkResult> callback);
+		void FetchDeferredAppLink(global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppLinkResult> callback);
 
-		void RefreshCurrentAccessToken(global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAccessTokenRefreshResult> callback);
+		void RefreshCurrentAccessToken(global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAccessTokenRefreshResult> callback);
 	}
 }

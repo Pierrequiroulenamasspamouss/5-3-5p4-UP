@@ -48,7 +48,7 @@ namespace Kampai.Common
 			long iD = timedSocialEventService.GetSocialEventStateCached(timedSocialEventService.GetCurrentSocialEvent().ID).Team.ID;
 			global::strange.extensions.signal.impl.Signal<global::Kampai.Game.SocialTeamResponse, global::Kampai.Game.ErrorResponse> signal = new global::strange.extensions.signal.impl.Signal<global::Kampai.Game.SocialTeamResponse, global::Kampai.Game.ErrorResponse>();
 			signal.AddListener(OnInviteSuccess);
-			timedSocialEventService.InviteFriends(eventId, iD, global::Kampai.Game.IdentityType.facebook, to, signal);
+			timedSocialEventService.InviteFriends(eventId, iD, global::Kampai.Game.IdentityType.discord, to, signal);
 		}
 
 		public void OnInviteSuccess(global::Kampai.Game.SocialTeamResponse response, global::Kampai.Game.ErrorResponse error)

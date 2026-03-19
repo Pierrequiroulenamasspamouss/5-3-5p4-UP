@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal class AppRequestResult : global::Facebook.Unity.ResultBase, global::Facebook.Unity.IAppRequestResult, global::Facebook.Unity.IResult
+	internal class AppRequestResult : global::Discord.Unity.ResultBase, global::Discord.Unity.IAppRequestResult, global::Discord.Unity.IResult
 	{
 		public const string RequestIDKey = "request";
 
@@ -10,7 +10,7 @@ namespace Facebook.Unity
 
 		public global::System.Collections.Generic.IEnumerable<string> To { get; private set; }
 
-		public AppRequestResult(global::Facebook.Unity.ResultContainer resultContainer)
+		public AppRequestResult(global::Discord.Unity.ResultContainer resultContainer)
 			: base(resultContainer)
 		{
 			if (ResultDictionary == null)
@@ -49,7 +49,7 @@ namespace Facebook.Unity
 
 		public override string ToString()
 		{
-			return global::Facebook.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string>
+			return global::Discord.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string>
 			{
 				{ "RequestID", RequestID },
 				{

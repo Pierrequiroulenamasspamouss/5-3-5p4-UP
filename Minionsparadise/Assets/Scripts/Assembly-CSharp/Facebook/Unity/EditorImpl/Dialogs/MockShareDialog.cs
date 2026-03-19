@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Editor.Dialogs
+namespace Discord.Unity.Editor.Dialogs
 {
-	internal class MockShareDialog : global::Facebook.Unity.Editor.EditorFacebookMockDialog
+	internal class MockShareDialog : global::Discord.Unity.Editor.EditorFacebookMockDialog
 	{
 		public string SubTitle { private get; set; }
 
@@ -19,7 +19,7 @@ namespace Facebook.Unity.Editor.Dialogs
 		protected override void SendSuccessResult()
 		{
 			global::System.Collections.Generic.Dictionary<string, object> dictionary = new global::System.Collections.Generic.Dictionary<string, object>();
-			if (global::Facebook.Unity.FB.IsLoggedIn)
+			if (global::Discord.Unity.FB.IsLoggedIn)
 			{
 				dictionary["postId"] = GenerateFakePostID();
 			}
@@ -33,7 +33,7 @@ namespace Facebook.Unity.Editor.Dialogs
 			}
 			if (base.Callback != null)
 			{
-				base.Callback(new global::Facebook.Unity.ResultContainer(dictionary));
+				base.Callback(new global::Discord.Unity.ResultContainer(dictionary));
 			}
 		}
 
@@ -45,13 +45,13 @@ namespace Facebook.Unity.Editor.Dialogs
 			{
 				dictionary["callback_id"] = base.CallbackID;
 			}
-			base.Callback(new global::Facebook.Unity.ResultContainer(dictionary));
+			base.Callback(new global::Discord.Unity.ResultContainer(dictionary));
 		}
 
 		private string GenerateFakePostID()
 		{
 			global::System.Text.StringBuilder stringBuilder = new global::System.Text.StringBuilder();
-			stringBuilder.Append(global::Facebook.Unity.AccessToken.CurrentAccessToken.UserId);
+			stringBuilder.Append(global::Discord.Unity.AccessToken.CurrentAccessToken.UserId);
 			stringBuilder.Append('_');
 			for (int i = 0; i < 17; i++)
 			{

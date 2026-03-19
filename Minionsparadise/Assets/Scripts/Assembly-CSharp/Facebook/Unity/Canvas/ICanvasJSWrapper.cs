@@ -1,4 +1,4 @@
-namespace Facebook.Unity.Canvas
+namespace Discord.Unity.Canvas
 {
 	internal interface ICanvasJSWrapper
 	{

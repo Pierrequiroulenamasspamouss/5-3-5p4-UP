@@ -1,10 +1,10 @@
-namespace Facebook.Unity.Mobile.Android
+namespace Discord.Unity.Mobile.Android
 {
-	internal class FBJavaClass : global::Facebook.Unity.Mobile.Android.IAndroidJavaClass
+	internal class FBJavaClass : global::Discord.Unity.Mobile.Android.IAndroidJavaClass
 	{
-		private const string FacebookJavaClassName = "com.facebook.unity.FB";
+		private const string FacebookJavaClassName = "com.discord.unity.FB";
 
-		private global::UnityEngine.AndroidJavaClass facebookJavaClass = new global::UnityEngine.AndroidJavaClass("com.facebook.unity.FB");
+		private global::UnityEngine.AndroidJavaClass facebookJavaClass = new global::UnityEngine.AndroidJavaClass("com.discord.unity.FB");
 
 		public T CallStatic<T>(string methodName)
 		{

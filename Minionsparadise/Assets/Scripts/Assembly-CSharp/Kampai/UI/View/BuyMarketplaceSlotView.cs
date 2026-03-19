@@ -6,7 +6,7 @@ namespace Kampai.UI.View
 		{
 			Pending = 0,
 			Sold = 1,
-			Facebook = 2
+			Discord = 2
 		}
 
 		public global::UnityEngine.UI.Text ItemTitleText;
@@ -275,7 +275,7 @@ namespace Kampai.UI.View
 		internal void SetupFacebookSlot(global::strange.extensions.signal.impl.Signal<string> playSFXSignal)
 		{
 			SetMarketplaceBuyItem(BuyItem, playSFXSignal);
-			CurrentState = global::Kampai.UI.View.BuyMarketplaceSlotView.State.Facebook;
+			CurrentState = global::Kampai.UI.View.BuyMarketplaceSlotView.State.Discord;
 			FacebookPanel.gameObject.SetActive(true);
 			PricePanel.gameObject.SetActive(false);
 			SoldIconImage.gameObject.SetActive(false);

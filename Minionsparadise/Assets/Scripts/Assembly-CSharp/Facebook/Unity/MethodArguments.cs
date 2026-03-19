@@ -1,4 +1,4 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	internal class MethodArguments
 	{
@@ -9,7 +9,7 @@ namespace Facebook.Unity
 		{
 		}
 
-		public MethodArguments(global::Facebook.Unity.MethodArguments methodArgs)
+		public MethodArguments(global::Discord.Unity.MethodArguments methodArgs)
 			: this(methodArgs.arguments)
 		{
 		}
@@ -74,7 +74,7 @@ namespace Facebook.Unity
 
 		public string ToJsonString()
 		{
-			return global::Facebook.MiniJSON.Json.Serialize(arguments);
+			return global::Discord.MiniJSON.Json.Serialize(arguments);
 		}
 
 		private static global::System.Collections.Generic.Dictionary<string, string> ToStringDict(global::System.Collections.Generic.IDictionary<string, object> dict)

@@ -164,7 +164,7 @@ public class SocialPartyFillOrderProfileButtonMediator : global::Kampai.UI.View.
 		}
 		else
 		{
-			logger.Warning("OnFacebookPictureComplete null texture for Facebook ID: {0}", id);
+			logger.Warning("OnFacebookPictureComplete null texture for Discord ID: {0}", id);
 		}
 	}
 }

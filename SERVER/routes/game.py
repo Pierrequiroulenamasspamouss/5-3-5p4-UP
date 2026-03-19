@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, send_file, current_app
 import os
 import json
 from utils.profile import generate_new_player_profile
+from utils.db import update_player_in_db, get_db_connection, init_db
 
 game_bp = Blueprint('game', __name__)
 
@@ -72,34 +73,39 @@ def get_definitions(filename):
 
 @game_bp.route('/rest/gamestate/<user_id>', methods=['GET'])
 def get_gamestate(user_id):
-    player_data_dir = os.path.join(SERVER_DIR, 'player_data')
-    os.makedirs(player_data_dir, exist_ok=True)
-    player_file = os.path.join(player_data_dir, f'{user_id}.json')
+    from utils.db import get_player_data, get_uid_by_discord_id
     
-    if os.path.exists(player_file):
-        print(f"[GAME] LOADING EXISTING PROFILE for user {user_id}")
-        try:
-            with open(player_file, 'r') as f:
-                profile = json.load(f)
-        except Exception as e:
-            print(f"[GAME] ERROR LOADING PROFILE: {e}, generating new one")
-            profile = generate_new_player_profile(user_id)
+    print(f"[GAME] LOADING PROFILE for user {user_id}")
+    
+    # 1. Try direct UID lookup
+    profile = get_player_data(user_id)
+    
+    # 2. If not found, try Discord ID resolution
+    if not profile:
+        resolved_uid = get_uid_by_discord_id(user_id)
+        if resolved_uid:
+            print(f"[GAME] RESOLVED Discord ID {user_id} to UID {resolved_uid}")
+            profile = get_player_data(resolved_uid)
+            
+    # 3. If still not found, generate and save new profile
+    if not profile:
+        print(f"[GAME] GENERATING NEW PROFILE for user {user_id} using empty_player.json template")
+        from utils.profile import generate_new_player_profile
+        from utils.db import update_player_in_db
+        new_profile = generate_new_player_profile(user_id)
+        update_player_in_db(user_id, new_profile)
+        profile = get_player_data(user_id)
+    
+    if profile:
+        json_str = json.dumps(profile, ensure_ascii=False)
+        return current_app.response_class(
+            response=json_str,
+            status=200,
+            mimetype='application/json'
+        )
     else:
-        print(f"[GAME] GENERATING NEW PROFILE for user {user_id}")
-        profile = generate_new_player_profile(user_id)
-        # Save immediately so the next load works correctly
-        try:
-            with open(player_file, 'w') as f:
-                json.dump(profile, f, indent=2)
-        except Exception as e:
-            print(f"[GAME] ERROR SAVING NEW PROFILE: {e}")
-    
-    json_str = json.dumps(profile, ensure_ascii=False)
-    return current_app.response_class(
-        response=json_str,
-        status=200,
-        mimetype='application/json'
-    )
+        print(f"[GAME] PROFILE NOT FOUND for user {user_id}, returning 503")
+        return jsonify({"error": "Save data not found"}), 503
 
 @game_bp.route('/rest/gamestate/<user_id>', methods=['POST'])
 def save_gamestate(user_id):
@@ -107,17 +113,63 @@ def save_gamestate(user_id):
         player_data = request.get_json(force=True, silent=True)
         if player_data is None:
             raise ValueError("No JSON data received or invalid JSON")
-        player_data_dir = os.path.join(SERVER_DIR, 'player_data')
-        os.makedirs(player_data_dir, exist_ok=True)
-        player_file = os.path.join(player_data_dir, f'{user_id}.json')
-        
-        with open(player_file, 'w') as f:
-            json.dump(player_data, f, indent=2)
+            
+        print(f"[GAME] SAVING PROFILE for user {user_id} to database")
+        # Update leaderboard and full data in database
+        try:
+            update_player_in_db(user_id, player_data)
+        except Exception as e:
+            print(f"[GAME] ERROR UPDATING DATABASE: {e}")
+            raise
         
         return jsonify({"success": True})
     except Exception as e:
         print(f"[GAME] ERROR SAVING PROFILE: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+@game_bp.route('/ping', methods=['GET'])
+def ping():
+    return jsonify({"status": "ok", "message": "Game blueprint is active"})
+
+@game_bp.route('/api/leaderboard', methods=['GET'])
+@game_bp.route('/api/leaderboard/', methods=['GET'])
+def get_leaderboard():
+    """
+    Returns the top 10 players ranked by level then XP.
+    Response format: { UID: { Level: X, TimePlayed: Y, Name: Z }, ... }
+    Caches the result in leaderboard.json
+    """
+    from utils.db import LEADERBOARD_JSON_PATH
+    try:
+        init_db() # Ensure DB exists
+        conn = get_db_connection()
+        players = conn.execute('''
+            SELECT uid, PlayerLevel as level, xp, Time_played as playtime, name 
+            FROM players 
+            ORDER BY PlayerLevel DESC, xp DESC 
+            LIMIT 10
+        ''').fetchall()
+        conn.close()
+        
+        leaderboard = {}
+        for p in players:
+            leaderboard[p['uid']] = {
+                "Level": p['level'],
+                "time played": p['playtime'],
+                "Name": p['name']
+            }
+        
+        # Save to leaderboard.json
+        try:
+            with open(LEADERBOARD_JSON_PATH, 'w') as f:
+                json.dump(leaderboard, f, indent=2)
+        except Exception as e:
+            print(f"[GAME] ERROR SAVING leaderboard.json: {e}")
+
+        return jsonify(leaderboard)
+    except Exception as e:
+        print(f"[GAME] ERROR FETCHING LEADERBOARD: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @game_bp.route('/rest/gamestate/<user_id>/reset', methods=['POST'])
 def reset_gamestate(user_id):

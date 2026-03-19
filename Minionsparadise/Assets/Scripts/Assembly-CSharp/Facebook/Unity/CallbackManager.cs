@@ -1,4 +1,4 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	internal class CallbackManager
 	{
@@ -6,7 +6,7 @@ namespace Facebook.Unity
 
 		private int nextAsyncId;
 
-		public string AddFacebookDelegate<T>(global::Facebook.Unity.FacebookDelegate<T> callback) where T : global::Facebook.Unity.IResult
+		public string AddFacebookDelegate<T>(global::Discord.Unity.FacebookDelegate<T> callback) where T : global::Discord.Unity.IResult
 		{
 			if (callback == null)
 			{
@@ -17,7 +17,7 @@ namespace Facebook.Unity
 			return nextAsyncId.ToString();
 		}
 
-		public void OnFacebookResponse(global::Facebook.Unity.IInternalResult result)
+		public void OnFacebookResponse(global::Discord.Unity.IInternalResult result)
 		{
 			object value;
 			if (result != null && result.CallbackId != null && facebookDelegates.TryGetValue(result.CallbackId, out value))
@@ -27,18 +27,18 @@ namespace Facebook.Unity
 			}
 		}
 
-		private static void CallCallback(object callback, global::Facebook.Unity.IResult result)
+		private static void CallCallback(object callback, global::Discord.Unity.IResult result)
 		{
-			if (callback == null || result == null || TryCallCallback<global::Facebook.Unity.IAppRequestResult>(callback, result) || TryCallCallback<global::Facebook.Unity.IShareResult>(callback, result) || TryCallCallback<global::Facebook.Unity.IGroupCreateResult>(callback, result) || TryCallCallback<global::Facebook.Unity.IGroupJoinResult>(callback, result) || TryCallCallback<global::Facebook.Unity.IPayResult>(callback, result) || TryCallCallback<global::Facebook.Unity.IAppInviteResult>(callback, result) || TryCallCallback<global::Facebook.Unity.IAppLinkResult>(callback, result) || TryCallCallback<global::Facebook.Unity.ILoginResult>(callback, result) || TryCallCallback<global::Facebook.Unity.IAccessTokenRefreshResult>(callback, result))
+			if (callback == null || result == null || TryCallCallback<global::Discord.Unity.IAppRequestResult>(callback, result) || TryCallCallback<global::Discord.Unity.IShareResult>(callback, result) || TryCallCallback<global::Discord.Unity.IGroupCreateResult>(callback, result) || TryCallCallback<global::Discord.Unity.IGroupJoinResult>(callback, result) || TryCallCallback<global::Discord.Unity.IPayResult>(callback, result) || TryCallCallback<global::Discord.Unity.IAppInviteResult>(callback, result) || TryCallCallback<global::Discord.Unity.IAppLinkResult>(callback, result) || TryCallCallback<global::Discord.Unity.ILoginResult>(callback, result) || TryCallCallback<global::Discord.Unity.IAccessTokenRefreshResult>(callback, result))
 			{
 				return;
 			}
 			throw new global::System.NotSupportedException("Unexpected result type: " + callback.GetType().FullName);
 		}
 
-		private static bool TryCallCallback<T>(object callback, global::Facebook.Unity.IResult result) where T : global::Facebook.Unity.IResult
+		private static bool TryCallCallback<T>(object callback, global::Discord.Unity.IResult result) where T : global::Discord.Unity.IResult
 		{
-			global::Facebook.Unity.FacebookDelegate<T> facebookDelegate = callback as global::Facebook.Unity.FacebookDelegate<T>;
+			global::Discord.Unity.FacebookDelegate<T> facebookDelegate = callback as global::Discord.Unity.FacebookDelegate<T>;
 			if (facebookDelegate != null)
 			{
 				facebookDelegate((T)result);
