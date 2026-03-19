@@ -5,8 +5,10 @@ import json
 DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'player_data', 'players.db')
 DEFINITIONS_PATH = os.path.join(os.path.dirname(__file__), '..', 'definitions.json')
 PLAYER_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'player_data')
+LEADERBOARD_JSON_PATH = os.path.join(PLAYER_DATA_DIR, 'leaderboard.json')
 
 MINION_NAMES = ["Kevin", "Stuart", "Bob", "Dave", "Jerry", "Carl", "Mel", "Otto", "Tim", "Mark", "Phil", "Paul", "Donny", "Ken", "Mike"]
+
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
@@ -188,8 +190,17 @@ def update_player_in_db(user_id, player_data):
     }
 
     if row:
-        fields['name'] = row['name']
+        # Prioritize discord_username if name is currently a default minion name or missing
+        discord_name = fields.get('discord_username') or row.get('discord_username')
+        current_name = row.get('name', '')
+        
+        if discord_name and (current_name in MINION_NAMES or not current_name):
+            fields['name'] = discord_name
+        else:
+            fields['name'] = current_name
+        
         placeholders = ", ".join([f"{k} = ?" for k in fields.keys()])
+
         query = f"UPDATE players SET {placeholders}, last_updated = CURRENT_TIMESTAMP WHERE uid = ?"
         params = list(fields.values()) + [record_uid]
         conn.execute(query, params)
@@ -290,9 +301,10 @@ def link_discord_to_player(uid, discord_profile):
     
     # max() already picked the survivor by playtime, we just update it with the new consolidated UID list.
     conn.execute(
-        "UPDATE players SET uid = ?, ID = ?, DISCORD = ?, discord_username = ?, discord_avatar = ?, last_updated = CURRENT_TIMESTAMP WHERE uid = ?", 
-        (consolidated_uid_str, consolidated_uid_str, json.dumps(discord_profile), discord_username, discord_avatar, survivor_record_uid)
+        "UPDATE players SET uid = ?, ID = ?, name = ?, DISCORD = ?, discord_username = ?, discord_avatar = ?, last_updated = CURRENT_TIMESTAMP WHERE uid = ?", 
+        (consolidated_uid_str, consolidated_uid_str, discord_username, json.dumps(discord_profile), discord_username, discord_avatar, survivor_record_uid)
     )
+
     
     # 5. Delete other redundant rows
     for cand in candidates:
