@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify, send_file, current_app
+from flask import Blueprint, request, jsonify, send_file, current_app, redirect
+
 import os
 import json
 from utils.profile import generate_new_player_profile
@@ -139,7 +140,8 @@ def get_leaderboard():
     Response format: { UID: { Level: X, TimePlayed: Y, Name: Z }, ... }
     Caches the result in leaderboard.json
     """
-    from utils.db import LEADERBOARD_JSON_PATH
+    from utils.db import LEADERBOARD_JSON_PATH, init_db, get_db_connection
+
     try:
         init_db() # Ensure DB exists
         conn = get_db_connection()
@@ -171,7 +173,39 @@ def get_leaderboard():
         print(f"[GAME] ERROR FETCHING LEADERBOARD: {e}")
         return jsonify({"error": str(e)}), 500
 
+@game_bp.route('/api/<uid>/icon.png', methods=['GET'])
+def get_player_icon(uid):
+    """
+    Redirects to the player's Discord avatar if available,
+    otherwise redirects to a placeholder avatar.
+    """
+    from utils.db import get_player_data, resolve_master_uid
+    
+    # Resolve internal UID if necessary
+    master_uid = resolve_master_uid(uid) or uid
+    profile = get_player_data(master_uid)
+    
+    if profile and profile.get('DISCORD'):
+        try:
+            # DISCORD field is stored as a JSON string
+            discord_data = profile['DISCORD']
+            if isinstance(discord_data, str):
+                discord_data = json.loads(discord_data)
+            
+            discord_id = discord_data.get('id')
+            avatar_hash = discord_data.get('avatar')
+            
+            if discord_id and avatar_hash:
+                return redirect(f"https://cdn.discordapp.com/avatars/{discord_id}/{avatar_hash}.png")
+        except Exception as e:
+            print(f"[GAME] Error parsing Discord data for {uid}: {e}")
+            
+    # Fallback: UI Avatars with the player's name
+    name = profile.get('name', 'Player') if profile else 'Player'
+    return redirect(f"https://ui-avatars.com/api/?name={name}&background=random")
+
 @game_bp.route('/rest/gamestate/<user_id>/reset', methods=['POST'])
+
 def reset_gamestate(user_id):
     player_file = os.path.join(SERVER_DIR, 'player_data', f'{user_id}.json')
     if os.path.exists(player_file):
