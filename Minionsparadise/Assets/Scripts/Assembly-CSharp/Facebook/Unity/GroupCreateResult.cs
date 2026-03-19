@@ -1,12 +1,12 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal class GroupCreateResult : global::Facebook.Unity.ResultBase, global::Facebook.Unity.IGroupCreateResult, global::Facebook.Unity.IResult
+	internal class GroupCreateResult : global::Discord.Unity.ResultBase, global::Discord.Unity.IGroupCreateResult, global::Discord.Unity.IResult
 	{
 		public const string IDKey = "id";
 
 		public string GroupId { get; private set; }
 
-		public GroupCreateResult(global::Facebook.Unity.ResultContainer resultContainer)
+		public GroupCreateResult(global::Discord.Unity.ResultContainer resultContainer)
 			: base(resultContainer)
 		{
 			string value;
@@ -18,7 +18,7 @@ namespace Facebook.Unity
 
 		public override string ToString()
 		{
-			return global::Facebook.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string> { { "GroupId", GroupId } });
+			return global::Discord.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string> { { "GroupId", GroupId } });
 		}
 	}
 }

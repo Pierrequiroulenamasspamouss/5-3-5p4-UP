@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal class PayResult : global::Facebook.Unity.ResultBase, global::Facebook.Unity.IPayResult, global::Facebook.Unity.IResult
+	internal class PayResult : global::Discord.Unity.ResultBase, global::Discord.Unity.IPayResult, global::Discord.Unity.IResult
 	{
 		internal const long CancelPaymentFlowCode = 1383010L;
 
@@ -12,7 +12,7 @@ namespace Facebook.Unity
 			}
 		}
 
-		internal PayResult(global::Facebook.Unity.ResultContainer resultContainer)
+		internal PayResult(global::Discord.Unity.ResultContainer resultContainer)
 			: base(resultContainer)
 		{
 			if (base.CanvasErrorCode.HasValue && base.CanvasErrorCode.Value == 1383010)
@@ -23,7 +23,7 @@ namespace Facebook.Unity
 
 		public override string ToString()
 		{
-			return global::Facebook.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string> { 
+			return global::Discord.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string> { 
 			{
 				"ErrorCode",
 				ErrorCode.ToString()

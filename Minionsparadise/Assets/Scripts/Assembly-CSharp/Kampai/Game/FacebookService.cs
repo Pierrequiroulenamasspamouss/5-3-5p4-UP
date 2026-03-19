@@ -53,7 +53,7 @@ namespace Kampai.Game
 			get
 			{
 				if (_useServerLogin) return !string.IsNullOrEmpty(_serverAccessToken);
-				return global::Facebook.Unity.FB.IsLoggedIn;
+				return global::Discord.Unity.FB.IsLoggedIn;
 			}
 		}
 
@@ -70,7 +70,7 @@ namespace Kampai.Game
 			get
 			{
 				if (_useServerLogin) return _serverUserID;
-				return (!isLoggedIn) ? string.Empty : global::Facebook.Unity.AccessToken.CurrentAccessToken.UserId;
+				return (!isLoggedIn) ? string.Empty : global::Discord.Unity.AccessToken.CurrentAccessToken.UserId;
 			}
 		}
 
@@ -95,7 +95,7 @@ namespace Kampai.Game
 			get
 			{
 				if (_useServerLogin) return _serverAccessToken;
-				return (!isLoggedIn) ? string.Empty : global::Facebook.Unity.AccessToken.CurrentAccessToken.TokenString;
+				return (!isLoggedIn) ? string.Empty : global::Discord.Unity.AccessToken.CurrentAccessToken.TokenString;
 			}
 		}
 
@@ -103,7 +103,7 @@ namespace Kampai.Game
 		{
 			get
 			{
-				return (!isLoggedIn) ? global::System.DateTime.MinValue : global::Facebook.Unity.AccessToken.CurrentAccessToken.ExpirationTime;
+				return (!isLoggedIn) ? global::System.DateTime.MinValue : global::Discord.Unity.AccessToken.CurrentAccessToken.ExpirationTime;
 			}
 		}
 
@@ -117,7 +117,7 @@ namespace Kampai.Game
 
 		public void Login(global::strange.extensions.signal.impl.Signal<global::Kampai.Game.ISocialService> successSignal, global::strange.extensions.signal.impl.Signal<global::Kampai.Game.ISocialService> failureSignal, global::System.Action callback)
 		{
-			logger.Debug("Facebook: Login Source = {0}", LoginSource ?? "N/A");
+			logger.Debug("Discord: Login Source = {0}", LoginSource ?? "N/A");
 			if (!isKillSwitchEnabled)
 			{
 				if (localPersistence.GetData("SocialInProgress") != "True")
@@ -136,7 +136,7 @@ namespace Kampai.Game
 				}
 				else
 				{
-					logger.Warning("Facebook: Ignoring login attempt as another one is already in progress.");
+					logger.Warning("Discord: Ignoring login attempt as another one is already in progress.");
 				}
 			}
 			else
@@ -148,24 +148,24 @@ namespace Kampai.Game
 		private global::System.Collections.IEnumerator LogInWithReadPermissions(params string[] permissions)
 		{
 			yield return null;
-			global::Facebook.Unity.FB.LogInWithReadPermissions(permissions, AuthCallback);
+			global::Discord.Unity.FB.LogInWithReadPermissions(permissions, AuthCallback);
 		}
 
 		private global::System.Collections.IEnumerator LogInViaServer()
 		{
 			string uid = localPersistence.GetData("UserID");
 			if (string.IsNullOrEmpty(uid)) { uid = "1000000000"; }
-			global::UnityEngine.Application.OpenURL(global::Kampai.Util.GameConstants.Server.CDN_METADATA_URL + "/auth/facebook/login?uid=" + uid);
-			logger.Info("Facebook: Opened Server Facebook Login for {0}. Polling for token...", uid);
+			global::UnityEngine.Application.OpenURL(global::Kampai.Util.GameConstants.Server.CDN_METADATA_URL + "/auth/discord/login?uid=" + uid);
+			logger.Info("Discord: Opened Server Discord Login for {0}. Polling for token...", uid);
 			bool solved = false;
 			while (!solved)
 			{
 				yield return new global::UnityEngine.WaitForSeconds(2f);
-				global::UnityEngine.WWW www = new global::UnityEngine.WWW(global::Kampai.Util.GameConstants.Server.CDN_METADATA_URL + "/auth/facebook/status?uid=" + uid);
+				global::UnityEngine.WWW www = new global::UnityEngine.WWW(global::Kampai.Util.GameConstants.Server.CDN_METADATA_URL + "/auth/discord/status?uid=" + uid);
 				yield return www;
 				if (string.IsNullOrEmpty(www.error) && !string.IsNullOrEmpty(www.text))
 				{
-					global::System.Collections.Generic.Dictionary<string, object> result = global::Facebook.MiniJSON.Json.Deserialize(www.text) as global::System.Collections.Generic.Dictionary<string, object>;
+					global::System.Collections.Generic.Dictionary<string, object> result = global::Discord.MiniJSON.Json.Deserialize(www.text) as global::System.Collections.Generic.Dictionary<string, object>;
 					if (result != null && result.ContainsKey("status") && result["status"].ToString() == "success")
 					{
 						_serverAccessToken = result["token"].ToString();
@@ -175,12 +175,14 @@ namespace Kampai.Game
 				}
 			}
 			localPersistence.PutData("SocialInProgress", "False");
+			localPersistence.PutData("Discord_AccessToken", _serverAccessToken);
+			localPersistence.PutData("Discord_UserID", _serverUserID);
 			_loginSuccessSignal.Dispatch(this);
 		}
 
 		public void Init(global::strange.extensions.signal.impl.Signal<global::Kampai.Game.ISocialService> successSignal, global::strange.extensions.signal.impl.Signal<global::Kampai.Game.ISocialService> failureSignal)
 		{
-			logger.Debug("Facebook: Init Called");
+			logger.Debug("Discord: Init Called");
 			updateKillSwitchFlag();
 			_initSuccessSignal = successSignal;
 			_initFailSignal = failureSignal;
@@ -188,9 +190,9 @@ namespace Kampai.Game
 			userPictures = new global::System.Collections.Generic.Dictionary<string, global::UnityEngine.Texture>();
 			try
 			{
-				if (!global::Facebook.Unity.FB.IsInitialized)
+				if (!global::Discord.Unity.FB.IsInitialized)
 				{
-					global::Facebook.Unity.FB.Init(global::Kampai.Util.GameConstants.Facebook.APP_ID, true, true, true, false, true, null, "en_US", null, SetInit);
+					global::Discord.Unity.FB.Init(global::Kampai.Util.GameConstants.Discord.APP_ID, true, true, true, false, true, null, "en_US", null, SetInit);
 				}
 				else
 				{
@@ -199,10 +201,19 @@ namespace Kampai.Game
 			}
 			catch (global::System.NotImplementedException)
 			{
-				logger.Warning("Facebook SDK implies NotImplementedException. Falling back to Server Login.");
+				logger.Warning("Discord SDK implies NotImplementedException. Falling back to Server Login.");
 				_useServerLogin = true;
 				_initSuccessSignal.Dispatch(this);
 			}
+
+			_serverAccessToken = localPersistence.GetData("Discord_AccessToken");
+			_serverUserID = localPersistence.GetData("Discord_UserID");
+			if (!string.IsNullOrEmpty(_serverAccessToken))
+			{
+				_useServerLogin = true;
+				logger.Info("Discord: Restored Server Login for {0}", _serverUserID);
+			}
+
 			localPersistence.PutData("SocialInProgress", "False");
 		}
 
@@ -235,17 +246,17 @@ namespace Kampai.Game
 
 		public void SendRequest(string message, string title, string data, global::System.Collections.Generic.IEnumerable<string> ids, int maxRecipients, global::strange.extensions.signal.impl.Signal<global::System.Collections.Generic.List<string>> successSignal, global::strange.extensions.signal.impl.Signal<global::System.Collections.Generic.List<string>> failureSignal)
 		{
-			logger.Debug("Facebook: FriendInvite");
+			logger.Debug("Discord: FriendInvite");
 			if (!isKillSwitchEnabled && isLoggedIn)
 			{
 				_inviteSignalSuccess = successSignal;
 				_inviteSignalFailure = failureSignal;
-				global::Facebook.Unity.FB.AppRequest(message, ids, null, null, maxRecipients, data, title, AppRequestCallback);
+				global::Discord.Unity.FB.AppRequest(message, ids, null, null, maxRecipients, data, title, AppRequestCallback);
 				return;
 			}
 			if (!isLoggedIn)
 			{
-				logger.Error("Facebook: FriendInvite failed. Please log in first.");
+				logger.Error("Discord: FriendInvite failed. Please log in first.");
 			}
 			if (failureSignal != null)
 			{
@@ -253,7 +264,7 @@ namespace Kampai.Game
 			}
 		}
 
-		private void AppRequestCallback(global::Facebook.Unity.IAppRequestResult result)
+		private void AppRequestCallback(global::Discord.Unity.IAppRequestResult result)
 		{
 			string text = ((result == null) ? null : result.Error);
 			global::System.Collections.Generic.List<string> list = ((result == null || result.To == null) ? null : new global::System.Collections.Generic.List<string>(result.To));
@@ -261,11 +272,11 @@ namespace Kampai.Game
 			{
 				if (result == null)
 				{
-					logger.Error("Facebook: AppRequest with no result");
+					logger.Error("Discord: AppRequest with no result");
 				}
 				else
 				{
-					logger.Error("Facebook: AppRequest failure = {0}", (!string.IsNullOrEmpty(text)) ? text : "Cancelled");
+					logger.Error("Discord: AppRequest failure = {0}", (!string.IsNullOrEmpty(text)) ? text : "Cancelled");
 				}
 				if (_inviteSignalFailure != null)
 				{
@@ -273,18 +284,18 @@ namespace Kampai.Game
 				}
 				return;
 			}
-			logger.Debug("Facebook: AppRequest result = {0}", result.RawResult);
+			logger.Debug("Discord: AppRequest result = {0}", result.RawResult);
 			global::System.Collections.Generic.IDictionary<string, object> resultDictionary = result.ResultDictionary;
 			if (resultDictionary == null || !resultDictionary.ContainsKey("request") || list == null || list.Count == 0)
 			{
-				logger.Error("Facebook: AppRequest cancelled due to bad response.");
+				logger.Error("Discord: AppRequest cancelled due to bad response.");
 				if (_inviteSignalFailure != null)
 				{
 					_inviteSignalFailure.Dispatch(list);
 				}
 				return;
 			}
-			logger.Debug("Facebook: AppRequest succeeded for = {0}", string.Join(",", list.ToArray()));
+			logger.Debug("Discord: AppRequest succeeded for = {0}", string.Join(",", list.ToArray()));
 			if (_inviteSignalSuccess != null)
 			{
 				_inviteSignalSuccess.Dispatch(list);
@@ -293,35 +304,35 @@ namespace Kampai.Game
 
 		public void GetUserInfo()
 		{
-			global::Facebook.Unity.FB.API("/me?fields=id,first_name", global::Facebook.Unity.HttpMethod.GET, GetUserInfoCallback);
+			global::Discord.Unity.FB.API("/me?fields=id,first_name", global::Discord.Unity.HttpMethod.GET, GetUserInfoCallback);
 		}
 
-		private void GetUserInfoCallback(global::Facebook.Unity.IGraphResult result)
+		private void GetUserInfoCallback(global::Discord.Unity.IGraphResult result)
 		{
 			string text = ((result == null) ? null : result.Error);
 			if (result == null || result.Cancelled || !string.IsNullOrEmpty(text))
 			{
 				if (result == null)
 				{
-					logger.Error("Facebook: GetUserInfo with no result");
+					logger.Error("Discord: GetUserInfo with no result");
 					return;
 				}
-				logger.Error("Facebook: GetUserInfo failure = {0}", (!string.IsNullOrEmpty(text)) ? text : "Cancelled");
+				logger.Error("Discord: GetUserInfo failure = {0}", (!string.IsNullOrEmpty(text)) ? text : "Cancelled");
 			}
 			else
 			{
-				logger.Debug("Facebook: GetUserInfo result = {0}", result.RawResult);
+				logger.Debug("Discord: GetUserInfo result = {0}", result.RawResult);
 			}
 		}
 
 		public void DownloadFriends(int friendLimit, global::strange.extensions.signal.impl.Signal<global::Kampai.Game.ISocialService> success, global::strange.extensions.signal.impl.Signal<global::Kampai.Game.ISocialService> failure)
 		{
-			logger.Debug("Facebook: DownloadFriends");
+			logger.Debug("Discord: DownloadFriends");
 			if (!isKillSwitchEnabled)
 			{
 				_getFriendsSignalFailure = failure;
 				_getFriendsSignalSuccess = success;
-				global::Facebook.Unity.FB.API(string.Format("me/friends?fields=name,id&limit={0}&access_token={1}", friendLimit, global::Facebook.Unity.AccessToken.CurrentAccessToken.TokenString), global::Facebook.Unity.HttpMethod.GET, DownloadFriendsCallback);
+				global::Discord.Unity.FB.API(string.Format("me/friends?fields=name,id&limit={0}&access_token={1}", friendLimit, global::Discord.Unity.AccessToken.CurrentAccessToken.TokenString), global::Discord.Unity.HttpMethod.GET, DownloadFriendsCallback);
 			}
 			else
 			{
@@ -329,18 +340,18 @@ namespace Kampai.Game
 			}
 		}
 
-		private void DownloadFriendsCallback(global::Facebook.Unity.IGraphResult result)
+		private void DownloadFriendsCallback(global::Discord.Unity.IGraphResult result)
 		{
 			string text = ((result == null) ? null : result.Error);
 			if (result == null || result.Cancelled || !string.IsNullOrEmpty(text))
 			{
 				if (result == null)
 				{
-					logger.Error("Facebook: DownloadFriends with no result");
+					logger.Error("Discord: DownloadFriends with no result");
 				}
 				else
 				{
-					logger.Error("Facebook: DownloadFriends failure = {0}", (!string.IsNullOrEmpty(text)) ? text : "Cancelled");
+					logger.Error("Discord: DownloadFriends failure = {0}", (!string.IsNullOrEmpty(text)) ? text : "Cancelled");
 				}
 				if (_getFriendsSignalFailure != null)
 				{
@@ -348,12 +359,12 @@ namespace Kampai.Game
 				}
 				return;
 			}
-			logger.Debug("Facebook: DownloadFriends result = {0}", result.RawResult);
+			logger.Debug("Discord: DownloadFriends result = {0}", result.RawResult);
 			global::System.Collections.Generic.IDictionary<string, object> resultDictionary = result.ResultDictionary;
 			global::System.Collections.Generic.List<object> list = ((resultDictionary == null || !resultDictionary.ContainsKey("data")) ? null : (resultDictionary["data"] as global::System.Collections.Generic.List<object>));
 			if (list == null)
 			{
-				logger.Error("Facebook: DownloadFriends result doesn't have any valid data.");
+				logger.Error("Discord: DownloadFriends result doesn't have any valid data.");
 				if (_getFriendsSignalFailure != null)
 				{
 					_getFriendsSignalFailure.Dispatch(this);
@@ -385,13 +396,13 @@ namespace Kampai.Game
 
 		public global::System.Collections.IEnumerator DownloadUserPicture(string id, global::strange.extensions.signal.impl.Signal<string> callback = null)
 		{
-			string url = string.Format("https://graph.facebook.com/{0}/picture?width=256&height=256", id);
-			logger.Info("Facebook: Download user picture URL: {0}", url);
+			string url = string.Format("https://graph.discord.com/{0}/picture?width=256&height=256", id);
+			logger.Info("Discord: Download user picture URL: {0}", url);
 			global::UnityEngine.WWW www = new global::UnityEngine.WWW(url);
 			yield return www;
 			if (!string.IsNullOrEmpty(www.error) || www.texture == null)
 			{
-				logger.Warning("Facebook: Download picture failed with error {0}", www.error);
+				logger.Warning("Discord: Download picture failed with error {0}", www.error);
 			}
 			else
 			{
@@ -418,23 +429,27 @@ namespace Kampai.Game
 
 		public void Logout()
 		{
-			logger.Debug("Facebook: Logout");
-			global::Facebook.Unity.FB.LogOut();
+			logger.Debug("Discord: Logout");
+			global::Discord.Unity.FB.LogOut();
+			_serverAccessToken = string.Empty;
+			_serverUserID = string.Empty;
+			localPersistence.PutData("Discord_AccessToken", "");
+			localPersistence.PutData("Discord_UserID", "");
 			friends.Clear();
 		}
 
 		private void SetInit()
 		{
-			logger.Debug("Facebook: Set Init Called");
-			if (global::Facebook.Unity.FB.IsInitialized)
+			logger.Debug("Discord: Set Init Called");
+			if (global::Discord.Unity.FB.IsInitialized)
 			{
-				global::Facebook.Unity.FB.ActivateApp();
+				global::Discord.Unity.FB.ActivateApp();
 				_initSuccessSignal.Dispatch(this);
-				logger.Info("Is Logged In Facebook: {0}", isLoggedIn.ToString());
+				logger.Info("Is Logged In Discord: {0}", isLoggedIn.ToString());
 				if (isLoggedIn)
 				{
-					global::Facebook.Unity.AccessToken currentAccessToken = global::Facebook.Unity.AccessToken.CurrentAccessToken;
-					logger.Info("Facebook UserID: {0}", currentAccessToken.UserId);
+					global::Discord.Unity.AccessToken currentAccessToken = global::Discord.Unity.AccessToken.CurrentAccessToken;
+					logger.Info("Discord UserID: {0}", currentAccessToken.UserId);
 					logger.Info("Access Token: {0}", currentAccessToken.TokenString);
 					logger.Info("Access Expiry: {0} ", currentAccessToken.ExpirationTime.ToString());
 					success.AddListener(downloadFriendsSuccess);
@@ -448,13 +463,13 @@ namespace Kampai.Game
 			}
 		}
 
-		private void AuthCallback(global::Facebook.Unity.ILoginResult result)
+		private void AuthCallback(global::Discord.Unity.ILoginResult result)
 		{
 			localPersistence.PutData("SocialInProgress", "False");
-			logger.Debug("Facebook: Auth result = {0}", result.RawResult);
+			logger.Debug("Discord: Auth result = {0}", result.RawResult);
 			if (isLoggedIn)
 			{
-				global::Facebook.Unity.AccessToken currentAccessToken = global::Facebook.Unity.AccessToken.CurrentAccessToken;
+				global::Discord.Unity.AccessToken currentAccessToken = global::Discord.Unity.AccessToken.CurrentAccessToken;
 				logger.Debug("********** FB **********");
 				logger.Debug(currentAccessToken.UserId);
 				logger.Debug(currentAccessToken.TokenString);
@@ -467,8 +482,8 @@ namespace Kampai.Game
 			else
 			{
 				string text = ((result == null) ? null : result.Error);
-				logger.Error("Facebook: Auth failure = {0}", (!string.IsNullOrEmpty(text) || !result.Cancelled) ? text : "Cancelled");
-				global::Facebook.Unity.FB.Init(global::Kampai.Util.GameConstants.Facebook.APP_ID, true, true, true, false, true, null, "en_US", null, SetInit);
+				logger.Error("Discord: Auth failure = {0}", (!string.IsNullOrEmpty(text) || !result.Cancelled) ? text : "Cancelled");
+				global::Discord.Unity.FB.Init(global::Kampai.Util.GameConstants.Discord.APP_ID, true, true, true, false, true, null, "en_US", null, SetInit);
 				localPersistence.PutData("SocialInProgress", "False");
 				_loginFailureSignal.Dispatch(this);
 			}

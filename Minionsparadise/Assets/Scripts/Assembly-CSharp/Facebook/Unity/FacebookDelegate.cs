@@ -1,4 +1,4 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	public delegate void FacebookDelegate<T>(T result) where T : global::Facebook.Unity.IResult;
+	public delegate void FacebookDelegate<T>(T result) where T : global::Discord.Unity.IResult;
 }

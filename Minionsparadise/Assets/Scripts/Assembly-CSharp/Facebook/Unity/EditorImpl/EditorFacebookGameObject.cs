@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Editor
+namespace Discord.Unity.Editor
 {
-	internal class EditorFacebookGameObject : global::Facebook.Unity.FacebookGameObject
+	internal class EditorFacebookGameObject : global::Discord.Unity.FacebookGameObject
 	{
 	}
 }

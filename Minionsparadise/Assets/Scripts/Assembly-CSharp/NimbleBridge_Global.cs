@@ -32,7 +32,7 @@ public class NimbleBridge_Global
 
 	public const string AUTHENTICATOR_ANONYMOUS = "anonymous";
 
-	public const string AUTHENTICATOR_FACEBOOK = "facebook";
+	public const string AUTHENTICATOR_FACEBOOK = "discord";
 
 	public const string AUTHENTICATOR_ORIGIN = "origin";
 

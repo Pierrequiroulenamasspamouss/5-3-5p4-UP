@@ -1,11 +1,11 @@
-namespace Facebook.Unity.Mobile
+namespace Discord.Unity.Mobile
 {
-	internal interface IMobileFacebookResultHandler : global::Facebook.Unity.IFacebookResultHandler
+	internal interface IMobileFacebookResultHandler : global::Discord.Unity.IFacebookResultHandler
 	{
-		void OnAppInviteComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnAppInviteComplete(global::Discord.Unity.ResultContainer resultContainer);
 
-		void OnFetchDeferredAppLinkComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnFetchDeferredAppLinkComplete(global::Discord.Unity.ResultContainer resultContainer);
 
-		void OnRefreshCurrentAccessTokenComplete(global::Facebook.Unity.ResultContainer resultContainer);
+		void OnRefreshCurrentAccessTokenComplete(global::Discord.Unity.ResultContainer resultContainer);
 	}
 }

@@ -1,4 +1,4 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	internal static class Utilities
 	{
@@ -53,7 +53,7 @@ namespace Facebook.Unity
 			T value;
 			if (!dictionary.TryGetValue<T>(key, out value) && logWarning)
 			{
-				global::Facebook.Unity.FacebookLogger.Warn("Did not find expected value '{0}' in dictionary", key);
+				global::Discord.Unity.FacebookLogger.Warn("Did not find expected value '{0}' in dictionary", key);
 			}
 			return value;
 		}
@@ -83,7 +83,7 @@ namespace Facebook.Unity
 
 		public static string ToJson(this global::System.Collections.Generic.IDictionary<string, object> dictionary)
 		{
-			return global::Facebook.MiniJSON.Json.Serialize(dictionary);
+			return global::Discord.MiniJSON.Json.Serialize(dictionary);
 		}
 
 		public static void AddAllKVPFrom<T1, T2>(this global::System.Collections.Generic.IDictionary<T1, T2> dest, global::System.Collections.Generic.IDictionary<T1, T2> source)
@@ -94,14 +94,14 @@ namespace Facebook.Unity
 			}
 		}
 
-		public static global::Facebook.Unity.AccessToken ParseAccessTokenFromResult(global::System.Collections.Generic.IDictionary<string, object> resultDictionary)
+		public static global::Discord.Unity.AccessToken ParseAccessTokenFromResult(global::System.Collections.Generic.IDictionary<string, object> resultDictionary)
 		{
-			string valueOrDefault = resultDictionary.GetValueOrDefault<string>(global::Facebook.Unity.LoginResult.UserIdKey);
-			string valueOrDefault2 = resultDictionary.GetValueOrDefault<string>(global::Facebook.Unity.LoginResult.AccessTokenKey);
+			string valueOrDefault = resultDictionary.GetValueOrDefault<string>(global::Discord.Unity.LoginResult.UserIdKey);
+			string valueOrDefault2 = resultDictionary.GetValueOrDefault<string>(global::Discord.Unity.LoginResult.AccessTokenKey);
 			global::System.DateTime expirationTime = ParseExpirationDateFromResult(resultDictionary);
 			global::System.Collections.Generic.ICollection<string> permissions = ParsePermissionFromResult(resultDictionary);
 			global::System.DateTime? lastRefresh = ParseLastRefreshFromResult(resultDictionary);
-			return new global::Facebook.Unity.AccessToken(valueOrDefault2, valueOrDefault, expirationTime, permissions, lastRefresh);
+			return new global::Discord.Unity.AccessToken(valueOrDefault2, valueOrDefault, expirationTime, permissions, lastRefresh);
 		}
 
 		public static string ToStringNullOk(this object obj)
@@ -131,12 +131,12 @@ namespace Facebook.Unity
 
 		private static global::System.DateTime ParseExpirationDateFromResult(global::System.Collections.Generic.IDictionary<string, object> resultDictionary)
 		{
-			if (global::Facebook.Unity.Constants.IsWeb)
+			if (global::Discord.Unity.Constants.IsWeb)
 			{
-				long valueOrDefault = resultDictionary.GetValueOrDefault<long>(global::Facebook.Unity.LoginResult.ExpirationTimestampKey);
+				long valueOrDefault = resultDictionary.GetValueOrDefault<long>(global::Discord.Unity.LoginResult.ExpirationTimestampKey);
 				return global::System.DateTime.UtcNow.AddSeconds(valueOrDefault);
 			}
-			string valueOrDefault2 = resultDictionary.GetValueOrDefault<string>(global::Facebook.Unity.LoginResult.ExpirationTimestampKey);
+			string valueOrDefault2 = resultDictionary.GetValueOrDefault<string>(global::Discord.Unity.LoginResult.ExpirationTimestampKey);
 			int result;
 			if (int.TryParse(valueOrDefault2, out result) && result > 0)
 			{
@@ -160,14 +160,14 @@ namespace Facebook.Unity
 		{
 			string value;
 			global::System.Collections.Generic.IEnumerable<object> value2;
-			if (resultDictionary.TryGetValue<string>(global::Facebook.Unity.LoginResult.PermissionsKey, out value))
+			if (resultDictionary.TryGetValue<string>(global::Discord.Unity.LoginResult.PermissionsKey, out value))
 			{
 				value2 = value.Split(',');
 			}
-			else if (!resultDictionary.TryGetValue<global::System.Collections.Generic.IEnumerable<object>>(global::Facebook.Unity.LoginResult.PermissionsKey, out value2))
+			else if (!resultDictionary.TryGetValue<global::System.Collections.Generic.IEnumerable<object>>(global::Discord.Unity.LoginResult.PermissionsKey, out value2))
 			{
 				value2 = new string[0];
-				global::Facebook.Unity.FacebookLogger.Warn("Failed to find parameter '{0}' in login result", global::Facebook.Unity.LoginResult.PermissionsKey);
+				global::Discord.Unity.FacebookLogger.Warn("Failed to find parameter '{0}' in login result", global::Discord.Unity.LoginResult.PermissionsKey);
 			}
 			return global::System.Linq.Enumerable.ToList(global::System.Linq.Enumerable.Select(value2, (object permission) => permission.ToString()));
 		}

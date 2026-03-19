@@ -1,4 +1,4 @@
-namespace Facebook.MiniJSON
+namespace Discord.MiniJSON
 {
 	public static class Json
 	{
@@ -59,34 +59,34 @@ namespace Facebook.MiniJSON
 				}
 			}
 
-			private global::Facebook.MiniJSON.Json.Parser.TOKEN NextToken
+			private global::Discord.MiniJSON.Json.Parser.TOKEN NextToken
 			{
 				get
 				{
 					EatWhitespace();
 					if (json.Peek() == -1)
 					{
-						return global::Facebook.MiniJSON.Json.Parser.TOKEN.NONE;
+						return global::Discord.MiniJSON.Json.Parser.TOKEN.NONE;
 					}
 					switch (PeekChar)
 					{
 					case '{':
-						return global::Facebook.MiniJSON.Json.Parser.TOKEN.CURLY_OPEN;
+						return global::Discord.MiniJSON.Json.Parser.TOKEN.CURLY_OPEN;
 					case '}':
 						json.Read();
-						return global::Facebook.MiniJSON.Json.Parser.TOKEN.CURLY_CLOSE;
+						return global::Discord.MiniJSON.Json.Parser.TOKEN.CURLY_CLOSE;
 					case '[':
-						return global::Facebook.MiniJSON.Json.Parser.TOKEN.SQUARED_OPEN;
+						return global::Discord.MiniJSON.Json.Parser.TOKEN.SQUARED_OPEN;
 					case ']':
 						json.Read();
-						return global::Facebook.MiniJSON.Json.Parser.TOKEN.SQUARED_CLOSE;
+						return global::Discord.MiniJSON.Json.Parser.TOKEN.SQUARED_CLOSE;
 					case ',':
 						json.Read();
-						return global::Facebook.MiniJSON.Json.Parser.TOKEN.COMMA;
+						return global::Discord.MiniJSON.Json.Parser.TOKEN.COMMA;
 					case '"':
-						return global::Facebook.MiniJSON.Json.Parser.TOKEN.STRING;
+						return global::Discord.MiniJSON.Json.Parser.TOKEN.STRING;
 					case ':':
-						return global::Facebook.MiniJSON.Json.Parser.TOKEN.COLON;
+						return global::Discord.MiniJSON.Json.Parser.TOKEN.COLON;
 					case '-':
 					case '0':
 					case '1':
@@ -98,18 +98,18 @@ namespace Facebook.MiniJSON
 					case '7':
 					case '8':
 					case '9':
-						return global::Facebook.MiniJSON.Json.Parser.TOKEN.NUMBER;
+						return global::Discord.MiniJSON.Json.Parser.TOKEN.NUMBER;
 					default:
 						switch (NextWord)
 						{
 						case "false":
-							return global::Facebook.MiniJSON.Json.Parser.TOKEN.FALSE;
+							return global::Discord.MiniJSON.Json.Parser.TOKEN.FALSE;
 						case "true":
-							return global::Facebook.MiniJSON.Json.Parser.TOKEN.TRUE;
+							return global::Discord.MiniJSON.Json.Parser.TOKEN.TRUE;
 						case "null":
-							return global::Facebook.MiniJSON.Json.Parser.TOKEN.NULL;
+							return global::Discord.MiniJSON.Json.Parser.TOKEN.NULL;
 						default:
-							return global::Facebook.MiniJSON.Json.Parser.TOKEN.NONE;
+							return global::Discord.MiniJSON.Json.Parser.TOKEN.NONE;
 						}
 					}
 				}
@@ -122,7 +122,7 @@ namespace Facebook.MiniJSON
 
 			public static object Parse(string jsonString)
 			{
-				using (global::Facebook.MiniJSON.Json.Parser parser = new global::Facebook.MiniJSON.Json.Parser(jsonString))
+				using (global::Discord.MiniJSON.Json.Parser parser = new global::Discord.MiniJSON.Json.Parser(jsonString))
 				{
 					return parser.ParseValue();
 				}
@@ -142,11 +142,11 @@ namespace Facebook.MiniJSON
 				{
 					switch (NextToken)
 					{
-					case global::Facebook.MiniJSON.Json.Parser.TOKEN.COMMA:
+					case global::Discord.MiniJSON.Json.Parser.TOKEN.COMMA:
 						continue;
-					case global::Facebook.MiniJSON.Json.Parser.TOKEN.NONE:
+					case global::Discord.MiniJSON.Json.Parser.TOKEN.NONE:
 						return null;
-					case global::Facebook.MiniJSON.Json.Parser.TOKEN.CURLY_CLOSE:
+					case global::Discord.MiniJSON.Json.Parser.TOKEN.CURLY_CLOSE:
 						return dictionary;
 					}
 					string text = ParseString();
@@ -154,7 +154,7 @@ namespace Facebook.MiniJSON
 					{
 						return null;
 					}
-					if (NextToken != global::Facebook.MiniJSON.Json.Parser.TOKEN.COLON)
+					if (NextToken != global::Discord.MiniJSON.Json.Parser.TOKEN.COLON)
 					{
 						return null;
 					}
@@ -170,12 +170,12 @@ namespace Facebook.MiniJSON
 				bool flag = true;
 				while (flag)
 				{
-					global::Facebook.MiniJSON.Json.Parser.TOKEN nextToken = NextToken;
+					global::Discord.MiniJSON.Json.Parser.TOKEN nextToken = NextToken;
 					switch (nextToken)
 					{
-					case global::Facebook.MiniJSON.Json.Parser.TOKEN.NONE:
+					case global::Discord.MiniJSON.Json.Parser.TOKEN.NONE:
 						return null;
-					case global::Facebook.MiniJSON.Json.Parser.TOKEN.SQUARED_CLOSE:
+					case global::Discord.MiniJSON.Json.Parser.TOKEN.SQUARED_CLOSE:
 						flag = false;
 						break;
 					default:
@@ -184,7 +184,7 @@ namespace Facebook.MiniJSON
 						list.Add(item);
 						break;
 					}
-					case global::Facebook.MiniJSON.Json.Parser.TOKEN.COMMA:
+					case global::Discord.MiniJSON.Json.Parser.TOKEN.COMMA:
 						break;
 					}
 				}
@@ -193,27 +193,27 @@ namespace Facebook.MiniJSON
 
 			private object ParseValue()
 			{
-				global::Facebook.MiniJSON.Json.Parser.TOKEN nextToken = NextToken;
+				global::Discord.MiniJSON.Json.Parser.TOKEN nextToken = NextToken;
 				return ParseByToken(nextToken);
 			}
 
-			private object ParseByToken(global::Facebook.MiniJSON.Json.Parser.TOKEN token)
+			private object ParseByToken(global::Discord.MiniJSON.Json.Parser.TOKEN token)
 			{
 				switch (token)
 				{
-				case global::Facebook.MiniJSON.Json.Parser.TOKEN.STRING:
+				case global::Discord.MiniJSON.Json.Parser.TOKEN.STRING:
 					return ParseString();
-				case global::Facebook.MiniJSON.Json.Parser.TOKEN.NUMBER:
+				case global::Discord.MiniJSON.Json.Parser.TOKEN.NUMBER:
 					return ParseNumber();
-				case global::Facebook.MiniJSON.Json.Parser.TOKEN.CURLY_OPEN:
+				case global::Discord.MiniJSON.Json.Parser.TOKEN.CURLY_OPEN:
 					return ParseObject();
-				case global::Facebook.MiniJSON.Json.Parser.TOKEN.SQUARED_OPEN:
+				case global::Discord.MiniJSON.Json.Parser.TOKEN.SQUARED_OPEN:
 					return ParseArray();
-				case global::Facebook.MiniJSON.Json.Parser.TOKEN.TRUE:
+				case global::Discord.MiniJSON.Json.Parser.TOKEN.TRUE:
 					return true;
-				case global::Facebook.MiniJSON.Json.Parser.TOKEN.FALSE:
+				case global::Discord.MiniJSON.Json.Parser.TOKEN.FALSE:
 					return false;
-				case global::Facebook.MiniJSON.Json.Parser.TOKEN.NULL:
+				case global::Discord.MiniJSON.Json.Parser.TOKEN.NULL:
 					return null;
 				default:
 					return null;
@@ -321,7 +321,7 @@ namespace Facebook.MiniJSON
 
 			public static string Serialize(object obj)
 			{
-				global::Facebook.MiniJSON.Json.Serializer serializer = new global::Facebook.MiniJSON.Json.Serializer();
+				global::Discord.MiniJSON.Json.Serializer serializer = new global::Discord.MiniJSON.Json.Serializer();
 				serializer.SerializeValue(obj);
 				return serializer.builder.ToString();
 			}
@@ -460,12 +460,12 @@ namespace Facebook.MiniJSON
 			{
 				return null;
 			}
-			return global::Facebook.MiniJSON.Json.Parser.Parse(json);
+			return global::Discord.MiniJSON.Json.Parser.Parse(json);
 		}
 
 		public static string Serialize(object obj)
 		{
-			return global::Facebook.MiniJSON.Json.Serializer.Serialize(obj);
+			return global::Discord.MiniJSON.Json.Serializer.Serialize(obj);
 		}
 	}
 }

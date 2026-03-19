@@ -1,15 +1,15 @@
-namespace Facebook.Unity.Mobile.Android
+namespace Discord.Unity.Mobile.Android
 {
-	internal class AndroidFacebookLoader : global::Facebook.Unity.FB.CompiledFacebookLoader
+	internal class AndroidFacebookLoader : global::Discord.Unity.FB.CompiledFacebookLoader
 	{
-		protected override global::Facebook.Unity.FacebookGameObject FBGameObject
+		protected override global::Discord.Unity.FacebookGameObject FBGameObject
 		{
 			get
 			{
-				global::Facebook.Unity.Mobile.Android.AndroidFacebookGameObject component = global::Facebook.Unity.ComponentFactory.GetComponent<global::Facebook.Unity.Mobile.Android.AndroidFacebookGameObject>();
-				if (component.Facebook == null)
+				global::Discord.Unity.Mobile.Android.AndroidFacebookGameObject component = global::Discord.Unity.ComponentFactory.GetComponent<global::Discord.Unity.Mobile.Android.AndroidFacebookGameObject>();
+				if (component.Discord == null)
 				{
-					component.Facebook = new global::Facebook.Unity.Mobile.Android.AndroidFacebook();
+					component.Discord = new global::Discord.Unity.Mobile.Android.AndroidFacebook();
 				}
 				return component;
 			}

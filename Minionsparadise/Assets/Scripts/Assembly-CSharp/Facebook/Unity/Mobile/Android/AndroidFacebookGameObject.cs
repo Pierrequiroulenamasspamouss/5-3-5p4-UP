@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Mobile.Android
+namespace Discord.Unity.Mobile.Android
 {
-	internal class AndroidFacebookGameObject : global::Facebook.Unity.Mobile.MobileFacebookGameObject
+	internal class AndroidFacebookGameObject : global::Discord.Unity.Mobile.MobileFacebookGameObject
 	{
 		protected override void OnAwake()
 		{

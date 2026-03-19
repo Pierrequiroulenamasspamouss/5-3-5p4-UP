@@ -1,15 +1,15 @@
-namespace Facebook.Unity.Canvas
+namespace Discord.Unity.Canvas
 {
-	internal class CanvasFacebookLoader : global::Facebook.Unity.FB.CompiledFacebookLoader
+	internal class CanvasFacebookLoader : global::Discord.Unity.FB.CompiledFacebookLoader
 	{
-		protected override global::Facebook.Unity.FacebookGameObject FBGameObject
+		protected override global::Discord.Unity.FacebookGameObject FBGameObject
 		{
 			get
 			{
-				global::Facebook.Unity.Canvas.CanvasFacebookGameObject component = global::Facebook.Unity.ComponentFactory.GetComponent<global::Facebook.Unity.Canvas.CanvasFacebookGameObject>();
-				if (component.Facebook == null)
+				global::Discord.Unity.Canvas.CanvasFacebookGameObject component = global::Discord.Unity.ComponentFactory.GetComponent<global::Discord.Unity.Canvas.CanvasFacebookGameObject>();
+				if (component.Discord == null)
 				{
-					component.Facebook = new global::Facebook.Unity.Canvas.CanvasFacebook();
+					component.Discord = new global::Discord.Unity.Canvas.CanvasFacebook();
 				}
 				return component;
 			}

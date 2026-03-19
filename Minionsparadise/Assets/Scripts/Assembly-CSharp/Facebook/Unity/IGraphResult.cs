@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	public interface IGraphResult : global::Facebook.Unity.IResult
+	public interface IGraphResult : global::Discord.Unity.IResult
 	{
 		global::System.Collections.Generic.IList<object> ResultList { get; }
 

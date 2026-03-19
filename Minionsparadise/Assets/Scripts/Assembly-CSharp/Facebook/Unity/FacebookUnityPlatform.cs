@@ -1,4 +1,4 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	internal enum FacebookUnityPlatform
 	{

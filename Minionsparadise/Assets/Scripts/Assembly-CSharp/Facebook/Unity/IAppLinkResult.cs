@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	public interface IAppLinkResult : global::Facebook.Unity.IResult
+	public interface IAppLinkResult : global::Discord.Unity.IResult
 	{
 		string Url { get; }
 

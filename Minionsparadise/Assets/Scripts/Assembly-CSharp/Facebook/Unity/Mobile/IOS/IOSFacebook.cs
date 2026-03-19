@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Mobile.IOS
+namespace Discord.Unity.Mobile.IOS
 {
-	internal class IOSFacebook : global::Facebook.Unity.Mobile.MobileFacebook
+	internal class IOSFacebook : global::Discord.Unity.Mobile.MobileFacebook
 	{
 		public enum FBInsightsFlushBehavior
 		{
@@ -28,7 +28,7 @@ namespace Facebook.Unity.Mobile.IOS
 
 		private bool limitEventUsage;
 
-		private global::Facebook.Unity.Mobile.IOS.IIOSWrapper iosWrapper;
+		private global::Discord.Unity.Mobile.IOS.IIOSWrapper iosWrapper;
 
 		public override bool LimitEventUsage
 		{
@@ -60,28 +60,28 @@ namespace Facebook.Unity.Mobile.IOS
 		}
 
 		public IOSFacebook()
-			: this(new global::Facebook.Unity.Mobile.IOS.IOSWrapper(), new global::Facebook.Unity.CallbackManager())
+			: this(new global::Discord.Unity.Mobile.IOS.IOSWrapper(), new global::Discord.Unity.CallbackManager())
 		{
 		}
 
-		public IOSFacebook(global::Facebook.Unity.Mobile.IOS.IIOSWrapper iosWrapper, global::Facebook.Unity.CallbackManager callbackManager)
+		public IOSFacebook(global::Discord.Unity.Mobile.IOS.IIOSWrapper iosWrapper, global::Discord.Unity.CallbackManager callbackManager)
 			: base(callbackManager)
 		{
 			this.iosWrapper = iosWrapper;
 		}
 
-		public void Init(string appId, bool frictionlessRequests, string iosURLSuffix, global::Facebook.Unity.HideUnityDelegate hideUnityDelegate, global::Facebook.Unity.InitDelegate onInitComplete)
+		public void Init(string appId, bool frictionlessRequests, string iosURLSuffix, global::Discord.Unity.HideUnityDelegate hideUnityDelegate, global::Discord.Unity.InitDelegate onInitComplete)
 		{
 			base.Init(hideUnityDelegate, onInitComplete);
-			iosWrapper.Init(appId, frictionlessRequests, iosURLSuffix, global::Facebook.Unity.Constants.UnitySDKUserAgentSuffixLegacy);
+			iosWrapper.Init(appId, frictionlessRequests, iosURLSuffix, global::Discord.Unity.Constants.UnitySDKUserAgentSuffixLegacy);
 		}
 
-		public override void LogInWithReadPermissions(global::System.Collections.Generic.IEnumerable<string> permissions, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.ILoginResult> callback)
+		public override void LogInWithReadPermissions(global::System.Collections.Generic.IEnumerable<string> permissions, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.ILoginResult> callback)
 		{
 			iosWrapper.LogInWithReadPermissions(AddCallback(callback), permissions.ToCommaSeparateList());
 		}
 
-		public override void LogInWithPublishPermissions(global::System.Collections.Generic.IEnumerable<string> permissions, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.ILoginResult> callback)
+		public override void LogInWithPublishPermissions(global::System.Collections.Generic.IEnumerable<string> permissions, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.ILoginResult> callback)
 		{
 			iosWrapper.LogInWithPublishPermissions(AddCallback(callback), permissions.ToCommaSeparateList());
 		}
@@ -92,7 +92,7 @@ namespace Facebook.Unity.Mobile.IOS
 			iosWrapper.LogOut();
 		}
 
-		public override void AppRequest(string message, global::Facebook.Unity.OGActionType? actionType, string objectId, global::System.Collections.Generic.IEnumerable<string> to, global::System.Collections.Generic.IEnumerable<object> filters, global::System.Collections.Generic.IEnumerable<string> excludeIds, int? maxRecipients, string data, string title, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppRequestResult> callback)
+		public override void AppRequest(string message, global::Discord.Unity.OGActionType? actionType, string objectId, global::System.Collections.Generic.IEnumerable<string> to, global::System.Collections.Generic.IEnumerable<object> filters, global::System.Collections.Generic.IEnumerable<string> excludeIds, int? maxRecipients, string data, string title, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppRequestResult> callback)
 		{
 			ValidateAppRequestArgs(message, actionType, objectId, to, filters, excludeIds, maxRecipients, data, title, callback);
 			string text = null;
@@ -103,7 +103,7 @@ namespace Facebook.Unity.Mobile.IOS
 			iosWrapper.AppRequest(AddCallback(callback), message, (!actionType.HasValue) ? string.Empty : actionType.ToString(), (objectId == null) ? string.Empty : objectId, (to == null) ? null : global::System.Linq.Enumerable.ToArray(to), (to != null) ? global::System.Linq.Enumerable.Count(to) : 0, (text == null) ? string.Empty : text, (excludeIds == null) ? null : global::System.Linq.Enumerable.ToArray(excludeIds), (excludeIds != null) ? global::System.Linq.Enumerable.Count(excludeIds) : 0, maxRecipients.HasValue, maxRecipients.HasValue ? maxRecipients.Value : 0, data, title);
 		}
 
-		public override void AppInvite(global::System.Uri appLinkUrl, global::System.Uri previewImageUrl, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppInviteResult> callback)
+		public override void AppInvite(global::System.Uri appLinkUrl, global::System.Uri previewImageUrl, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppInviteResult> callback)
 		{
 			string appLinkUrl2 = string.Empty;
 			string previewImageUrl2 = string.Empty;
@@ -118,31 +118,31 @@ namespace Facebook.Unity.Mobile.IOS
 			iosWrapper.AppInvite(AddCallback(callback), appLinkUrl2, previewImageUrl2);
 		}
 
-		public override void ShareLink(global::System.Uri contentURL, string contentTitle, string contentDescription, global::System.Uri photoURL, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IShareResult> callback)
+		public override void ShareLink(global::System.Uri contentURL, string contentTitle, string contentDescription, global::System.Uri photoURL, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IShareResult> callback)
 		{
 			iosWrapper.ShareLink(AddCallback(callback), contentURL.AbsoluteUrlOrEmptyString(), contentTitle, contentDescription, photoURL.AbsoluteUrlOrEmptyString());
 		}
 
-		public override void FeedShare(string toId, global::System.Uri link, string linkName, string linkCaption, string linkDescription, global::System.Uri picture, string mediaSource, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IShareResult> callback)
+		public override void FeedShare(string toId, global::System.Uri link, string linkName, string linkCaption, string linkDescription, global::System.Uri picture, string mediaSource, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IShareResult> callback)
 		{
 			string link2 = ((!(link != null)) ? string.Empty : link.ToString());
 			string picture2 = ((!(picture != null)) ? string.Empty : picture.ToString());
 			iosWrapper.FeedShare(AddCallback(callback), toId, link2, linkName, linkCaption, linkDescription, picture2, mediaSource);
 		}
 
-		public override void GameGroupCreate(string name, string description, string privacy, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IGroupCreateResult> callback)
+		public override void GameGroupCreate(string name, string description, string privacy, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IGroupCreateResult> callback)
 		{
 			iosWrapper.CreateGameGroup(AddCallback(callback), name, description, privacy);
 		}
 
-		public override void GameGroupJoin(string id, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IGroupJoinResult> callback)
+		public override void GameGroupJoin(string id, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IGroupJoinResult> callback)
 		{
 			iosWrapper.JoinGameGroup(global::System.Convert.ToInt32(base.CallbackManager.AddFacebookDelegate(callback)), id);
 		}
 
 		public override void AppEventsLogEvent(string logEvent, float? valueToSum, global::System.Collections.Generic.Dictionary<string, object> parameters)
 		{
-			global::Facebook.Unity.Mobile.IOS.IOSFacebook.NativeDict nativeDict = MarshallDict(parameters);
+			global::Discord.Unity.Mobile.IOS.IOSFacebook.NativeDict nativeDict = MarshallDict(parameters);
 			if (valueToSum.HasValue)
 			{
 				iosWrapper.LogAppEvent(logEvent, valueToSum.Value, nativeDict.NumEntries, nativeDict.Keys, nativeDict.Values);
@@ -155,7 +155,7 @@ namespace Facebook.Unity.Mobile.IOS
 
 		public override void AppEventsLogPurchase(float logPurchase, string currency, global::System.Collections.Generic.Dictionary<string, object> parameters)
 		{
-			global::Facebook.Unity.Mobile.IOS.IOSFacebook.NativeDict nativeDict = MarshallDict(parameters);
+			global::Discord.Unity.Mobile.IOS.IOSFacebook.NativeDict nativeDict = MarshallDict(parameters);
 			iosWrapper.LogPurchaseAppEvent(logPurchase, currency, nativeDict.NumEntries, nativeDict.Keys, nativeDict.Values);
 		}
 
@@ -163,29 +163,29 @@ namespace Facebook.Unity.Mobile.IOS
 		{
 		}
 
-		public override void FetchDeferredAppLink(global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppLinkResult> callback)
+		public override void FetchDeferredAppLink(global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppLinkResult> callback)
 		{
 			iosWrapper.FetchDeferredAppLink(AddCallback(callback));
 		}
 
-		public override void GetAppLink(global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppLinkResult> callback)
+		public override void GetAppLink(global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppLinkResult> callback)
 		{
 			iosWrapper.GetAppLink(global::System.Convert.ToInt32(base.CallbackManager.AddFacebookDelegate(callback)));
 		}
 
-		public override void RefreshCurrentAccessToken(global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAccessTokenRefreshResult> callback)
+		public override void RefreshCurrentAccessToken(global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAccessTokenRefreshResult> callback)
 		{
 			iosWrapper.RefreshCurrentAccessToken(global::System.Convert.ToInt32(base.CallbackManager.AddFacebookDelegate(callback)));
 		}
 
-		protected override void SetShareDialogMode(global::Facebook.Unity.ShareDialogMode mode)
+		protected override void SetShareDialogMode(global::Discord.Unity.ShareDialogMode mode)
 		{
 			iosWrapper.SetShareDialogMode((int)mode);
 		}
 
-		private static global::Facebook.Unity.Mobile.IOS.IOSFacebook.NativeDict MarshallDict(global::System.Collections.Generic.Dictionary<string, object> dict)
+		private static global::Discord.Unity.Mobile.IOS.IOSFacebook.NativeDict MarshallDict(global::System.Collections.Generic.Dictionary<string, object> dict)
 		{
-			global::Facebook.Unity.Mobile.IOS.IOSFacebook.NativeDict nativeDict = new global::Facebook.Unity.Mobile.IOS.IOSFacebook.NativeDict();
+			global::Discord.Unity.Mobile.IOS.IOSFacebook.NativeDict nativeDict = new global::Discord.Unity.Mobile.IOS.IOSFacebook.NativeDict();
 			if (dict != null && dict.Count > 0)
 			{
 				nativeDict.Keys = new string[dict.Count];
@@ -201,9 +201,9 @@ namespace Facebook.Unity.Mobile.IOS
 			return nativeDict;
 		}
 
-		private static global::Facebook.Unity.Mobile.IOS.IOSFacebook.NativeDict MarshallDict(global::System.Collections.Generic.Dictionary<string, string> dict)
+		private static global::Discord.Unity.Mobile.IOS.IOSFacebook.NativeDict MarshallDict(global::System.Collections.Generic.Dictionary<string, string> dict)
 		{
-			global::Facebook.Unity.Mobile.IOS.IOSFacebook.NativeDict nativeDict = new global::Facebook.Unity.Mobile.IOS.IOSFacebook.NativeDict();
+			global::Discord.Unity.Mobile.IOS.IOSFacebook.NativeDict nativeDict = new global::Discord.Unity.Mobile.IOS.IOSFacebook.NativeDict();
 			if (dict != null && dict.Count > 0)
 			{
 				nativeDict.Keys = new string[dict.Count];
@@ -219,7 +219,7 @@ namespace Facebook.Unity.Mobile.IOS
 			return nativeDict;
 		}
 
-		private int AddCallback<T>(global::Facebook.Unity.FacebookDelegate<T> callback) where T : global::Facebook.Unity.IResult
+		private int AddCallback<T>(global::Discord.Unity.FacebookDelegate<T> callback) where T : global::Discord.Unity.IResult
 		{
 			string value = base.CallbackManager.AddFacebookDelegate(callback);
 			return global::System.Convert.ToInt32(value);

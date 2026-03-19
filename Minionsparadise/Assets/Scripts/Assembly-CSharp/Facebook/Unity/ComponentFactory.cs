@@ -1,4 +1,4 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	internal class ComponentFactory
 	{
@@ -24,11 +24,11 @@ namespace Facebook.Unity
 			}
 		}
 
-		public static T GetComponent<T>(global::Facebook.Unity.ComponentFactory.IfNotExist ifNotExist = global::Facebook.Unity.ComponentFactory.IfNotExist.AddNew) where T : global::UnityEngine.MonoBehaviour
+		public static T GetComponent<T>(global::Discord.Unity.ComponentFactory.IfNotExist ifNotExist = global::Discord.Unity.ComponentFactory.IfNotExist.AddNew) where T : global::UnityEngine.MonoBehaviour
 		{
 			global::UnityEngine.GameObject gameObject = FacebookGameObject;
 			T val = gameObject.GetComponent<T>();
-			if (val == null && ifNotExist == global::Facebook.Unity.ComponentFactory.IfNotExist.AddNew)
+			if (val == null && ifNotExist == global::Discord.Unity.ComponentFactory.IfNotExist.AddNew)
 			{
 				val = gameObject.AddComponent<T>();
 			}

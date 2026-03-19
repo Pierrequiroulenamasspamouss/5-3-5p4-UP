@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Mobile.IOS
+namespace Discord.Unity.Mobile.IOS
 {
-	internal class IOSFacebookGameObject : global::Facebook.Unity.Mobile.MobileFacebookGameObject
+	internal class IOSFacebookGameObject : global::Discord.Unity.Mobile.MobileFacebookGameObject
 	{
 	}
 }

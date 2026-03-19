@@ -1,13 +1,13 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal class GraphResult : global::Facebook.Unity.ResultBase, global::Facebook.Unity.IGraphResult, global::Facebook.Unity.IResult
+	internal class GraphResult : global::Discord.Unity.ResultBase, global::Discord.Unity.IGraphResult, global::Discord.Unity.IResult
 	{
 		public global::System.Collections.Generic.IList<object> ResultList { get; private set; }
 
 		public global::UnityEngine.Texture2D Texture { get; private set; }
 
 		internal GraphResult(global::UnityEngine.WWW result)
-			: base(new global::Facebook.Unity.ResultContainer(result.text), result.error, false)
+			: base(new global::Discord.Unity.ResultContainer(result.text), result.error, false)
 		{
 			Init(RawResult);
 			if (result.error == null)
@@ -22,7 +22,7 @@ namespace Facebook.Unity
 			{
 				return;
 			}
-			object obj = global::Facebook.MiniJSON.Json.Deserialize(RawResult);
+			object obj = global::Discord.MiniJSON.Json.Deserialize(RawResult);
 			global::System.Collections.Generic.IDictionary<string, object> dictionary = obj as global::System.Collections.Generic.IDictionary<string, object>;
 			if (dictionary != null)
 			{

@@ -1,4 +1,4 @@
-namespace Facebook.Unity.Editor
+namespace Discord.Unity.Editor
 {
 	internal abstract class EditorFacebookMockDialog : global::UnityEngine.MonoBehaviour
 	{
@@ -6,7 +6,7 @@ namespace Facebook.Unity.Editor
 
 		private global::UnityEngine.GUIStyle modalStyle;
 
-		public global::Facebook.Unity.Utilities.Callback<global::Facebook.Unity.ResultContainer> Callback { protected get; set; }
+		public global::Discord.Unity.Utilities.Callback<global::Discord.Unity.ResultContainer> Callback { protected get; set; }
 
 		public string CallbackID { protected get; set; }
 
@@ -39,7 +39,7 @@ namespace Facebook.Unity.Editor
 			{
 				dictionary["callback_id"] = CallbackID;
 			}
-			Callback(new global::Facebook.Unity.ResultContainer(dictionary.ToJson()));
+			Callback(new global::Discord.Unity.ResultContainer(dictionary.ToJson()));
 		}
 
 		protected virtual void SendErrorResult(string errorMessage)
@@ -50,7 +50,7 @@ namespace Facebook.Unity.Editor
 			{
 				dictionary["callback_id"] = CallbackID;
 			}
-			Callback(new global::Facebook.Unity.ResultContainer(dictionary.ToJson()));
+			Callback(new global::Discord.Unity.ResultContainer(dictionary.ToJson()));
 		}
 
 		private void OnGUIDialog(int windowId)

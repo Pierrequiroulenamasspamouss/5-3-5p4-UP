@@ -1,4 +1,4 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	internal class ResultContainer
 	{
@@ -12,7 +12,7 @@ namespace Facebook.Unity
 		{
 			RawResult = dictionary.ToJson();
 			ResultDictionary = dictionary;
-			if (global::Facebook.Unity.Constants.IsWeb)
+			if (global::Discord.Unity.Constants.IsWeb)
 			{
 				ResultDictionary = GetWebFormattedResponseDictionary(ResultDictionary);
 			}
@@ -26,8 +26,8 @@ namespace Facebook.Unity
 				ResultDictionary = new global::System.Collections.Generic.Dictionary<string, object>();
 				return;
 			}
-			ResultDictionary = global::Facebook.MiniJSON.Json.Deserialize(result) as global::System.Collections.Generic.Dictionary<string, object>;
-			if (global::Facebook.Unity.Constants.IsWeb && ResultDictionary != null)
+			ResultDictionary = global::Discord.MiniJSON.Json.Deserialize(result) as global::System.Collections.Generic.Dictionary<string, object>;
+			if (global::Discord.Unity.Constants.IsWeb && ResultDictionary != null)
 			{
 				ResultDictionary = GetWebFormattedResponseDictionary(ResultDictionary);
 			}

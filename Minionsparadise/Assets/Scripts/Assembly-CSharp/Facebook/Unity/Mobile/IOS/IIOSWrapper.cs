@@ -1,4 +1,4 @@
-namespace Facebook.Unity.Mobile.IOS
+namespace Discord.Unity.Mobile.IOS
 {
 	internal interface IIOSWrapper
 	{
