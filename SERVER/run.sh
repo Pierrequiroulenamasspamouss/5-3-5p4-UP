@@ -1,0 +1,1 @@
+python3 kampai_server.py
