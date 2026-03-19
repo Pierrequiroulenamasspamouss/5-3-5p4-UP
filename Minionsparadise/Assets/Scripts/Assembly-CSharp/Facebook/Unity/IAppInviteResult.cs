@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	public interface IAppInviteResult : global::Facebook.Unity.IResult
+	public interface IAppInviteResult : global::Discord.Unity.IResult
 	{
 	}
 }

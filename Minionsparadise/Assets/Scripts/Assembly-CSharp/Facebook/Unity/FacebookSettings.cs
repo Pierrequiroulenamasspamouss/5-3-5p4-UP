@@ -1,4 +1,4 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	public class FacebookSettings : global::UnityEngine.ScriptableObject
 	{
@@ -32,7 +32,7 @@ namespace Facebook.Unity
 
 		private const string FacebookSettingsAssetExtension = ".asset";
 
-		private static global::Facebook.Unity.FacebookSettings instance;
+		private static global::Discord.Unity.FacebookSettings instance;
 
 		[global::UnityEngine.SerializeField]
 		private int selectedAppIndex;
@@ -62,9 +62,9 @@ namespace Facebook.Unity
 		private string iosURLSuffix = string.Empty;
 
 		[global::UnityEngine.SerializeField]
-		private global::System.Collections.Generic.List<global::Facebook.Unity.FacebookSettings.UrlSchemes> appLinkSchemes = new global::System.Collections.Generic.List<global::Facebook.Unity.FacebookSettings.UrlSchemes>
+		private global::System.Collections.Generic.List<global::Discord.Unity.FacebookSettings.UrlSchemes> appLinkSchemes = new global::System.Collections.Generic.List<global::Discord.Unity.FacebookSettings.UrlSchemes>
 		{
-			new global::Facebook.Unity.FacebookSettings.UrlSchemes()
+			new global::Discord.Unity.FacebookSettings.UrlSchemes()
 		};
 
 		public static int SelectedAppIndex
@@ -235,7 +235,7 @@ namespace Facebook.Unity
 			}
 		}
 
-		public static global::System.Collections.Generic.List<global::Facebook.Unity.FacebookSettings.UrlSchemes> AppLinkSchemes
+		public static global::System.Collections.Generic.List<global::Discord.Unity.FacebookSettings.UrlSchemes> AppLinkSchemes
 		{
 			get
 			{
@@ -251,16 +251,16 @@ namespace Facebook.Unity
 			}
 		}
 
-		private static global::Facebook.Unity.FacebookSettings Instance
+		private static global::Discord.Unity.FacebookSettings Instance
 		{
 			get
 			{
 				if (instance == null)
 				{
-					instance = global::UnityEngine.Resources.Load("FacebookSettings") as global::Facebook.Unity.FacebookSettings;
+					instance = global::UnityEngine.Resources.Load("FacebookSettings") as global::Discord.Unity.FacebookSettings;
 					if (instance == null)
 					{
-						instance = global::UnityEngine.ScriptableObject.CreateInstance<global::Facebook.Unity.FacebookSettings>();
+						instance = global::UnityEngine.ScriptableObject.CreateInstance<global::Discord.Unity.FacebookSettings>();
 					}
 				}
 				return instance;

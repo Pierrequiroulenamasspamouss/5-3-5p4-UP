@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Editor.Dialogs
+namespace Discord.Unity.Editor.Dialogs
 {
-	internal class EmptyMockDialog : global::Facebook.Unity.Editor.EditorFacebookMockDialog
+	internal class EmptyMockDialog : global::Discord.Unity.Editor.EditorFacebookMockDialog
 	{
 		public string EmptyDialogTitle { get; set; }
 
@@ -26,7 +26,7 @@ namespace Facebook.Unity.Editor.Dialogs
 			}
 			if (base.Callback != null)
 			{
-				base.Callback(new global::Facebook.Unity.ResultContainer(dictionary));
+				base.Callback(new global::Discord.Unity.ResultContainer(dictionary));
 			}
 		}
 	}

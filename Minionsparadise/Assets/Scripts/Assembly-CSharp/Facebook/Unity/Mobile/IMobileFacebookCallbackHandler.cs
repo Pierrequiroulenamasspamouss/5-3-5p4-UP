@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Mobile
+namespace Discord.Unity.Mobile
 {
-	internal interface IMobileFacebookCallbackHandler : global::Facebook.Unity.IFacebookCallbackHandler
+	internal interface IMobileFacebookCallbackHandler : global::Discord.Unity.IFacebookCallbackHandler
 	{
 		void OnAppInviteComplete(string message);
 

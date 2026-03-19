@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	public interface IPayResult : global::Facebook.Unity.IResult
+	public interface IPayResult : global::Discord.Unity.IResult
 	{
 		long ErrorCode { get; }
 	}

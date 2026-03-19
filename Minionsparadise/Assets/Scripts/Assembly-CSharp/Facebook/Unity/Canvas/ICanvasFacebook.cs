@@ -1,6 +1,6 @@
-namespace Facebook.Unity.Canvas
+namespace Discord.Unity.Canvas
 {
-	internal interface ICanvasFacebook : global::Facebook.Unity.IFacebook, global::Facebook.Unity.IPayFacebook
+	internal interface ICanvasFacebook : global::Discord.Unity.IFacebook, global::Discord.Unity.IPayFacebook
 	{
 	}
 }

@@ -21,7 +21,7 @@ namespace Kampai.Common
 
 		public override void Execute()
 		{
-			logger.Info("Facebook killswitch enabled = {0}", facebookService.isKillSwitchEnabled);
+			logger.Info("Discord killswitch enabled = {0}", facebookService.isKillSwitchEnabled);
 			if (facebookService.isKillSwitchEnabled || coppaService.Restricted())
 			{
 				action(false);

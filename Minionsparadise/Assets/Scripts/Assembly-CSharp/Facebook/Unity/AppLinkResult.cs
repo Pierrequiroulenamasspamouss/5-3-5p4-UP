@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal class AppLinkResult : global::Facebook.Unity.ResultBase, global::Facebook.Unity.IAppLinkResult, global::Facebook.Unity.IResult
+	internal class AppLinkResult : global::Discord.Unity.ResultBase, global::Discord.Unity.IAppLinkResult, global::Discord.Unity.IResult
 	{
 		public string Url { get; private set; }
 
@@ -10,7 +10,7 @@ namespace Facebook.Unity
 
 		public global::System.Collections.Generic.IDictionary<string, object> Extras { get; private set; }
 
-		public AppLinkResult(global::Facebook.Unity.ResultContainer resultContainer)
+		public AppLinkResult(global::Discord.Unity.ResultContainer resultContainer)
 			: base(resultContainer)
 		{
 			if (ResultDictionary != null)
@@ -40,7 +40,7 @@ namespace Facebook.Unity
 
 		public override string ToString()
 		{
-			return global::Facebook.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string>
+			return global::Discord.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string>
 			{
 				{ "Url", Url },
 				{ "TargetUrl", TargetUrl },

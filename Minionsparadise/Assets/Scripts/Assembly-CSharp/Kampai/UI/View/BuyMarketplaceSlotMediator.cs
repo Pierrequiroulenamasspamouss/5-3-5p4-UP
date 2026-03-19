@@ -87,7 +87,7 @@ namespace Kampai.UI.View
 			{
 				haltSlotMachine.Dispatch();
 			}
-			else if (view.CurrentState == global::Kampai.UI.View.BuyMarketplaceSlotView.State.Facebook)
+			else if (view.CurrentState == global::Kampai.UI.View.BuyMarketplaceSlotView.State.Discord)
 			{
 				facebookService.LoginSource = "Marketplace";
 				showFacebookPopupSignal.Dispatch(delegate

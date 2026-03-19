@@ -1,4 +1,4 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	internal static class Constants
 	{
@@ -40,13 +40,13 @@ namespace Facebook.Unity
 
 		public const string PublishPagesPermission = "publish_pages";
 
-		private static global::Facebook.Unity.FacebookUnityPlatform? currentPlatform;
+		private static global::Discord.Unity.FacebookUnityPlatform? currentPlatform;
 
 		public static global::System.Uri GraphUrl
 		{
 			get
 			{
-				string uriString = string.Format(global::System.Globalization.CultureInfo.InvariantCulture, "https://graph.{0}/{1}/", global::Facebook.Unity.FB.FacebookDomain, global::Facebook.Unity.FB.GraphApiVersion);
+				string uriString = string.Format(global::System.Globalization.CultureInfo.InvariantCulture, "https://graph.{0}/{1}/", global::Discord.Unity.FB.FacebookDomain, global::Discord.Unity.FB.GraphApiVersion);
 				return new global::System.Uri(uriString);
 			}
 		}
@@ -55,7 +55,7 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return string.Format(global::System.Globalization.CultureInfo.InvariantCulture, "{0} {1}", global::Facebook.Unity.FB.FacebookImpl.SDKUserAgent, UnitySDKUserAgent);
+				return string.Format(global::System.Globalization.CultureInfo.InvariantCulture, "{0} {1}", global::Discord.Unity.FB.FacebookImpl.SDKUserAgent, UnitySDKUserAgent);
 			}
 		}
 
@@ -63,7 +63,7 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return CurrentPlatform == global::Facebook.Unity.FacebookUnityPlatform.Android || CurrentPlatform == global::Facebook.Unity.FacebookUnityPlatform.IOS;
+				return CurrentPlatform == global::Discord.Unity.FacebookUnityPlatform.Android || CurrentPlatform == global::Discord.Unity.FacebookUnityPlatform.IOS;
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return CurrentPlatform == global::Facebook.Unity.FacebookUnityPlatform.WebGL || CurrentPlatform == global::Facebook.Unity.FacebookUnityPlatform.WebPlayer;
+				return CurrentPlatform == global::Discord.Unity.FacebookUnityPlatform.WebGL || CurrentPlatform == global::Discord.Unity.FacebookUnityPlatform.WebPlayer;
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return string.Format(global::System.Globalization.CultureInfo.InvariantCulture, "Unity.{0}", global::Facebook.Unity.FacebookSdkVersion.Build);
+				return string.Format(global::System.Globalization.CultureInfo.InvariantCulture, "Unity.{0}", global::Discord.Unity.FacebookSdkVersion.Build);
 			}
 		}
 
@@ -95,7 +95,7 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return global::Facebook.Unity.Utilities.GetUserAgent("FBUnitySDK", global::Facebook.Unity.FacebookSdkVersion.Build);
+				return global::Discord.Unity.Utilities.GetUserAgent("FBUnitySDK", global::Discord.Unity.FacebookSdkVersion.Build);
 			}
 		}
 
@@ -107,7 +107,7 @@ namespace Facebook.Unity
 			}
 		}
 
-		public static global::Facebook.Unity.FacebookUnityPlatform CurrentPlatform
+		public static global::Discord.Unity.FacebookUnityPlatform CurrentPlatform
 		{
 			get
 			{
@@ -123,21 +123,21 @@ namespace Facebook.Unity
 			}
 		}
 
-		private static global::Facebook.Unity.FacebookUnityPlatform GetCurrentPlatform()
+		private static global::Discord.Unity.FacebookUnityPlatform GetCurrentPlatform()
 		{
 			switch (global::UnityEngine.Application.platform)
 			{
 			case global::UnityEngine.RuntimePlatform.Android:
-				return global::Facebook.Unity.FacebookUnityPlatform.Android;
+				return global::Discord.Unity.FacebookUnityPlatform.Android;
 			case global::UnityEngine.RuntimePlatform.IPhonePlayer:
-				return global::Facebook.Unity.FacebookUnityPlatform.IOS;
+				return global::Discord.Unity.FacebookUnityPlatform.IOS;
 			case global::UnityEngine.RuntimePlatform.OSXWebPlayer:
 			case global::UnityEngine.RuntimePlatform.WindowsWebPlayer:
-				return global::Facebook.Unity.FacebookUnityPlatform.WebPlayer;
+				return global::Discord.Unity.FacebookUnityPlatform.WebPlayer;
 			case global::UnityEngine.RuntimePlatform.WebGLPlayer:
-				return global::Facebook.Unity.FacebookUnityPlatform.WebGL;
+				return global::Discord.Unity.FacebookUnityPlatform.WebGL;
 			default:
-				return global::Facebook.Unity.FacebookUnityPlatform.Unknown;
+				return global::Discord.Unity.FacebookUnityPlatform.Unknown;
 			}
 		}
 	}

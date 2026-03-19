@@ -70,7 +70,7 @@ namespace Kampai.Game
 		private void LogOutSocialService(global::Kampai.Game.IdentityType type)
 		{
 			global::System.Collections.Generic.Dictionary<global::Kampai.Game.IdentityType, global::Kampai.Game.ISocialService> dictionary = new global::System.Collections.Generic.Dictionary<global::Kampai.Game.IdentityType, global::Kampai.Game.ISocialService>();
-			dictionary.Add(global::Kampai.Game.IdentityType.facebook, FacebookService);
+			dictionary.Add(global::Kampai.Game.IdentityType.discord, FacebookService);
 			dictionary.Add(global::Kampai.Game.IdentityType.gamecenter, GameCenterService);
 			dictionary.Add(global::Kampai.Game.IdentityType.googleplay, GooglePlayService);
 			global::System.Collections.Generic.Dictionary<global::Kampai.Game.IdentityType, global::Kampai.Game.ISocialService> dictionary2 = dictionary;

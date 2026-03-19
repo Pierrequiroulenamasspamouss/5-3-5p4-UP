@@ -1,6 +1,6 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal class ShareResult : global::Facebook.Unity.ResultBase, global::Facebook.Unity.IResult, global::Facebook.Unity.IShareResult
+	internal class ShareResult : global::Discord.Unity.ResultBase, global::Discord.Unity.IResult, global::Discord.Unity.IShareResult
 	{
 		public string PostId { get; private set; }
 
@@ -8,11 +8,11 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return (!global::Facebook.Unity.Constants.IsWeb) ? "id" : "post_id";
+				return (!global::Discord.Unity.Constants.IsWeb) ? "id" : "post_id";
 			}
 		}
 
-		internal ShareResult(global::Facebook.Unity.ResultContainer resultContainer)
+		internal ShareResult(global::Discord.Unity.ResultContainer resultContainer)
 			: base(resultContainer)
 		{
 			if (ResultDictionary != null)
@@ -31,7 +31,7 @@ namespace Facebook.Unity
 
 		public override string ToString()
 		{
-			return global::Facebook.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string> { { "PostId", PostId } });
+			return global::Discord.Unity.Utilities.FormatToString(base.ToString(), GetType().Name, new global::System.Collections.Generic.Dictionary<string, string> { { "PostId", PostId } });
 		}
 	}
 }

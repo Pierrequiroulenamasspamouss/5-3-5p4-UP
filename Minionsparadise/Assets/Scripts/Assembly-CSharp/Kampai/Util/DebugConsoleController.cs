@@ -1391,7 +1391,7 @@ namespace Kampai.Util
 			socialEventInvitation.inviter = new global::Kampai.Game.UserIdentity();
 			socialEventInvitation.inviter.ExternalID = "1374474932861011";
 			socialEventInvitation.inviter.ID = "1374474932861011";
-			socialEventInvitation.inviter.Type = global::Kampai.Game.IdentityType.facebook;
+			socialEventInvitation.inviter.Type = global::Kampai.Game.IdentityType.discord;
 			localInvitations.Add(socialEventInvitation);
 		}
 
@@ -2039,7 +2039,7 @@ namespace Kampai.Util
 		public void Unlink(string[] args)
 		{
 			global::System.Collections.Generic.Dictionary<string, global::Kampai.Game.IdentityType> dictionary = new global::System.Collections.Generic.Dictionary<string, global::Kampai.Game.IdentityType>();
-			dictionary.Add("fb", global::Kampai.Game.IdentityType.facebook);
+			dictionary.Add("fb", global::Kampai.Game.IdentityType.discord);
 			dictionary.Add("gc", global::Kampai.Game.IdentityType.gamecenter);
 			dictionary.Add("gp", global::Kampai.Game.IdentityType.googleplay);
 			global::System.Collections.Generic.Dictionary<string, global::Kampai.Game.IdentityType> dictionary2 = dictionary;
@@ -3456,12 +3456,12 @@ namespace Kampai.Util
 			if (args.Length > 1 && (args[1].Equals("on") || args[1].Equals("off")))
 			{
 				marketplaceService.DebugFacebook = args[1].Equals("on");
-				outBuilder.Append(string.Format("Marketplace Facebook features turned {0}", (!marketplaceService.DebugFacebook) ? "off" : "on"));
+				outBuilder.Append(string.Format("Marketplace Discord features turned {0}", (!marketplaceService.DebugFacebook) ? "off" : "on"));
 				gameContext.injectionBinder.GetInstance<global::Kampai.Game.UpdateMarketplaceSlotStateSignal>().Dispatch();
 			}
 			else
 			{
-				outBuilder.Append("usage: \"mpfacebook <on|off>\" to switch facebook features on/off");
+				outBuilder.Append("usage: \"mpfacebook <on|off>\" to switch discord features on/off");
 			}
 		}
 

@@ -141,7 +141,7 @@ namespace Kampai.UI.View
 		private void Start()
 		{
 			togglePopupSignal.Dispatch(true);
-			logger.Info("facebook killswitch : {0}", facebookService.isKillSwitchEnabled);
+			logger.Info("discord killswitch : {0}", facebookService.isKillSwitchEnabled);
 			logger.Info("google+ killswitch : {0}", googleService.isKillSwitchEnabled);
 			base.view.facebookButton.gameObject.SetActive(!coppaService.Restricted() && !facebookService.isKillSwitchEnabled);
 			SetupButtons();

@@ -6,6 +6,7 @@ from routes.user import user_bp
 from routes.game import game_bp
 from routes.metrics import metrics_bp
 from routes.sales import sales_bp
+from utils.db import init_db, migrate_files_to_db
 
 # Disable verbose logs
 log = logging.getLogger('werkzeug')
@@ -13,6 +14,11 @@ log.setLevel(logging.ERROR)
 
 def create_app(port):
     app = Flask(f"App_{port}")
+    
+    # Initialize DB
+    init_db()
+    # Migrate any legacy .json files
+    migrate_files_to_db()
     
     # CRITICAL: Keep JSON order intact
     app.config['JSON_SORT_KEYS'] = False
@@ -53,4 +59,4 @@ if __name__ == '__main__':
     app_main = create_app(44733)
     print(">>> Main Server started on port 44733 (with auto-reload)", flush=True)
     app_main.run(host='0.0.0.0', port=44733, debug=True, threaded=True, use_reloader=True)
-# trigger reload 1773787109.4464662
+# trigger reload 1773787109.4464663

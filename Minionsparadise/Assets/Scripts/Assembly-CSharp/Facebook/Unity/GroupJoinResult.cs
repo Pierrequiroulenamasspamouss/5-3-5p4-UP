@@ -1,8 +1,8 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
-	internal class GroupJoinResult : global::Facebook.Unity.ResultBase, global::Facebook.Unity.IGroupJoinResult, global::Facebook.Unity.IResult
+	internal class GroupJoinResult : global::Discord.Unity.ResultBase, global::Discord.Unity.IGroupJoinResult, global::Discord.Unity.IResult
 	{
-		internal GroupJoinResult(global::Facebook.Unity.ResultContainer resultContainer)
+		internal GroupJoinResult(global::Discord.Unity.ResultContainer resultContainer)
 			: base(resultContainer)
 		{
 		}

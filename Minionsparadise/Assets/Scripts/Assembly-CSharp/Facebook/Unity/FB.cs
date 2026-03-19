@@ -1,23 +1,23 @@
-namespace Facebook.Unity
+namespace Discord.Unity
 {
 	public sealed class FB : global::UnityEngine.ScriptableObject
 	{
 		public sealed class Canvas
 		{
-			private static global::Facebook.Unity.IPayFacebook FacebookPayImpl
+			private static global::Discord.Unity.IPayFacebook FacebookPayImpl
 			{
 				get
 				{
-					global::Facebook.Unity.IPayFacebook payFacebook = FacebookImpl as global::Facebook.Unity.IPayFacebook;
+					global::Discord.Unity.IPayFacebook payFacebook = FacebookImpl as global::Discord.Unity.IPayFacebook;
 					if (payFacebook == null)
 					{
-						throw new global::System.InvalidOperationException("Attempt to call Facebook pay interface on unsupported platform");
+						throw new global::System.InvalidOperationException("Attempt to call Discord pay interface on unsupported platform");
 					}
 					return payFacebook;
 				}
 			}
 
-			public static void Pay(string product, string action = "purchaseitem", int quantity = 1, int? quantityMin = null, int? quantityMax = null, string requestId = null, string pricepointId = null, string testCurrency = null, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IPayResult> callback = null)
+			public static void Pay(string product, string action = "purchaseitem", int quantity = 1, int? quantityMin = null, int? quantityMax = null, string requestId = null, string pricepointId = null, string testCurrency = null, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IPayResult> callback = null)
 			{
 				FacebookPayImpl.Pay(product, action, quantity, quantityMin, quantityMax, requestId, pricepointId, testCurrency, callback);
 			}
@@ -25,7 +25,7 @@ namespace Facebook.Unity
 
 		public sealed class Mobile
 		{
-			public static global::Facebook.Unity.ShareDialogMode ShareDialogMode
+			public static global::Discord.Unity.ShareDialogMode ShareDialogMode
 			{
 				get
 				{
@@ -37,11 +37,11 @@ namespace Facebook.Unity
 				}
 			}
 
-			private static global::Facebook.Unity.Mobile.IMobileFacebook MobileFacebookImpl
+			private static global::Discord.Unity.Mobile.IMobileFacebook MobileFacebookImpl
 			{
 				get
 				{
-					global::Facebook.Unity.Mobile.IMobileFacebook mobileFacebook = FacebookImpl as global::Facebook.Unity.Mobile.IMobileFacebook;
+					global::Discord.Unity.Mobile.IMobileFacebook mobileFacebook = FacebookImpl as global::Discord.Unity.Mobile.IMobileFacebook;
 					if (mobileFacebook == null)
 					{
 						throw new global::System.InvalidOperationException("Attempt to call Mobile interface on non mobile platform");
@@ -50,12 +50,12 @@ namespace Facebook.Unity
 				}
 			}
 
-			public static void AppInvite(global::System.Uri appLinkUrl, global::System.Uri previewImageUrl = null, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppInviteResult> callback = null)
+			public static void AppInvite(global::System.Uri appLinkUrl, global::System.Uri previewImageUrl = null, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppInviteResult> callback = null)
 			{
 				MobileFacebookImpl.AppInvite(appLinkUrl, previewImageUrl, callback);
 			}
 
-			public static void FetchDeferredAppLinkData(global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppLinkResult> callback = null)
+			public static void FetchDeferredAppLinkData(global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppLinkResult> callback = null)
 			{
 				if (callback != null)
 				{
@@ -63,7 +63,7 @@ namespace Facebook.Unity
 				}
 			}
 
-			public static void RefreshCurrentAccessToken(global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAccessTokenRefreshResult> callback = null)
+			public static void RefreshCurrentAccessToken(global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAccessTokenRefreshResult> callback = null)
 			{
 				MobileFacebookImpl.RefreshCurrentAccessToken(callback);
 			}
@@ -75,7 +75,7 @@ namespace Facebook.Unity
 			{
 				get
 				{
-					global::Facebook.Unity.Mobile.Android.AndroidFacebook androidFacebook = FacebookImpl as global::Facebook.Unity.Mobile.Android.AndroidFacebook;
+					global::Discord.Unity.Mobile.Android.AndroidFacebook androidFacebook = FacebookImpl as global::Discord.Unity.Mobile.Android.AndroidFacebook;
 					return (androidFacebook == null) ? string.Empty : androidFacebook.KeyHash;
 				}
 			}
@@ -83,11 +83,11 @@ namespace Facebook.Unity
 
 		internal abstract class CompiledFacebookLoader : global::UnityEngine.MonoBehaviour
 		{
-			protected abstract global::Facebook.Unity.FacebookGameObject FBGameObject { get; }
+			protected abstract global::Discord.Unity.FacebookGameObject FBGameObject { get; }
 
 			public void Start()
 			{
-				facebook = FBGameObject.Facebook;
+				discord = FBGameObject.Discord;
 				OnDLLLoadedDelegate();
 				LogVersion();
 				global::UnityEngine.Object.Destroy(this);
@@ -98,11 +98,11 @@ namespace Facebook.Unity
 
 		private const string DefaultJSSDKLocale = "en_US";
 
-		private static global::Facebook.Unity.IFacebook facebook;
+		private static global::Discord.Unity.IFacebook discord;
 
 		private static bool isInitCalled;
 
-		private static string facebookDomain = "facebook.com";
+		private static string facebookDomain = "discord.com";
 
 		private static string graphApiVersion = "v2.5";
 
@@ -124,7 +124,7 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return facebook != null && FacebookImpl.LoggedIn;
+				return discord != null && FacebookImpl.LoggedIn;
 			}
 		}
 
@@ -132,7 +132,7 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return facebook != null && facebook.Initialized;
+				return discord != null && discord.Initialized;
 			}
 		}
 
@@ -140,30 +140,30 @@ namespace Facebook.Unity
 		{
 			get
 			{
-				return facebook != null && facebook.LimitEventUsage;
+				return discord != null && discord.LimitEventUsage;
 			}
 			set
 			{
-				if (facebook != null)
+				if (discord != null)
 				{
-					facebook.LimitEventUsage = value;
+					discord.LimitEventUsage = value;
 				}
 			}
 		}
 
-		internal static global::Facebook.Unity.IFacebook FacebookImpl
+		internal static global::Discord.Unity.IFacebook FacebookImpl
 		{
 			get
 			{
-				if (facebook == null)
+				if (discord == null)
 				{
-					throw new global::System.NullReferenceException("Facebook object is not yet loaded.  Did you call FB.Init()?");
+					throw new global::System.NullReferenceException("Discord object is not yet loaded.  Did you call FB.Init()?");
 				}
-				return facebook;
+				return discord;
 			}
 			set
 			{
-				facebook = value;
+				discord = value;
 			}
 		}
 
@@ -179,14 +179,14 @@ namespace Facebook.Unity
 			}
 		}
 
-		private static global::Facebook.Unity.FB.OnDLLLoaded OnDLLLoadedDelegate { get; set; }
+		private static global::Discord.Unity.FB.OnDLLLoaded OnDLLLoadedDelegate { get; set; }
 
-		public static void Init(global::Facebook.Unity.InitDelegate onInitComplete = null, global::Facebook.Unity.HideUnityDelegate onHideUnity = null, string authResponse = null)
+		public static void Init(global::Discord.Unity.InitDelegate onInitComplete = null, global::Discord.Unity.HideUnityDelegate onHideUnity = null, string authResponse = null)
 		{
-			Init(global::Facebook.Unity.FacebookSettings.AppId, global::Facebook.Unity.FacebookSettings.Cookie, global::Facebook.Unity.FacebookSettings.Logging, global::Facebook.Unity.FacebookSettings.Status, global::Facebook.Unity.FacebookSettings.Xfbml, global::Facebook.Unity.FacebookSettings.FrictionlessRequests, authResponse, "en_US", onHideUnity, onInitComplete);
+			Init(global::Discord.Unity.FacebookSettings.AppId, global::Discord.Unity.FacebookSettings.Cookie, global::Discord.Unity.FacebookSettings.Logging, global::Discord.Unity.FacebookSettings.Status, global::Discord.Unity.FacebookSettings.Xfbml, global::Discord.Unity.FacebookSettings.FrictionlessRequests, authResponse, "en_US", onHideUnity, onInitComplete);
 		}
 
-		public static void Init(string appId, bool cookie = true, bool logging = true, bool status = true, bool xfbml = false, bool frictionlessRequests = true, string authResponse = null, string javascriptSDKLocale = "en_US", global::Facebook.Unity.HideUnityDelegate onHideUnity = null, global::Facebook.Unity.InitDelegate onInitComplete = null)
+		public static void Init(string appId, bool cookie = true, bool logging = true, bool status = true, bool xfbml = false, bool frictionlessRequests = true, string authResponse = null, string javascriptSDKLocale = "en_US", global::Discord.Unity.HideUnityDelegate onHideUnity = null, global::Discord.Unity.InitDelegate onInitComplete = null)
 		{
 			if (string.IsNullOrEmpty(appId))
 			{
@@ -196,55 +196,55 @@ namespace Facebook.Unity
 			if (!isInitCalled)
 			{
 				isInitCalled = true;
-				if (global::Facebook.Unity.Constants.IsEditor)
+				if (global::Discord.Unity.Constants.IsEditor)
 				{
 					OnDLLLoadedDelegate = delegate
 					{
-						((global::Facebook.Unity.Editor.EditorFacebook)facebook).Init(onHideUnity, onInitComplete);
+						((global::Discord.Unity.Editor.EditorFacebook)discord).Init(onHideUnity, onInitComplete);
 					};
-					global::Facebook.Unity.ComponentFactory.GetComponent<global::Facebook.Unity.Editor.EditorFacebookLoader>();
+					global::Discord.Unity.ComponentFactory.GetComponent<global::Discord.Unity.Editor.EditorFacebookLoader>();
 					return;
 				}
-				switch (global::Facebook.Unity.Constants.CurrentPlatform)
+				switch (global::Discord.Unity.Constants.CurrentPlatform)
 				{
-				case global::Facebook.Unity.FacebookUnityPlatform.WebGL:
-				case global::Facebook.Unity.FacebookUnityPlatform.WebPlayer:
+				case global::Discord.Unity.FacebookUnityPlatform.WebGL:
+				case global::Discord.Unity.FacebookUnityPlatform.WebPlayer:
 					OnDLLLoadedDelegate = delegate
 					{
-						((global::Facebook.Unity.Canvas.CanvasFacebook)facebook).Init(appId, cookie, logging, status, xfbml, global::Facebook.Unity.FacebookSettings.ChannelUrl, authResponse, frictionlessRequests, javascriptSDKLocale, global::Facebook.Unity.Constants.DebugMode, onHideUnity, onInitComplete);
+						((global::Discord.Unity.Canvas.CanvasFacebook)discord).Init(appId, cookie, logging, status, xfbml, global::Discord.Unity.FacebookSettings.ChannelUrl, authResponse, frictionlessRequests, javascriptSDKLocale, global::Discord.Unity.Constants.DebugMode, onHideUnity, onInitComplete);
 					};
-					global::Facebook.Unity.ComponentFactory.GetComponent<global::Facebook.Unity.Canvas.CanvasFacebookLoader>();
+					global::Discord.Unity.ComponentFactory.GetComponent<global::Discord.Unity.Canvas.CanvasFacebookLoader>();
 					break;
-				case global::Facebook.Unity.FacebookUnityPlatform.IOS:
+				case global::Discord.Unity.FacebookUnityPlatform.IOS:
 					OnDLLLoadedDelegate = delegate
 					{
-						((global::Facebook.Unity.Mobile.IOS.IOSFacebook)facebook).Init(appId, frictionlessRequests, global::Facebook.Unity.FacebookSettings.IosURLSuffix, onHideUnity, onInitComplete);
+						((global::Discord.Unity.Mobile.IOS.IOSFacebook)discord).Init(appId, frictionlessRequests, global::Discord.Unity.FacebookSettings.IosURLSuffix, onHideUnity, onInitComplete);
 					};
-					global::Facebook.Unity.ComponentFactory.GetComponent<global::Facebook.Unity.Mobile.IOS.IOSFacebookLoader>();
+					global::Discord.Unity.ComponentFactory.GetComponent<global::Discord.Unity.Mobile.IOS.IOSFacebookLoader>();
 					break;
-				case global::Facebook.Unity.FacebookUnityPlatform.Android:
+				case global::Discord.Unity.FacebookUnityPlatform.Android:
 					OnDLLLoadedDelegate = delegate
 					{
-						((global::Facebook.Unity.Mobile.Android.AndroidFacebook)facebook).Init(appId, onHideUnity, onInitComplete);
+						((global::Discord.Unity.Mobile.Android.AndroidFacebook)discord).Init(appId, onHideUnity, onInitComplete);
 					};
-					global::Facebook.Unity.ComponentFactory.GetComponent<global::Facebook.Unity.Mobile.Android.AndroidFacebookLoader>();
+					global::Discord.Unity.ComponentFactory.GetComponent<global::Discord.Unity.Mobile.Android.AndroidFacebookLoader>();
 					break;
 				default:
-					throw new global::System.NotImplementedException("Facebook API does not yet support this platform");
+					throw new global::System.NotImplementedException("Discord API does not yet support this platform");
 				}
 			}
 			else
 			{
-				global::Facebook.Unity.FacebookLogger.Warn("FB.Init() has already been called.  You only need to call this once and only once.");
+				global::Discord.Unity.FacebookLogger.Warn("FB.Init() has already been called.  You only need to call this once and only once.");
 			}
 		}
 
-		public static void LogInWithPublishPermissions(global::System.Collections.Generic.IEnumerable<string> permissions = null, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.ILoginResult> callback = null)
+		public static void LogInWithPublishPermissions(global::System.Collections.Generic.IEnumerable<string> permissions = null, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.ILoginResult> callback = null)
 		{
 			FacebookImpl.LogInWithPublishPermissions(permissions, callback);
 		}
 
-		public static void LogInWithReadPermissions(global::System.Collections.Generic.IEnumerable<string> permissions = null, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.ILoginResult> callback = null)
+		public static void LogInWithReadPermissions(global::System.Collections.Generic.IEnumerable<string> permissions = null, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.ILoginResult> callback = null)
 		{
 			FacebookImpl.LogInWithReadPermissions(permissions, callback);
 		}
@@ -254,32 +254,32 @@ namespace Facebook.Unity
 			FacebookImpl.LogOut();
 		}
 
-		public static void AppRequest(string message, global::Facebook.Unity.OGActionType actionType, string objectId, global::System.Collections.Generic.IEnumerable<string> to, string data = "", string title = "", global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppRequestResult> callback = null)
+		public static void AppRequest(string message, global::Discord.Unity.OGActionType actionType, string objectId, global::System.Collections.Generic.IEnumerable<string> to, string data = "", string title = "", global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppRequestResult> callback = null)
 		{
 			FacebookImpl.AppRequest(message, actionType, objectId, to, null, null, null, data, title, callback);
 		}
 
-		public static void AppRequest(string message, global::Facebook.Unity.OGActionType actionType, string objectId, global::System.Collections.Generic.IEnumerable<object> filters = null, global::System.Collections.Generic.IEnumerable<string> excludeIds = null, int? maxRecipients = null, string data = "", string title = "", global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppRequestResult> callback = null)
+		public static void AppRequest(string message, global::Discord.Unity.OGActionType actionType, string objectId, global::System.Collections.Generic.IEnumerable<object> filters = null, global::System.Collections.Generic.IEnumerable<string> excludeIds = null, int? maxRecipients = null, string data = "", string title = "", global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppRequestResult> callback = null)
 		{
 			FacebookImpl.AppRequest(message, actionType, objectId, null, filters, excludeIds, maxRecipients, data, title, callback);
 		}
 
-		public static void AppRequest(string message, global::System.Collections.Generic.IEnumerable<string> to = null, global::System.Collections.Generic.IEnumerable<object> filters = null, global::System.Collections.Generic.IEnumerable<string> excludeIds = null, int? maxRecipients = null, string data = "", string title = "", global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppRequestResult> callback = null)
+		public static void AppRequest(string message, global::System.Collections.Generic.IEnumerable<string> to = null, global::System.Collections.Generic.IEnumerable<object> filters = null, global::System.Collections.Generic.IEnumerable<string> excludeIds = null, int? maxRecipients = null, string data = "", string title = "", global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppRequestResult> callback = null)
 		{
 			FacebookImpl.AppRequest(message, null, null, to, filters, excludeIds, maxRecipients, data, title, callback);
 		}
 
-		public static void ShareLink(global::System.Uri contentURL = null, string contentTitle = "", string contentDescription = "", global::System.Uri photoURL = null, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IShareResult> callback = null)
+		public static void ShareLink(global::System.Uri contentURL = null, string contentTitle = "", string contentDescription = "", global::System.Uri photoURL = null, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IShareResult> callback = null)
 		{
 			FacebookImpl.ShareLink(contentURL, contentTitle, contentDescription, photoURL, callback);
 		}
 
-		public static void FeedShare(string toId = "", global::System.Uri link = null, string linkName = "", string linkCaption = "", string linkDescription = "", global::System.Uri picture = null, string mediaSource = "", global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IShareResult> callback = null)
+		public static void FeedShare(string toId = "", global::System.Uri link = null, string linkName = "", string linkCaption = "", string linkDescription = "", global::System.Uri picture = null, string mediaSource = "", global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IShareResult> callback = null)
 		{
 			FacebookImpl.FeedShare(toId, link, linkName, linkCaption, linkDescription, picture, mediaSource, callback);
 		}
 
-		public static void API(string query, global::Facebook.Unity.HttpMethod method, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IGraphResult> callback = null, global::System.Collections.Generic.IDictionary<string, string> formData = null)
+		public static void API(string query, global::Discord.Unity.HttpMethod method, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IGraphResult> callback = null, global::System.Collections.Generic.IDictionary<string, string> formData = null)
 		{
 			if (string.IsNullOrEmpty(query))
 			{
@@ -288,7 +288,7 @@ namespace Facebook.Unity
 			FacebookImpl.API(query, method, formData, callback);
 		}
 
-		public static void API(string query, global::Facebook.Unity.HttpMethod method, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IGraphResult> callback, global::UnityEngine.WWWForm formData)
+		public static void API(string query, global::Discord.Unity.HttpMethod method, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IGraphResult> callback, global::UnityEngine.WWWForm formData)
 		{
 			if (string.IsNullOrEmpty(query))
 			{
@@ -302,7 +302,7 @@ namespace Facebook.Unity
 			FacebookImpl.ActivateApp(AppId);
 		}
 
-		public static void GetAppLink(global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IAppLinkResult> callback)
+		public static void GetAppLink(global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IAppLinkResult> callback)
 		{
 			if (callback != null)
 			{
@@ -310,12 +310,12 @@ namespace Facebook.Unity
 			}
 		}
 
-		public static void GameGroupCreate(string name, string description, string privacy = "CLOSED", global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IGroupCreateResult> callback = null)
+		public static void GameGroupCreate(string name, string description, string privacy = "CLOSED", global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IGroupCreateResult> callback = null)
 		{
 			FacebookImpl.GameGroupCreate(name, description, privacy, callback);
 		}
 
-		public static void GameGroupJoin(string id, global::Facebook.Unity.FacebookDelegate<global::Facebook.Unity.IGroupJoinResult> callback = null)
+		public static void GameGroupJoin(string id, global::Discord.Unity.FacebookDelegate<global::Discord.Unity.IGroupJoinResult> callback = null)
 		{
 			FacebookImpl.GameGroupJoin(id, callback);
 		}
@@ -336,13 +336,13 @@ namespace Facebook.Unity
 
 		private static void LogVersion()
 		{
-			if (facebook != null)
+			if (discord != null)
 			{
-				global::Facebook.Unity.FacebookLogger.Info(string.Format("Using Facebook Unity SDK v{0} with {1}", global::Facebook.Unity.FacebookSdkVersion.Build, FacebookImpl.SDKUserAgent));
+				global::Discord.Unity.FacebookLogger.Info(string.Format("Using Discord Unity SDK v{0} with {1}", global::Discord.Unity.FacebookSdkVersion.Build, FacebookImpl.SDKUserAgent));
 			}
 			else
 			{
-				global::Facebook.Unity.FacebookLogger.Info(string.Format("Using Facebook Unity SDK v{0}", global::Facebook.Unity.FacebookSdkVersion.Build));
+				global::Discord.Unity.FacebookLogger.Info(string.Format("Using Discord Unity SDK v{0}", global::Discord.Unity.FacebookSdkVersion.Build));
 			}
 		}
 	}
