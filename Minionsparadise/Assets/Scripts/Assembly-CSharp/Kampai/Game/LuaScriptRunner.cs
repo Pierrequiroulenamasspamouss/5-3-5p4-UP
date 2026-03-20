@@ -9,7 +9,7 @@ namespace Kampai.Game
     {
         public readonly global::Kampai.Util.IKampaiLogger logger = global::Elevation.Logging.LogManager.GetClassLogger("LuaScriptRunner") as global::Kampai.Util.IKampaiLogger;
 
-        private Closure coroutine;
+        private MoonSharp.Interpreter.Coroutine coroutine;
         private readonly global::Kampai.Game.LuaArgRetriever argRetriever = new global::Kampai.Game.LuaArgRetriever();
         private readonly global::Kampai.Game.LuaReturnValueContainer returnContainer;
         private global::Kampai.Game.QuestScriptInstance questInstance;
@@ -29,10 +29,15 @@ namespace Kampai.Game
 
         public global::Kampai.Game.QuestRunnerLanguage Lang
         {
-            get { return global::Kampai.Game.QuestRunnerLanguage.LUA; }
+            get { return global::Kampai.Game.QuestRunnerLanguage.Lua; }
         }
 
         public global::System.Action<global::Kampai.Game.QuestScriptInstance> OnQuestScriptComplete { get; set; }
+
+        public global::Kampai.Game.ReturnValueContainer InvokationValues
+        {
+            get { return _invokationValues; }
+        }
 
         public static LuaScriptRunner CurrentRunner { get; private set; }
 
@@ -109,22 +114,11 @@ namespace Kampai.Game
             CurrentRunner = this;
             try
             {
-                if (!hasRanMethod && !string.IsNullOrEmpty(startMethodName))
-                {
-                    hasRanMethod = true;
-                    DynValue startMethod = qsKernel.SharedScript.Globals.Get(startMethodName);
-                    if (startMethod.Type == DataType.Function || startMethod.Type == DataType.ClrFunction)
-                    {
-                        // Some scripts expect calling a specific entry point
-                        coroutine = qsKernel.SharedScript.CreateCoroutine(startMethod).Coroutine;
-                    }
-                }
-                
                 coroutine.Resume(args);
 
                 if (coroutine.State == CoroutineState.Dead)
                 {
-                    EndQuest();
+                    HandleContinueFinished();
                 }
                 else
                 {
@@ -142,18 +136,39 @@ namespace Kampai.Game
             }
         }
 
+        private void HandleContinueFinished()
+        {
+            if (!hasRanMethod && startMethodName != null)
+            {
+                hasRanMethod = true;
+                DynValue startMethod = qsKernel.SharedScript.Globals.Get(startMethodName);
+                if (startMethod.Type == DataType.Function || startMethod.Type == DataType.ClrFunction)
+                {
+                    coroutine = qsKernel.SharedScript.CreateCoroutine(startMethod).Coroutine;
+                    canContinue = true;
+                    Continue(_invokationValues.ToDynValueArray());
+                    return;
+                }
+            }
+            EndQuest();
+        }
+
         private void LogLuaError(string message)
         {
             global::UnityEngine.Debug.LogError("<color=red>[LUA ERROR]</color> " + fileName + " : " + message);
         }
 
         public void Stop() { DisposedCheck(); InternalStop(); }
+        public void Pause() { /* Interface implementation */ }
         public void Resume() { DisposedCheck(); if (canContinue) Continue(); }
         
         private void InternalStop() 
         { 
-            controller.ContinueSignal.RemoveListener(ContinueFromYield); 
-            controller.Stop(); 
+            if (controller != null)
+            {
+                controller.ContinueSignal.RemoveListener(ContinueFromYield); 
+                controller.Stop(); 
+            }
             canContinue = false;
         }
 
