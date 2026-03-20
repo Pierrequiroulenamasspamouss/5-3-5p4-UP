@@ -151,6 +151,7 @@ namespace Kampai.Game
 					}
 				}
 			}
+#endif
 			_touchCount = num;
 			if (_touchCount > 0)
 			{

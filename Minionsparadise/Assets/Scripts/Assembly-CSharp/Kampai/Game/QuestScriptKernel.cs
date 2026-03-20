@@ -39,6 +39,7 @@ namespace Kampai.Game
 						}
 						else
 						{
+							logger.Info("Registered Lua API function: {0} (mapped to {1})", questScriptAPIAttribute.Name, methodInfo.Name);
 							apiFunctions[questScriptAPIAttribute.Name] = func;
 						}
 					}

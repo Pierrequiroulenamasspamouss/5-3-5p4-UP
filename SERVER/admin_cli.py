@@ -4,7 +4,7 @@ import os
 import sys
 
 # Connect to the SQLite database
-DB_PATH = os.path.join(os.path.dirname(__file__), "server.db")
+DB_PATH = os.path.join(os.path.dirname(__file__), "player_data/players.db")
 EMPTY_PLAYER_PATH = os.path.join(os.path.dirname(__file__), "empty_player.json")
 
 def get_connection():
@@ -35,8 +35,7 @@ def find_player(conn):
     print(f"[+] Found player: {row['uid']} (Name: {row['name']})")
     
     # Show current currencies
-    state = json.loads(row['state']) if row['state'] else {}
-    inventory = state.get('inventory', [])
+    inventory = json.loads(row['inventory']) if row['inventory'] else []
     sand_dollars = 0
     doubloons = 0
     for item in inventory:
@@ -51,8 +50,7 @@ def find_player(conn):
 
 def update_currency(conn, player, currency_id, currency_name):
     print(f"\n--- Edit {currency_name} ---")
-    state = json.loads(player['state'])
-    inventory = state.get('inventory', [])
+    inventory = json.loads(player['inventory']) if player['inventory'] else []
     
     current_amount = 0
     item_index = -1
@@ -84,10 +82,8 @@ def update_currency(conn, player, currency_id, currency_name):
         else:
             inventory.append({"ID": currency_id, "Definition": currency_id, "Quantity": new_amount})
             
-        state['inventory'] = inventory
-        
         cursor = conn.cursor()
-        cursor.execute("UPDATE players SET state = ? WHERE uid = ?", (json.dumps(state), player['uid']))
+        cursor.execute("UPDATE players SET inventory = ? WHERE uid = ?", (json.dumps(inventory), player['uid']))
         conn.commit()
         print(f"[+] {currency_name} updated successfully! New amount: {new_amount}")
         
@@ -103,19 +99,51 @@ def reset_player(conn, player):
         
     try:
         with open(EMPTY_PLAYER_PATH, 'r') as f:
-            empty_state = f.read()
+            empty_state = json.load(f)
             
         cursor = conn.cursor()
-        cursor.execute("""
-            UPDATE players 
-            SET state = ?, 
-                FB = '', 
-                DISCORD = '', 
-                discord_username = '', 
-                discord_avatar = '',
-                session_key = ''
-            WHERE uid = ?
-        """, (empty_state, player['uid']))
+        # Reset the record using individual columns
+        # We try to map the top-level JSON fields to columns
+        column_data = {
+            'uid': player['uid'],
+            'ID': player['uid'],
+            'version': empty_state.get('version', 0),
+            'nextId': empty_state.get('nextId', 0),
+            'villainQueue': json.dumps(empty_state.get('villainQueue', [])),
+            'inventory': json.dumps(empty_state.get('inventory', [])),
+            'pendingTransactions': json.dumps(empty_state.get('pendingTransactions', [])),
+            'unlocks': json.dumps(empty_state.get('unlocks', [])),
+            'purchasedSales': json.dumps(empty_state.get('purchasedSales', [])),
+            'triggers': json.dumps(empty_state.get('triggers', [])),
+            'lastLevelUpTime': empty_state.get('lastLevelUpTime', 0),
+            'lastGameStartTime': empty_state.get('lastGameStartTime', 0),
+            'firstGameStartTime': empty_state.get('firstGameStartTime', 0),
+            'lastPlayedTime': empty_state.get('lastPlayedTime', 0),
+            'totalGameplayDurationSinceLastLevelUp': empty_state.get('totalGameplayDurationSinceLastLevelUp', 0),
+            'totalAccumulatedGameplayDuration': empty_state.get('totalAccumulatedGameplayDuration', 0),
+            'targetExpansionID': empty_state.get('targetExpansionID', 0),
+            'timezoneOffset': empty_state.get('timezoneOffset', 0),
+            'country': empty_state.get('country', ''),
+            'completedOrders': empty_state.get('completedOrders', 0),
+            'highestFtueLevel': empty_state.get('highestFtueLevel', 0),
+            'socialRewards': json.dumps(empty_state.get('socialRewards', [])),
+            'mtxPurchaseTracking': json.dumps(empty_state.get('mtxPurchaseTracking', [])),
+            'completedQuestsTotal': empty_state.get('completedQuestsTotal', 0),
+            'currentItemCount': empty_state.get('currentItemCount', 0),
+            'PlatformStoreTransactionIDs': json.dumps(empty_state.get('PlatformStoreTransactionIDs', [])),
+            'helpTipsTrackingData': json.dumps(empty_state.get('helpTipsTrackingData', [])),
+            'DISCORD': '',
+            'discord_username': '',
+            'discord_avatar': '',
+            'FACEBOOK': '',
+            'last_updated': 'CURRENT_TIMESTAMP'
+        }
+        
+        placeholders = ", ".join([f"{k} = ?" for k in column_data.keys() if k != 'last_updated'])
+        query = f"UPDATE players SET {placeholders}, last_updated = CURRENT_TIMESTAMP WHERE uid = ?"
+        params = [column_data[k] for k in column_data.keys() if k != 'last_updated'] + [player['uid']]
+        
+        cursor.execute(query, params)
         conn.commit()
         print(f"[+] Player {player['uid']} has been reset using empty_player.json and socials removed.")
     except Exception as e:
@@ -131,7 +159,7 @@ def remove_socials(conn, player):
     cursor = conn.cursor()
     cursor.execute("""
         UPDATE players 
-        SET FB = '', 
+        SET FACEBOOK = '', 
             DISCORD = '', 
             discord_username = '', 
             discord_avatar = ''

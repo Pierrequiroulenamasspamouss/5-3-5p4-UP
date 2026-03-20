@@ -66,6 +66,12 @@ namespace Kampai.Game
                 throw new ScriptRuntimeException("Unbound method: " + methodName);
             }
             
+            // Log arguments for debugging nil errors
+            for (int i = 0; i < args.Count; i++)
+            {
+                logger.Info("Lua: {0} calling {1} with arg[{2}] = {3} (Type: {4})", fileName, methodName, i, args[i], args[i].Type);
+            }
+
             argRetriever.Setup(args, methodName);
             returnContainer.Reset();
             
@@ -114,6 +120,9 @@ namespace Kampai.Game
             CurrentRunner = this;
             try
             {
+                logger.Info("Lua: {0} Continue - Pre Globals Check", fileName);
+                qsKernel.LogGlobals();
+
                 coroutine.Resume(args);
 
                 if (coroutine.State == CoroutineState.Dead)
