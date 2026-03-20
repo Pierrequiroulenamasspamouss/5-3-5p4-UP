@@ -53,7 +53,7 @@ public class NimbleBridge_MTX
 	private static extern void NimbleBridge_MTX_deleteTransactionArray(global::System.IntPtr array);
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
-	private static extern void NimbleBridge_NimbleBridge_MTX_deleteItemArray(global::System.IntPtr array);
+	private static extern void NimbleBridge_MTX_deleteItemArray(global::System.IntPtr array);
 
 	[global::System.Runtime.InteropServices.DllImport("NimbleCInterface")]
 	private static extern NimbleBridge_Error NimbleBridge_MTX_purchaseItem(string sku, NimbleBridge_MTX.BridgeMTXTransactionCallback receiptCallback, global::System.IntPtr receiptCallbackData, NimbleBridge_MTX.BridgeMTXTransactionCallback purchaseCallback, global::System.IntPtr purchaseCallbackData);
