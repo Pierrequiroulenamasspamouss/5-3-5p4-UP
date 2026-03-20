@@ -1,119 +1,94 @@
+using MoonSharp.Interpreter;
+
 namespace Kampai.Game
 {
     public class LuaKernel : global::System.IDisposable
     {
-        private readonly global::Kampai.Wrappers.NativeLibContext context;
-        public readonly global::Kampai.Wrappers.MasterLuaState L;
         private readonly global::Kampai.Util.IKampaiLogger _logger = global::Elevation.Logging.LogManager.GetClassLogger("LuaKernel") as global::Kampai.Util.IKampaiLogger;
-        private readonly global::Kampai.Wrappers.SafeGCHandle luaSearcherHandle;
-        private readonly global::Kampai.Wrappers.SafeGCHandle cSearcherHandle;
 
-        public LuaKernel()
+        [Inject]
+        public QuestScriptKernel ApiKernel { get; set; }
+
+        public Script SharedScript { get; private set; }
+        public Table QSTable { get; private set; }
+        public Table QSUtilTable { get; private set; }
+
+        [PostConstruct]
+        public void PostConstruct()
         {
-            _logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: Initializing engine...");
-            try
+            _logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: Initializing Shared MoonSharp engine...");
+            
+            SharedScript = new Script();
+            QSTable = new Table(SharedScript);
+            QSUtilTable = new Table(SharedScript);
+
+            // Set up __index proxies that call back into the active runner
+            DynValue qsIndex = DynValue.NewCallback((ctx, args) => {
+                string key = args.AsType(1, "__index", DataType.String).String;
+                return LuaScriptRunner.InvokeApiGlobal("qs", key, args);
+            });
+            Table qsMeta = new Table(SharedScript);
+            qsMeta.Set("__index", qsIndex);
+            QSTable.MetaTable = qsMeta;
+
+            DynValue qsutilIndex = DynValue.NewCallback((ctx, args) => {
+                string key = args.AsType(1, "__index", DataType.String).String;
+                // Try API first
+                DynValue val = LuaScriptRunner.InvokeApiGlobal("qsutil", key, args);
+                if (val.IsNil()) {
+                    // Fallback to globals (standard lua funcs)
+                    return SharedScript.Globals.Get(key);
+                }
+                return val;
+            });
+            Table qsutilMeta = new Table(SharedScript);
+            qsutilMeta.Set("__index", qsutilIndex);
+            QSUtilTable.MetaTable = qsutilMeta;
+
+            SharedScript.Globals["qs"] = QSTable;
+            SharedScript.Globals["qsutil"] = QSUtilTable;
+
+            // Load Utilities.txt into qsutil once
+            global::UnityEngine.TextAsset utilAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>("LUA/Utilities");
+            if (utilAsset != null)
             {
-                luaSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(LuaSearcher);
-                cSearcherHandle = global::Kampai.Wrappers.LuaUtil.MakeHandle(CSearcher);
-
-                // On initialise le contexte de log (V�rifie que tu as bien appliqu� ma rustine sur NativeLibContext.cs)
-                context = new global::Kampai.Wrappers.NativeLibContext(LogMethod, ErrorMethod);
-
-                L = new global::Kampai.Wrappers.MasterLuaState();
-
-                // IMPORTANT : On charge les libs TOUJOURS, m�me en Editor
-                L.luaL_openlibs();
-                SetupState(L);
-
-                _logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: Engine Ready.");
-            }
-            catch (global::System.Exception ex)
-            {
-                _logger.Error("LuaKernel Init Failed: " + ex.ToString());
-                throw;
-            }
-        }
-
-        private void SetupState(global::Kampai.Wrappers.LuaState state)
-        {
-            state.lua_createtable(2, 0);
-            state.lua_pushinteger(1);
-            state.lua_pushlightuserdata(luaSearcherHandle);
-            state.lua_pushcclosure(global::Kampai.Wrappers.LuaUtil.cfunc_CallDelegate, 1);
-            state.lua_settable(-3);
-            state.lua_pushinteger(2);
-            state.lua_pushlightuserdata(cSearcherHandle);
-            state.lua_pushcclosure(global::Kampai.Wrappers.LuaUtil.cfunc_CallDelegate, 1);
-            state.lua_settable(-3);
-            state.lua_getglobal("package");
-            state.lua_pushvalue(-2);
-            state.lua_setfield(-2, "searchers");
-            state.lua_pop(2);
-        }
-
-        private int LuaSearcher(global::Kampai.Wrappers.LuaState state)
-        {
-            string arg = state.lua_tostring(1);
-            string text = string.Format("LUA/{0}", arg);
-
-            // Load as TextAsset from Unity Resources
-            global::UnityEngine.TextAsset textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>(text);
-
-            if (textAsset == null)
-            {
-                state.lua_pushstring("Failed to load asset " + text);
-                return 1;
+                try
+                {
+                    SharedScript.DoString(utilAsset.text, QSUtilTable, "LUA/Utilities.txt");
+                }
+                catch (ScriptRuntimeException ex)
+                {
+                    _logger.Error("LuaKernel: Utilities.txt Load Error: " + ex.DecoratedMessage);
+                }
             }
 
-            // CRITICAL: We use .bytes (byte[]) instead of .text (string) 
-            // to prevent encoding-related memory crashes in the Lua DLL.
-            byte[] scriptBytes = textAsset.bytes;
-
-            // We pass the length as a UIntPtr to match the 32-bit C++ size_t
-            state.luaL_loadbufferx(scriptBytes, (global::System.UIntPtr)scriptBytes.Length, text, null);
-
-            return 1;
+            _logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: MoonSharp Engine Ready.");
         }
 
-        private int CSearcher(global::Kampai.Wrappers.LuaState state)
-		{
-			string text = state.lua_tostring(1);
-			string[] value = text.Split('.');
-			string function_name = "luaopen_" + string.Join("_", value);
-			global::Kampai.Wrappers.KampaiNativeLib.kampai_push_cfunction_from_lib(state, text, function_name);
-			return 1;
-		}
+        public bool HasApiFunction(string name)
+        {
+            return ApiKernel != null && ApiKernel.HasApiFunction(name);
+        }
 
-		private void LogMethod(string message)
-		{
-			_logger.Log(global::Kampai.Util.KampaiLogLevel.Info, message);
-		}
+        public global::System.Func<global::Kampai.Game.QuestScriptController, global::Kampai.Game.IArgRetriever, global::Kampai.Game.ReturnValueContainer, bool> GetApiFunction(string name)
+        {
+            return ApiKernel != null ? ApiKernel.GetApiFunction(name) : null;
+        }
 
-		private void ErrorMethod(string message)
-		{
-			_logger.Error(message);
-		}
+        protected virtual void Dispose(bool fromDispose)
+        {
+            SharedScript = null;
+        }
 
-		protected virtual void Dispose(bool fromDispose)
-		{
-			if (fromDispose)
-			{
-				L.Dispose();
-				context.Dispose();
-				luaSearcherHandle.Dispose();
-				cSearcherHandle.Dispose();
-			}
-		}
+        public void Dispose()
+        {
+            Dispose(true);
+            global::System.GC.SuppressFinalize(this);
+        }
 
-		public void Dispose()
-		{
-			Dispose(true);
-			global::System.GC.SuppressFinalize(this);
-		}
-
-		~LuaKernel()
-		{
-			Dispose(false);
-		}
-	}
+        ~LuaKernel()
+        {
+            Dispose(false);
+        }
+    }
 }

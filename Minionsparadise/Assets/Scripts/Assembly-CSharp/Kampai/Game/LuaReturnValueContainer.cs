@@ -1,3 +1,6 @@
+using MoonSharp.Interpreter;
+using System.Collections.Generic;
+
 namespace Kampai.Game
 {
 	internal sealed class LuaReturnValueContainer : global::Kampai.Game.ReturnValueContainer
@@ -17,45 +20,40 @@ namespace Kampai.Game
 			keyValues.Clear();
 		}
 
-		public int PushToStack(global::Kampai.Wrappers.LuaState L)
+		public DynValue ToDynValue()
 		{
 			switch (base.type)
 			{
 			case global::Kampai.Game.ReturnValueContainer.ValueType.Number:
-				L.lua_pushnumber(numberValue);
-				return 1;
+				return DynValue.NewNumber(numberValue);
 			case global::Kampai.Game.ReturnValueContainer.ValueType.String:
-				L.lua_pushstring(stringValue);
-				return 1;
+				return DynValue.NewString(stringValue);
 			case global::Kampai.Game.ReturnValueContainer.ValueType.Boolean:
-				L.lua_pushboolean(boolValue);
-				return 1;
+				return DynValue.NewBoolean(boolValue);
 			case global::Kampai.Game.ReturnValueContainer.ValueType.Nil:
-				L.lua_pushnil();
-				return 1;
+				return DynValue.Nil;
 			case global::Kampai.Game.ReturnValueContainer.ValueType.Dictionary:
-				return PushDictionary(L);
+				return ToDictionaryDynValue();
 			case global::Kampai.Game.ReturnValueContainer.ValueType.Array:
-				return PushArray(L);
+				return ToArrayDynValue();
 			case global::Kampai.Game.ReturnValueContainer.ValueType.Void:
-				return 0;
+				return DynValue.Void;
 			default:
-				logger.Error("LuaReturnValueContainer: Don't know how to push {0} onto stack.", global::System.Enum.GetName(typeof(global::Kampai.Game.ReturnValueContainer.ValueType), base.type));
-				return 0;
+				logger.Error("LuaReturnValueContainer: Don't know how to convert {0} to DynValue.", global::System.Enum.GetName(typeof(global::Kampai.Game.ReturnValueContainer.ValueType), base.type));
+				return DynValue.Void;
 			}
 		}
 
-		public int PushArrayValuesToStack(global::Kampai.Wrappers.LuaState L)
+		public DynValue[] ToDynValueArray()
 		{
 			int count = arrayIndices.Count;
+			DynValue[] result = new DynValue[count];
 			for (int i = 0; i < count; i++)
 			{
-				if (arrayIndices[i].PushToStack(L) == 0)
-				{
-					L.lua_pushnil();
-				}
+				DynValue dv = arrayIndices[i].ToDynValue();
+				result[i] = dv.IsVoid() ? DynValue.Nil : dv;
 			}
-			return count;
+			return result;
 		}
 
 		protected override global::Kampai.Game.ReturnValueContainer GetContainerForKey(string key)
@@ -87,33 +85,27 @@ namespace Kampai.Game
 			arrayIndices.Clear();
 		}
 
-		private int PushDictionary(global::Kampai.Wrappers.LuaState L)
+		private DynValue ToDictionaryDynValue()
 		{
-			L.lua_createtable(0, keyValues.Count);
+			Table table = new Table(null);
 			foreach (global::System.Collections.Generic.KeyValuePair<string, global::Kampai.Game.LuaReturnValueContainer> keyValue in keyValues)
 			{
-				if (keyValue.Value.PushToStack(L) == 0)
-				{
-					L.lua_pushnil();
-				}
-				L.lua_setfield(-2, keyValue.Key);
+				DynValue dv = keyValue.Value.ToDynValue();
+				table.Set(keyValue.Key, dv.IsVoid() ? DynValue.Nil : dv);
 			}
-			return 1;
+			return DynValue.NewTable(table);
 		}
 
-		private int PushArray(global::Kampai.Wrappers.LuaState L)
+		private DynValue ToArrayDynValue()
 		{
 			int count = arrayIndices.Count;
-			L.lua_createtable(count, 0);
+			Table table = new Table(null);
 			for (int i = 0; i < count; i++)
 			{
-				if (arrayIndices[i].PushToStack(L) == 0)
-				{
-					L.lua_pushnil();
-				}
-				L.lua_rawseti(-2, i + 1);
+				DynValue dv = arrayIndices[i].ToDynValue();
+				table.Set(i + 1, dv.IsVoid() ? DynValue.Nil : dv);
 			}
-			return 1;
+			return DynValue.NewTable(table);
 		}
 	}
 }
