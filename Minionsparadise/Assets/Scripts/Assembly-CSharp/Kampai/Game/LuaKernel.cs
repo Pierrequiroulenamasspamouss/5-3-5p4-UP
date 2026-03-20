@@ -16,7 +16,8 @@ namespace Kampai.Game
         [PostConstruct]
         public void PostConstruct()
         {
-            _logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: Initializing Shared MoonSharp engine...");
+            _logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: --- INITIALIZING LUA KERNEL ---");
+            _logger.Info("LuaKernel: Instance HashCode: {0}", GetHashCode());
             
             SharedScript = new Script();
             QSTable = new Table(SharedScript);
@@ -25,7 +26,11 @@ namespace Kampai.Game
             // Set up __index proxies that call back into the active runner
             DynValue qsIndex = DynValue.NewCallback((ctx, args) => {
                 string key = args.AsType(1, "__index", DataType.String).String;
-                return LuaScriptRunner.InvokeApiGlobal("qs", key, args);
+                DynValue val = LuaScriptRunner.InvokeApiGlobal("qs", key, args);
+                if (val.IsNil()) {
+                    return SharedScript.Globals.Get(key);
+                }
+                return val;
             });
             Table qsMeta = new Table(SharedScript);
             qsMeta.Set("__index", qsIndex);
@@ -63,6 +68,16 @@ namespace Kampai.Game
             }
 
             _logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "LuaKernel: MoonSharp Engine Ready.");
+        }
+
+        public void LogGlobals()
+        {
+            _logger.Info("LuaKernel: --- GLOBAL STATE DUMP ---");
+            foreach (var key in SharedScript.Globals.Keys)
+            {
+                _logger.Info("LuaKernel: Global [{0}] = {1}", key, SharedScript.Globals[key]);
+            }
+            _logger.Info("LuaKernel: -----------------------");
         }
 
         public bool HasApiFunction(string name)

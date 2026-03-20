@@ -23,21 +23,25 @@ namespace Kampai.Game
 		// So `args.AsType(index - 1, DataType.Number)` is correct for 1-based indices.
 		public int GetInt(int index)
 		{
+			if (index > Length || args[index - 1].IsNil()) return 0;
 			return (int)args.AsType(index - 1, _methodName, DataType.Number).Number;
 		}
 
 		public float GetFloat(int index)
 		{
+			if (index > Length || args[index - 1].IsNil()) return 0f;
 			return (float)args.AsType(index - 1, _methodName, DataType.Number).Number;
 		}
 
 		public string GetString(int index)
 		{
+			if (index > Length || args[index - 1].IsNil()) return string.Empty;
 			return args.AsType(index - 1, _methodName, DataType.String).String;
 		}
 
 		public bool GetBoolean(int index)
 		{
+			if (index > Length || args[index - 1].IsNil()) return false;
 			return args.AsType(index - 1, _methodName, DataType.Boolean).Boolean;
 		}
 
