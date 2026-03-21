@@ -63,8 +63,8 @@ namespace Kampai.Util
 				injectionBinder.Bind<global::Kampai.Main.ILocalizationService>().To<global::Kampai.Main.HALService>().ToName(global::Kampai.Main.LocalizationServices.EVENT)
 					.CrossContext()
 					.ToSingleton();
-				injectionBinder.Bind<global::Kampai.Main.IAssetBundlesService>().To<global::Kampai.Main.AssetBundlesService>().ToSingleton()
-					.CrossContext();
+
+
 				injectionBinder.Bind<global::Kampai.Main.ILocalContentService>().To<global::Kampai.Main.LocalContentService>().ToSingleton()
 					.CrossContext();
 				injectionBinder.Bind<global::Kampai.Main.IAssetsPreloadService>().To<global::Kampai.Main.AssetsPreloadService>().CrossContext()

@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Temp\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_3_5;UNITY_5_3;UNITY_5;ENABLE_NEW_BUGREPORTER;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_SPRITE_POLYGON;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;ENABLE_LOCALIZATION;ENABLE_ANDROID_ATLAS_ETC1_COMPRESSION;ENABLE_EDITOR_TESTS_RUNNER;UNITY_ANDROID;UNITY_ANDROID_API;ENABLE_SUBSTANCE;ENABLE_TEXTUREID_MAP;ENABLE_EGL;ENABLE_NETWORK;ENABLE_RUNTIME_GI;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_LOG_MIXED_STACKTRACE;ENABLE_UNITYWEBREQUEST;PLATFORM_SUPPORTS_ADS_ID;ENABLE_UNITYADS_RUNTIME;UNITY_UNITYADS_API;ENABLE_MONO;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_3_5;UNITY_5_3;UNITY_5;ENABLE_NEW_BUGREPORTER;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_SPRITE_POLYGON;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;ENABLE_LOCALIZATION;ENABLE_ANDROID_ATLAS_ETC1_COMPRESSION;ENABLE_EDITOR_TESTS_RUNNER;UNITY_ANDROID;UNITY_ANDROID_API;ENABLE_SUBSTANCE;ENABLE_TEXTUREID_MAP;ENABLE_EGL;ENABLE_NETWORK;ENABLE_RUNTIME_GI;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_LOG_MIXED_STACKTRACE;ENABLE_UNITYWEBREQUEST;PLATFORM_SUPPORTS_ADS_ID;ENABLE_UNITYADS_RUNTIME;UNITY_UNITYADS_API;ENABLE_MONO;ENABLE_PROFILER;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
@@ -2414,7 +2414,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\ZoomableBuildingDefinition.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\AppStartCompleteCommand.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\AppStartCompleteSignal.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\AssetBundlesService.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\AssetsPreloadList.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\AssetsPreloadService.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\CheckDLCTierCommand.cs" />
@@ -2434,7 +2433,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\HindsightContentRequestCommand.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\HindsightContentRequestSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\HindsightService.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\IAssetBundlesService.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\IAssetsPreloadService.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\IHindsightService.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\ILocalContentService.cs" />
@@ -2450,8 +2448,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LoadDevicePrefsSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LoadLocalizationServiceCommand.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LoadLocalizationServiceSignal.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LoadSharedBundlesCommand.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LoadSharedBundlesSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LoadState.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LoadStateType.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LocalContentService.cs" />
@@ -3506,7 +3502,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\Boxed.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\Bresenham.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\BuildingPacksHelper.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\BundleInfo.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\ChangeShaderQueue.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\ClientHealthUtil.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\ClientVersion.cs" />
@@ -3644,7 +3639,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\PathFinder.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\PetsLogoLocalizer.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\Point.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\PreinstallBundles.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\Prestigable.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\QualityHelper.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\QuantityItem.cs" />

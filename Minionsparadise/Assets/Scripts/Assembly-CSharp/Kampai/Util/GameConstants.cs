@@ -3075,9 +3075,9 @@ namespace Kampai.Util
 
 		public const ulong APPROX_VIDEO_SIZE = 5242880uL;
 
-		public const string BUNDLED_RESOURCE_MANIFEST_PATH = "Manifest";
+		public const string DLC_RESOURCE_MANIFEST_PATH = "Manifest";
 
-		public const string PACKAGED_ASSET_BUNDLES_PATH = "PackagedAssetBundlesManifest";
+		public const string PACKAGED_DLC_ASSETS_PATH = "PackagedAssetBundlesManifest";
 
 		public const string PREINSTALLED_LOC_TEXT_PATH = "Loc_Text_Preinstalled/";
 
@@ -3107,7 +3107,7 @@ namespace Kampai.Util
 
 		public static readonly string RESOURCE_MANIFEST_PATH = PERSISTENT_DATA_PATH + "/DLC_Manifest.json";
 
-		public static readonly string PREINSTALL_JSON_PATH = global::UnityEngine.Application.dataPath + "/Content/Resources/PreinstalledBundles.json";
+		public static readonly string PREINSTALL_DLC_MANIFEST_PATH = global::UnityEngine.Application.dataPath + "/Content/Resources/PreinstalledBundles.json";
 
 		public static readonly string PRE_INSTALLED_DLC_PATH = global::UnityEngine.Application.streamingAssetsPath + "/DLC/";
 
