@@ -1,1 +1,0 @@
-public delegate void SynergyRequestPreparingCallback(NimbleBridge_SynergyRequest request);

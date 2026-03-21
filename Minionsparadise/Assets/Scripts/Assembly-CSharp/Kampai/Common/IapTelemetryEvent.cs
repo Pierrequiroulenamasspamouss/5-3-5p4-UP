@@ -18,11 +18,11 @@ namespace Kampai.Common
 
 		public string googleOrderId = string.Empty;
 
-		public uint nimbleMtxErrorCode;
+		public uint mtxErrorCode;
 
 		public override string ToString()
 		{
-			return string.Format("IapTelemetryEvent: productId = {0}, productPrice = {1}, currency = {2},\nappleReceipt = {3}, appleTransactionId = {4}, googlePurchaseData = {5}, googleDataSignature = {6}, nimbleMtxErrorCode = {7}", productId, productPrice, currency, appleReceipt, appleTransactionId, googlePurchaseData, googleDataSignature, nimbleMtxErrorCode);
+			return string.Format("IapTelemetryEvent: productId = {0}, productPrice = {1}, currency = {2},\nappleReceipt = {3}, appleTransactionId = {4}, googlePurchaseData = {5}, googleDataSignature = {6}, mtxErrorCode = {7}", productId, productPrice, currency, appleReceipt, appleTransactionId, googlePurchaseData, googleDataSignature, mtxErrorCode);
 		}
 	}
 }

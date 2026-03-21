@@ -178,10 +178,10 @@ namespace Kampai.Game
 			}
 			if (!string.IsNullOrEmpty(synergyID) && !synergyID.Equals(userID))
 			{
-				logger.Debug("SynergyIds don't match oops, changing them, old SynergyID = {0}  new Synergy ID = {1} ", NimbleBridge_SynergyIdManager.GetComponent().GetSynergyId(), synergyID);
-				using (NimbleBridge_SynergyIdManager.GetComponent().Login(synergyID, session.UserID))
-				{
-				}
+				logger.Debug("SynergyIds don't match oops, changing them (Nimble disabled), old SynergyID = {0}  new Synergy ID = {1} ", userID, synergyID);
+				// using (NimbleBridge_SynergyIdManager.GetComponent().Login(synergyID, session.UserID))
+				// {
+				// }
 			}
 		}
 	}

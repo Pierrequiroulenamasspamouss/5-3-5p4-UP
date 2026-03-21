@@ -2,7 +2,7 @@ namespace Kampai.Common
 {
 	public class ReInitializeGameCommand : global::strange.extensions.command.impl.Command
 	{
-		private static readonly global::System.Collections.Generic.IList<string> DO_NOT_DESTROY_GOS = new global::System.Collections.Generic.List<string> { "NimbleCallbackHelper", "UnityFacebookSDKPlugin", "PlayGames_QueueRunner" };
+		private static readonly global::System.Collections.Generic.IList<string> DO_NOT_DESTROY_GOS = new global::System.Collections.Generic.List<string> { "UnityFacebookSDKPlugin", "PlayGames_QueueRunner" };
 
 		[Inject]
 		public string levelToLoad { get; set; }

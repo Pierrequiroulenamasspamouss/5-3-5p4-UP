@@ -71,7 +71,7 @@ namespace Kampai.Splash
 
 		private const int MAX_CONCURRENT_REQUESTS = 5;
 
-		private static readonly string NATIVE_CLASS = string.Format("com.ea.gp.minions.nimble.{0}", typeof(global::Kampai.Splash.BackgroundDownloadDlcService).Name);
+		private static readonly string NATIVE_CLASS = string.Format("com.ea.gp.minions.{0}", typeof(global::Kampai.Splash.BackgroundDownloadDlcService).Name);
 
 		public global::Kampai.Util.IKampaiLogger logger = global::Elevation.Logging.LogManager.GetClassLogger("BackgroundDownloadDlcService") as global::Kampai.Util.IKampaiLogger;
 
@@ -224,7 +224,7 @@ namespace Kampai.Splash
 #if !UNITY_EDITOR && UNITY_ANDROID
     try 
     {
-        nativeService = new global::UnityEngine.AndroidJavaClass("com.ea.gp.minions.nimble.BackgroundDownloadDlcService");
+        nativeService = new global::UnityEngine.AndroidJavaClass("com.ea.gp.minions.BackgroundDownloadDlcService");
         requestHeaders = new global::UnityEngine.AndroidJavaObject("java.util.HashMap");
         
         foreach (global::System.Collections.Generic.KeyValuePair<string, string> item in dictionary2)

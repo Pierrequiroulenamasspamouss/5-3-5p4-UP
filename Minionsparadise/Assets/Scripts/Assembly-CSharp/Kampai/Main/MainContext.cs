@@ -181,7 +181,7 @@ namespace Kampai.Main
 			base.commandBinder.Bind<global::Kampai.Game.RestoreMtxPurchaseSignal>().To<global::Kampai.Game.Mtx.RestoreMtxPurchaseCommand>();
 			injectionBinder.Bind<global::Kampai.Game.FinishPremiumPurchaseSignal>().ToSingleton().CrossContext()
 				.Weak();
-			injectionBinder.Bind<global::Kampai.Game.ICurrencyService>().To<global::Kampai.Game.NimbleCurrencyService>().ToSingleton()
+			injectionBinder.Bind<global::Kampai.Game.ICurrencyService>().To<global::Kampai.Game.DummyCurrencyService>().ToSingleton()
 				.CrossContext();
 			injectionBinder.Bind<global::Kampai.Main.SupersonicVideoAdAvailabilityChangedSignal>().CrossContext().ToSingleton();
 			injectionBinder.Bind<global::Kampai.Main.SupersonicVideoAdShowSignal>().CrossContext().ToSingleton();
@@ -219,7 +219,7 @@ namespace Kampai.Main
 			base.commandBinder.Bind<global::Kampai.Main.SetupSupersonicSignal>().To<global::Kampai.Common.SetupSupersonicCommand>();
 			base.commandBinder.Bind<global::Kampai.Game.CheckUpgradeSignal>().To<global::Kampai.Game.CheckUpgradeCommand>();
 			base.commandBinder.Bind<global::Kampai.Game.KillSwitchChangedSignal>().To<global::Kampai.Game.KillSwitchChangedCommand>();
-			base.commandBinder.Bind<global::Kampai.Game.NimbleOTSignal>().To<global::Kampai.Game.NimbleOTCommand>();
+			// NimbleOTCommand binding removed
 			base.commandBinder.Bind<global::Kampai.Game.ReloadConfigurationsPeriodicSignal>().To<ReloadConfigurationsPeriodicCommand>();
 			base.commandBinder.Bind<global::Kampai.Main.SetupNativeAlertManagerSignal>().To<global::Kampai.Common.Controller.SetupNativeAlertManagerCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowClientUpgradeDialogSignal>().To<global::Kampai.UI.Controller.ShowClientUpgradeDialogCommand>();

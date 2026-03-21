@@ -51,8 +51,7 @@ namespace Kampai.Main
 		[Inject]
 		public global::Kampai.Splash.DLCModel dlcModel { get; set; }
 
-		[Inject]
-		public global::Kampai.Game.NimbleOTSignal nimbleOTSignal { get; set; }
+		// NimbleOTSignal injection removed
 
 		[Inject]
 		public global::Kampai.Util.ICoroutineProgressMonitor coroutineProgressMonitor { get; set; }
@@ -142,7 +141,7 @@ namespace Kampai.Main
 			logger.EventStart("MainCompleteCommand.LoadUI");
 			autoSavePlayerSignal.Dispatch();
 			reloadConfigs.Dispatch();
-			nimbleOTSignal.Dispatch();
+			// nimbleOTSignal.Dispatch();
 			clientHealthService.MarkMeterEvent("AppFlow.AppStart");
 			telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("100 - Load Complete", playerService.SWRVEGroup, dlcService.GetDownloadQualityLevel());
 			loadDevicePrefsSignal.Dispatch();
