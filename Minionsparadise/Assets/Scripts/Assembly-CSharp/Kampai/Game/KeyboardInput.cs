@@ -34,7 +34,7 @@ namespace Kampai.Game
 				{
 					input |= 1;
 				}
-				if (global::UnityEngine.Mathf.Abs(global::UnityEngine.Input.GetAxis("Mouse ScrollWheel")) * global::UnityEngine.Time.deltaTime > 0f)
+				if (global::UnityEngine.Mathf.Abs(global::UnityEngine.Input.GetAxis("Mouse ScrollWheel")) > 0f)
 				{
 					input |= 2;
 				}

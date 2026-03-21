@@ -328,7 +328,8 @@ namespace Kampai.Splash
 #if !UNITY_EDITOR
                 if (nativeService == null)
                 {
-                    logger.Error("[BDLC] Cannot process queue: nativeService is null");
+                    logger.Error("[BDLC] Cannot process queue: nativeService is null. Stopping service.");
+                    isRunning = false;
                     return false;
                 }
 #endif

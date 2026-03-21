@@ -56,7 +56,9 @@ namespace Kampai.Main
 			telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("30 - Loaded DLC Manifest", playerService.SWRVEGroup, dlcService.GetDownloadQualityLevel());
 			try
 			{
+				logger.Info("PostDownloadManifestCommand dispatching setupManifestSignal");
 				setupManifestSignal.Dispatch();
+				logger.Info("PostDownloadManifestCommand setupManifestSignal dispatched");
 			}
 			catch (global::Kampai.Util.FatalException ex)
 			{
@@ -64,12 +66,15 @@ namespace Kampai.Main
 				return;
 			}
 			global::System.Collections.Generic.IList<global::Kampai.Util.BundleInfo> unstreamablePackagedBundlesList = manifestService.GetUnstreamablePackagedBundlesList();
+			logger.Info("PostDownloadManifestCommand unstreamablePackagedBundlesList count: " + unstreamablePackagedBundlesList.Count);
 			if (unstreamablePackagedBundlesList.Count > 0)
 			{
+				logger.Info("PostDownloadManifestCommand starting CopyStreamingAssets");
 				routineRunner.StartCoroutine(CopyStreamingAssets(unstreamablePackagedBundlesList));
 			}
 			else
 			{
+				logger.Info("PostDownloadManifestCommand calling CompleteManifestDownload");
 				CompleteManifestDownload();
 			}
 		}

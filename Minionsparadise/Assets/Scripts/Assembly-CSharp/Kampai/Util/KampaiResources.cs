@@ -370,7 +370,7 @@ namespace Kampai.Util
 
             return bundleOp;
 #else
-            if (_logger != null) _logger.Debug(string.Format("  - Skipping bundle check (async) for '{0}' on Windows/Editor", path));
+            if (_logger != null) _logger.Debug(string.Format("  - Skipping bundle check (async) for '{0}' on Android/Windows/Editor", path));
             if (onComplete != null) onComplete(null);
             return null;
 #endif
@@ -429,13 +429,19 @@ namespace Kampai.Util
                 }
 #endif
             }
+#endif
 
-            string localKey = Path.GetFileName(path);
+            string localKey = global::System.IO.Path.GetFileName(path);
             if (_localContentService != null && _localContentService.IsLocalAsset(localKey))
             {
                 resolvedPath = _localContentService.GetAssetPath(localKey);
                 return true;
             }
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+            // On Android with bundles disabled, we might want to try Resources.Load directly as a fallback
+            resolvedPath = path; 
+            return true;
 #endif
             return false;
         }

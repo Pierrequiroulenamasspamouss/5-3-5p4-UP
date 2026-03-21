@@ -155,7 +155,7 @@ namespace Kampai.Game.View
 					velocity = global::UnityEngine.Vector3.zero;
 				}
 			}
-			float num = velocity.y / totalPixels;
+			float num = (velocity.y / totalPixels) * global::UnityEngine.Time.deltaTime * 30f;
 			fraction += num;
 			fraction = global::UnityEngine.Mathf.Clamp(fraction, cameraDefinition.MaxZoomOutLevel, cameraDefinition.MaxZoomInLevel);
 			base.transform.eulerAngles = new global::UnityEngine.Vector3(rotationEaseFunction(fraction, 55f, -30f, 1f), base.transform.eulerAngles.y, base.transform.eulerAngles.z);
@@ -180,7 +180,7 @@ namespace Kampai.Game.View
 
 		public virtual void Decay()
 		{
-			velocity *= decayAmount;
+			velocity *= global::UnityEngine.Mathf.Pow(decayAmount, global::UnityEngine.Time.deltaTime * 30f);
 		}
 
 		public virtual void SetupAutoZoom(float zoomTo)

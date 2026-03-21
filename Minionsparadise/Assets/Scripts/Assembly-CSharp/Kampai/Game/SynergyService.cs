@@ -9,7 +9,7 @@ namespace Kampai.Game
 		{
 			get
 			{
-				return string.Empty;
+				return global::UnityEngine.SystemInfo.deviceUniqueIdentifier;
 			}
 		}
 	}
