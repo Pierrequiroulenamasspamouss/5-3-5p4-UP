@@ -18,12 +18,14 @@ public class AndroidAgent : SupersonicIAgent
 	public void start()
 	{
 #if UNITY_ANDROID && !UNITY_EDITOR
-		global::UnityEngine.Debug.Log("Android started");
+		global::UnityEngine.Debug.Log("Android started - DISABLING SUPERSONIC BRIDGE");
+		/*
 		using (global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass(AndroidBridge))
 		{
 			_androidBridge = androidJavaClass.CallStatic<global::UnityEngine.AndroidJavaObject>("getInstance", new object[0]);
 		}
 		_androidBridge.Call("setPluginData", "Unity", Supersonic.pluginVersion(), Supersonic.unityVersion());
+		*/
 		global::UnityEngine.Debug.Log("Android started - ended");
 #endif
 	}

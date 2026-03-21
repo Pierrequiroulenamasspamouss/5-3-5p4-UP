@@ -138,7 +138,7 @@ namespace Kampai.Common.Service.Audio
 			logger.Debug("Starting Load of Audio Assets from Bundles");
 			allBanksAsyncSW = global::System.Diagnostics.Stopwatch.StartNew();
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN
-			logger.Debug("LoadAllFromAssetBundles: Skipping DLC audio bundle loading on Windows/Editor. Banks will be loaded from StreamingAssets/FMOD.");
+			logger.Debug("LoadAllFromAssetBundles: Skipping DLC audio bundle loading. Banks will be loaded from StreamingAssets/FMOD.");
 			StartAsyncBankLoadingProcessing();
 #else
 			foreach (string audioBundle in _manifestService.GetAudioBundles())
@@ -436,7 +436,12 @@ namespace Kampai.Common.Service.Audio
 		private string GetRawAssetPathByOriginalName(string bundleName)
 		{
 			string bundleLocation = _manifestService.GetBundleLocation(bundleName);
-			return global::System.IO.Path.Combine(bundleLocation, bundleName + ".unity3d");
+			string path = global::System.IO.Path.Combine(bundleLocation, bundleName + ".unity3d");
+			if (global::System.IO.File.Exists(path))
+			{
+				return path;
+			}
+			return global::System.IO.Path.Combine(bundleLocation, bundleName);
 		}
 
 		private global::System.Collections.IEnumerator LoadMapsFromFileSystem()

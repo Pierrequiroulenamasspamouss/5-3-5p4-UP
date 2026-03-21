@@ -29,6 +29,7 @@ namespace Kampai.Game
 
 		public override void Execute()
 		{
+			logger.Info("LoginUserCommand.Execute started");
 			logger.EventStart("LoginUserCommand.Execute");
 			string text = LocalPersistService.GetData("UserID");
 			string text2 = LocalPersistService.GetData("AnonymousSecret");

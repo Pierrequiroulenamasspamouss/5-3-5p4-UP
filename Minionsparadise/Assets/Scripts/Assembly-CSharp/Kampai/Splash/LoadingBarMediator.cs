@@ -85,6 +85,10 @@ namespace Kampai.Splash
 			}
 			timeRemaining = time;
 			timeTarget = time;
+			if (time <= 0f)
+			{
+				current = this.target;
+			}
 		}
 
 		private void OnSetSplashProgress(float progress)

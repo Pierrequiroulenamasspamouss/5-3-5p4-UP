@@ -36,9 +36,16 @@ namespace Kampai.Common
 
 		public void GenerateMasterManifest()
 		{
+			logger.Info("ManifestService.GenerateMasterManifest starting");
 			Clear();
 #if !UNITY_WEBPLAYER
-			if (!global::System.IO.File.Exists(global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH) || new global::System.IO.FileInfo(global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH).Length == 0L)
+			if (!global::System.IO.File.Exists(global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH))
+			{
+				logger.Warning("ManifestService.GenerateMasterManifest: manifest file NOT found at {0}", global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH);
+				return;
+			}
+			logger.Info("ManifestService.GenerateMasterManifest: manifest file found at {0}", global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH);
+			if (new global::System.IO.FileInfo(global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH).Length == 0L)
 			{
 				throw new global::Kampai.Util.FatalException(global::Kampai.Util.FatalCode.GS_ERROR_BAD_MANIFEST, 1, "Read empty manifest");
 			}
@@ -51,7 +58,9 @@ namespace Kampai.Common
 			try
 			{
 #if !UNITY_WEBPLAYER
+				logger.Info("ManifestService.GenerateMasterManifest: about to deserialize manifest");
 				manifestObject = global::Kampai.Util.FastJSONDeserializer.DeserializeFromFile<global::Kampai.Util.ManifestObject>(global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH);
+				logger.Info("ManifestService.GenerateMasterManifest: deserialization complete");
 #endif
 			}
 			catch (global::Newtonsoft.Json.JsonReaderException ex)
@@ -97,7 +106,9 @@ namespace Kampai.Common
 			{
 				throw new global::Kampai.Util.FatalException(global::Kampai.Util.FatalCode.GS_ERROR_BAD_MANIFEST, 5, "Null dlcURL in manifest");
 			}
+			logger.Info("ManifestService.GenerateMasterManifest: building bundled assets lookup");
 			buildBundledAssetsLookup();
+			logger.Info("ManifestService.GenerateMasterManifest: finished");
 		}
 
 		private global::Kampai.Util.BundleInfo AddBundle(global::Kampai.Util.BundleInfo bundle)

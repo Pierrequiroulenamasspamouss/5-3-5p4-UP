@@ -6,7 +6,7 @@ namespace Kampai.Game.View
 
 		protected override bool IsInputDone()
 		{
-			if (global::UnityEngine.Mathf.Abs(global::UnityEngine.Input.GetAxis("Mouse ScrollWheel")) * global::UnityEngine.Time.deltaTime < 1E-07f)
+			if (global::UnityEngine.Mathf.Abs(global::UnityEngine.Input.GetAxis("Mouse ScrollWheel")) < 1E-07f)
 			{
 				frameCount++;
 			}
