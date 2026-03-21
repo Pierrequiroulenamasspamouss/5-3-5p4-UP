@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Temp\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_3_5;UNITY_5_3;UNITY_5;ENABLE_NEW_BUGREPORTER;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_SPRITE_POLYGON;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;ENABLE_LOCALIZATION;ENABLE_ANDROID_ATLAS_ETC1_COMPRESSION;ENABLE_EDITOR_TESTS_RUNNER;UNITY_ANDROID;UNITY_ANDROID_API;ENABLE_SUBSTANCE;ENABLE_TEXTUREID_MAP;ENABLE_EGL;ENABLE_NETWORK;ENABLE_RUNTIME_GI;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_LOG_MIXED_STACKTRACE;ENABLE_UNITYWEBREQUEST;PLATFORM_SUPPORTS_ADS_ID;ENABLE_UNITYADS_RUNTIME;UNITY_UNITYADS_API;ENABLE_MONO;ENABLE_PROFILER;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_3_5;UNITY_5_3;UNITY_5;ENABLE_NEW_BUGREPORTER;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_SPRITE_POLYGON;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;ENABLE_LOCALIZATION;ENABLE_ANDROID_ATLAS_ETC1_COMPRESSION;ENABLE_EDITOR_TESTS_RUNNER;UNITY_ANDROID;UNITY_ANDROID_API;ENABLE_SUBSTANCE;ENABLE_TEXTUREID_MAP;ENABLE_EGL;ENABLE_NETWORK;ENABLE_RUNTIME_GI;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_LOG_MIXED_STACKTRACE;ENABLE_UNITYWEBREQUEST;PLATFORM_SUPPORTS_ADS_ID;ENABLE_UNITYADS_RUNTIME;UNITY_UNITYADS_API;ENABLE_MONO;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
@@ -67,8 +67,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\AnimationTest.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\AppTrackerView.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\AutoSavePlayerStateCommand.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\BridgeNetworkConnectionCallback.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\BridgeSynergyNetworkConnectionCallback.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\BuildingLiftCameraView.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\BuildingType.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\BuildingUtil.cs" />
@@ -105,8 +103,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Ea\Sharkbite\HttpPlugin\Http\Impl\DefaultRequestFactory.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Ea\Sharkbite\HttpPlugin\Http\Impl\DefaultResponse.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Ea\Sharkbite\HttpPlugin\Http\Impl\FileDownloadResponse.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Ea\Sharkbite\HttpPlugin\Http\Impl\NimbleRequest.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Ea\Sharkbite\HttpPlugin\Http\Impl\NimbleRequestFactory.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\EdwardMinionHandsTinyBushViewObject.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Elevation\Collections\Generic\LockFreeQueue.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Elevation\Logging\DefaultLogger.cs" />
@@ -504,7 +500,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Common\NetworkConnectionLostSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Common\NetworkModel.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Common\NetworkTypeChangedSignal.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Common\NimbleTelemetrySender.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Common\OpenRateAppPageCommand.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Common\ParameterName.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Common\PickControllerModel.cs" />
@@ -924,6 +919,7 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DropItemDefinition.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DropLevelBandDefinition.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DropType.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DummyCurrencyService.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DynamicIngredientsDefinition.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DynamicMasterPlanDefinition.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DynamicQuestDefinition.cs" />
@@ -1439,9 +1435,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\NamedCharacterType.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\NetworkLostCloseSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\NetworkLostOpenSignal.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\NimbleCurrencyService.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\NimbleOTCommand.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\NimbleOTSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\NoOpPlot.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\NoOpPlotDefinition.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\Notification.cs" />
@@ -3700,8 +3693,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\LoadDevicePrefsCommand.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\LocalPersistanceService.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\LoginWhiteboxUserCommand.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\MTXRefreshReceiptCallback.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\MTXTransactionCallback.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\MarketplaceUtil.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\MarshalUtility.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\MasterPlanUtil.cs" />
@@ -3712,45 +3703,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\MinionStateAudioArgs.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\MinionUtil.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\MuteMusicBusCommand.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NetworkConnectionCallback.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_ApplicationEnvironment.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_Base.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_CallbackHelper.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_Data.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_Error.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_Global.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_HttpRequest.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_HttpResponse.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_Log.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_LogSource.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_MTX.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_MTXCatalogItem.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_MTXError.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_MTXTransaction.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_Map.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_MockDataStorage.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_Network.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_NetworkConnectionHandle.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_NotificationCenter.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_NotificationListener.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_OperationalTelemetryDispatch.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_OperationalTelemetryEvent.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_Persistence.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_PersistenceService.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_PushTNG.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_SynergyEnvironment.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_SynergyIdManager.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_SynergyIdManagerError.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_SynergyNetwork.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_SynergyNetworkConnectionHandle.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_SynergyRequest.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_SynergyResponse.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_Tracking.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_TrackingConstants.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_TrackingS2S.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_TrackingSynergy.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NimbleBridge_Utility.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\NotificationCallback.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\OpenMinionUpgradeBuildingCommand.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\OpenVillainLairPortalBuildingCommand.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\OpenVillainLairResourcePlotBuildingCommand.cs" />
@@ -3845,8 +3797,6 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\SwrveMD5Core.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\SwrveMiniJSON\Json.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\SwrveSDK.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\SynergyNetworkConnectionCallback.cs" />
-     <Compile Include="Assets\Scripts\Assembly-CSharp\SynergyRequestPreparingCallback.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\SynergyTrackingEventKey.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\SynergyTrackingEventType.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\TeslaActivate.cs" />
@@ -4354,7 +4304,6 @@
      <Compile Include="Assets\Scripts\StrangeIoC\strange\framework\impl\SemiBinding.cs" />
      <Compile Include="Assets\Scripts\System.Runtime.CompilerServices.Unsafe\Properties\AssemblyInfo.cs" />
      <Compile Include="Assets\Scripts\System.Runtime.InteropServices\Properties\AssemblyInfo.cs" />
-     <Compile Include="Assets\TestIO.cs" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_101112_pre.txt" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_2000001022_pre.txt" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_3849295_pre.txt" />
@@ -4365,6 +4314,7 @@
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_31068_pre.txt" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_3849294_step_1_post.txt" />
      <None Include="Assets\Shader\camera_vignette.shader" />
+     <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_333112_pre.txt" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_31048_pre.txt" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_101131_pre.txt" />

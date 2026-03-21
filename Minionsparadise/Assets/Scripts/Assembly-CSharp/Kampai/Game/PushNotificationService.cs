@@ -10,10 +10,10 @@ namespace Kampai.Game
 		{
 			if (!pushTngInitialized)
 			{
-				double dateOfBirthSecondsUnixEpoch = GetDateOfBirthSecondsUnixEpoch(birthdateYear, birthdateMonth);
-				bool flag = !global::Kampai.Util.GameConstants.StaticConfig.PUSHTNG_USE_PROD_APNS_CERT;
-				logger.Debug("[PN] PushNotificationService: call NimbleBridge_PushTNG.Start: userAlias: {0}, dateOfBirth Unix epoch: {1}(year-month: {2}-{3}), iOSSanbox: {4}", userAlias, dateOfBirthSecondsUnixEpoch, birthdateYear, birthdateMonth, flag);
-				NimbleBridge_PushTNG.GetComponent().Start(userAlias, dateOfBirthSecondsUnixEpoch, flag);
+				// double dateOfBirthSecondsUnixEpoch = GetDateOfBirthSecondsUnixEpoch(birthdateYear, birthdateMonth);
+				// bool flag = !global::Kampai.Util.GameConstants.StaticConfig.PUSHTNG_USE_PROD_APNS_CERT;
+				logger.Debug("[PN] PushNotificationService: NimbleBridge_PushTNG.Start skipped (Nimble disabled): userAlias: {0}", userAlias);
+				// NimbleBridge_PushTNG.GetComponent().Start(userAlias, dateOfBirthSecondsUnixEpoch, flag);
 				pushTngInitialized = true;
 			}
 			else

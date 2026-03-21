@@ -16,8 +16,7 @@ namespace Kampai.Game
 		[Inject]
 		public global::Kampai.Common.ITelemetryService telemetryService { get; set; }
 
-		[Inject]
-		public global::Kampai.Common.NimbleTelemetrySender nimbleTelemetryService { get; set; }
+		// NimbleTelemetrySender injection removed
 
 		public override void Execute()
 		{
@@ -31,7 +30,7 @@ namespace Kampai.Game
 				logger.Info("#                  SYNERGY KillSwitch ON                                                                                                                                              #");
 				logger.Info("#                                                                                                                                                                                     #");
 				logger.Info("=======================================================================================================================================================================================");
-				telemetryService.SharingUsage(nimbleTelemetryService, false);
+				// telemetryService.SharingUsage(nimbleTelemetryService, false);
 			}
 			else
 			{
@@ -41,7 +40,7 @@ namespace Kampai.Game
 				logger.Info("#                  SYNERGY KillSwitch OFF                                                                                                                                             #");
 				logger.Info("#                                                                                                                                                                                     #");
 				logger.Info("=======================================================================================================================================================================================");
-				telemetryService.SharingUsage(nimbleTelemetryService, true);
+				// telemetryService.SharingUsage(nimbleTelemetryService, true);
 			}
 		}
 	}

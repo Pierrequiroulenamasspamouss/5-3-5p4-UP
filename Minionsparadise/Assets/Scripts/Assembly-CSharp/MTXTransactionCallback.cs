@@ -1,1 +1,0 @@
-public delegate void MTXTransactionCallback(NimbleBridge_MTXTransaction transaction);

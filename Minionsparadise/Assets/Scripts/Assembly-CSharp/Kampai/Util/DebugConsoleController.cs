@@ -644,10 +644,9 @@ namespace Kampai.Util
 			}
 		}
 
-		[global::Kampai.Util.DebugCommand]
 		public void Telemetry(string[] args)
 		{
-			telemetryService.Send_Telemetry_EVT_GAME_ERROR_GAMEPLAY("error", "test", true);
+			// telemetryService.Send_Telemetry_EVT_GAME_ERROR_GAMEPLAY("error", "test", true);
 		}
 
 		[global::Kampai.Util.DebugCommand]
@@ -848,10 +847,10 @@ namespace Kampai.Util
 			outBuilder.AppendLine("\tAnonynousID: " + plainText);
 			string userID = facebookService.userID;
 			outBuilder.AppendLine("\tFacebookID: " + userID);
-			string synergyId = NimbleBridge_SynergyIdManager.GetComponent().GetSynergyId();
-			outBuilder.AppendLine("\tSynergyID: " + synergyId);
-			string sdkVersion = NimbleBridge_Base.GetSdkVersion();
-			outBuilder.AppendLine("\tNimbleSDK: " + sdkVersion);
+			// string synergyId = NimbleBridge_SynergyIdManager.GetComponent().GetSynergyId();
+			// outBuilder.AppendLine("\tSynergyID: " + synergyId);
+			// string sdkVersion = NimbleBridge_Base.GetSdkVersion();
+			// outBuilder.AppendLine("\tNimbleSDK: " + sdkVersion);
 			string userID2 = googlePlayService.userID;
 			outBuilder.AppendLine("\tGooglePlayID: " + userID2);
 		}
@@ -1865,7 +1864,7 @@ namespace Kampai.Util
 		{
 			string userSynergyId = args[2];
 			logger.Debug("Logging into synergy");
-			NimbleBridge_SynergyIdManager.GetComponent().Login(userSynergyId, "test");
+			// NimbleBridge_SynergyIdManager.GetComponent().Login(userSynergyId, "test");
 		}
 
 		[global::Kampai.Util.DebugCommand(Name = "purchase a")]

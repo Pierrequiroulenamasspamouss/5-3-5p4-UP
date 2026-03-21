@@ -69,10 +69,17 @@ public class HockeyAppAndroid : global::UnityEngine.MonoBehaviour
 	protected void StartCrashManager(string appID, bool updateManagerEnabled, bool autoSendEnabled, string userID)
 	{
 #if !UNITY_WEBPLAYER && UNITY_ANDROID && !UNITY_EDITOR
-		global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("com.unity3d.player.UnityPlayer");
-		global::UnityEngine.AndroidJavaObject androidJavaObject = androidJavaClass.GetStatic<global::UnityEngine.AndroidJavaObject>("currentActivity");
-		global::UnityEngine.AndroidJavaClass androidJavaClass2 = new global::UnityEngine.AndroidJavaClass("net.hockeyapp.unity.HockeyUnityPlugin");
-		androidJavaClass2.CallStatic("startHockeyAppManager", appID, androidJavaObject, updateManagerEnabled, autoSendEnabled, userID);
+		try
+		{
+			global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("com.unity3d.player.UnityPlayer");
+			global::UnityEngine.AndroidJavaObject androidJavaObject = androidJavaClass.GetStatic<global::UnityEngine.AndroidJavaObject>("currentActivity");
+			global::UnityEngine.AndroidJavaClass androidJavaClass2 = new global::UnityEngine.AndroidJavaClass("net.hockeyapp.unity.HockeyUnityPlugin");
+			androidJavaClass2.CallStatic("startHockeyAppManager", appID, androidJavaObject, updateManagerEnabled, autoSendEnabled, userID);
+		}
+		catch (global::System.Exception ex)
+		{
+			global::UnityEngine.Debug.LogWarning("Failed to initialize HockeyApp crash manager: " + ex.Message);
+		}
 #endif
 	}
 
@@ -80,8 +87,16 @@ public class HockeyAppAndroid : global::UnityEngine.MonoBehaviour
 	{
 		string text = null;
 #if !UNITY_WEBPLAYER && UNITY_ANDROID && !UNITY_EDITOR
-		global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("net.hockeyapp.unity.HockeyUnityPlugin");
-		return androidJavaClass.CallStatic<string>("getAppVersion", new object[0]);
+		try
+		{
+			global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("net.hockeyapp.unity.HockeyUnityPlugin");
+			return androidJavaClass.CallStatic<string>("getAppVersion", new object[0]);
+		}
+		catch (global::System.Exception ex)
+		{
+			global::UnityEngine.Debug.LogWarning("Failed to get HockeyApp version: " + ex.Message);
+			return "1.0.0";
+		}
 #else
 		return "1.0.0";
 #endif
