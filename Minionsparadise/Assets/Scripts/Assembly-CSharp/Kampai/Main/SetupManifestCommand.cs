@@ -6,9 +6,6 @@ namespace Kampai.Main
 		public global::Kampai.Common.IManifestService manifestService { get; set; }
 
 		[Inject]
-		public global::Kampai.Main.IAssetBundlesService assetBundlesService { get; set; }
-
-		[Inject]
 		public global::Kampai.Main.ILocalContentService localContentService { get; set; }
 
 		private global::Kampai.Util.IKampaiLogger logger = global::Elevation.Logging.LogManager.GetClassLogger("SetupManifestCommand") as global::Kampai.Util.IKampaiLogger;
@@ -21,7 +18,6 @@ namespace Kampai.Main
 			global::Kampai.Util.TimeProfiler.EndSection("read manifest");
 			logger.Info("SetupManifestCommand finished GenerateMasterManifest");
 			global::Kampai.Util.KampaiResources.SetManifestService(manifestService);
-			global::Kampai.Util.KampaiResources.SetAssetBundlesService(assetBundlesService);
 			global::Kampai.Util.KampaiResources.SetLocalContentService(localContentService);
 			logger.Info("SetupManifestCommand finished");
 		}

@@ -18,8 +18,7 @@ namespace Kampai.Main
 		[Inject]
 		public global::Kampai.Main.LoadDevicePrefsSignal loadDevicePrefsSignal { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.LoadSharedBundlesSignal bundleSignal { get; set; }
+
 
 		[Inject]
 		public global::Kampai.Common.Service.HealthMetrics.IClientHealthService clientHealthService { get; set; }
@@ -36,8 +35,7 @@ namespace Kampai.Main
 		[Inject]
 		public global::Kampai.Common.ITelemetryService telemetryService { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.IAssetBundlesService assetBundlesService { get; set; }
+
 
 		[Inject]
 		public global::Kampai.Game.ITimedSocialEventService socialEventService { get; set; }
@@ -89,35 +87,35 @@ namespace Kampai.Main
 		public override void Execute()
 		{
 			logger.EventStart("MainCompleteCommand.Execute");
+			logger.Info("MainCompleteCommand: Starting Execute phase...");
 			checkDLCTier.Dispatch();
 			int quantity = (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_ID);
 			int quantity2 = (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_GATE_ID);
 			dlcService.SetPlayerDLCTier(quantity);
-			if (dlcModel.HighestTierDownloaded < quantity2)
-			{
-				logger.Debug("DLC Highest Tier Downloaded is less than the tier Gate, launching DLC Download");
-				launchDownloadSignal.Dispatch(false);
-			}
-			else
-			{
-				global::Kampai.Util.TimeProfiler.StartSection("loading scenes");
-				loadDevicePrefsSignal.Dispatch();
-				loadAudioSignal.Dispatch();
-				routineRunner.StartCoroutine(PostExternalScenes());
-			}
+			global::Kampai.Util.TimeProfiler.StartSection("loading scenes");
+			logger.Info("MainCompleteCommand: Dispatching loadDevicePrefsSignal...");
+			loadDevicePrefsSignal.Dispatch();
+			logger.Info("MainCompleteCommand: Dispatching loadAudioSignal...");
+			loadAudioSignal.Dispatch();
+			logger.Info("MainCompleteCommand: Starting PostExternalScenes coroutine...");
+			routineRunner.StartCoroutine(PostExternalScenes());
+
 			hindsightService.Initialize();
 			logger.EventStop("MainCompleteCommand.Execute");
+			logger.Info("MainCompleteCommand: Execute phase complete.");
 		}
 
 		private global::System.Collections.IEnumerator PostExternalScenes()
 		{
 			yield return null;
+			logger.Debug("MainCompleteCommand: PostExternalScenes: Waiting for running tasks...");
 			while (coroutineProgressMonitor.HasRunningTasks())
 			{
 				yield return null;
 			}
+			logger.Debug("MainCompleteCommand: PostExternalScenes: All tasks finished.");
 			logger.Debug("Starting Load Post External Scene");
-			bundleSignal.Dispatch();
+
 			assetsPreloadService.StopAssetsPreload();
 			localServiceSignal.Dispatch();
 			global::Kampai.Util.DeviceCapabilities.Initialize();
@@ -157,7 +155,7 @@ namespace Kampai.Main
 			global::Kampai.Util.TimeProfiler.EndSection("loading scenes");
 			global::Kampai.Util.TimeProfiler.StartSection("cleanup");
 			logger.EventStart("MainCompleteCommand.CleanUp");
-			assetBundlesService.UnloadDLCBundles();
+
 			async = global::UnityEngine.Resources.UnloadUnusedAssets();
 			routineRunner.StartCoroutine(CleanupComplete());
 		}

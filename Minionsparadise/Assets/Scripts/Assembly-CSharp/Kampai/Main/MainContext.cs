@@ -207,7 +207,8 @@ namespace Kampai.Main
 			base.commandBinder.Bind<global::Kampai.Main.ReloadGameSignal>().To<global::Kampai.Main.ReloadGameCommand>();
 			base.commandBinder.Bind<global::Kampai.Game.ConfigurationsLoadedSignal>().To<global::Kampai.Game.ConfigurationsLoadedCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.OpenRateAppPageSignal>().To<global::Kampai.Common.OpenRateAppPageCommand>();
-			base.commandBinder.Bind<global::Kampai.Main.LoadSharedBundlesSignal>().To<global::Kampai.Main.LoadSharedBundlesCommand>();
+
+
 			base.commandBinder.Bind<global::Kampai.Game.ABTestSignal>().To<global::Kampai.Util.ABTestCommand>();
 			base.commandBinder.Bind<global::Kampai.Main.SetupSwrveSignal>().To<global::Kampai.Common.SetupSwrveCommand>();
 			base.commandBinder.Bind<global::Kampai.Common.ABTestResourcesUpdatedSignal>().To<global::Kampai.Common.ABTestResourcesUpdatedCommand>();

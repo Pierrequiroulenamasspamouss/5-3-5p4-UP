@@ -404,17 +404,17 @@ namespace Kampai.Common
 			LogGameEvent(telemetryEvent);
 		}
 
-		public void Send_Telemetry_EVT_USER_GAME_DOWNLOAD_FUNNEL(string bundleName, int duration, long size, bool isNetworkWifi)
+		public void Send_Telemetry_EVT_USER_GAME_DOWNLOAD_FUNNEL(string dlcName, int duration, long size, bool isNetworkWifi)
 		{
 			global::Kampai.Common.TelemetryEvent telemetryEvent = new global::Kampai.Common.TelemetryEvent(SynergyTrackingEventType.EVT_USER_GAME_DOWNLOAD_FUNNEL);
 			global::System.Collections.Generic.List<global::Kampai.Common.TelemetryParameter> list = new global::System.Collections.Generic.List<global::Kampai.Common.TelemetryParameter>();
-			list.Add(new global::Kampai.Common.TelemetryParameter("EVT_KEYTYPE_ENUMERATION", bundleName, global::Kampai.Common.ParameterName.DLC_NAME));
+			list.Add(new global::Kampai.Common.TelemetryParameter("EVT_KEYTYPE_ENUMERATION", dlcName, global::Kampai.Common.ParameterName.DLC_NAME));
 			list.Add(new global::Kampai.Common.TelemetryParameter("EVT_KEYTYPE_DURATION", duration, global::Kampai.Common.ParameterName.DURATION));
 			list.AddRange(GetLevelGrindPremium());
 			list.Add(new global::Kampai.Common.TelemetryParameter("EVT_KEYTYPE_SCORE", size, global::Kampai.Common.ParameterName.DLC_SIZE));
 			list.Add(new global::Kampai.Common.TelemetryParameter("EVT_KEYTYPE_ENUMERATION", isNetworkWifi.ToString(), global::Kampai.Common.ParameterName.DLC_IS_WIFI));
 			telemetryEvent.Parameters = list;
-			logger.Debug(string.Format("Send_Telemetry_EVT_USER_GAME_DOWNLOAD_FUNNEL: {0} in {1}", bundleName, duration));
+			logger.Debug(string.Format("Send_Telemetry_EVT_USER_GAME_DOWNLOAD_FUNNEL: {0} in {1}", dlcName, duration));
 			LogGameEvent(telemetryEvent);
 		}
 

@@ -1266,6 +1266,7 @@ public class SwrveSDK
 	protected string GetDeviceLanguage()
 	{
 		string text = null;
+#if UNITY_ANDROID && !UNITY_EDITOR
 		try
 		{
 			using (global::UnityEngine.AndroidJavaClass androidJavaClass = new global::UnityEngine.AndroidJavaClass("java.util.Locale"))
@@ -1288,6 +1289,7 @@ public class SwrveSDK
 		{
 			SwrveLog.LogWarning("Couldn't get the device language, make sure you are running on an Android device: " + ex.ToString());
 		}
+#endif
 		if (string.IsNullOrEmpty(text))
 		{
 			global::System.Globalization.CultureInfo currentUICulture = global::System.Globalization.CultureInfo.CurrentUICulture;

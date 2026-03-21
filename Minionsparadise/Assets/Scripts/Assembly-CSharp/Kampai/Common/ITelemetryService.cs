@@ -50,7 +50,7 @@ namespace Kampai.Common
 
 		void Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL(string step, string swrveGroup, string performance);
 
-		void Send_Telemetry_EVT_USER_GAME_DOWNLOAD_FUNNEL(string bundleName, int duration, long size, bool isNetworkWifi);
+		void Send_Telemetry_EVT_USER_GAME_DOWNLOAD_FUNNEL(string dlcName, int duration, long size, bool isNetworkWifi);
 
 		void Send_Telemetry_EVT_GP_LEVEL_PROMOTION();
 

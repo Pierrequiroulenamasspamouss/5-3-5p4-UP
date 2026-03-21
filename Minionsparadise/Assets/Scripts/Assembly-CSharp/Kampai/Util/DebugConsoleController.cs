@@ -1950,88 +1950,10 @@ namespace Kampai.Util
 			uiContext.injectionBinder.GetInstance<global::Kampai.UI.View.ShowQuestPanelSignal>().Dispatch(questController.ID);
 		}
 
-		[global::Kampai.Util.DebugCommand(Name = "dlc list")]
-		public void DLCList(string[] args)
+		[global::Kampai.Util.DebugCommand(Name = "dlc information")]
+		public void DLCInfo(string[] args)
 		{
-			outBuilder.AppendLine("DLC Packs:");
-#if !UNITY_WEBPLAYER
-			global::System.IO.DirectoryInfo directoryInfo = new global::System.IO.DirectoryInfo(global::Kampai.Util.GameConstants.DLC_PATH);
-			int num = 0;
-			global::System.IO.FileInfo[] files = directoryInfo.GetFiles();
-			foreach (global::System.IO.FileInfo fileInfo in files)
-			{
-				outBuilder.AppendLine("\t" + fileInfo.Name);
-				num++;
-			}
-			outBuilder.AppendLine(string.Format("Found {0} bundles", num));
-#else
-			outBuilder.AppendLine("DLC List not supported on WebPlayer.");
-#endif
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc backup")]
-		public void CheckDlcBackupFlag(string[] args)
-		{
-			outBuilder.AppendLine("iOS only!");
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc clear")]
-		public void DLCClear(string[] args)
-		{
-#if !UNITY_WEBPLAYER
-			global::System.IO.DirectoryInfo directoryInfo = new global::System.IO.DirectoryInfo(global::Kampai.Util.GameConstants.DLC_PATH);
-			global::System.IO.FileInfo[] files = directoryInfo.GetFiles();
-			foreach (global::System.IO.FileInfo fileInfo in files)
-			{
-				fileInfo.Delete();
-			}
-#else
-			outBuilder.AppendLine("DLC Clear not supported on WebPlayer.");
-#endif
-			global::UnityEngine.SceneManagement.SceneManager.LoadScene("Initialize");
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc quality")]
-		public void DLCQuality(string[] args)
-		{
-			outBuilder.AppendLine("DLC Download Quality = " + dlcService.GetDownloadQualityLevel());
-			outBuilder.AppendLine("DLC Display Quality = " + dlcService.GetDisplayQualityLevel());
-			outBuilder.AppendLine("DLC Tier = " + playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_ID));
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc setquality")]
-		public void DLCSetQuality(string[] args)
-		{
-			string value = args[2];
-			global::Kampai.Util.TargetPerformance targetPerformance = (global::Kampai.Util.TargetPerformance)(int)global::System.Enum.Parse(typeof(global::Kampai.Util.TargetPerformance), value, true);
-			if (targetPerformance != global::Kampai.Util.TargetPerformance.UNKNOWN && targetPerformance != global::Kampai.Util.TargetPerformance.UNSUPPORTED)
-			{
-				localPersistService.PutData("FORCE_LOD", targetPerformance.ToString());
-				mainContext.injectionBinder.GetInstance<global::Kampai.Main.ReloadGameSignal>().Dispatch();
-			}
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc tier")]
-		public void DLCTier(string[] args)
-		{
-			outBuilder.AppendLine("Player's DLC Tier = " + playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_ID));
-			outBuilder.AppendLine("Player's Tier Gate = " + playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_GATE_ID));
-			outBuilder.AppendLine("Highest Tier Downloaded  = " + gameContext.injectionBinder.GetInstance<global::Kampai.Splash.DLCModel>().HighestTierDownloaded);
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc preinstall")]
-		public void DLCPreInstall(string[] args)
-		{
-#if !UNITY_WEBPLAYER
-			string value = global::System.IO.File.ReadAllText(global::Kampai.Util.GameConstants.PREINSTALL_JSON_PATH);
-			global::Kampai.Util.PreinstallBundles preinstallBundles = global::Newtonsoft.Json.JsonConvert.DeserializeObject<global::Kampai.Util.PreinstallBundles>(value);
-			foreach (string bundle in preinstallBundles.Bundles)
-			{
-				outBuilder.AppendLine(bundle);
-			}
-#else
-			outBuilder.AppendLine("DLC PreInstall not supported on WebPlayer.");
-#endif
+			outBuilder.AppendLine("DLC functionality is disabled/bypassed in this build.");
 		}
 
 		[global::Kampai.Util.DebugCommand(Args = new string[] { "fb/gc/gp" })]

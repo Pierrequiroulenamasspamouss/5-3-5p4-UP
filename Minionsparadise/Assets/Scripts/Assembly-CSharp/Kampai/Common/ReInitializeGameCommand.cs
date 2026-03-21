@@ -7,8 +7,7 @@ namespace Kampai.Common
 		[Inject]
 		public string levelToLoad { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.IAssetBundlesService assetBundlesService { get; set; }
+
 
 		[Inject]
 		public global::Kampai.Game.EnvironmentState state { get; set; }
@@ -41,8 +40,7 @@ namespace Kampai.Common
 					global::UnityEngine.Object.Destroy(gameObject);
 				}
 			}
-			assetBundlesService.UnloadDLCBundles();
-			assetBundlesService.UnloadSharedBundles();
+
 			Go.killAllTweens();
 			global::Kampai.Util.KampaiResources.ClearCache();
 			global::Kampai.Main.LoadState.Set(global::Kampai.Main.LoadStateType.BOOTING);
