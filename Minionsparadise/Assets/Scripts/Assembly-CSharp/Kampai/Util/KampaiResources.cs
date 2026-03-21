@@ -264,9 +264,9 @@ namespace Kampai.Util
                     {
                         int resIndex = resourcePath.IndexOf("/Resources/", StringComparison.Ordinal) + 11;
                         resourcePath = Path.ChangeExtension(resourcePath.Substring(resIndex), null);
-                        result = Resources.Load(resourcePath, type);
-                        if (result != null && _logger != null) _logger.Debug(string.Format("  - Resources.Load success: '{0}' (from '{1}')", resourcePath, resolvedPath));
                     }
+                    result = Resources.Load(resourcePath, type);
+                    if (result != null && _logger != null) _logger.Debug(string.Format("  - Resources.Load success: '{0}'", resourcePath));
                 }
 
                 if (result != null)

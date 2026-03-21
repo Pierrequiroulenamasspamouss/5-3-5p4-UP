@@ -267,8 +267,7 @@ namespace Kampai.Util
 		[Inject]
 		public global::Kampai.Main.ILocalizationService localizationService { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.ISupersonicService supersonicService { get; set; }
+
 
 		[Inject]
 		public global::Kampai.Game.IRewardedAdService rewardedAdService { get; set; }
@@ -2002,20 +2001,7 @@ namespace Kampai.Util
 			resetRewardedAdLimitSignal.Dispatch();
 		}
 
-		[global::Kampai.Util.DebugCommand(Name = "ssrv", Args = new string[] { "placement id" }, RequiresAllArgs = false)]
-		public void SupersonicRewardedVideo(string[] args)
-		{
-			string text = ((args.Length <= 1) ? string.Empty : args[1]);
-			logger.Info("Debug console: try to show rewarded video, placement: '{0}'", text);
-			supersonicService.ShowRewardedVideo(text);
-		}
 
-		[global::Kampai.Util.DebugCommand(Name = "sso")]
-		public void SupersonicOfferwall(string[] args)
-		{
-			logger.Info("Debug console: show offerwall");
-			supersonicService.ShowOfferwall();
-		}
 
 		[global::Kampai.Util.DebugCommand(Name = "adstatus")]
 		public void RewardedAdStatus(string[] args)

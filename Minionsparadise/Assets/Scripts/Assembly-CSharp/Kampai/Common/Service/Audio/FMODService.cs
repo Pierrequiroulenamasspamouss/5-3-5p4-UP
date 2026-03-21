@@ -122,6 +122,9 @@ namespace Kampai.Common.Service.Audio
 #elif UNITY_STANDALONE_WIN
 			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Windows/Raw_FMOD_GlobalMap.json");
 			if (global::System.IO.File.Exists(path)) return path;
+#elif UNITY_ANDROID
+			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.persistentDataPath, "Raw_FMOD_GlobalMap.json");
+			if (global::System.IO.File.Exists(path)) return path;
 #endif
 			string assetFileByOriginalName = _manifestService.GetAssetFileByOriginalName("Raw_FMOD_GlobalMap");
 			string rawPath = GetRawAssetPathByOriginalName(assetFileByOriginalName);
