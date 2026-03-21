@@ -62,8 +62,7 @@ namespace Kampai.Game
 		[Inject]
 		public global::Kampai.Game.PlayerSessionCountUpdatedSignal playerSessionCountUpdatedSignal { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.ISupersonicService supersonicService { get; set; }
+
 
 		[Inject]
 		public global::Kampai.Game.ITimeService timeService { get; set; }
@@ -86,14 +85,7 @@ namespace Kampai.Game
 		[Inject]
 		public global::Kampai.Game.AdPlacementActivityStateChangedSignal adPlacementActivityStateChangedSignal { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.SupersonicVideoAdAvailabilityChangedSignal supersonicVideoAdAvailabilityChangedSignal { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.SupersonicVideoAdShowSignal supersonicVideoAdShowSignal { get; set; }
-
-		[Inject]
-		public global::Kampai.Main.SupersonicVideoAdRewardedSignal supersonicVideoAdRewardedSignal { get; set; }
 
 		[Inject]
 		public global::Kampai.UI.View.DeclineRewardedAdShowSignal declineRewadedAdShowSignal { get; set; }
@@ -159,7 +151,7 @@ namespace Kampai.Game
 
 		public bool IsRewardedVideoAvailable()
 		{
-			return supersonicService.IsRewardedVideoAvailable();
+			return false;
 		}
 
 		public bool IsPlacementAvailable(global::Kampai.Game.AdPlacementName placementName)
@@ -294,7 +286,10 @@ namespace Kampai.Game
 				if (!value.IsActive(num))
 				{
 					int iD = value.ID;
-					timeEventService.RemoveEvent(iD);
+					if (timeEventService != null)
+					{
+						timeEventService.RemoveEvent(iD);
+					}
 					if (subscribe)
 					{
 						int cooldownEndTimestamp = value.GetCooldownEndTimestamp(num);
@@ -311,7 +306,10 @@ namespace Kampai.Game
 					num4 = cooldownEndTimestamp2;
 				}
 				int iD2 = adPlacementInstance.ID;
-				timeEventService.RemoveEvent(iD2);
+				if (timeEventService != null)
+				{
+					timeEventService.RemoveEvent(iD2);
+				}
 				if (subscribe)
 				{
 					SchedulePlacementConditionsUpdate(iD2, num, num4);
@@ -325,7 +323,10 @@ namespace Kampai.Game
 			if (num > 0)
 			{
 				num++;
-				timeEventService.AddEvent(eventID, currentTimeUTC, num, updatePlacementConditionsByTimerSignal);
+				if (timeEventService != null)
+				{
+					timeEventService.AddEvent(eventID, currentTimeUTC, num, updatePlacementConditionsByTimerSignal);
+				}
 			}
 		}
 
@@ -455,16 +456,20 @@ namespace Kampai.Game
 		{
 			if (subscribe)
 			{
+/*
 				supersonicVideoAdAvailabilityChangedSignal.AddListener(OnVideoAdAvailabilityChanged);
 				supersonicVideoAdShowSignal.AddListener(OnVideoAdShow);
 				supersonicVideoAdRewardedSignal.AddListener(OnVideoAdRewarded);
+*/
 				declineRewadedAdShowSignal.AddListener(OnAdWatchDecline);
 			}
 			else
 			{
+/*
 				supersonicVideoAdAvailabilityChangedSignal.RemoveListener(OnVideoAdAvailabilityChanged);
 				supersonicVideoAdShowSignal.RemoveListener(OnVideoAdShow);
 				supersonicVideoAdRewardedSignal.RemoveListener(OnVideoAdRewarded);
+*/
 				declineRewadedAdShowSignal.RemoveListener(OnAdWatchDecline);
 			}
 		}
@@ -524,7 +529,9 @@ namespace Kampai.Game
 				logger.Error("ShowRewardedVideo(): Unexpected invokation: previous watch-reward exists", "Ads: ");
 			}
 			pendingAdImpressionData = new global::Kampai.Game.RewardedAdService.PendingAdImpressionData(instance, reward);
-			supersonicService.ShowRewardedVideo();
+			logger.Warning("ShowRewardedVideo(): Supersonic service removed. Cannot show video ad.");
+			// Simulate failure or just clear pending data
+			pendingAdImpressionData = null;
 		}
 
 		private void OnVideoAdShow()
@@ -582,7 +589,7 @@ namespace Kampai.Game
 				stringBuilder.AppendFormat("RewardedAdvertisementDefinition is missing in definitions, ad is disabled");
 				return stringBuilder.ToString();
 			}
-			stringBuilder.AppendFormat("Supersonic rewarded video available: {0}\n", supersonicService.IsRewardedVideoAvailable());
+			stringBuilder.AppendFormat("Supersonic rewarded video available: {0}\n", IsRewardedVideoAvailable());
 			global::Kampai.Game.KillSwitch killSwitch = global::Kampai.Game.KillSwitch.SUPERSONIC;
 			stringBuilder.AppendFormat("{0} killswitch status: {1}\n", killSwitch, (!configurationsService.isKillSwitchOn(killSwitch)) ? "off" : "on");
 			stringBuilder.AppendFormat("Country: {0}\n", localizationService.GetCountry() ?? "null");

@@ -110,7 +110,10 @@ namespace Kampai.UI.View
 		{
 			if (base.dooberModel.XPGlassPosition == global::UnityEngine.Vector3.zero)
 			{
-				base.dooberModel.XPGlassPosition = hud.GetComponent<global::Kampai.UI.View.HUDView>().PointsPanel.position;
+				if (hud != null)
+				{
+					base.dooberModel.XPGlassPosition = hud.GetComponent<global::Kampai.UI.View.HUDView>().PointsPanel.position;
+				}
 			}
 			return base.dooberModel.XPGlassPosition;
 		}
@@ -119,7 +122,10 @@ namespace Kampai.UI.View
 		{
 			if (base.dooberModel.GrindGlassPosition == global::UnityEngine.Vector3.zero)
 			{
-				base.dooberModel.GrindGlassPosition = hud.transform.Find("group_Store_Element/group_Currency_Grind/icn_Currency_Grind").position;
+				if (hud != null)
+				{
+					base.dooberModel.GrindGlassPosition = hud.transform.Find("group_Store_Element/group_Currency_Grind/icn_Currency_Grind").position;
+				}
 			}
 			return base.dooberModel.GrindGlassPosition;
 		}
@@ -128,7 +134,10 @@ namespace Kampai.UI.View
 		{
 			if (base.dooberModel.PremiumGlassPosition == global::UnityEngine.Vector3.zero)
 			{
-				base.dooberModel.PremiumGlassPosition = hud.transform.Find("group_Store_Element/group_Currency_Premium/icn_Currency_Premium").position;
+				if (hud != null)
+				{
+					base.dooberModel.PremiumGlassPosition = hud.transform.Find("group_Store_Element/group_Currency_Premium/icn_Currency_Premium").position;
+				}
 			}
 			return base.dooberModel.PremiumGlassPosition;
 		}
@@ -137,7 +146,10 @@ namespace Kampai.UI.View
 		{
 			if (base.dooberModel.StorageGlassPosition == global::UnityEngine.Vector3.zero)
 			{
-				base.dooberModel.StorageGlassPosition = hud.transform.Find("group_Store_Element/group_Storage/icn_Storage").position;
+				if (hud != null)
+				{
+					base.dooberModel.StorageGlassPosition = hud.transform.Find("group_Store_Element/group_Storage/icn_Storage").position;
+				}
 			}
 			return base.dooberModel.StorageGlassPosition;
 		}
@@ -146,7 +158,10 @@ namespace Kampai.UI.View
 		{
 			if (base.dooberModel.InspirationGlassPosition == global::UnityEngine.Vector3.zero)
 			{
-				base.dooberModel.InspirationGlassPosition = hud.transform.Find("PointsPanel/XP_FunMeter/Fun_Meter/screen_InspirationPanel").position;
+				if (hud != null)
+				{
+					base.dooberModel.InspirationGlassPosition = hud.transform.Find("PointsPanel/XP_FunMeter/Fun_Meter/screen_InspirationPanel").position;
+				}
 			}
 			return base.dooberModel.InspirationGlassPosition;
 		}
@@ -155,7 +170,10 @@ namespace Kampai.UI.View
 		{
 			if (base.dooberModel.DiscoBallGlassPosition == global::UnityEngine.Vector3.zero)
 			{
-				base.dooberModel.DiscoBallGlassPosition = hud.transform.Find("panel_DiscoGlobe/dooberFlyUpPosition").position;
+				if (hud != null)
+				{
+					base.dooberModel.DiscoBallGlassPosition = hud.transform.Find("panel_DiscoGlobe/dooberFlyUpPosition").position;
+				}
 			}
 			return base.dooberModel.DiscoBallGlassPosition;
 		}
@@ -173,7 +191,10 @@ namespace Kampai.UI.View
 		{
 			if (base.dooberModel.StoreGlassPosition == global::UnityEngine.Vector3.zero)
 			{
-				base.dooberModel.StoreGlassPosition = hud.transform.Find("panel_BuildMenu/img_backing").position;
+				if (hud != null)
+				{
+					base.dooberModel.StoreGlassPosition = hud.transform.Find("panel_BuildMenu/img_backing").position;
+				}
 			}
 			return base.dooberModel.StoreGlassPosition;
 		}
@@ -182,9 +203,12 @@ namespace Kampai.UI.View
 		{
 			if (base.dooberModel.TokenInfoHUDPosition == global::UnityEngine.Vector3.zero)
 			{
-				global::UnityEngine.RectTransform rectTransform = hud.transform.Find("panel_TokenInfo/img_Token").transform as global::UnityEngine.RectTransform;
-				global::UnityEngine.Vector3 tokenInfoHUDPosition = new global::UnityEngine.Vector3(rectTransform.position.x + 4f, rectTransform.position.y, rectTransform.position.z);
-				base.dooberModel.TokenInfoHUDPosition = tokenInfoHUDPosition;
+				if (hud != null)
+				{
+					global::UnityEngine.RectTransform rectTransform = hud.transform.Find("panel_TokenInfo/img_Token").transform as global::UnityEngine.RectTransform;
+					global::UnityEngine.Vector3 tokenInfoHUDPosition = new global::UnityEngine.Vector3(rectTransform.position.x + 4f, rectTransform.position.y, rectTransform.position.z);
+					base.dooberModel.TokenInfoHUDPosition = tokenInfoHUDPosition;
+				}
 			}
 			return base.dooberModel.TokenInfoHUDPosition;
 		}
@@ -201,7 +225,10 @@ namespace Kampai.UI.View
 		{
 			if (base.dooberModel.MiscGlassPosition == global::UnityEngine.Vector3.zero)
 			{
-				base.dooberModel.MiscGlassPosition = hud.transform.Find("misc_DooberLocation").position;
+				if (hud != null)
+				{
+					base.dooberModel.MiscGlassPosition = hud.transform.Find("misc_DooberLocation").position;
+				}
 			}
 			return base.dooberModel.MiscGlassPosition;
 		}

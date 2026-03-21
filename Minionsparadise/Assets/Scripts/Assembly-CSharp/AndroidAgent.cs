@@ -33,21 +33,30 @@ public class AndroidAgent : SupersonicIAgent
 	public void reportAppStarted()
 	{
 #if UNITY_ANDROID && !UNITY_EDITOR
-		_androidBridge.Call("reportAppStarted");
+		if (_androidBridge != null)
+		{
+			_androidBridge.Call("reportAppStarted");
+		}
 #endif
 	}
 
 	public void onResume()
 	{
 #if UNITY_ANDROID && !UNITY_EDITOR
-		_androidBridge.Call("onResume");
+		if (_androidBridge != null)
+		{
+			_androidBridge.Call("onResume");
+		}
 #endif
 	}
 
 	public void onPause()
 	{
 #if UNITY_ANDROID && !UNITY_EDITOR
-		_androidBridge.Call("onPause");
+		if (_androidBridge != null)
+		{
+			_androidBridge.Call("onPause");
+		}
 #endif
 	}
 

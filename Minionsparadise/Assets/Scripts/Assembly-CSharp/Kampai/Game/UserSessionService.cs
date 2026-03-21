@@ -32,8 +32,7 @@ namespace Kampai.Game
 		[Inject]
 		public global::Kampai.Main.SetupSwrveSignal setupSwrveSignal { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.SetupSupersonicSignal setupSupersonicSignal { get; set; }
+
 
 		[Inject]
 		public global::Kampai.Game.UpdateUserSignal updateUserSignal { get; set; }
@@ -88,7 +87,7 @@ namespace Kampai.Game
 				telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("70 - User Login", playerService.SWRVEGroup, dlcService.GetDownloadQualityLevel());
 				logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "User's session ID: {0}", UserSession.SessionID);
 				setupSwrveSignal.Dispatch(userSession.UserID);
-				setupSupersonicSignal.Dispatch();
+
 				global::strange.extensions.signal.impl.Signal<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> signal = new global::strange.extensions.signal.impl.Signal<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse>();
 				signal.AddListener(CatchAuthenticationErrorResponse);
 				downloadService.AddGlobalResponseListener(signal);

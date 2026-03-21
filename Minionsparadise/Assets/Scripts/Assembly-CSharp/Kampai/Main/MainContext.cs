@@ -155,8 +155,7 @@ namespace Kampai.Main
 			injectionBinder.Bind<global::Kampai.Main.HindsightContentDismissSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.Common.ISwrveService>().To<global::Kampai.Common.SwrveService>().CrossContext()
 				.ToSingleton();
-			injectionBinder.Bind<global::Kampai.Main.ISupersonicService>().To<global::Kampai.Main.SupersonicService>().CrossContext()
-				.ToSingleton();
+
 			// Ensure AppResumeCompletedSignal is available in the main context for HindsightService
 			injectionBinder.Bind<global::Kampai.Common.AppResumeCompletedSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.Common.AppFocusGainedCompletedSignal>().ToSingleton().CrossContext();
@@ -183,9 +182,7 @@ namespace Kampai.Main
 				.Weak();
 			injectionBinder.Bind<global::Kampai.Game.ICurrencyService>().To<global::Kampai.Game.DummyCurrencyService>().ToSingleton()
 				.CrossContext();
-			injectionBinder.Bind<global::Kampai.Main.SupersonicVideoAdAvailabilityChangedSignal>().CrossContext().ToSingleton();
-			injectionBinder.Bind<global::Kampai.Main.SupersonicVideoAdShowSignal>().CrossContext().ToSingleton();
-			injectionBinder.Bind<global::Kampai.Main.SupersonicVideoAdRewardedSignal>().CrossContext().ToSingleton();
+
 			injectionBinder.Bind<global::Kampai.Main.PauseSoundSignal>().ToSingleton().CrossContext();
 			BindPlayerCommand();
 			base.commandBinder.Bind<global::Kampai.Main.MainCompleteSignal>().To<global::Kampai.Main.MainCompleteCommand>();
@@ -217,7 +214,7 @@ namespace Kampai.Main
 			base.commandBinder.Bind<global::Kampai.Main.OpenHelpSignal>().To<global::Kampai.Main.OpenHelpCommand>();
 			base.commandBinder.Bind<global::Kampai.Main.DisplayHindsightContentSignal>().To<global::Kampai.Main.DisplayHindsightContentCommand>();
 			base.commandBinder.Bind<global::Kampai.Main.HindsightContentRequestSignal>().To<global::Kampai.Main.HindsightContentRequestCommand>();
-			base.commandBinder.Bind<global::Kampai.Main.SetupSupersonicSignal>().To<global::Kampai.Common.SetupSupersonicCommand>();
+
 			base.commandBinder.Bind<global::Kampai.Game.CheckUpgradeSignal>().To<global::Kampai.Game.CheckUpgradeCommand>();
 			base.commandBinder.Bind<global::Kampai.Game.KillSwitchChangedSignal>().To<global::Kampai.Game.KillSwitchChangedCommand>();
 			// NimbleOTCommand binding removed
