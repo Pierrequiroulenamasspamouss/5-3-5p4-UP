@@ -67,8 +67,17 @@ def get_manifest(filename):
 def get_definitions(filename):
     print(f"[GAME] REQUESTING DEFINITIONS: {filename}", flush=True)
     if os.path.exists(DEFINITIONS_PATH): 
-        print(f"[GAME] SERVING REAL DEFINITIONS from {DEFINITIONS_PATH}", flush=True)
-        return send_file(DEFINITIONS_PATH, mimetype='application/json')
+        size = os.path.getsize(DEFINITIONS_PATH)
+        print(f"[GAME] SERVING DEFINITIONS ({size} bytes) from {DEFINITIONS_PATH}", flush=True)
+        # Verify content briefly in logs
+        with open(DEFINITIONS_PATH, 'r') as f:
+            data = json.load(f)
+            cats = [c.get('id') for c in data.get('currencyStoreDefinition', {}).get('categoryDefinitions', [])]
+            print(f"[GAME] CATEGORIES IN FILE: {cats}", flush=True)
+        
+        response = send_file(DEFINITIONS_PATH, mimetype='application/json')
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        return response
     print(f"[GAME] WARNING: DEFINITIONS NOT FOUND at {DEFINITIONS_PATH}", flush=True)
     return jsonify({})
 
