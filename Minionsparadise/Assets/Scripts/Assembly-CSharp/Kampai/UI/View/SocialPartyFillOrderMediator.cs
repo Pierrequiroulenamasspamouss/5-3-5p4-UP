@@ -260,6 +260,11 @@ namespace Kampai.UI.View
 					}
 				}
 			}
+			// No discord friends to download pictures for — call SetupUI directly
+			if (friends.Count == 0)
+			{
+				SetupUI();
+			}
 		}
 
 		private void OnFacebookPictureComplete(string id)
@@ -331,6 +336,7 @@ namespace Kampai.UI.View
 						socialPartyFillOrderProfileButtonMediatorData.identity = member;
 						socialPartyFillOrderProfileButtonMediatorData.parent = base.view.SocialFillTeamPanel;
 						socialPartyFillOrderProfileButtonMediatorData.index = num3;
+						socialPartyFillOrderProfileButtonMediatorData.teamId = team.ID;
 						showPartyFillOrderProfile.Dispatch(socialPartyFillOrderProfileButtonMediatorData);
 						num3++;
 					}
@@ -340,6 +346,7 @@ namespace Kampai.UI.View
 						socialPartyFillOrderProfileButtonMediatorData2.identity = null;
 						socialPartyFillOrderProfileButtonMediatorData2.parent = base.view.SocialFillTeamPanel;
 						socialPartyFillOrderProfileButtonMediatorData2.index = num3;
+						socialPartyFillOrderProfileButtonMediatorData2.teamId = team.ID;
 						showPartyFillOrderProfile.Dispatch(socialPartyFillOrderProfileButtonMediatorData2);
 						num3++;
 					}

@@ -3,7 +3,13 @@ from flask import Blueprint, request, jsonify, send_file, current_app, redirect
 import os
 import json
 from utils.profile import generate_new_player_profile
-from utils.db import update_player_in_db, get_db_connection, init_db
+from utils.db import (
+    update_player_in_db, get_db_connection, init_db, get_player_data,
+    get_uid_by_discord_id, resolve_master_uid, LEADERBOARD_JSON_PATH,
+    get_tse_team_for_user, create_tse_team_for_user, save_tse_order_progress,
+    claim_tse_reward, join_tse_team, leave_tse_team, get_tse_team_by_id,
+    get_tse_invitations, create_tse_invitation, reject_tse_invitation
+)
 
 game_bp = Blueprint('game', __name__)
 
@@ -301,3 +307,126 @@ def swrve_resources_diff():
 @game_bp.route('/1/batch', methods=['POST'])
 def swrve_batch():
     return "", 200
+
+@game_bp.route('/rest/tse/event/<int:event_id>/team/user/<user_id>', methods=['GET'])
+def get_tse_state(event_id, user_id):
+    print(f"[TSE] GET state: event={event_id} user={user_id}", flush=True)
+    team, reward_claimed = get_tse_team_for_user(event_id, user_id)
+    invitations = get_tse_invitations(user_id)
+    
+    if team:
+        print(f"[TSE] Found team={team['id']} members={len(team['members'])} orders={len(team['orderProgress'])}", flush=True)
+    else:
+        print(f"[TSE] No team found for user={user_id} in event={event_id}", flush=True)
+    
+    response = {
+        "eventId": event_id,
+        "team": team,
+        "userEvent": {
+            "rewardClaimed": reward_claimed,
+            "invitations": invitations
+        },
+        "error": None
+    }
+    return jsonify(response)
+
+@game_bp.route('/rest/tse/event/<int:event_id>/team/user/<user_id>', methods=['POST'])
+def create_tse_team(event_id, user_id):
+    print(f"[TSE] POST create team: event={event_id} user={user_id}", flush=True)
+    team, reward_claimed = create_tse_team_for_user(event_id, user_id)
+    print(f"[TSE] Created team={team['id']}", flush=True)
+    response = {
+        "eventId": event_id,
+        "team": team,
+        "userEvent": {"rewardClaimed": reward_claimed, "invitations": []},
+        "error": None
+    }
+    return jsonify(response)
+
+@game_bp.route('/rest/tse/event/<int:event_id>/team/<int:team_id>/user/<user_id>/join', methods=['POST'])
+def join_tse_team_route(event_id, team_id, user_id):
+    print(f"[TSE] JOIN: event={event_id} team={team_id} user={user_id}", flush=True)
+    success, error_type = join_tse_team(team_id, user_id)
+    if not success:
+        print(f"[TSE] JOIN FAILED: {error_type}", flush=True)
+        return jsonify({"eventId": event_id, "team": None, "userEvent": None, "error": {"type": error_type}})
+    
+    team = get_tse_team_by_id(team_id)
+    print(f"[TSE] JOIN OK: team now has {len(team['members'])} members", flush=True)
+    return jsonify({"eventId": event_id, "team": team, "userEvent": {"rewardClaimed": False, "invitations": []}, "error": None})
+
+@game_bp.route('/rest/tse/event/<int:event_id>/team/<int:team_id>/user/<user_id>/leave', methods=['POST'])
+def leave_tse_team_route(event_id, team_id, user_id):
+    leave_tse_team(team_id, user_id)
+    return jsonify({"eventId": event_id, "team": None, "userEvent": None, "error": None})
+
+@game_bp.route('/rest/tse/event/<int:event_id>/team/<int:team_id>/user/<user_id>/invite', methods=['POST'])
+def invite_tse_user(event_id, team_id, user_id):
+    invitee_ids = request.args.get('externalIds', '').split(',')
+    for invitee_id in invitee_ids:
+        if invitee_id:
+            create_tse_invitation(event_id, team_id, user_id, invitee_id)
+    
+    team = get_tse_team_by_id(team_id)
+    return jsonify({"eventId": event_id, "team": team, "userEvent": None, "error": None})
+
+@game_bp.route('/rest/tse/event/<int:event_id>/team/<int:team_id>/user/<user_id>/order', methods=['POST'])
+def fill_tse_order(event_id, team_id, user_id):
+    order_id = int(request.args.get('orderId', 0) or request.args.get('orderid', 0))
+    print(f"[TSE] FILL ORDER: event={event_id} team={team_id} user={user_id} order={order_id}", flush=True)
+    team = get_tse_team_by_id(team_id)
+    if not team:
+        print(f"[TSE] FILL ORDER: team {team_id} not found", flush=True)
+        return jsonify({"error": {"type": "TEAM_NOT_FOUND"}})
+    
+    existing_ids = [o.get('orderId') or o.get('orderid') for o in team['orderProgress']]
+    if order_id in existing_ids:
+        print(f"[TSE] FILL ORDER: order {order_id} already filled", flush=True)
+        return jsonify({"eventId": event_id, "team": team, "error": {"type": "ORDER_ALREADY_FILLED"}})
+    
+    team['orderProgress'].append({"orderId": order_id, "completedByUserId": user_id})
+    save_tse_order_progress(team_id, team['orderProgress'])
+    print(f"[TSE] FILL ORDER: success, total={len(team['orderProgress'])}", flush=True)
+    
+    return jsonify({"eventId": event_id, "team": team, "userEvent": None, "error": None})
+
+@game_bp.route('/rest/tse/event/<int:event_id>/team/<int:team_id>/user/<user_id>/reward', methods=['POST'])
+def claim_tse_reward_route(event_id, team_id, user_id):
+    claim_tse_reward(team_id, user_id)
+    team = get_tse_team_by_id(team_id)
+    return jsonify({"eventId": event_id, "team": team, "userEvent": {"rewardClaimed": True, "invitations": []}, "error": None})
+
+@game_bp.route('/rest/tse/event/<int:event_id>/teams', methods=['POST'])
+def get_tse_teams(event_id):
+    data = request.json or {}
+    team_ids = data.get('teamIds', [])
+    teams = []
+    for tid in team_ids:
+        t = get_tse_team_by_id(tid)
+        if t: teams.append(t)
+    return jsonify(teams)
+
+@game_bp.route('/join/<int:team_id>', methods=['GET'])
+def join_team_web(team_id):
+    return f"""
+    <html>
+        <head><title>Join Minions Paradise Team</title></head>
+        <body style="background: #222; color: #fff; font-family: sans-serif; text-align: center; padding-top: 50px;">
+            <div style="background: #333; display: inline-block; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <h1 style="color: #fb0; margin-bottom: 20px;">Join Team #{team_id}!</h1>
+                <p style="font-size: 1.2em; margin-bottom: 30px;">Redirecting you to Minions Paradise...</p>
+                <div id="loader" style="border: 4px solid #444; border-top: 4px solid #fb0; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 30px;"></div>
+                <a href="deeplink://join/team/{team_id}" style="background: #fb0; color: #000; text-decoration: none; padding: 15px 30px; border-radius: 10px; font-weight: bold; display: inline-block; transition: transform 0.2s;">OPEN GAME</a>
+            </div>
+            <style>
+                @keyframes spin {{ 0% {{ transform: rotate(0deg); }} 100% {{ transform: rotate(360deg); }} }}
+                a:hover {{ transform: scale(1.05); }}
+            </style>
+            <script>
+                setTimeout(function() {{
+                    window.location.href = "deeplink://join/team/{team_id}";
+                }}, 1500);
+            </script>
+        </body>
+    </html>
+    """

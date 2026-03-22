@@ -4,7 +4,7 @@ import os
 import random
 import json
 import requests
-from utils.db import player_exists, link_discord_to_player, get_uid_by_discord_id, get_tse_team_for_user, create_tse_team_for_user, save_tse_order_progress, claim_tse_reward
+from utils.db import player_exists, link_discord_to_player, get_uid_by_discord_id
 from urllib.parse import quote
 
 user_bp = Blueprint('user', __name__)
@@ -56,101 +56,7 @@ def register():
         "type": 0
     })
 
-# --- TSE ENDPOINTS (DB-PERSISTED) ---
-
-@user_bp.route('/rest/tse/event/<int:event_id>/team/user/<user_id>', methods=['GET', 'POST'])
-def get_tse_event_team(event_id, user_id):
-    """
-    Get or create a team for a user in a timed social event.
-    GET: Returns existing team state.
-    POST: Creates a new team if none exists.
-    """
-    team, reward_claimed = get_tse_team_for_user(event_id, user_id)
-    
-    if not team and request.method == 'POST':
-        team, reward_claimed = create_tse_team_for_user(event_id, user_id)
-        print(f"[TSE] Created new team {team['id']} for user {user_id} in event {event_id}")
-    
-    data = {
-        "eventId": event_id,
-        "team": team,
-        "userEvent": {
-            "rewardClaimed": reward_claimed,
-            "invitations": []
-        },
-        "error": None
-    }
-    
-    return current_app.response_class(
-        json.dumps(data, separators=(', ', ': ')),
-        mimetype='application/json'
-    )
-
-@user_bp.route('/rest/tse/event/<int:event_id>/teams', methods=['GET', 'POST'])
-def get_tse_teams(event_id):
-    return current_app.response_class(
-        json.dumps({}, separators=(', ', ': ')),
-        mimetype='application/json'
-    )
-
-@user_bp.route('/rest/tse/event/<int:event_id>/team/<int:team_id>/user/<user_id>/<action>', methods=['GET', 'POST'])
-def tse_team_actions(event_id, team_id, user_id, action):
-    team, reward_claimed = get_tse_team_for_user(event_id, user_id)
-    if not team:
-        return jsonify({"error": "Team not found"}), 404
-    
-    if action == "order":
-        try:
-            order_data = request.get_json(force=True, silent=True) or {}
-            order_id = order_data.get('orderId')
-            existing_orders = [o['orderId'] for o in team['orderProgress']]
-            
-            if order_id not in existing_orders:
-                team['orderProgress'].append({"orderId": order_id, "completedByUserId": str(user_id)})
-                save_tse_order_progress(team_id, team['orderProgress'])
-                print(f"[TSE] User {user_id} completed order {order_id} in team {team_id}")
-            else:
-                print(f"[TSE] Order {order_id} already completed in team {team_id}")
-        except Exception as e:
-            print(f"[TSE] Error processing order: {e}")
-    elif action == "reward":
-        if not reward_claimed:
-            newly_claimed = claim_tse_reward(team_id, user_id)
-            if newly_claimed:
-                reward_claimed = True
-                print(f"[TSE] User {user_id} claimed reward for team {team_id} in event {event_id}")
-            else:
-                print(f"[TSE] User {user_id} reward already claimed or not eligible for team {team_id}")
-        else:
-            print(f"[TSE] User {user_id} already claimed reward for team {team_id}")
-    elif action == "join":
-        # Join an existing team
-        from utils.db import get_db_connection
-        conn = get_db_connection()
-        try:
-            conn.execute('INSERT OR IGNORE INTO tse_members (team_id, user_id) VALUES (?, ?)',
-                         (team_id, str(user_id)))
-            conn.commit()
-        except Exception as e:
-            print(f"[TSE] Error joining team: {e}")
-        finally:
-            conn.close()
-        # Re-fetch after join
-        team, reward_claimed = get_tse_team_for_user(event_id, user_id)
-    
-    data = {
-        "eventId": event_id,
-        "team": team,
-        "userEvent": {
-            "rewardClaimed": reward_claimed,
-            "invitations": []
-        },
-        "error": None
-    }
-    return current_app.response_class(
-        json.dumps(data, separators=(', ', ': ')),
-        mimetype='application/json'
-    )
+# TSE routes moved to routes/game.py
 
 @user_bp.route('/rest/v2/user/<user_id>/identity', methods=['POST'])
 def link_identity(user_id):
