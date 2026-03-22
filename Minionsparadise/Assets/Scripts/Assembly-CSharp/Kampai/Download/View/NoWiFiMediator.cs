@@ -108,7 +108,6 @@ namespace Kampai.Download.View
 
 		private void ContinueButton()
 		{
-			dlcModel.AllowDownloadOnMobileNetwork = true;
 			Close();
 		}
 
@@ -125,7 +124,7 @@ namespace Kampai.Download.View
 		private void Close()
 		{
 			showNoWiFiPanelSignal.Dispatch(false);
-			if (!networkModel.isConnectionLost && (networkModel.reachability == global::UnityEngine.NetworkReachability.ReachableViaLocalAreaNetwork || dlcModel.AllowDownloadOnMobileNetwork))
+			if (!networkModel.isConnectionLost)
 			{
 				resumeNetworkOperationSignal.Dispatch();
 			}

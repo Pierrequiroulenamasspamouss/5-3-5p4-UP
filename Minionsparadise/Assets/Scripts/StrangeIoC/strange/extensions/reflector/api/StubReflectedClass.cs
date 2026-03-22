@@ -2,6 +2,10 @@ namespace strange.extensions.reflector.api
 {
 	public abstract class StubReflectedClass : global::strange.extensions.reflector.api.IReflectedClass
 	{
+		public object[] SetterNames { get; set; }
+
+		public bool[] SetterOptional { get; set; }
+
 		public bool PreGenerated
 		{
 			get

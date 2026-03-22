@@ -72,7 +72,16 @@ namespace Kampai.Util
 
 		public bool HasRunningTasks()
 		{
-			return GetRunningTasksCount() > 0;
+			int count = GetRunningTasksCount();
+			if (count > 0)
+			{
+				string tasks = "";
+				foreach (var t in tasksQueue) tasks += t.Tag + ", ";
+				foreach (var t in waitQueue) tasks += t.Tag + " (waiting), ";
+				foreach (var t in tasksWaitingForNextFrame) tasks += t.Tag + " (next frame), ";
+				UnityEngine.Debug.Log("CoroutineProgressMonitor: Waiting for tasks: " + tasks);
+			}
+			return count > 0;
 		}
 
 		public int GetRunningTasksCount()

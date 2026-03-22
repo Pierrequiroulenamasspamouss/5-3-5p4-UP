@@ -140,13 +140,10 @@ namespace Kampai.Common
 				.WithResponseSignal(signal2);
 			int retries = request.retries;
 			videoRequest.networkRequest = obj.WithRetry(true, retries).WithResume(true).WithAvoidBackup(true);
-			if (networkModel.reachability == global::UnityEngine.NetworkReachability.ReachableViaCarrierDataNetwork && !dlcModel.AllowDownloadOnMobileNetwork)
-			{
-				request.networkRequest.Restart();
-				showNoWiFiPanelSignal.Dispatch(true);
-			}
+			videoRequest.networkRequest = obj.WithRetry(true, retries).WithResume(true).WithAvoidBackup(true);
 			request.progressBarStart = request.progressBarNow;
 			downloadService.Perform(request.networkRequest);
+
 		}
 
 		public bool IsIntroCached(string videoUriTemplate = null)

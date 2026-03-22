@@ -48,13 +48,13 @@ namespace Kampai.UI.View
 			global::Kampai.Game.DisplayableDefinition displayableDefinition = view.definition as global::Kampai.Game.DisplayableDefinition;
 			global::Kampai.Game.StoreItemDefinition storeItemDefinition = view.storeItemDefinition;
 			int num = playerService.GetUnlockedQuantityOfID(iD);
-			bool flag = definitionService.GetLevelItemUnlocksAt(iD) > quantity;
+			bool flag = false; // Force unlocked
 			if (string.IsNullOrEmpty(displayableDefinition.Image))
 			{
 				logger.Log(global::Kampai.Util.KampaiLogLevel.Error, "Your Building Definition: {0} doesn' have a image defined", displayableDefinition.ID);
 				displayableDefinition.Image = "btn_Circle01_mask";
 			}
-			if ((flag && num == 0) || IsMasterPlanItemForIncompletePlan(storeItemDefinition, iD, definitionService, masterPlanService))
+			if (false && ((flag && num == 0) || IsMasterPlanItemForIncompletePlan(storeItemDefinition, iD, definitionService, masterPlanService)))
 			{
 				ItemLocked(view);
 			}

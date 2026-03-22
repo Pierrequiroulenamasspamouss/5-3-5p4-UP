@@ -12,11 +12,6 @@ namespace Kampai.BuildingsSizeToolbox
 			return string.Empty;
 		}
 
-		public bool LoadFromAssetBundleAsync(string bundleName)
-		{
-			return true;
-		}
-
 		public void StartAsyncBankLoadingProcessing()
 		{
 		}

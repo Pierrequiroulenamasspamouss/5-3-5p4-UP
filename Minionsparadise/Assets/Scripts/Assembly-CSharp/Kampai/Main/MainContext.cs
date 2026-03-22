@@ -155,8 +155,7 @@ namespace Kampai.Main
 			injectionBinder.Bind<global::Kampai.Main.HindsightContentDismissSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.Common.ISwrveService>().To<global::Kampai.Common.SwrveService>().CrossContext()
 				.ToSingleton();
-			injectionBinder.Bind<global::Kampai.Main.ISupersonicService>().To<global::Kampai.Main.SupersonicService>().CrossContext()
-				.ToSingleton();
+
 			// Ensure AppResumeCompletedSignal is available in the main context for HindsightService
 			injectionBinder.Bind<global::Kampai.Common.AppResumeCompletedSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.Common.AppFocusGainedCompletedSignal>().ToSingleton().CrossContext();
@@ -181,11 +180,9 @@ namespace Kampai.Main
 			base.commandBinder.Bind<global::Kampai.Game.RestoreMtxPurchaseSignal>().To<global::Kampai.Game.Mtx.RestoreMtxPurchaseCommand>();
 			injectionBinder.Bind<global::Kampai.Game.FinishPremiumPurchaseSignal>().ToSingleton().CrossContext()
 				.Weak();
-			injectionBinder.Bind<global::Kampai.Game.ICurrencyService>().To<global::Kampai.Game.NimbleCurrencyService>().ToSingleton()
+			injectionBinder.Bind<global::Kampai.Game.ICurrencyService>().To<global::Kampai.Game.DebugCurrencyService>().ToSingleton()
 				.CrossContext();
-			injectionBinder.Bind<global::Kampai.Main.SupersonicVideoAdAvailabilityChangedSignal>().CrossContext().ToSingleton();
-			injectionBinder.Bind<global::Kampai.Main.SupersonicVideoAdShowSignal>().CrossContext().ToSingleton();
-			injectionBinder.Bind<global::Kampai.Main.SupersonicVideoAdRewardedSignal>().CrossContext().ToSingleton();
+
 			injectionBinder.Bind<global::Kampai.Main.PauseSoundSignal>().ToSingleton().CrossContext();
 			BindPlayerCommand();
 			base.commandBinder.Bind<global::Kampai.Main.MainCompleteSignal>().To<global::Kampai.Main.MainCompleteCommand>();
@@ -207,7 +204,8 @@ namespace Kampai.Main
 			base.commandBinder.Bind<global::Kampai.Main.ReloadGameSignal>().To<global::Kampai.Main.ReloadGameCommand>();
 			base.commandBinder.Bind<global::Kampai.Game.ConfigurationsLoadedSignal>().To<global::Kampai.Game.ConfigurationsLoadedCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.OpenRateAppPageSignal>().To<global::Kampai.Common.OpenRateAppPageCommand>();
-			base.commandBinder.Bind<global::Kampai.Main.LoadSharedBundlesSignal>().To<global::Kampai.Main.LoadSharedBundlesCommand>();
+
+
 			base.commandBinder.Bind<global::Kampai.Game.ABTestSignal>().To<global::Kampai.Util.ABTestCommand>();
 			base.commandBinder.Bind<global::Kampai.Main.SetupSwrveSignal>().To<global::Kampai.Common.SetupSwrveCommand>();
 			base.commandBinder.Bind<global::Kampai.Common.ABTestResourcesUpdatedSignal>().To<global::Kampai.Common.ABTestResourcesUpdatedCommand>();
@@ -216,10 +214,10 @@ namespace Kampai.Main
 			base.commandBinder.Bind<global::Kampai.Main.OpenHelpSignal>().To<global::Kampai.Main.OpenHelpCommand>();
 			base.commandBinder.Bind<global::Kampai.Main.DisplayHindsightContentSignal>().To<global::Kampai.Main.DisplayHindsightContentCommand>();
 			base.commandBinder.Bind<global::Kampai.Main.HindsightContentRequestSignal>().To<global::Kampai.Main.HindsightContentRequestCommand>();
-			base.commandBinder.Bind<global::Kampai.Main.SetupSupersonicSignal>().To<global::Kampai.Common.SetupSupersonicCommand>();
+
 			base.commandBinder.Bind<global::Kampai.Game.CheckUpgradeSignal>().To<global::Kampai.Game.CheckUpgradeCommand>();
 			base.commandBinder.Bind<global::Kampai.Game.KillSwitchChangedSignal>().To<global::Kampai.Game.KillSwitchChangedCommand>();
-			base.commandBinder.Bind<global::Kampai.Game.NimbleOTSignal>().To<global::Kampai.Game.NimbleOTCommand>();
+			// NimbleOTCommand binding removed
 			base.commandBinder.Bind<global::Kampai.Game.ReloadConfigurationsPeriodicSignal>().To<ReloadConfigurationsPeriodicCommand>();
 			base.commandBinder.Bind<global::Kampai.Main.SetupNativeAlertManagerSignal>().To<global::Kampai.Common.Controller.SetupNativeAlertManagerCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowClientUpgradeDialogSignal>().To<global::Kampai.UI.Controller.ShowClientUpgradeDialogCommand>();

@@ -6,8 +6,6 @@ namespace Kampai.Util
 
 		public string baseURL { get; set; }
 
-		public global::System.Collections.Generic.List<global::Kampai.Util.BundleInfo> bundles { get; set; }
-
 		[global::Kampai.Util.Deserializer("ReaderUtil.ReadStringDictionary")]
 		public global::System.Collections.Generic.Dictionary<string, string> assets { get; set; }
 
@@ -53,10 +51,6 @@ namespace Kampai.Util
 			case "BASEURL":
 				reader.Read();
 				baseURL = global::Kampai.Util.ReaderUtil.ReadString(reader, converters);
-				break;
-			case "BUNDLES":
-				reader.Read();
-				bundles = global::Kampai.Util.ReaderUtil.PopulateList(reader, converters, bundles);
 				break;
 			case "ASSETS":
 				reader.Read();

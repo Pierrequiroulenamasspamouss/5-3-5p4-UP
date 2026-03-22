@@ -60,8 +60,115 @@ def init_db():
             last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS tse_teams (
+            team_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_id INTEGER NOT NULL,
+            order_progress TEXT DEFAULT '[]',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS tse_members (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            team_id INTEGER NOT NULL,
+            user_id TEXT NOT NULL,
+            reward_claimed INTEGER DEFAULT 0,
+            FOREIGN KEY (team_id) REFERENCES tse_teams(team_id),
+            UNIQUE(team_id, user_id)
+        )
+    ''')
     conn.commit()
     conn.close()
+
+def get_tse_team_for_user(event_id, user_id):
+    """Get a user's team for an event from DB. Returns (team_dict, reward_claimed) or (None, False)."""
+    conn = get_db_connection()
+    row = conn.execute('''
+        SELECT t.team_id, t.event_id, t.order_progress, m.reward_claimed
+        FROM tse_teams t
+        JOIN tse_members m ON t.team_id = m.team_id
+        WHERE t.event_id = ? AND m.user_id = ?
+    ''', (event_id, str(user_id))).fetchone()
+    
+    if not row:
+        conn.close()
+        return None, False
+    
+    team_id = row['team_id']
+    order_progress = json.loads(row['order_progress'] or '[]')
+    reward_claimed = bool(row['reward_claimed'])
+    
+    # Get all members
+    members = conn.execute('SELECT user_id FROM tse_members WHERE team_id = ?', (team_id,)).fetchall()
+    conn.close()
+    
+    member_list = []
+    for m in members:
+        mid = m['user_id']
+        member_list.append({
+            "id": mid, "externalId": mid, "userId": mid,
+            "type": 0, "secret": "mock", "sessionKey": "mock"
+        })
+    
+    team = {
+        "id": team_id,
+        "socialEventId": event_id,
+        "members": member_list,
+        "orderProgress": order_progress
+    }
+    return team, reward_claimed
+
+def create_tse_team_for_user(event_id, user_id):
+    """Create a new team for a user. Returns (team_dict, False)."""
+    conn = get_db_connection()
+    cursor = conn.execute(
+        'INSERT INTO tse_teams (event_id, order_progress) VALUES (?, ?)',
+        (event_id, '[]')
+    )
+    team_id = cursor.lastrowid
+    conn.execute(
+        'INSERT INTO tse_members (team_id, user_id) VALUES (?, ?)',
+        (team_id, str(user_id))
+    )
+    conn.commit()
+    conn.close()
+    
+    team = {
+        "id": team_id,
+        "socialEventId": event_id,
+        "members": [
+            {"id": str(user_id), "externalId": str(user_id), "userId": str(user_id),
+             "type": 0, "secret": "mock", "sessionKey": "mock"}
+        ],
+        "orderProgress": []
+    }
+    return team, False
+
+def save_tse_order_progress(team_id, order_progress):
+    """Save order progress to DB."""
+    conn = get_db_connection()
+    conn.execute('UPDATE tse_teams SET order_progress = ? WHERE team_id = ?',
+                 (json.dumps(order_progress), team_id))
+    conn.commit()
+    conn.close()
+
+def claim_tse_reward(team_id, user_id):
+    """Mark reward as claimed for a user on a team. Returns True if newly claimed, False if already claimed."""
+    conn = get_db_connection()
+    row = conn.execute('SELECT reward_claimed FROM tse_members WHERE team_id = ? AND user_id = ?',
+                       (team_id, str(user_id))).fetchone()
+    if not row:
+        conn.close()
+        return False
+    if row['reward_claimed']:
+        conn.close()
+        return False  # Already claimed
+    conn.execute('UPDATE tse_members SET reward_claimed = 1 WHERE team_id = ? AND user_id = ?',
+                 (team_id, str(user_id)))
+    conn.commit()
+    conn.close()
+    return True
 
 def get_level_from_xp(xp, xp_needed_list):
     level = 0
@@ -120,7 +227,7 @@ def update_player_in_db(user_id, player_data):
     xp = 0
     if isinstance(inventory, list):
         for item in inventory:
-            if item.get('Definition') == 0:
+            if item.get('Definition') == 2:
                 xp = item.get('Quantity', 0)
                 break
     
@@ -135,7 +242,8 @@ def update_player_in_db(user_id, player_data):
         pass
 
     conn = get_db_connection()
-    row = conn.execute('SELECT * FROM players WHERE uid = ?', (record_uid,)).fetchone()
+    row_data = conn.execute('SELECT * FROM players WHERE uid = ?', (record_uid,)).fetchone()
+    row = dict(row_data) if row_data else None
 
     # 2. High Playtime Guard: If existing record has more playtime, don't overwrite critical fields
     incoming_playtime = player_data.get('totalAccumulatedGameplayDuration', 0)
@@ -184,9 +292,9 @@ def update_player_in_db(user_id, player_data):
         'PlayerLevel': level,
         'xp': xp,
         'Time_played': player_data.get('totalAccumulatedGameplayDuration', 0),
-        'DISCORD': player_data.get('discord_info', row['DISCORD'] if row else ''),
-        'FACEBOOK': player_data.get('facebook_id', row['FACEBOOK'] if row else ''),
-        'GOOGLE_PLAY': player_data.get('google_id', row['GOOGLE_PLAY'] if row else '')
+'DISCORD': player_data.get('discord_info', row.get('DISCORD', '') if row else ''),
+        'FACEBOOK': player_data.get('facebook_id', row.get('FACEBOOK', '') if row else ''),
+        'GOOGLE_PLAY': player_data.get('google_id', row.get('GOOGLE_PLAY', '') if row else '')
     }
 
     if row:
@@ -265,7 +373,8 @@ def link_discord_to_player(uid, discord_profile):
     all_uids = set([str(uid)])
     candidates = []
     
-    for row in rows:
+    for row_obj in rows:
+        row = dict(row_obj)
         r_uid = str(row['uid'])
         # Split by comma in case it's already a list
         for part in r_uid.split(', '):

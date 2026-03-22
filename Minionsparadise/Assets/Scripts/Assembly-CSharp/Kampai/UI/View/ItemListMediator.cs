@@ -194,8 +194,8 @@ namespace Kampai.UI.View
 					{
 						return -1;
 					}
-					int levelItemUnlocksAt = definitionService.GetLevelItemUnlocksAt(storeItemDefinition2.ReferencedDefID);
-					int levelItemUnlocksAt2 = definitionService.GetLevelItemUnlocksAt(storeItemDefinition3.ReferencedDefID);
+					int levelItemUnlocksAt = (storeItemDefinition2.Type == global::Kampai.Game.StoreItemType.SalePack || storeItemDefinition2.Type == global::Kampai.Game.StoreItemType.PremiumCurrency || storeItemDefinition2.Type == global::Kampai.Game.StoreItemType.GrindCurrency) ? 0 : definitionService.GetLevelItemUnlocksAt(storeItemDefinition2.ReferencedDefID);
+					int levelItemUnlocksAt2 = (storeItemDefinition3.Type == global::Kampai.Game.StoreItemType.SalePack || storeItemDefinition3.Type == global::Kampai.Game.StoreItemType.PremiumCurrency || storeItemDefinition3.Type == global::Kampai.Game.StoreItemType.GrindCurrency) ? 0 : definitionService.GetLevelItemUnlocksAt(storeItemDefinition3.ReferencedDefID);
 					if (levelItemUnlocksAt < levelItemUnlocksAt2)
 					{
 						return -1;
@@ -437,6 +437,10 @@ namespace Kampai.UI.View
 		internal void SetBadgeCountForStoreItemType(global::Kampai.Game.StoreItemType type)
 		{
 			global::System.Collections.Generic.List<global::Kampai.UI.View.StoreButtonView> storeButtonViews = base.view.GetStoreButtonViews(type);
+			if (storeButtonViews == null)
+			{
+				return;
+			}
 			foreach (global::Kampai.UI.View.StoreButtonView item in storeButtonViews)
 			{
 				int iD = item.definition.ID;

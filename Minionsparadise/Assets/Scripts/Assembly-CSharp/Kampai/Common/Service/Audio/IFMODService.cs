@@ -6,8 +6,6 @@ namespace Kampai.Common.Service.Audio
 
 		string GetGuid(string eventName);
 
-		bool LoadFromAssetBundleAsync(string bundleName);
-
 		void StartAsyncBankLoadingProcessing();
 
 		bool BanksLoadingInProgress();

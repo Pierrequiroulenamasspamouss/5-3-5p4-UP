@@ -2,6 +2,10 @@ namespace strange.extensions.reflector.api
 {
 	public interface IReflectedClass
 	{
+		object[] SetterNames { get; set; }
+
+		bool[] SetterOptional { get; set; }
+
 		bool PreGenerated { get; set; }
 
 		bool HasNonTrivialConstructor();

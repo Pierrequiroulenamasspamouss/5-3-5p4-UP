@@ -151,11 +151,56 @@ namespace Kampai.Game
 			global::Discord.Unity.FB.LogInWithReadPermissions(permissions, AuthCallback);
 		}
 
-		private global::System.Collections.IEnumerator LogInViaServer()
+			private void OpenBrowserURL(string url)
+		{
+			logger.Info("Discord: Attempting to open URL: {0}", url);
+			try
+			{
+				// Method 1: Process.Start with cmd (most reliable on Windows)
+				#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+				try
+				{
+					System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+					{
+						FileName = "cmd",
+						Arguments = "/c start \"\" \"" + url.Replace("&", "^&") + "\"",
+						UseShellExecute = false,
+						CreateNoWindow = true
+					});
+					logger.Info("Discord: Opened URL via cmd /c start");
+					return;
+				}
+				catch (System.Exception e)
+				{
+					logger.Warning("Discord: cmd /c start failed: {0}", e.Message);
+				}
+				#endif
+				// Method 2: Standard Application.OpenURL
+				global::UnityEngine.Application.OpenURL(url);
+				logger.Info("Discord: Opened URL via Application.OpenURL");
+			}
+			catch (global::System.Exception ex)
+			{
+				logger.Error("Discord: All browser methods failed: {0}", ex.Message);
+				// Method 3: Copy to clipboard as last resort
+				try
+				{
+					global::UnityEngine.GUIUtility.systemCopyBuffer = url;
+					logger.Error("Discord: URL copied to clipboard. Please paste it in your browser: {0}", url);
+				}
+				catch (global::System.Exception)
+				{
+					logger.Error("Discord: Could not copy to clipboard. Please open this URL manually: {0}", url);
+				}
+			}
+		}
+
+	private global::System.Collections.IEnumerator LogInViaServer()
 		{
 			string uid = localPersistence.GetData("UserID");
 			if (string.IsNullOrEmpty(uid)) { uid = "1000000000"; }
-			global::UnityEngine.Application.OpenURL(global::Kampai.Util.GameConstants.Server.CDN_METADATA_URL + "/auth/discord/login?uid=" + uid);
+			string loginUrl = global::Kampai.Util.GameConstants.Server.CDN_METADATA_URL + "/auth/discord/login?uid=" + uid;
+			OpenBrowserURL(loginUrl);
 			logger.Info("Discord: Opened Server Discord Login for {0}. Polling for token...", uid);
 			bool solved = false;
 			while (!solved)
@@ -190,9 +235,11 @@ namespace Kampai.Game
 			userPictures = new global::System.Collections.Generic.Dictionary<string, global::UnityEngine.Texture>();
 			try
 			{
+				string appId = global::Kampai.Util.GameConstants.Discord.APP_ID;
+				logger.Info("Discord: Initializing with APP_ID = '{0}'", appId);
 				if (!global::Discord.Unity.FB.IsInitialized)
 				{
-					global::Discord.Unity.FB.Init(global::Kampai.Util.GameConstants.Discord.APP_ID, true, true, true, false, true, null, "en_US", null, SetInit);
+					global::Discord.Unity.FB.Init(appId, true, true, true, false, true, null, "en_US", null, SetInit);
 				}
 				else
 				{
@@ -396,7 +443,7 @@ namespace Kampai.Game
 
 		public global::System.Collections.IEnumerator DownloadUserPicture(string id, global::strange.extensions.signal.impl.Signal<string> callback = null)
 		{
-			string url = string.Format("https://graph.discord.com/{0}/picture?width=256&height=256", id);
+			string url = string.Format("http://" + global::Kampai.Util.GameConstants.Server.SERVER_URL + "/api/{0}/icon.png", id);
 			logger.Info("Discord: Download user picture URL: {0}", url);
 			global::UnityEngine.WWW www = new global::UnityEngine.WWW(url);
 			yield return www;
@@ -430,7 +477,10 @@ namespace Kampai.Game
 		public void Logout()
 		{
 			logger.Debug("Discord: Logout");
-			global::Discord.Unity.FB.LogOut();
+			if (global::Discord.Unity.FB.IsInitialized)
+			{
+				global::Discord.Unity.FB.LogOut();
+			}
 			_serverAccessToken = string.Empty;
 			_serverUserID = string.Empty;
 			localPersistence.PutData("Discord_AccessToken", "");
