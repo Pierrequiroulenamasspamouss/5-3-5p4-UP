@@ -227,7 +227,7 @@ def update_player_in_db(user_id, player_data):
     xp = 0
     if isinstance(inventory, list):
         for item in inventory:
-            if item.get('Definition') == 0:
+            if item.get('Definition') == 2:
                 xp = item.get('Quantity', 0)
                 break
     
