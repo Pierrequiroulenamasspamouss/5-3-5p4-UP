@@ -57,6 +57,10 @@ def init_db():
             FACEBOOK TEXT,
             GOOGLE_PLAY TEXT,
             
+            password TEXT,
+            custom_avatar TEXT,
+            custom_name TEXT,
+            
             last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
@@ -89,6 +93,22 @@ def init_db():
             FOREIGN KEY (team_id) REFERENCES tse_teams(team_id)
         )
     ''')
+    conn.commit()
+    
+    # Try to add columns for existing databases
+    try:
+        conn.execute("ALTER TABLE players ADD COLUMN password TEXT")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        conn.execute("ALTER TABLE players ADD COLUMN custom_avatar TEXT")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        conn.execute("ALTER TABLE players ADD COLUMN custom_name TEXT")
+    except sqlite3.OperationalError:
+        pass
+        
     conn.commit()
     conn.close()
 

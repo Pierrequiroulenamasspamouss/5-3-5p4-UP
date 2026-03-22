@@ -6,6 +6,7 @@ from routes.user import user_bp
 from routes.game import game_bp
 from routes.metrics import metrics_bp
 from routes.sales import sales_bp
+from routes.dashboard import dashboard_bp
 from utils.db import init_db, migrate_files_to_db
 
 # Disable verbose logs
@@ -28,6 +29,7 @@ def create_app(port):
     app.register_blueprint(game_bp)
     app.register_blueprint(metrics_bp)
     app.register_blueprint(sales_bp)
+    app.register_blueprint(dashboard_bp)
 
     from flask import request
     @app.before_request
