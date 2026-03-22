@@ -65,48 +65,57 @@ namespace Kampai.UI
 			}
 		}
 
-		public bool IsValidCurrencyItem(int storeItemDefinitionID, global::Kampai.Game.StoreCategoryType type, bool countInLocked = true)
+		public bool IsValidCurrencyItem(int id, global::Kampai.Game.StoreCategoryType type, bool countInLocked = true)
 		{
-			global::Kampai.Game.StoreItemDefinition definition;
-			if (!definitionService.TryGet<global::Kampai.Game.StoreItemDefinition>(storeItemDefinitionID, out definition))
+			global::Kampai.Game.StoreItemDefinition def;
+			if (!definitionService.TryGet<global::Kampai.Game.StoreItemDefinition>(id, out def))
 			{
-				logger.Warning("Unable to find store item def with id: {0}", storeItemDefinitionID);
 				return false;
 			}
-			if (!definition.IsOnSale(global::UnityEngine.Application.platform, timeService, localeService, logger))
+
+
+			global::Kampai.Game.CurrencyItemDefinition currencyDef;
+			if (!definitionService.TryGet<global::Kampai.Game.CurrencyItemDefinition>(def.ReferencedDefID, out currencyDef))
 			{
-				logger.Warning("Item not valid for current store: {0}", storeItemDefinitionID);
 				return false;
 			}
-			global::Kampai.Game.CurrencyItemDefinition definition2;
-			if (!definitionService.TryGet<global::Kampai.Game.CurrencyItemDefinition>(definition.ReferencedDefID, out definition2))
+
+			if (def.Type == global::Kampai.Game.StoreItemType.SalePack)
 			{
-				logger.Warning("Unable to find currency item def with id: {0}", definition.ReferencedDefID);
-				return false;
-			}
-			/* if (definition2.COPPAGated && coppaService.Restricted())
-			{
-				return false;
-			} */
-			if (definition.Type == global::Kampai.Game.StoreItemType.SalePack)
-			{
-				global::Kampai.Game.PackDefinition definition3 = GetCurrencyStorePackDefinition(definition.ReferencedDefID);
-				if (definition3 == null)
-				{
-					logger.Error("Unable to find PackDefinition with id: {0}", definition.ReferencedDefID);
-					return false;
-				}
-				if (PackUtil.HasPurchasedEnough(definition3, playerService))
+				global::Kampai.Game.PackDefinition packDef = GetCurrencyStorePackDefinition(def.ReferencedDefID);
+				if (packDef == null)
 				{
 					return false;
 				}
+
+				// Check server-updated dates on the Pack itself (if it supports ranges like SalePackDefinition)
+				global::Kampai.Util.IUTCRangeable rangeable = packDef as global::Kampai.Util.IUTCRangeable;
+				if (rangeable != null && !timeService.WithinRange(rangeable, true))
+				{
+					return false;
+				}
+
+				if (PackUtil.HasPurchasedEnough(packDef, playerService))
+				{
+					return false;
+				}
 			}
+			else if (!def.IsOnSale(global::UnityEngine.Application.platform, timeService, localeService, logger))
+			{
+				// For non-packs, use original StoreItem date check
+				return false;
+			}
+
 			return true;
 		}
 
-		public bool ShouldPackBeVisuallyLocked(global::Kampai.Game.PackDefinition currencyStorePackDefinition)
+		public bool ShouldPackBeVisuallyLocked(global::Kampai.Game.PackDefinition packDef)
 		{
-			return false; // Force unlocked
+			if (packDef.UnlockLevel > 0 && (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.LEVEL_ID) < packDef.UnlockLevel)
+			{
+				return true;
+			}
+			return false;
 		}
 
 		private bool ShouldItemBeMarkedAsViewed(global::Kampai.Game.StoreItemDefinition storeItemDef)

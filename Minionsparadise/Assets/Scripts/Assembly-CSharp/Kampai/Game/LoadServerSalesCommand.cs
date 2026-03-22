@@ -76,14 +76,24 @@ namespace Kampai.Game
 					foreach (global::Kampai.Game.SalePackDefinition item2 in list2)
 					{
 						global::Kampai.Game.Transaction.TransactionDefinition transactionDefinition = item2.TransactionDefinition.ToDefinition();
-						if (definitionService.Has<global::Kampai.Game.SalePackDefinition>(item2.ID) || definitionService.Has<global::Kampai.Game.Transaction.TransactionDefinition>(transactionDefinition.ID))
-						{
-							continue;
-						}
+						
 						int uTCEndDate = item2.UTCEndDate;
 						int num = timeService.CurrentTime();
-						if (uTCEndDate > num)
+						
+						if (definitionService.Has<global::Kampai.Game.SalePackDefinition>(item2.ID))
 						{
+							// UPDATE EXISTING
+							global::Kampai.Game.SalePackDefinition existing = definitionService.Get<global::Kampai.Game.SalePackDefinition>(item2.ID);
+							existing.UTCStartDate = item2.UTCStartDate;
+							existing.UTCEndDate = item2.UTCEndDate;
+							existing.CanBuyThisManyTimes = item2.CanBuyThisManyTimes;
+							existing.Disabled = item2.Disabled;
+							existing.Impressions = item2.Impressions;
+							logger.Info("ServerSales - Updated SalePackDefinition ID = " + item2.ID + " EndDate: " + item2.UTCEndDate);
+						}
+						else if (uTCEndDate > num && !definitionService.Has<global::Kampai.Game.Transaction.TransactionDefinition>(transactionDefinition.ID))
+						{
+							// ADD NEW
 							definitionService.Add(item2);
 							if (item2.TransactionDefinition != null)
 							{

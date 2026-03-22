@@ -58,7 +58,7 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 			bool flag = true;
 			string binaryDefinitionsPath = global::Kampai.Game.DefinitionService.GetBinaryDefinitionsPath();
 #if !UNITY_WEBPLAYER
-			if (global::System.IO.File.Exists(binaryDefinitionsPath))
+			/* if (global::System.IO.File.Exists(binaryDefinitionsPath))
 			{
 				logger.Debug("LoadDefinitions: Starting binary deserialization");
 				if (DeserializeDefinitionsFromBinaryFile(binaryDefinitionsPath))
@@ -70,7 +70,8 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 				{
 					global::Kampai.Game.DefinitionService.DeleteBinarySerialization();
 				}
-			}
+			} */
+			logger.Warning("FORCED JSON LOADING: Skipping binary definitions cache.");
 #else
 			if (false)
 			{
@@ -81,6 +82,12 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 				logger.Debug("LoadDefinitions: Starting json deserialization");
 				routineRunner.StartAsyncConditionTask(delegate
 				{
+					if (global::System.IO.File.Exists(jsonPath)) {
+						long length = new global::System.IO.FileInfo(jsonPath).Length;
+						logger.Warning("FORCED JSON LOADING: File {0} size: {1} bytes", jsonPath, length);
+					} else {
+						logger.Error("FORCED JSON LOADING: File {0} DOES NOT EXIST!", jsonPath);
+					}
 					bool flag2 = DeserializeDefinitionsFromJsonFile(jsonPath);
 					if (!flag2)
 					{

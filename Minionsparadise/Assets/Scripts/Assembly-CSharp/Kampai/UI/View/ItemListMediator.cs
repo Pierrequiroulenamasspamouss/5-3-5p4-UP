@@ -437,6 +437,10 @@ namespace Kampai.UI.View
 		internal void SetBadgeCountForStoreItemType(global::Kampai.Game.StoreItemType type)
 		{
 			global::System.Collections.Generic.List<global::Kampai.UI.View.StoreButtonView> storeButtonViews = base.view.GetStoreButtonViews(type);
+			if (storeButtonViews == null)
+			{
+				return;
+			}
 			foreach (global::Kampai.UI.View.StoreButtonView item in storeButtonViews)
 			{
 				int iD = item.definition.ID;
