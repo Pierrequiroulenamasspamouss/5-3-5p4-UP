@@ -55,8 +55,8 @@ if __name__ == '__main__':
     t2 = threading.Thread(target=run_secondary, daemon=True)
     t2.start()
 
-    # Main port with reloader
+    # Main port without reloader to avoid multi-process start issues
     app_main = create_app(44733)
-    print(">>> Main Server started on port 44733 (with auto-reload)", flush=True)
-    app_main.run(host='0.0.0.0', port=44733, debug=True, threaded=True, use_reloader=True)
+    print(">>> Main Server started on port 44733", flush=True)
+    app_main.run(host='0.0.0.0', port=44733, debug=False, threaded=True, use_reloader=False)
 # trigger reload 1773787109.4464663
