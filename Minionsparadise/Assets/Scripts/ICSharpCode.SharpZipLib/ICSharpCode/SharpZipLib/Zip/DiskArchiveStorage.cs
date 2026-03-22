@@ -48,7 +48,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 			{
 				throw new global::ICSharpCode.SharpZipLib.Zip.ZipException("No temporary stream has been created");
 			}
-			global::System.IO.Stream stream = null;
 			string tempFileName = GetTempFileName(fileName_, false);
 			bool flag = false;
 			try
@@ -66,7 +65,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 			catch (global::System.Exception)
 			{
-				stream = null;
 				if (!flag)
 				{
 #if !UNITY_WEBPLAYER
@@ -76,6 +74,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				}
 				throw;
 			}
+
 		}
 
 		public override global::System.IO.Stream MakeTemporaryCopy(global::System.IO.Stream stream)

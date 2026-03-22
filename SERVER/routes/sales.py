@@ -6,6 +6,23 @@ sales_bp = Blueprint('sales', __name__)
 
 SERVER_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFINITIONS_PATH = os.path.join(SERVER_DIR, "definitions.json")
+MARKET_PRICES_PATH = os.path.join(SERVER_DIR, "MarketPrices.json")
+
+@sales_bp.route('/rest/market_prices', methods=['GET'])
+def get_market_prices():
+    """
+    Returns SKU to Price mappings.
+    """
+    if not os.path.exists(MARKET_PRICES_PATH):
+        return jsonify({"default": "$9.99"})
+    
+    try:
+        with open(MARKET_PRICES_PATH, 'r') as f:
+            prices = json.load(f)
+        return jsonify(prices)
+    except Exception as e:
+        print(f"[PRICES] Error: {e}")
+        return jsonify({"default": "$9.99"})
 
 @sales_bp.route('/rest/sales/<user_id>/v2', methods=['GET'])
 def get_sales(user_id):

@@ -1,5 +1,7 @@
+#pragma warning disable 3005
 namespace strange.extensions.injector.api
 {
+
 	public interface IInjectionBinding : global::strange.framework.api.IBinding
 	{
 		bool isCrossContext { get; }

@@ -10,11 +10,11 @@ namespace Kampai.UI
 
 		int GetBadgeCount(global::Kampai.Game.CurrencyStoreCategoryDefinition currencyStoreCategoryDef);
 
-		global::Kampai.Game.CurrencyStorePackDefinition GetCurrencyStorePackDefinition(int packDefinitionId);
+		global::Kampai.Game.PackDefinition GetCurrencyStorePackDefinition(int packDefinitionId);
 
-		bool ShouldPackBeVisuallyLocked(global::Kampai.Game.CurrencyStorePackDefinition currencyStorePackDefinition);
+		bool ShouldPackBeVisuallyLocked(global::Kampai.Game.PackDefinition currencyStorePackDefinition);
 
-		bool HasPurchasedEnough(global::Kampai.Game.CurrencyStorePackDefinition currencyStorePackDefinition);
+		bool HasPurchasedEnough(global::Kampai.Game.PackDefinition currencyStorePackDefinition);
 
 		bool IsValidCurrencyItem(int storeItemDefinitionID, global::Kampai.Game.StoreCategoryType type, bool countInLocked = true);
 	}

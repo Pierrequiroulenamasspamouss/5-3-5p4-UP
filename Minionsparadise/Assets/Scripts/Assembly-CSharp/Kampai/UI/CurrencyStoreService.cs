@@ -90,25 +90,21 @@ namespace Kampai.UI
 			} */
 			if (definition.Type == global::Kampai.Game.StoreItemType.SalePack)
 			{
-				global::Kampai.Game.CurrencyStorePackDefinition definition3;
-				if (!definitionService.TryGet<global::Kampai.Game.CurrencyStorePackDefinition>(definition.ReferencedDefID, out definition3))
+				global::Kampai.Game.PackDefinition definition3 = GetCurrencyStorePackDefinition(definition.ReferencedDefID);
+				if (definition3 == null)
 				{
-					logger.Error("Unable to find CurrencyStorePackDefinition with id: {0}", definition.ReferencedDefID);
+					logger.Error("Unable to find PackDefinition with id: {0}", definition.ReferencedDefID);
 					return false;
 				}
 				if (PackUtil.HasPurchasedEnough(definition3, playerService))
 				{
 					return false;
 				}
-				/* if (!countInLocked && playerService.GetHighestFtueCompleted() < definition3.StoreUnlockFTUELevel)
-				{
-					return false;
-				} */
 			}
 			return true;
 		}
 
-		public bool ShouldPackBeVisuallyLocked(global::Kampai.Game.CurrencyStorePackDefinition currencyStorePackDefinition)
+		public bool ShouldPackBeVisuallyLocked(global::Kampai.Game.PackDefinition currencyStorePackDefinition)
 		{
 			return false; // Force unlocked
 		}
@@ -119,21 +115,26 @@ namespace Kampai.UI
 			{
 				return true;
 			}
-			global::Kampai.Game.CurrencyStorePackDefinition definition;
-			return definitionService.TryGet<global::Kampai.Game.CurrencyStorePackDefinition>(storeItemDef.ReferencedDefID, out definition) && !ShouldPackBeVisuallyLocked(definition);
+			global::Kampai.Game.PackDefinition definition = GetCurrencyStorePackDefinition(storeItemDef.ReferencedDefID);
+			return definition != null && !ShouldPackBeVisuallyLocked(definition);
 		}
 
-		public bool HasPurchasedEnough(global::Kampai.Game.CurrencyStorePackDefinition currencyStorePackDefinition)
+		public bool HasPurchasedEnough(global::Kampai.Game.PackDefinition currencyStorePackDefinition)
 		{
 			return PackUtil.HasPurchasedEnough(currencyStorePackDefinition, playerService);
 		}
 
-		public global::Kampai.Game.CurrencyStorePackDefinition GetCurrencyStorePackDefinition(int packDefinitionId)
+		public global::Kampai.Game.PackDefinition GetCurrencyStorePackDefinition(int packDefinitionId)
 		{
-			global::Kampai.Game.CurrencyStorePackDefinition definition;
-			if (definitionService.TryGet<global::Kampai.Game.CurrencyStorePackDefinition>(packDefinitionId, out definition))
+			global::Kampai.Game.CurrencyStorePackDefinition currencyDef;
+			if (definitionService.TryGet<global::Kampai.Game.CurrencyStorePackDefinition>(packDefinitionId, out currencyDef))
 			{
-				return definition;
+				return currencyDef;
+			}
+			global::Kampai.Game.SalePackDefinition saleDef;
+			if (definitionService.TryGet<global::Kampai.Game.SalePackDefinition>(packDefinitionId, out saleDef))
+			{
+				return saleDef;
 			}
 			logger.Error("The Store Pack you are trying to find doesn't exist, id: {0}", packDefinitionId);
 			return null;

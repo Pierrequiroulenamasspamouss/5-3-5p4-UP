@@ -476,7 +476,8 @@ namespace Newtonsoft.Json.Bson
 		{
 			int count = ReadInt32();
 			global::Newtonsoft.Json.Bson.BsonBinaryType bsonBinaryType = (global::Newtonsoft.Json.Bson.BsonBinaryType)ReadByte();
-			if (bsonBinaryType == global::Newtonsoft.Json.Bson.BsonBinaryType.Data && !_jsonNet35BinaryCompatibility)
+			if (bsonBinaryType == global::Newtonsoft.Json.Bson.BsonBinaryType.Binary && !_jsonNet35BinaryCompatibility)
+
 			{
 				count = ReadInt32();
 			}
