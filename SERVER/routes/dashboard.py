@@ -1,0 +1,801 @@
+from flask import Blueprint, jsonify, request, render_template_string, redirect
+import json
+import os
+import sqlite3
+from utils.db import get_db_connection, DB_PATH, PLAYER_DATA_DIR, DEFINITIONS_PATH
+
+dashboard_bp = Blueprint('dashboard', __name__)
+
+EMPTY_PLAYER_JSON = os.path.join(os.path.dirname(__file__), '..', 'empty_player.json')
+
+# We serve the frontend HTML directly from Python to ensure easy deployment.
+html_template = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minions Paradise Decompiled Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+        
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(239, 68, 68, 0.1), transparent 25%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 2rem;
+            margin: 2rem;
+        }
+
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+        }
+
+        h1 { font-size: 2.25rem; font-weight: 800; margin-top: 0; margin-bottom: 0.5rem; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; border-bottom: 1px solid var(--panel-border); padding-bottom: 0.5rem; }
+        p { color: var(--text-muted); line-height: 1.6; }
+
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.875rem; color: var(--text-muted); }
+        
+        input[type="text"], input[type="password"], input[type="file"], select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--panel-border);
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
+
+        button, .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: var(--accent);
+            color: #0f172a;
+            text-decoration: none;
+            width: 100%;
+        }
+        
+        button:hover, .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        button:active, .btn:active { transform: translateY(0); }
+        
+        button.danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+        button.danger:hover { background: var(--danger); color: white; }
+        button.secondary { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid var(--panel-border); }
+        button.secondary:hover { background: rgba(255, 255, 255, 0.2); }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+        .alert.warning { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); color: #fcd34d; display: block; }
+        .alert.error { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); color: #fca5a5; display: block; }
+        .alert.success { background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #6ee7b7; display: block; }
+
+        #dashboard-view { display: none; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+        
+        .action-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+        .action-card:hover { border-color: rgba(255, 255, 255, 0.2); background: rgba(15, 23, 42, 0.6); }
+
+        .discord-link { display: inline-flex; align-items: center; justify-content: center; background: #5865F2; color: white; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; width: 100%; transition: background 0.2s; margin-top: 1rem; }
+        .discord-link:hover { background: #4752C4; }
+        
+        .inventory-list { max-height: 300px; overflow-y: auto; padding-right: 10px; }
+        .inventory-list::-webkit-scrollbar { width: 6px; }
+        .inventory-list::-webkit-scrollbar-track { background: var(--panel-border); border-radius: 4px; }
+        .inventory-list::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+        
+        .inv-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--panel-border); }
+        .inv-item:last-child { border-bottom: none; }
+        .inv-actions button { padding: 4px 8px; width: auto; font-size: 0.8rem; margin-left: 4px; }
+        
+        /* Modal for forms */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+        .modal-content { background: var(--bg-color); border: 1px solid var(--panel-border); border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%; }
+        .close-btn { color: var(--text-muted); float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover { color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="status-msg" class="alert"></div>
+
+    <!-- Login View -->
+    <div id="login-view" class="glass-panel">
+        <h1>Welcome to Minions Paradise Decompiled Dashboard</h1>
+        <p>Manage your save data securely.</p>
+        
+        <div class="input-group" style="margin-top: 2rem;">
+            <label for="login-uid">User ID (UID)</label>
+            <input type="text" id="login-uid" placeholder="Enter your UID">
+        </div>
+        <div class="input-group">
+            <label for="login-password">Password (Leave blank if unsecured)</label>
+            <input type="password" id="login-password" placeholder="Enter your password">
+        </div>
+        <button id="btn-login" onclick="login()">Enter Dashboard</button>
+        
+        <a href="https://discord.gg/jcpbMGDzzW" target="_blank" class="discord-link">
+            Join the Discord
+        </a>
+    </div>
+
+    <!-- Dashboard View -->
+    <div id="dashboard-view">
+        <div class="glass-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Dashboard: <span id="display-uid" style="color: var(--accent);"></span></h2>
+                <button class="secondary" style="width: auto;" onclick="logout()">Logout</button>
+            </div>
+            
+            <div id="security-warning" class="alert warning" style="cursor: pointer;" onclick="openModal('password-modal')">
+                <strong>Warning:</strong> Your profile is not secured with a password. Click here to set one to protect your data!
+            </div>
+            
+            <p>Welcome back, <strong id="display-name">Player</strong>!</p>
+        </div>
+
+        <div class="grid-2">
+            <!-- Save Management -->
+            <div class="action-card">
+                <h3>Save Management</h3>
+                <p style="font-size: 0.875rem;">Backup, restore, or completely reset your progression.</p>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                    <button class="secondary" onclick="backupSave()">Backup Save</button>
+                    <button class="secondary" onclick="openModal('upload-modal')">Upload Save</button>
+                </div>
+                <button class="danger" style="margin-top: 0.5rem;" onclick="openModal('reset-modal')">Reset Save Data</button>
+            </div>
+
+            <!-- Profile & Socials -->
+            <div class="action-card">
+                <h3>Profile & Socials</h3>
+                <p style="font-size: 0.875rem;">Manage your linked accounts and display name.</p>
+                <button class="secondary" onclick="openModal('profile-modal')">Change Name & Avatar</button>
+                <button class="danger" style="margin-top: 0.5rem;" onclick="unlinkSocials()">Unlink Socials (Discord)</button>
+            </div>
+
+            <!-- Migrate Save -->
+            <div class="action-card">
+                <h3>Migrate Save</h3>
+                <p style="font-size: 0.875rem;">Transfer progression from or to another User ID.</p>
+                <button class="secondary" onclick="openModal('migrate-modal')">Start Migration</button>
+            </div>
+
+            <!-- View Inventory -->
+            <div class="action-card">
+                <h3>View Inventory</h3>
+                <p style="font-size: 0.875rem;">Checkout your resources and currencies.</p>
+                <button class="secondary" onclick="viewInventory()">Show Inventory</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div id="password-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('password-modal')">&times;</span>
+        <h2>Set Password</h2>
+        <div class="input-group">
+            <label>New Password</label>
+            <input type="password" id="new-password">
+        </div>
+        <button onclick="setPassword()">Save Password</button>
+    </div>
+</div>
+
+<div id="reset-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('reset-modal')">&times;</span>
+        <h2>Confirm Reset</h2>
+        <p>This will completely wipe your progress and set you back to the start. Social links will be removed. Are you sure?</p>
+        <button class="danger" onclick="resetSave()">Yes, Reset My Save</button>
+    </div>
+</div>
+
+<div id="profile-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('profile-modal')">&times;</span>
+        <h2>Update Profile</h2>
+        <div class="input-group">
+            <label>Custom Name</label>
+            <input type="text" id="update-name" placeholder="Leave blank to use Discord name">
+        </div>
+        <div class="input-group">
+            <label>Custom Avatar URL</label>
+            <input type="text" id="update-avatar" placeholder="https://...">
+        </div>
+        <button onclick="updateProfile()">Save Changes</button>
+    </div>
+</div>
+
+<div id="migrate-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('migrate-modal')">&times;</span>
+        <h2>Migrate Save</h2>
+        <div class="input-group">
+            <label>Direction</label>
+            <select id="migrate-dir">
+                <option value="to">Migrate TO Target UID</option>
+                <option value="from">Migrate FROM Target UID</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Target UID</label>
+            <input type="text" id="migrate-target">
+        </div>
+        <div class="input-group" id="migrate-pwd-group">
+            <label>Target UID Password (if secured)</label>
+            <input type="password" id="migrate-password">
+        </div>
+        <button onclick="migrateSave()">Migrate Now</button>
+    </div>
+</div>
+
+<div id="upload-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('upload-modal')">&times;</span>
+        <h2>Upload Save</h2>
+        <p>Upload a Valid JSON file. Only inventory/resources will be updated.</p>
+        <div class="input-group">
+            <input type="file" id="upload-file" accept=".json">
+        </div>
+        <button onclick="uploadSave()">Upload</button>
+    </div>
+</div>
+
+<div id="inventory-modal" class="modal">
+    <div class="modal-content" style="max-height: 85vh; display: flex; flex-direction: column; max-width: 600px;">
+        <span class="close-btn" onclick="closeModal('inventory-modal')">&times;</span>
+        <h2>Inventory / Resources</h2>
+        
+        <div class="input-group" style="display: flex; gap: 8px;">
+            <input type="text" id="add-item-id" placeholder="Item ID (e.g. 205)" style="flex: 1;">
+            <input type="text" id="add-item-amount" placeholder="Amount" style="flex: 1;">
+            <button onclick="updateInventoryItem('add')" style="width: auto;">Add / Update</button>
+        </div>
+        
+        <div class="inventory-list" id="inv-list" style="flex-grow: 1; margin-top: 1rem;">Loading...</div>
+    </div>
+</div>
+
+<script>
+    let currentSession = null;
+    
+    function showMsg(msg, type) {
+        const el = document.getElementById('status-msg');
+        el.className = 'alert ' + type;
+        el.textContent = msg;
+        setTimeout(() => el.style.display = 'none', 5000);
+    }
+    
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    
+    function apiCall(endpoint, data, onSuccess) {
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if(res.error) showMsg(res.error, 'error');
+            else {
+                if(res.msg) showMsg(res.msg, 'success');
+                onSuccess(res);
+            }
+        }).catch(err => showMsg("Server error: " + err, 'error'));
+    }
+
+    function login() {
+        const uid = document.getElementById('login-uid').value.trim();
+        const pwd = document.getElementById('login-password').value;
+        if(!uid) return showMsg("Please enter a UID", 'error');
+        
+        apiCall('/api/dashboard/login', {uid, password: pwd}, (res) => {
+            currentSession = { uid, token: res.token };
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'block';
+            document.getElementById('display-uid').innerText = uid;
+            document.getElementById('display-name').innerText = res.name || 'Player';
+            
+            document.getElementById('security-warning').style.display = res.secured ? 'none' : 'block';
+        });
+    }
+
+    function logout() {
+        currentSession = null;
+        document.getElementById('login-view').style.display = 'block';
+        document.getElementById('dashboard-view').style.display = 'none';
+        document.getElementById('login-password').value = '';
+    }
+
+    function setPassword() {
+        const pwd = document.getElementById('new-password').value;
+        if(!pwd) return showMsg("Password cannot be empty", "error");
+        
+        apiCall('/api/dashboard/set_password', {uid: currentSession.uid, token: currentSession.token, password: pwd}, () => {
+            closeModal('password-modal');
+            document.getElementById('security-warning').style.display = 'none';
+            document.getElementById('new-password').value = '';
+        });
+    }
+
+    function resetSave() {
+        apiCall('/api/dashboard/reset_save', {uid: currentSession.uid, token: currentSession.token}, () => {
+            closeModal('reset-modal');
+        });
+    }
+
+    function backupSave() {
+        window.location.href = `/api/dashboard/backup_save?uid=${currentSession.uid}&token=${currentSession.token}`;
+    }
+
+    function unlinkSocials() {
+        if(confirm("Are you sure you want to unlink Discord?")) {
+            apiCall('/api/dashboard/unlink_socials', {uid: currentSession.uid, token: currentSession.token}, () => {});
+        }
+    }
+
+    function updateProfile() {
+        const name = document.getElementById('update-name').value;
+        const avatar = document.getElementById('update-avatar').value;
+        apiCall('/api/dashboard/update_profile', {uid: currentSession.uid, token: currentSession.token, custom_name: name, custom_avatar: avatar}, () => {
+            closeModal('profile-modal');
+            if(name) document.getElementById('display-name').innerText = name;
+        });
+    }
+
+    function migrateSave() {
+        const dir = document.getElementById('migrate-dir').value;
+        const target = document.getElementById('migrate-target').value;
+        const targetPwd = document.getElementById('migrate-password').value;
+        
+        if(!target) return showMsg("Enter Target UID", "error");
+        
+        apiCall('/api/dashboard/migrate_save', {
+            uid: currentSession.uid, token: currentSession.token,
+            direction: dir, target_uid: target, target_password: targetPwd
+        }, () => {
+            closeModal('migrate-modal');
+        });
+    }
+
+    function uploadSave() {
+        const fileInput = document.getElementById('upload-file');
+        if(!fileInput.files[0]) return showMsg("Select a file first", "error");
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const json = JSON.parse(e.target.result);
+                apiCall('/api/dashboard/upload_save', {uid: currentSession.uid, token: currentSession.token, payload: json}, () => {
+                    closeModal('upload-modal');
+                });
+            } catch(err) {
+                showMsg("Invalid JSON file", "error");
+            }
+        };
+        reader.readAsText(fileInput.files[0]);
+    }
+    
+    function viewInventory() {
+        fetch(`/api/dashboard/inventory?uid=${currentSession.uid}&token=${currentSession.token}`)
+        .then(r => r.json())
+        .then(res => {
+            if(res.error) return showMsg(res.error, "error");
+            const list = document.getElementById('inv-list');
+            list.innerHTML = '';
+            
+            res.inventory.forEach(item => {
+                const itemHtml = `
+                <div class="inv-item">
+                    <div style="flex: 1">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">[ID: ${item.id}]</span> 
+                        <strong>${item.name}</strong>
+                    </div>
+                    
+                    <div class="inv-actions" style="display: flex; align-items: center; gap: 8px;">
+                        <input type="number" id="amt-${item.id}" value="${item.amount}" style="width: 80px; padding: 4px; background: rgba(0,0,0,0.2);">
+                        <button class="secondary" onclick="updateInventoryItem('edit', ${item.id})">Save</button>
+                        <button class="danger" onclick="updateInventoryItem('delete', ${item.id})">X</button>
+                    </div>
+                </div>`;
+                list.innerHTML += itemHtml;
+            });
+            openModal('inventory-modal');
+        });
+    }
+
+    function updateInventoryItem(action, id) {
+        let itemId = id;
+        let amount = 0;
+        
+        if(action === 'add') {
+            itemId = document.getElementById('add-item-id').value;
+            amount = document.getElementById('add-item-amount').value;
+            if(!itemId || !amount) return showMsg("Please enter ID and Amount", "error");
+            action = 'update';
+        } else if(action === 'edit') {
+            amount = document.getElementById(`amt-${id}`).value;
+            action = 'update';
+        }
+        
+        apiCall('/api/dashboard/update_inventory_item', {
+            uid: currentSession.uid, token: currentSession.token,
+            item_id: parseInt(itemId), amount: parseInt(amount), action: action
+        }, () => {
+            // Refresh Inventory View seamlessly
+            viewInventory();
+            document.getElementById('add-item-id').value = '';
+            document.getElementById('add-item-amount').value = '';
+        });
+    }
+</script>
+</body>
+</html>
+"""
+
+# Very simple unauthenticated token implementation for the session (real apps should use JWT or proper sessions)
+# Since UID + password check is lightweight, we use a basic static "token" generation.
+def gen_token(uid):
+    return f"tok_{uid}"
+
+def verify_session(data):
+    uid = data.get('uid')
+    token = data.get('token')
+    if token != gen_token(uid):
+        return False
+    return True
+
+@dashboard_bp.route('/dashboard', methods=['GET'])
+def render_dashboard():
+    return render_template_string(html_template)
+
+@dashboard_bp.route('/api/dashboard/login', methods=['POST'])
+def dashboard_login():
+    data = request.json
+    uid = data.get('uid')
+    pwd = data.get('password', '')
+    
+    conn = get_db_connection()
+    row = conn.execute("SELECT password, custom_name, discord_username FROM players WHERE uid = ?", (uid,)).fetchone()
+    
+    if not row:
+        conn.close()
+        return jsonify({"error": "Player not found. Login to the game first to create the account."})
+    
+    db_pwd = row['password']
+    
+    if db_pwd and db_pwd != pwd:
+        conn.close()
+        return jsonify({"error": "Incorrect password."})
+        
+    conn.close()
+    
+    name = row['custom_name'] or row['discord_username'] or "Player"
+    secured = bool(db_pwd)
+    
+    return jsonify({
+        "msg": "Login successful",
+        "token": gen_token(uid),
+        "name": name,
+        "secured": secured
+    })
+
+@dashboard_bp.route('/api/dashboard/set_password', methods=['POST'])
+def set_password():
+    data = request.json
+    if not verify_session(data): return jsonify({"error": "Unauthorized"})
+    
+    uid = data.get('uid')
+    pwd = data.get('password')
+    
+    conn = get_db_connection()
+    # Check if a password already exists
+    row = conn.execute("SELECT password FROM players WHERE uid = ?", (uid,)).fetchone()
+    if row and row['password']:
+        conn.close()
+        return jsonify({"error": "Profile is already secured."})
+        
+    conn.execute("UPDATE players SET password = ? WHERE uid = ?", (pwd, uid))
+    conn.commit()
+    conn.close()
+    return jsonify({"msg": "Password updated successfully!"})
+
+@dashboard_bp.route('/api/dashboard/reset_save', methods=['POST'])
+def reset_save():
+    data = request.json
+    if not verify_session(data): return jsonify({"error": "Unauthorized"})
+    uid = data.get('uid')
+    
+    try:
+        with open(EMPTY_PLAYER_JSON, 'r') as f:
+            empty_data = json.load(f)
+            inventory_str = json.dumps(empty_data.get('inventory', {}))
+    except Exception as e:
+        return jsonify({"error": f"Failed to read empty_player.json: {e}"})
+        
+    conn = get_db_connection()
+    conn.execute('''
+        UPDATE players 
+        SET inventory = ?, DISCORD = '', discord_username = '', discord_avatar = '',
+            FACEBOOK = '', GOOGLE_PLAY = '', custom_name = '', custom_avatar = ''
+        WHERE uid = ?
+    ''', (inventory_str, uid))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({"msg": "Save data has been successfully reset."})
+
+@dashboard_bp.route('/api/dashboard/unlink_socials', methods=['POST'])
+def unlink_socials():
+    data = request.json
+    if not verify_session(data): return jsonify({"error": "Unauthorized"})
+    uid = data.get('uid')
+    
+    conn = get_db_connection()
+    conn.execute("UPDATE players SET DISCORD = '', discord_username = '', discord_avatar = '', FACEBOOK = '', GOOGLE_PLAY = '' WHERE uid = ?", (uid,))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({"msg": "Socials unlinked successfully."})
+
+@dashboard_bp.route('/api/dashboard/update_profile', methods=['POST'])
+def update_profile():
+    data = request.json
+    if not verify_session(data): return jsonify({"error": "Unauthorized"})
+    uid = data.get('uid')
+    
+    conn = get_db_connection()
+    conn.execute("UPDATE players SET custom_name = ?, custom_avatar = ? WHERE uid = ?", 
+                 (data.get('custom_name'), data.get('custom_avatar'), uid))
+    conn.commit()
+    conn.close()
+    return jsonify({"msg": "Profile updated successfully."})
+
+@dashboard_bp.route('/api/dashboard/backup_save', methods=['GET'])
+def backup_save():
+    uid = request.args.get('uid')
+    token = request.args.get('token')
+    if token != gen_token(uid): return "Unauthorized", 401
+    
+    conn = get_db_connection()
+    row = conn.execute("SELECT * FROM players WHERE uid = ?", (uid,)).fetchone()
+    conn.close()
+    
+    if not row: return "Not Found", 404
+    
+    # Dump entire row as JSON
+    d = dict(row)
+    # Parse internally nested JSON for a cleaner export
+    for k in ['inventory', 'purchasedSales', 'unlocks', 'DISCORD']:
+        if d.get(k):
+            try: d[k] = json.loads(d[k])
+            except: pass
+            
+    from flask import Response
+    return Response(json.dumps(d, indent=2), mimetype='application/json', headers={'Content-Disposition': f'attachment;filename=player_{uid}.json'})
+
+@dashboard_bp.route('/api/dashboard/upload_save', methods=['POST'])
+def upload_save():
+    data = request.json
+    if not verify_session(data): return jsonify({"error": "Unauthorized"})
+    uid = data.get('uid')
+    payload = data.get('payload', {})
+    
+    if not isinstance(payload, dict): return jsonify({"error": "Invalid payload"})
+    
+    fields_to_update = {}
+    if 'inventory' in payload: fields_to_update['inventory'] = json.dumps(payload['inventory'])
+    if 'PurchasedSales' in payload: fields_to_update['purchasedSales'] = json.dumps(payload['PurchasedSales'])
+    
+    if not fields_to_update:
+        # Check lowercase keys just in case
+        if 'purchasedsales' in payload: fields_to_update['purchasedSales'] = json.dumps(payload['purchasedsales'])
+        
+    if not fields_to_update:
+        return jsonify({"error": "No meaningful inventory fields found to update."})
+        
+    conn = get_db_connection()
+    for k, v in fields_to_update.items():
+        conn.execute(f"UPDATE players SET {k} = ? WHERE uid = ?", (v, uid))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({"msg": "Save uploaded and applied!"})
+
+@dashboard_bp.route('/api/dashboard/migrate_save', methods=['POST'])
+def migrate_save():
+    data = request.json
+    if not verify_session(data): return jsonify({"error": "Unauthorized"})
+    
+    uid = data.get('uid')
+    target = data.get('target_uid')
+    direction = data.get('direction')
+    target_pwd = data.get('target_password', '')
+    
+    conn = get_db_connection()
+    # Check target
+    target_row = conn.execute("SELECT password, inventory FROM players WHERE uid = ?", (target,)).fetchone()
+    if not target_row:
+        conn.close()
+        return jsonify({"error": "Target UID not found."})
+        
+    if target_row['password'] and target_row['password'] != target_pwd:
+        conn.close()
+        return jsonify({"error": "Incorrect password for target UID."})
+        
+    current_row = conn.execute("SELECT inventory FROM players WHERE uid = ?", (uid,)).fetchone()
+    
+    if direction == 'to':
+        # current -> target
+        conn.execute("UPDATE players SET inventory = ? WHERE uid = ?", (current_row['inventory'], target))
+    elif direction == 'from':
+        # target -> current
+        conn.execute("UPDATE players SET inventory = ? WHERE uid = ?", (target_row['inventory'], uid))
+    else:
+        conn.close()
+        return jsonify({"error": "Invalid direction."})
+        
+    conn.commit()
+    conn.close()
+    return jsonify({"msg": f"Save migrated successfully {direction} {target}."})
+
+def get_loc_text(key):
+    # Quick simple search through EN.json to map LocKeys
+    loc_path = os.path.join(os.path.dirname(__file__), '..', 'loc_text', 'EN.json')
+    try:
+        with open(loc_path, 'r', encoding='utf-8') as f:
+            translations = json.load(f)
+            return translations.get(key, key)
+    except:
+        return key
+
+@dashboard_bp.route('/api/dashboard/inventory', methods=['GET'])
+def inventory():
+    uid = request.args.get('uid')
+    token = request.args.get('token')
+    if token != gen_token(uid): return jsonify({"error": "Unauthorized"})
+    
+    conn = get_db_connection()
+    row = conn.execute("SELECT inventory FROM players WHERE uid = ?", (uid,)).fetchone()
+    conn.close()
+    
+    if not row or not row['inventory']: return jsonify({"inventory": []})
+    
+    # Load definitions for nice names
+    defs = {}
+    try:
+        with open(DEFINITIONS_PATH, 'r', encoding='utf-8') as f:
+            d = json.load(f)
+            for item in d.get('itemDefinitions', []):
+                defs[item.get('id')] = item.get('localizedKey', f"Item {item.get('id')}")
+            for item in d.get('currencyItemDefinitions', []):
+                defs[item.get('id')] = item.get('localizedKey', f"Currency {item.get('id')}")
+    except:
+        pass
+
+    inv_json = json.loads(row['inventory'])
+    res = []
+    
+    if isinstance(inv_json, list):
+        for item in inv_json:
+            item_def = item.get('Definition')
+            amount = item.get('Quantity')
+            if item_def is not None and amount is not None:
+                loc_key = defs.get(item_def, f"Item {item_def}")
+                name = get_loc_text(loc_key)
+                res.append({"id": item_def, "name": name, "amount": amount})
+    elif isinstance(inv_json, dict):
+        for item_id, amount in inv_json.items():
+            if not str(item_id).isdigit():
+                continue
+            item_id = int(item_id)
+            loc_key = defs.get(item_id, f"Item {item_id}")
+            name = get_loc_text(loc_key)
+            res.append({"id": item_id, "name": name, "amount": amount})
+        
+    return jsonify({"inventory": res})
+
+@dashboard_bp.route('/api/dashboard/update_inventory_item', methods=['POST'])
+def update_inventory_item():
+    data = request.json
+    if not verify_session(data): return jsonify({"error": "Unauthorized"})
+    
+    uid = data.get('uid')
+    item_id = int(data.get('item_id'))
+    amount = int(data.get('amount'))
+    action = data.get('action') # 'update' or 'delete'
+    
+    conn = get_db_connection()
+    row = conn.execute("SELECT inventory FROM players WHERE uid = ?", (uid,)).fetchone()
+    
+    if not row:
+        conn.close()
+        return jsonify({"error": "Player not found."})
+        
+    inv_json = json.loads(row['inventory'])
+    
+    if isinstance(inv_json, list):
+        found = False
+        for i in range(len(inv_json)-1, -1, -1):
+            if inv_json[i].get('Definition') == item_id:
+                if action == 'delete':
+                    del inv_json[i]
+                else:
+                    inv_json[i]['Quantity'] = amount
+                found = True
+        
+        if not found and action != 'delete':
+            # Need a fake ID, maybe max + 1
+            max_id = max([x.get('ID', 0) for x in inv_json]) if len(inv_json) > 0 else 0
+            inv_json.append({"ID": max_id + 1, "Definition": item_id, "Quantity": amount})
+    elif isinstance(inv_json, dict):
+        if action == 'delete':
+            inv_json.pop(str(item_id), None)
+        else:
+            inv_json[str(item_id)] = amount
+            
+    conn.execute("UPDATE players SET inventory = ? WHERE uid = ?", (json.dumps(inv_json), uid))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({"msg": "Inventory updated display refreshed!"})
