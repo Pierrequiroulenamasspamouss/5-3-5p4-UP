@@ -1337,8 +1337,8 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			ftab = new int[65537];
 			if (block != null && quadrant != null && zptr != null)
 			{
-				int[] ftab2 = ftab;
 			}
+
 			szptr = new short[2 * num];
 		}
 

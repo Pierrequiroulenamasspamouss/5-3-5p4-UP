@@ -68,9 +68,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 
 			public void BuildCodes()
 			{
-				int num3 = freqs.Length;
 				int[] array = new int[maxLength];
 				int num = 0;
+
 				codes = new short[freqs.Length];
 				for (int i = 0; i < maxLength; i++)
 				{

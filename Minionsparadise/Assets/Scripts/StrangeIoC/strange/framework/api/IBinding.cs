@@ -1,5 +1,7 @@
+#pragma warning disable 3005
 namespace strange.framework.api
 {
+
 	public interface IBinding
 	{
 		object key { get; }
