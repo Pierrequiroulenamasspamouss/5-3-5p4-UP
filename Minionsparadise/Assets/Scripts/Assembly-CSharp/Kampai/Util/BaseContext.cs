@@ -63,8 +63,8 @@ namespace Kampai.Util
 				injectionBinder.Bind<global::Kampai.Main.ILocalizationService>().To<global::Kampai.Main.HALService>().ToName(global::Kampai.Main.LocalizationServices.EVENT)
 					.CrossContext()
 					.ToSingleton();
-				injectionBinder.Bind<global::Kampai.Main.IAssetBundlesService>().To<global::Kampai.Main.AssetBundlesService>().ToSingleton()
-					.CrossContext();
+
+
 				injectionBinder.Bind<global::Kampai.Main.ILocalContentService>().To<global::Kampai.Main.LocalContentService>().ToSingleton()
 					.CrossContext();
 				injectionBinder.Bind<global::Kampai.Main.IAssetsPreloadService>().To<global::Kampai.Main.AssetsPreloadService>().CrossContext()
@@ -218,18 +218,14 @@ namespace Kampai.Util
 				injectionBinder.Bind<global::Kampai.Game.UpdateVolumeSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Common.ICoppaService>().To<global::Kampai.Common.CoppaService>().ToSingleton()
 					.CrossContext();
-#if !UNITY_ANDROID || UNITY_EDITOR
+				// De-integrated Nimble: Always use DefaultRequestFactory to bypass NimbleCInterface.so dependency.
 				injectionBinder.Bind<global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequestFactory>().To<global::Ea.Sharkbite.HttpPlugin.Http.Impl.DefaultRequestFactory>().ToSingleton()
 					.CrossContext();
-#else
-				injectionBinder.Bind<global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequestFactory>().To<global::Ea.Sharkbite.HttpPlugin.Http.Impl.NimbleRequestFactory>().ToSingleton()
-					.CrossContext();
-#endif
 				injectionBinder.Bind<global::Kampai.Common.ITelemetryService>().To<global::Kampai.Common.TelemetryService>().ToSingleton()
 					.CrossContext();
 				injectionBinder.Bind<global::Kampai.Game.ITimeService>().To<global::Kampai.Game.TimeService>().ToSingleton()
 					.CrossContext();
-				injectionBinder.Bind<global::Kampai.Common.NimbleTelemetrySender>().ToSingleton().CrossContext();
+				// NimbleTelemetrySender binding removed
 				injectionBinder.Bind<global::Kampai.Splash.IDownloadService>().To<global::Kampai.Splash.DownloadService>().ToSingleton()
 					.CrossContext();
 				injectionBinder.Bind<global::Kampai.Splash.IBackgroundDownloadDlcService>().To<global::Kampai.Splash.BackgroundDownloadDlcService>().ToSingleton()

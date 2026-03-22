@@ -1,5 +1,7 @@
+#pragma warning disable 3005
 namespace strange.extensions.injector.api
 {
+
 	public interface IInjectionBinder : global::strange.framework.api.IInstanceProvider
 	{
 		global::strange.extensions.injector.api.IInjector injector { get; set; }

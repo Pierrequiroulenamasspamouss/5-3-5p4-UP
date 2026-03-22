@@ -14,6 +14,8 @@ namespace strange.extensions.reflector.impl
 
 		public object[] SetterNames { get; set; }
 
+		public bool[] SetterOptional { get; set; }
+
 		public bool PreGenerated { get; set; }
 
 		public object CreateInstance(global::strange.extensions.injector.api.IInjector injector)
@@ -22,7 +24,7 @@ namespace strange.extensions.reflector.impl
 			object[] array = ((num > 0) ? new object[num] : emptyObjectList);
 			for (int i = 0; i < ConstructorParameters.Length; i++)
 			{
-				array[i] = injector.GetValueInjection(ConstructorParameters[i], null, null);
+				array[i] = injector.GetValueInjection(ConstructorParameters[i], null, null, false);
 			}
 			return Constructor(array);
 		}
@@ -41,7 +43,8 @@ namespace strange.extensions.reflector.impl
 			{
 				global::System.Collections.Generic.KeyValuePair<global::System.Type, global::System.Action<object, object>> keyValuePair = Setters[i];
 				object name = SetterNames[i];
-				object valueInjection = injector.GetValueInjection(keyValuePair.Key, name, instance);
+				bool optional = SetterOptional[i];
+				object valueInjection = injector.GetValueInjection(keyValuePair.Key, name, instance, optional);
 				keyValuePair.Value(instance, valueInjection);
 			}
 		}

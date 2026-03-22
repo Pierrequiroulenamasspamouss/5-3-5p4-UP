@@ -144,22 +144,6 @@ namespace Kampai.Game
 		private void ReconcileDlc()
 		{
 			reconcileDLCSignal.Dispatch(false);
-			if (dlcModel.NeededBundles == null)
-			{
-				return;
-			}
-			int count = dlcModel.NeededBundles.Count;
-			if (count != 0)
-			{
-				if (global::Kampai.Main.LoadState.Get() != global::Kampai.Main.LoadStateType.DLC || (count < 5 && (dlcModel.AllowDownloadOnMobileNetwork || networkModel.reachability == global::UnityEngine.NetworkReachability.ReachableViaLocalAreaNetwork)))
-				{
-					checkAvailableStorageSignal.Dispatch(global::Kampai.Util.GameConstants.PERSISTENT_DATA_PATH, dlcModel.TotalSize, backgroundDownloadDlcService.Start);
-				}
-				else
-				{
-					reloadGameSignal.Dispatch();
-				}
-			}
 		}
 	}
 }

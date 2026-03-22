@@ -4,8 +4,8 @@ import os
 import random
 import json
 import requests
-from utils.db import player_exists, link_discord_to_player, get_uid_by_discord_id
-
+from utils.db import player_exists, link_discord_to_player, get_uid_by_discord_id, get_tse_team_for_user, create_tse_team_for_user, save_tse_order_progress, claim_tse_reward
+from urllib.parse import quote
 
 user_bp = Blueprint('user', __name__)
 
@@ -56,61 +56,26 @@ def register():
         "type": 0
     })
 
-# --- TSE ENDPOINTS MOCKS ---
-tse_teams = {} # event_id -> { team_id: { members: [], progress: [] } }
+# --- TSE ENDPOINTS (DB-PERSISTED) ---
 
 @user_bp.route('/rest/tse/event/<int:event_id>/team/user/<user_id>', methods=['GET', 'POST'])
 def get_tse_event_team(event_id, user_id):
     """
-    Mocks the Timed Social Event / Team Request for the user.
-    Simulates "fake friends" if a team is created or joined.
+    Get or create a team for a user in a timed social event.
+    GET: Returns existing team state.
+    POST: Creates a new team if none exists.
     """
-    # Simple state persistence
-    if event_id not in tse_teams:
-        tse_teams[event_id] = {}
-        
-    # Clean old integer lists from previous runs
-    if event_id in tse_teams:
-        for tid in list(tse_teams[event_id].keys()):
-            if tse_teams[event_id][tid].get('orderProgress') and isinstance(tse_teams[event_id][tid]['orderProgress'][0], int):
-                del tse_teams[event_id][tid]
-
-    # Find user's team or create one if POST
-    user_team = None
-    for tid, team in tse_teams[event_id].items():
-        if any(m['userId'] == str(user_id) for m in team['members']):
-            user_team = team
-            user_team['id'] = tid
-            break
-            
-    if not user_team and request.method == 'POST':
-        tid = 1001 + len(tse_teams[event_id])
-        user_team = {
-            "id": tid,
-            "socialEventId": event_id,
-            "members": [
-                {
-                    "id": str(user_id),
-                    "externalId": str(user_id),
-                    "userId": str(user_id),
-                    "type": 0,
-                    "secret": "mock",
-                    "sessionKey": "mock"
-                },
-                # FAKE FRIENDS
-                {"id": "2001", "externalId": "2001", "userId": "2001", "type": 0, "name": "Dave"},
-                {"id": "2002", "externalId": "2002", "userId": "2002", "type": 0, "name": "Phil"},
-                {"id": "2003", "externalId": "2003", "userId": "2003", "type": 0, "name": "Stuart"}
-            ],
-            "orderProgress": [{"orderId": o, "completedByUserId": random.choice(["2001", "2002", "2003"])} for o in random.sample([1, 2, 3, 4, 5, 6, 7, 8, 9], random.randint(1, 4))] # Initial friend progress
-        }
-        tse_teams[event_id][tid] = user_team
+    team, reward_claimed = get_tse_team_for_user(event_id, user_id)
+    
+    if not team and request.method == 'POST':
+        team, reward_claimed = create_tse_team_for_user(event_id, user_id)
+        print(f"[TSE] Created new team {team['id']} for user {user_id} in event {event_id}")
     
     data = {
         "eventId": event_id,
-        "team": user_team,
+        "team": team,
         "userEvent": {
-            "rewardClaimed": False,
+            "rewardClaimed": reward_claimed,
             "invitations": []
         },
         "error": None
@@ -123,7 +88,6 @@ def get_tse_event_team(event_id, user_id):
 
 @user_bp.route('/rest/tse/event/<int:event_id>/teams', methods=['GET', 'POST'])
 def get_tse_teams(event_id):
-    # Return few random teams if needed
     return current_app.response_class(
         json.dumps({}, separators=(', ', ': ')),
         mimetype='application/json'
@@ -131,11 +95,9 @@ def get_tse_teams(event_id):
 
 @user_bp.route('/rest/tse/event/<int:event_id>/team/<int:team_id>/user/<user_id>/<action>', methods=['GET', 'POST'])
 def tse_team_actions(event_id, team_id, user_id, action):
-    team = tse_teams.get(event_id, {}).get(team_id)
-    if not team and action != "join":
+    team, reward_claimed = get_tse_team_for_user(event_id, user_id)
+    if not team:
         return jsonify({"error": "Team not found"}), 404
-        
-    reward_claimed = False
     
     if action == "order":
         try:
@@ -145,22 +107,37 @@ def tse_team_actions(event_id, team_id, user_id, action):
             
             if order_id not in existing_orders:
                 team['orderProgress'].append({"orderId": order_id, "completedByUserId": str(user_id)})
-            
-            all_possible_orders = [1, 2, 3, 4, 5, 6, 7, 8, 9] # Standard 9 orders
-            # Re-eval existing orders after append
-            existing_orders = [o['orderId'] for o in team['orderProgress']]
-            remaining = [o for o in all_possible_orders if o not in existing_orders]
-            if remaining:
-                num_to_add = random.randint(1, min(2, len(remaining)))
-                friends_orders = random.sample(remaining, num_to_add)
-                for fo in friends_orders:
-                    team['orderProgress'].append({"orderId": fo, "completedByUserId": random.choice(["2001", "2002", "2003"])})
-                print(f"[TSE] Friends completed orders: {friends_orders}")
+                save_tse_order_progress(team_id, team['orderProgress'])
+                print(f"[TSE] User {user_id} completed order {order_id} in team {team_id}")
+            else:
+                print(f"[TSE] Order {order_id} already completed in team {team_id}")
         except Exception as e:
-            print(f"[TSE] Error simulating friend progress: {e}")
+            print(f"[TSE] Error processing order: {e}")
     elif action == "reward":
-        reward_claimed = True
-        
+        if not reward_claimed:
+            newly_claimed = claim_tse_reward(team_id, user_id)
+            if newly_claimed:
+                reward_claimed = True
+                print(f"[TSE] User {user_id} claimed reward for team {team_id} in event {event_id}")
+            else:
+                print(f"[TSE] User {user_id} reward already claimed or not eligible for team {team_id}")
+        else:
+            print(f"[TSE] User {user_id} already claimed reward for team {team_id}")
+    elif action == "join":
+        # Join an existing team
+        from utils.db import get_db_connection
+        conn = get_db_connection()
+        try:
+            conn.execute('INSERT OR IGNORE INTO tse_members (team_id, user_id) VALUES (?, ?)',
+                         (team_id, str(user_id)))
+            conn.commit()
+        except Exception as e:
+            print(f"[TSE] Error joining team: {e}")
+        finally:
+            conn.close()
+        # Re-fetch after join
+        team, reward_claimed = get_tse_team_for_user(event_id, user_id)
+    
     data = {
         "eventId": event_id,
         "team": team,
@@ -178,23 +155,196 @@ def tse_team_actions(event_id, team_id, user_id, action):
 @user_bp.route('/rest/v2/user/<user_id>/identity', methods=['POST'])
 def link_identity(user_id):
     """
-    Mocks account linking.
+    Account linking with conflict detection.
     Expects AccountLinkRequest: { "credentials": "...", "externalId": "...", "identityType": "..." }
-    Returns UserIdentity object.
+    Returns UserIdentity on success, or 409 with AccountLinkErrorResponse if already linked.
     """
+    from utils.db import resolve_master_uid, get_db_connection
     try:
         data = request.get_json(force=True, silent=True) or {}
     except Exception:
         data = {}
         
-    print(f"[IDENTITY] Linking user {user_id} with {data.get('identityType')} ID {data.get('externalId')}")
+    external_id = data.get('externalId', '')
+    identity_type = data.get('identityType', 'discord')
     
-    # Return UserIdentity sequence
+    print(f"[IDENTITY] Linking user {user_id} with {identity_type} ID {external_id}")
+    
+    # Check if this external ID is already linked to a DIFFERENT player
+    master_uid = resolve_master_uid(user_id) or str(user_id)
+    
+    if identity_type == 'discord' and external_id:
+        existing_uid = get_uid_by_discord_id(external_id)
+        if existing_uid and existing_uid != master_uid:
+            # This Discord account is already linked to another player
+            print(f"[IDENTITY] CONFLICT: Discord {external_id} already linked to {existing_uid}, requesting user is {master_uid}")
+            return jsonify({
+                "error": {
+                    "code": 409,
+                    "responseCode": 409,
+                    "description": "Social account already linked to another user",
+                    "message": "CONFLICT",
+                    "details": {
+                        "conflictType": identity_type,
+                        "conflictUserId": existing_uid,
+                        "conflictIdentityId": external_id
+                    },
+                    "exceptionDetails": ""
+                }
+            }), 409
+    
+    # No conflict — link normally
+    if identity_type == 'discord' and external_id:
+        # Store the Discord link in the DB
+        conn = get_db_connection()
+        discord_json = json.dumps({"id": external_id, "uids": [str(user_id)]})
+        conn.execute("UPDATE players SET DISCORD = ? WHERE uid = ?", (discord_json, master_uid))
+        conn.commit()
+        conn.close()
+    
     return jsonify({
         "userId": user_id,
         "externalId": data.get('externalId', 'mock_external_id'),
-        "type": data.get('identityType', 'discord')
+        "type": identity_type
     })
+
+@user_bp.route('/rest/v2/user/<user_id>/identity/<anon_id>', methods=['POST'])
+def relink_identity_forward(user_id, anon_id):
+    """
+    Forward re-link: The current player (user_id) takes over the linked account's data.
+    The Discord link moves from the conflict user (toUserId) to this player.
+    Expects AccountReLinkRequest: { "toUserId": "...", "identityType": "...", "externalId": "...", "credentials": "..." }
+    """
+    from utils.db import resolve_master_uid, get_db_connection, get_player_data
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+    except Exception:
+        data = {}
+    
+    to_user_id = data.get('toUserId', '')
+    external_id = data.get('externalId', '')
+    identity_type = data.get('identityType', 'discord')
+    
+    print(f"[RELINK-FORWARD] User {user_id} wants to take over account from {to_user_id} (Discord: {external_id})")
+    
+    conn = get_db_connection()
+    
+    # Resolve both UIDs
+    current_master = resolve_master_uid(user_id, conn) or str(user_id)
+    conflict_master = resolve_master_uid(to_user_id, conn) or str(to_user_id)
+    
+    if conflict_master and conflict_master != current_master:
+        # Move Discord from conflict to current player
+        # Get the conflict player's Discord data
+        conflict_row = conn.execute("SELECT DISCORD FROM players WHERE uid = ?", (conflict_master,)).fetchone()
+        discord_data = conflict_row['DISCORD'] if conflict_row else None
+        
+        if discord_data:
+            try:
+                d = json.loads(discord_data)
+                # Add current user's UID to the uids list
+                uids = d.get('uids', [])
+                if str(user_id) not in uids:
+                    uids.append(str(user_id))
+                d['uids'] = uids
+                discord_data = json.dumps(d)
+            except:
+                pass
+        
+        # Consolidate: merge current player into conflict player's row
+        # The current player's UID becomes part of the conflict player's UID list
+        all_uids = set()
+        for uid_str in [current_master, conflict_master]:
+            for part in uid_str.split(', '):
+                all_uids.add(part.strip())
+        consolidated_uid_str = ", ".join(sorted(list(all_uids)))
+        
+        # Update the conflict player's row to include this UID
+        conn.execute(
+            "UPDATE players SET uid = ?, ID = ?, DISCORD = ?, last_updated = CURRENT_TIMESTAMP WHERE uid = ?",
+            (consolidated_uid_str, consolidated_uid_str, discord_data, conflict_master)
+        )
+        
+        # Delete the current player's separate row if it exists and is different
+        if current_master != conflict_master:
+            conn.execute("DELETE FROM players WHERE uid = ?", (current_master,))
+        
+        conn.commit()
+        print(f"[RELINK-FORWARD] Merged {current_master} into {conflict_master}. New UID: {consolidated_uid_str}")
+    
+    conn.close()
+    
+    # Return UserIdentity so the client can reload with the new user
+    return jsonify({
+        "userId": to_user_id,
+        "externalId": external_id,
+        "type": identity_type
+    })
+
+@user_bp.route('/rest/v2/user/<user_id>/identity/<anon_id>/reverseLink', methods=['POST'])
+def relink_identity_reverse(user_id, anon_id):
+    """
+    Reverse re-link: The current player (user_id) keeps their own data.
+    The Discord link stays on the conflict user; current player remains unlinked.
+    Expects AccountReLinkRequest: { "toUserId": "...", "identityType": "...", "externalId": "...", "credentials": "..." }
+    """
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+    except Exception:
+        data = {}
+    
+    to_user_id = data.get('toUserId', '')
+    external_id = data.get('externalId', '')
+    identity_type = data.get('identityType', 'discord')
+    
+    print(f"[RELINK-REVERSE] User {user_id} keeps their data. Discord stays on {to_user_id}")
+    
+    # Nothing to change in DB — the Discord link stays on the original user.
+    # Just return success so the client knows to keep the current session.
+    return jsonify({
+        "userId": user_id,
+        "externalId": external_id,
+        "type": identity_type
+    })
+
+@user_bp.route('/rest/v2/user/<user_id>/discord/unlink', methods=['POST'])
+def unlink_discord(user_id):
+    """
+    Unlinks Discord from a player account, keeping the player's progress intact.
+    The player row remains with their UID, but DISCORD data is cleared.
+    """
+    from utils.db import resolve_master_uid, get_db_connection
+    
+    master_uid = resolve_master_uid(user_id) or str(user_id)
+    print(f"[IDENTITY] UNLINKING Discord from user {master_uid}")
+    
+    conn = get_db_connection()
+    
+    # Get current Discord data for logging
+    row = conn.execute("SELECT DISCORD, discord_username FROM players WHERE uid = ?", (master_uid,)).fetchone()
+    if row and row['DISCORD']:
+        print(f"[IDENTITY] Removing Discord link: {row['discord_username']} from {master_uid}")
+    
+    # Clear Discord fields but keep the player row and all progress
+    # If UID was consolidated (comma-separated), split it back to just the requesting user's ID
+    conn.execute(
+        "UPDATE players SET DISCORD = '', discord_username = '', discord_avatar = '', last_updated = CURRENT_TIMESTAMP WHERE uid = ?",
+        (master_uid,)
+    )
+    
+    # If the UID was a consolidated comma-separated list, we trim it to just this user
+    if ',' in master_uid:
+        # Keep only the requesting user's ID
+        conn.execute(
+            "UPDATE players SET uid = ?, ID = ? WHERE uid = ?",
+            (str(user_id), str(user_id), master_uid)
+        )
+        print(f"[IDENTITY] Trimmed consolidated UID from {master_uid} to {user_id}")
+    
+    conn.commit()
+    conn.close()
+    
+    return jsonify({"success": True, "userId": str(user_id)})
 
 @user_bp.route('/token', methods=['POST'])
 def get_dcn_token():
@@ -242,17 +392,23 @@ def discord_login():
     client_id = config.get('DISCORD_CLIENT_ID')
     redirect_uri = get_discord_redirect_uri(request)
     
-    # uid is passed from the game client to link the account
-    uid = request.args.get('uid', '')
+    if not redirect_uri or not client_id:
+        return "Discord config not set properly", 500
+    
+    if isinstance(redirect_uri, bytes):
+        redirect_uri = redirect_uri.decode('utf-8')
+    
+    uid = quote(request.args.get('uid', ''))
     
     auth_url = (
         f"https://discord.com/api/oauth2/authorize"
         f"?client_id={client_id}"
-        f"&redirect_uri={requests.utils.quote(redirect_uri)}"
+        f"&redirect_uri={quote(redirect_uri)}"
         f"&response_type=code"
         f"&scope=identify"
-        f"&state={uid}" # Passing uid in state to retrieve it in callback
+        f"&state={uid}"
     )
+    
     return f"<html><body><script>window.location.href='{auth_url}';</script></body></html>"
 
 @user_bp.route('/auth/discord/callback', methods=['GET'])

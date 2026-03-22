@@ -44,7 +44,7 @@ namespace Kampai.Tools.AnimationToolKit
 			crossContextInjectionBinder.Bind<global::Kampai.Util.INamedCharacterBuilder>().To<global::Kampai.Util.NamedCharacterBuilder>().ToSingleton();
 			crossContextInjectionBinder.Bind<global::Kampai.Game.IPlayerService>().To<global::Kampai.Tools.AnimationToolKit.AnimationToolKitPlayerService>().ToSingleton();
 			crossContextInjectionBinder.Bind<global::Kampai.Common.IManifestService>().To<global::Kampai.Common.ManifestService>().ToSingleton();
-			crossContextInjectionBinder.Bind<global::Kampai.Main.IAssetBundlesService>().To<global::Kampai.Main.AssetBundlesService>().ToSingleton();
+
 			crossContextInjectionBinder.Bind<global::Kampai.Main.ILocalContentService>().To<global::Kampai.Main.LocalContentService>().ToSingleton();
 			crossContextInjectionBinder.Bind<global::Kampai.Game.View.MinionIdleNotifier>().To<global::Kampai.Tools.AnimationToolKit.AnimationToolKitMinionManagerView>().ToSingleton();
 			crossContextInjectionBinder.Bind<ILocalPersistanceService>().To<LocalPersistanceService>().ToSingleton();

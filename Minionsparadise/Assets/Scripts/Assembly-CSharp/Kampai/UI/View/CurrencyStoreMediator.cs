@@ -2,6 +2,8 @@ namespace Kampai.UI.View
 {
 	public class CurrencyStoreMediator : global::Kampai.UI.View.UIStackMediator<global::Kampai.UI.View.CurrencyStoreView>
 	{
+		public global::Kampai.Util.IKampaiLogger logger = global::Elevation.Logging.LogManager.GetClassLogger("CurrencyStoreMediator") as global::Kampai.Util.IKampaiLogger;
+
 		[Inject]
 		public global::Kampai.UI.View.PremiumCurrencyCatalogUpdatedSignal premiumCurrencyCatalogUpdatedSignal { get; set; }
 
@@ -142,33 +144,58 @@ namespace Kampai.UI.View
 		private void OnStoreDefinitionLoaded(int storeCategoryDefinitionID)
 		{
 			base.view.ClearViews();
-			global::System.Collections.Generic.IList<global::Kampai.Game.CurrencyStoreCategoryDefinition> currencyStoreCategoryDefinitions = definitionService.GetCurrencyStoreCategoryDefinitions();
-			for (int i = 0; i < currencyStoreCategoryDefinitions.Count; i++)
+			global::System.Collections.Generic.IList<global::Kampai.Game.CurrencyStoreCategoryDefinition> cats = definitionService.GetCurrencyStoreCategoryDefinitions();
+			
+			if (cats == null) {
+				logger.Error("[SHOPDEBUG] GetCurrencyStoreCategoryDefinitions returned NULL");
+				return;
+			}
+
+			logger.Warning("[SHOPDEBUG] CATEGORIES COUNT: {0}", cats.Count);
+			
+			for (int i = 0; i < cats.Count; i++)
 			{
-				global::Kampai.Game.CurrencyStoreCategoryDefinition currencyStoreCategoryDefinition = currencyStoreCategoryDefinitions[i];
-				base.view.viewCounts.Add(currencyStoreCategoryDefinition.StoreItemDefinitionIDs.Count);
+				global::Kampai.Game.CurrencyStoreCategoryDefinition cat = cats[i];
+				if (cat == null) continue;
+
+				logger.Info("[SHOPDEBUG] Category {0} (ID: {1}) - Items: {2}", i, cat.ID, (cat.StoreItemDefinitionIDs != null) ? cat.StoreItemDefinitionIDs.Count : 0);
+				
+				if (cat.StoreItemDefinitionIDs == null) continue;
+
+				base.view.viewCounts.Add(cat.StoreItemDefinitionIDs.Count);
 				global::System.Collections.Generic.List<global::Kampai.Game.StoreItemDefinition> list = new global::System.Collections.Generic.List<global::Kampai.Game.StoreItemDefinition>();
-				for (int j = 0; j < currencyStoreCategoryDefinition.StoreItemDefinitionIDs.Count; j++)
+				for (int j = 0; j < cat.StoreItemDefinitionIDs.Count; j++)
 				{
-					int num = currencyStoreCategoryDefinition.StoreItemDefinitionIDs[j];
-					if (currencyStoreService.IsValidCurrencyItem(num, currencyStoreCategoryDefinition.StoreCategoryType))
+					int id = cat.StoreItemDefinitionIDs[j];
+					global::Kampai.Game.StoreItemDefinition itemDef;
+					if (definitionService.TryGet<global::Kampai.Game.StoreItemDefinition>(id, out itemDef))
 					{
-						list.Add(definitionService.Get<global::Kampai.Game.StoreItemDefinition>(num));
+						if (currencyStoreService.IsValidCurrencyItem(id, cat.StoreCategoryType))
+						{
+							list.Add(itemDef);
+						}
+					}
+					else
+					{
+						logger.Error("[SHOPDEBUG] Missing StoreItemDef ID: {0}", id);
 					}
 				}
+				
+				logger.Info("[SHOPDEBUG] Category {0} validated {1} items.", cat.ID, list.Count);
+
 				if (list.Count <= 0)
 				{
 					continue;
 				}
-				global::Kampai.UI.View.CurrencyStoreCategoryButtonView currencyStoreCategoryButtonView = base.view.BuildCategoryButton(currencyStoreCategoryDefinition);
+				global::Kampai.UI.View.CurrencyStoreCategoryButtonView currencyStoreCategoryButtonView = base.view.BuildCategoryButton(cat);
 				int badgeCount = 0;
-				if (!AllItemsAreLocked() && currencyStoreCategoryDefinition.ID != storeCategoryDefinitionID)
+				if (!AllItemsAreLocked() && cat.ID != storeCategoryDefinitionID)
 				{
-					badgeCount = currencyStoreService.GetBadgeCount(currencyStoreCategoryDefinition);
+					badgeCount = currencyStoreService.GetBadgeCount(cat);
 				}
 				currencyStoreCategoryButtonView.SetBadgeCount(badgeCount);
 				currencyStoreCategoryButtonView.ClickedSignal.AddListener(OnCategoryButtonClicked);
-				global::Kampai.UI.View.CurrencyStoreCategoryView categoryView = base.view.BuildCategoryContainer(currencyStoreCategoryDefinition, currencyStoreCategoryButtonView);
+				global::Kampai.UI.View.CurrencyStoreCategoryView categoryView = base.view.BuildCategoryContainer(cat, currencyStoreCategoryButtonView);
 				foreach (global::Kampai.Game.StoreItemDefinition item in list)
 				{
 					global::Kampai.Game.CurrencyItemDefinition currencyItemDefinition = definitionService.Get<global::Kampai.Game.CurrencyItemDefinition>(item.ReferencedDefID);
@@ -203,7 +230,7 @@ namespace Kampai.UI.View
 
 		private bool AllItemsAreLocked()
 		{
-			return !currencyService.TransactionProcessingEnabled();
+			return false; // Force unlocked
 		}
 
 		private void OnMenuClose()

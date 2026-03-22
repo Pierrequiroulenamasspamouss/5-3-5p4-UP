@@ -267,8 +267,7 @@ namespace Kampai.Util
 		[Inject]
 		public global::Kampai.Main.ILocalizationService localizationService { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.ISupersonicService supersonicService { get; set; }
+
 
 		[Inject]
 		public global::Kampai.Game.IRewardedAdService rewardedAdService { get; set; }
@@ -644,10 +643,9 @@ namespace Kampai.Util
 			}
 		}
 
-		[global::Kampai.Util.DebugCommand]
 		public void Telemetry(string[] args)
 		{
-			telemetryService.Send_Telemetry_EVT_GAME_ERROR_GAMEPLAY("error", "test", true);
+			// telemetryService.Send_Telemetry_EVT_GAME_ERROR_GAMEPLAY("error", "test", true);
 		}
 
 		[global::Kampai.Util.DebugCommand]
@@ -848,10 +846,10 @@ namespace Kampai.Util
 			outBuilder.AppendLine("\tAnonynousID: " + plainText);
 			string userID = facebookService.userID;
 			outBuilder.AppendLine("\tFacebookID: " + userID);
-			string synergyId = NimbleBridge_SynergyIdManager.GetComponent().GetSynergyId();
-			outBuilder.AppendLine("\tSynergyID: " + synergyId);
-			string sdkVersion = NimbleBridge_Base.GetSdkVersion();
-			outBuilder.AppendLine("\tNimbleSDK: " + sdkVersion);
+			// string synergyId = NimbleBridge_SynergyIdManager.GetComponent().GetSynergyId();
+			// outBuilder.AppendLine("\tSynergyID: " + synergyId);
+			// string sdkVersion = NimbleBridge_Base.GetSdkVersion();
+			// outBuilder.AppendLine("\tNimbleSDK: " + sdkVersion);
 			string userID2 = googlePlayService.userID;
 			outBuilder.AppendLine("\tGooglePlayID: " + userID2);
 		}
@@ -1865,7 +1863,7 @@ namespace Kampai.Util
 		{
 			string userSynergyId = args[2];
 			logger.Debug("Logging into synergy");
-			NimbleBridge_SynergyIdManager.GetComponent().Login(userSynergyId, "test");
+			// NimbleBridge_SynergyIdManager.GetComponent().Login(userSynergyId, "test");
 		}
 
 		[global::Kampai.Util.DebugCommand(Name = "purchase a")]
@@ -1951,88 +1949,10 @@ namespace Kampai.Util
 			uiContext.injectionBinder.GetInstance<global::Kampai.UI.View.ShowQuestPanelSignal>().Dispatch(questController.ID);
 		}
 
-		[global::Kampai.Util.DebugCommand(Name = "dlc list")]
-		public void DLCList(string[] args)
+		[global::Kampai.Util.DebugCommand(Name = "dlc information")]
+		public void DLCInfo(string[] args)
 		{
-			outBuilder.AppendLine("DLC Packs:");
-#if !UNITY_WEBPLAYER
-			global::System.IO.DirectoryInfo directoryInfo = new global::System.IO.DirectoryInfo(global::Kampai.Util.GameConstants.DLC_PATH);
-			int num = 0;
-			global::System.IO.FileInfo[] files = directoryInfo.GetFiles();
-			foreach (global::System.IO.FileInfo fileInfo in files)
-			{
-				outBuilder.AppendLine("\t" + fileInfo.Name);
-				num++;
-			}
-			outBuilder.AppendLine(string.Format("Found {0} bundles", num));
-#else
-			outBuilder.AppendLine("DLC List not supported on WebPlayer.");
-#endif
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc backup")]
-		public void CheckDlcBackupFlag(string[] args)
-		{
-			outBuilder.AppendLine("iOS only!");
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc clear")]
-		public void DLCClear(string[] args)
-		{
-#if !UNITY_WEBPLAYER
-			global::System.IO.DirectoryInfo directoryInfo = new global::System.IO.DirectoryInfo(global::Kampai.Util.GameConstants.DLC_PATH);
-			global::System.IO.FileInfo[] files = directoryInfo.GetFiles();
-			foreach (global::System.IO.FileInfo fileInfo in files)
-			{
-				fileInfo.Delete();
-			}
-#else
-			outBuilder.AppendLine("DLC Clear not supported on WebPlayer.");
-#endif
-			global::UnityEngine.SceneManagement.SceneManager.LoadScene("Initialize");
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc quality")]
-		public void DLCQuality(string[] args)
-		{
-			outBuilder.AppendLine("DLC Download Quality = " + dlcService.GetDownloadQualityLevel());
-			outBuilder.AppendLine("DLC Display Quality = " + dlcService.GetDisplayQualityLevel());
-			outBuilder.AppendLine("DLC Tier = " + playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_ID));
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc setquality")]
-		public void DLCSetQuality(string[] args)
-		{
-			string value = args[2];
-			global::Kampai.Util.TargetPerformance targetPerformance = (global::Kampai.Util.TargetPerformance)(int)global::System.Enum.Parse(typeof(global::Kampai.Util.TargetPerformance), value, true);
-			if (targetPerformance != global::Kampai.Util.TargetPerformance.UNKNOWN && targetPerformance != global::Kampai.Util.TargetPerformance.UNSUPPORTED)
-			{
-				localPersistService.PutData("FORCE_LOD", targetPerformance.ToString());
-				mainContext.injectionBinder.GetInstance<global::Kampai.Main.ReloadGameSignal>().Dispatch();
-			}
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc tier")]
-		public void DLCTier(string[] args)
-		{
-			outBuilder.AppendLine("Player's DLC Tier = " + playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_ID));
-			outBuilder.AppendLine("Player's Tier Gate = " + playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_GATE_ID));
-			outBuilder.AppendLine("Highest Tier Downloaded  = " + gameContext.injectionBinder.GetInstance<global::Kampai.Splash.DLCModel>().HighestTierDownloaded);
-		}
-
-		[global::Kampai.Util.DebugCommand(Name = "dlc preinstall")]
-		public void DLCPreInstall(string[] args)
-		{
-#if !UNITY_WEBPLAYER
-			string value = global::System.IO.File.ReadAllText(global::Kampai.Util.GameConstants.PREINSTALL_JSON_PATH);
-			global::Kampai.Util.PreinstallBundles preinstallBundles = global::Newtonsoft.Json.JsonConvert.DeserializeObject<global::Kampai.Util.PreinstallBundles>(value);
-			foreach (string bundle in preinstallBundles.Bundles)
-			{
-				outBuilder.AppendLine(bundle);
-			}
-#else
-			outBuilder.AppendLine("DLC PreInstall not supported on WebPlayer.");
-#endif
+			outBuilder.AppendLine("DLC functionality is disabled/bypassed in this build.");
 		}
 
 		[global::Kampai.Util.DebugCommand(Args = new string[] { "fb/gc/gp" })]
@@ -2081,20 +2001,7 @@ namespace Kampai.Util
 			resetRewardedAdLimitSignal.Dispatch();
 		}
 
-		[global::Kampai.Util.DebugCommand(Name = "ssrv", Args = new string[] { "placement id" }, RequiresAllArgs = false)]
-		public void SupersonicRewardedVideo(string[] args)
-		{
-			string text = ((args.Length <= 1) ? string.Empty : args[1]);
-			logger.Info("Debug console: try to show rewarded video, placement: '{0}'", text);
-			supersonicService.ShowRewardedVideo(text);
-		}
 
-		[global::Kampai.Util.DebugCommand(Name = "sso")]
-		public void SupersonicOfferwall(string[] args)
-		{
-			logger.Info("Debug console: show offerwall");
-			supersonicService.ShowOfferwall();
-		}
 
 		[global::Kampai.Util.DebugCommand(Name = "adstatus")]
 		public void RewardedAdStatus(string[] args)

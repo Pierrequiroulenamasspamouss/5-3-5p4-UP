@@ -2,10 +2,6 @@ namespace Kampai.Util
 {
 	public static class NetworkUtil
 	{
-#if UNITY_ANDROID && !UNITY_EDITOR
-		private static readonly global::UnityEngine.AndroidJavaClass miscUtils = new global::UnityEngine.AndroidJavaClass("com.ea.gp.minions.utils.Misc");
-#endif
-
 		private static global::UnityEngine.NetworkReachability cachedReachability = global::UnityEngine.NetworkReachability.NotReachable;
 		private static int mainThreadId = -1;
 
@@ -18,7 +14,7 @@ namespace Kampai.Util
 		public static bool IsConnected()
 		{
 #if UNITY_ANDROID && !UNITY_EDITOR
-			return miscUtils.CallStatic<bool>("isConnected", new object[0]);
+			return global::UnityEngine.Application.internetReachability != global::UnityEngine.NetworkReachability.NotReachable;
 #else
 			// Use cached value if not on main thread or in editor
 #if UNITY_EDITOR
@@ -32,7 +28,7 @@ namespace Kampai.Util
 		public static bool IsNetworkWiFi()
 		{
 #if UNITY_ANDROID && !UNITY_EDITOR
-			return miscUtils.CallStatic<bool>("isNetworkWiFi", new object[0]);
+			return global::UnityEngine.Application.internetReachability == global::UnityEngine.NetworkReachability.ReachableViaLocalAreaNetwork;
 #else
 #if UNITY_EDITOR
 			return true;

@@ -32,8 +32,7 @@ namespace Kampai.Game
 		[Inject]
 		public global::Kampai.Main.SetupSwrveSignal setupSwrveSignal { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.SetupSupersonicSignal setupSupersonicSignal { get; set; }
+
 
 		[Inject]
 		public global::Kampai.Game.UpdateUserSignal updateUserSignal { get; set; }
@@ -88,7 +87,7 @@ namespace Kampai.Game
 				telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("70 - User Login", playerService.SWRVEGroup, dlcService.GetDownloadQualityLevel());
 				logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "User's session ID: {0}", UserSession.SessionID);
 				setupSwrveSignal.Dispatch(userSession.UserID);
-				setupSupersonicSignal.Dispatch();
+
 				global::strange.extensions.signal.impl.Signal<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse> signal = new global::strange.extensions.signal.impl.Signal<global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse>();
 				signal.AddListener(CatchAuthenticationErrorResponse);
 				downloadService.AddGlobalResponseListener(signal);
@@ -178,10 +177,10 @@ namespace Kampai.Game
 			}
 			if (!string.IsNullOrEmpty(synergyID) && !synergyID.Equals(userID))
 			{
-				logger.Debug("SynergyIds don't match oops, changing them, old SynergyID = {0}  new Synergy ID = {1} ", NimbleBridge_SynergyIdManager.GetComponent().GetSynergyId(), synergyID);
-				using (NimbleBridge_SynergyIdManager.GetComponent().Login(synergyID, session.UserID))
-				{
-				}
+				logger.Debug("SynergyIds don't match oops, changing them (Nimble disabled), old SynergyID = {0}  new Synergy ID = {1} ", userID, synergyID);
+				// using (NimbleBridge_SynergyIdManager.GetComponent().Login(synergyID, session.UserID))
+				// {
+				// }
 			}
 		}
 	}

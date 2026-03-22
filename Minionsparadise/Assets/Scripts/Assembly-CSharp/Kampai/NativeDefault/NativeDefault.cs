@@ -10,12 +10,12 @@ namespace Kampai.Util
 		{
 			get
 			{
-				string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "config.json");
-				global::UnityEngine.Debug.Log("NativeDefault: Loading config from " + path);
-				if (global::System.IO.File.Exists(path))
+				global::UnityEngine.TextAsset textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>("config");
+				if (textAsset != null)
 				{
-					return global::System.IO.File.ReadAllText(path).Trim();
+					return textAsset.text.Trim();
 				}
+				global::UnityEngine.Debug.LogError("NativeDefault: Failed to load config from Resources");
 				return string.Empty;
 			}
 		}
@@ -163,6 +163,16 @@ namespace Kampai.Util
 
 		public string GetStreamingTextAsset(string path)
 		{
+			string resourcePath = path;
+			if (resourcePath.EndsWith(".json"))
+			{
+				resourcePath = resourcePath.Substring(0, resourcePath.Length - 5);
+			}
+			global::UnityEngine.TextAsset textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>(resourcePath);
+			if (textAsset != null)
+			{
+				return textAsset.text;
+			}
 			string fullPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, path);
 			if (global::System.IO.File.Exists(fullPath))
 			{

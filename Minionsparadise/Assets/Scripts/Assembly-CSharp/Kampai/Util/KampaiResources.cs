@@ -58,23 +58,23 @@ namespace Kampai.Util
         }
 
         private static IManifestService _manifestService;
-        private static IAssetBundlesService _assetBundlesService;
         private static ILocalContentService _localContentService;
         private static IKampaiLogger _logger;
         private static readonly AssetsCache _cachedObjects = new AssetsCache();
 
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_ANDROID
         private static Dictionary<string, string> _editorAssetPathMap;
 
-        private static void InitializeEditorAssetMap()
+        private static void InitializeAssetMap()
         {
             if (_editorAssetPathMap != null) return;
             
             _editorAssetPathMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
             string dataPath = Application.dataPath.Replace('\\', '/');
             
             // List of directories to scan for local assets
-            string[] searchDirs = { "/content", "/Shader", "/Resources" };
+            string[] searchDirs = { "/Shader", "/Resources" };
 
                 foreach (string searchDir in searchDirs)
                 {
@@ -135,12 +135,13 @@ namespace Kampai.Util
                     }
                     else
                     {
-                        if (_logger != null) _logger.Warning(string.Format("KampaiResources: Local directory '{0}' NOT FOUND", fullPath));
+                        if (_logger != null) _logger.Debug(string.Format("KampaiResources: Optional local directory '{0}' NOT FOUND", fullPath));
                     }
                 }
             if (_logger != null) _logger.Info(string.Format("KampaiResources: Initialized local asset map with {0} entries", _editorAssetPathMap.Count));
+#endif
 
-            // Load manifest if it exists
+            // Load manifest if it exists (always on Android, or as fallback on Editor/Standalone)
             TextAsset manifest = Resources.Load<TextAsset>("KampaiAssetManifest");
             if (manifest != null)
             {
@@ -178,10 +179,7 @@ namespace Kampai.Util
             _manifestService = service; 
         }
         
-        public static void SetAssetBundlesService(IAssetBundlesService service) 
-        { 
-            _assetBundlesService = service; 
-        }
+
         
         public static void SetLocalContentService(ILocalContentService service) 
         { 
@@ -200,24 +198,33 @@ namespace Kampai.Util
 
         public static bool FileExists(string path)
         {
-            if (_manifestService == null || _localContentService == null) return false;
-            return _manifestService.GetAssetLocation(path).Length > 0 || _localContentService.IsLocalAsset(path);
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_ANDROID
+            InitializeAssetMap();
+            if (_editorAssetPathMap != null && _editorAssetPathMap.ContainsKey(Path.GetFileNameWithoutExtension(path)))
+            {
+                return true;
+            }
+#endif
+            bool exists = false;
+            if (_manifestService != null)
+            {
+                exists |= _manifestService.GetAssetLocation(path).Length > 0;
+            }
+            if (_localContentService != null)
+            {
+                exists |= _localContentService.IsLocalAsset(path);
+            }
+            return exists;
         }
 
         public static bool FileDownloaded(string path, DLCModel dlcModel)
         {
-            string assetLocation = _manifestService.GetAssetLocation(path);
-            if (string.IsNullOrEmpty(assetLocation))
-            {
-                return _localContentService.IsLocalAsset(path);
-            }
-            int bundleTier = _manifestService.GetBundleTier(assetLocation);
-            return dlcModel.HighestTierDownloaded >= bundleTier;
+            return true;
         }
 
         public static bool IsAssetTierGated(string asset) 
         {
-            return _manifestService.IsAssetTierTooHigh(asset);
+            return false;
         }
 
         public static T Load<T>(string path) where T : class 
@@ -254,8 +261,27 @@ namespace Kampai.Util
 #endif
                 if (result == null)
                 {
-                    result = Resources.Load(resolvedPath, type);
-                    if (result != null && _logger != null) _logger.Debug(string.Format("  - Resources.Load success: '{0}'", resolvedPath));
+                    string resourcePath = resolvedPath;
+                    if (resourcePath.StartsWith("Assets/Resources/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        resourcePath = resourcePath.Substring(17);
+                        resourcePath = Path.ChangeExtension(resourcePath, null);
+                    }
+                    else if (resourcePath.Contains("/Resources/"))
+                    {
+                        int resIndex = resourcePath.IndexOf("/Resources/", StringComparison.Ordinal) + 11;
+                        resourcePath = Path.ChangeExtension(resourcePath.Substring(resIndex), null);
+                    }
+                    else
+                    {
+                         // If it doesn't contain /Resources/ but is being loaded from the map, 
+                         // it might be a direct Resources.Load attempt by name
+                         resourcePath = Path.ChangeExtension(resourcePath, null);
+                    }
+                    
+                    result = Resources.Load(resourcePath, type);
+                    if (result != null && _logger != null) _logger.Debug(string.Format("  - Resources.Load success: '{0}'", resourcePath));
+                    else if (_logger != null) _logger.Warning(string.Format("  - Resources.Load FAILED: '{0}' (original path: '{1}')", resourcePath, path));
                 }
 
                 if (result != null)
@@ -271,36 +297,7 @@ namespace Kampai.Util
             }
 
 #if !(UNITY_EDITOR || UNITY_STANDALONE_WIN)
-            string assetLocation = _manifestService.GetAssetLocation(path);
-            if (_logger != null) _logger.Debug(string.Format("  - Manifest location: '{0}'", assetLocation));
-            
-            bool isGated = !string.IsNullOrEmpty(assetLocation) && _manifestService.IsBundleTierTooHigh(assetLocation);
-
-            if (string.IsNullOrEmpty(assetLocation))
-            {
-                _logger.Error(string.Format("Unable to find bundle or local asset for '{0}'.", path));
-            }
-            else if (!isGated)
-            {
-                AssetBundle bundle = GetBundleFromService(assetLocation);
-                if (bundle != null)
-                {
-                    result = bundle.LoadAsset(path, type);
-                }
-            }
-
-            if (result != null)
-            {
-                _cachedObjects.Add(path, result, type);
-            }
-            else if (!isGated)
-            {
-                _logger.Error(string.Format("KampaiResources.Load is returning NULL for object '{0}'", path));
-            }
-            else
-            {
-                _logger.Info(string.Format("Asset '{0}' is not available for the current tier", path));
-            }
+            if (_logger != null) _logger.Debug(string.Format("  - Assets are expected to be local or in Resources. Skipping bundle check for '{0}'", path));
 #else
             if (_logger != null) _logger.Debug(string.Format("  - Skipping bundle check for '{0}' on Windows/Editor", path));
 #endif
@@ -342,38 +339,8 @@ namespace Kampai.Util
                 return request;
             }
 
-#if !(UNITY_EDITOR || UNITY_STANDALONE_WIN)
-            string assetLocation = _manifestService.GetAssetLocation(path);
-            if (string.IsNullOrEmpty(assetLocation))
-            {
-                Object obj = Load(path, type); 
-                if (onComplete != null) onComplete(obj);
-                return null;
-            }
-
-            AssetBundle bundle = GetBundleFromService(assetLocation);
-            AsyncOperation bundleOp = null;
-            
-            if (bundle != null) 
-            {
-                bundleOp = bundle.LoadAssetAsync(path, type);
-            }
-
-            if (bundleOp != null)
-            {
-                routineRunner.StartCoroutine(LoadAsyncWait(bundleOp, onComplete, path, type));
-            }
-            else
-            {
-                _logger.Error(string.Format("KampaiResources.LoadAsync failed for {0}", path));
-            }
-
-            return bundleOp;
-#else
-            if (_logger != null) _logger.Debug(string.Format("  - Skipping bundle check (async) for '{0}' on Windows/Editor", path));
             if (onComplete != null) onComplete(null);
             return null;
-#endif
         }
 
         private static IEnumerator LoadAsyncWait(AsyncOperation request, Action<Object> onComplete, string name, Type type)
@@ -388,14 +355,6 @@ namespace Kampai.Util
             {
                 obj = resReq.asset;
             }
-            else 
-            {
-                AssetBundleRequest abReq = request as AssetBundleRequest;
-                if (abReq != null)
-                {
-                    obj = abReq.asset;
-                }
-            }
 
             if (obj != null)
             {
@@ -409,51 +368,69 @@ namespace Kampai.Util
             resolvedPath = null;
             isEditorPath = false;
 
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN
-            InitializeEditorAssetMap();
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_ANDROID
+            InitializeAssetMap();
             string fileName = Path.GetFileNameWithoutExtension(path);
             
-            string editorPath;
-            if (_editorAssetPathMap != null && _editorAssetPathMap.TryGetValue(fileName, out editorPath))
+            string editorPath = null;
+            if (_editorAssetPathMap != null)
+            {
+                if (_editorAssetPathMap.TryGetValue(fileName, out editorPath))
+                {
+                    // Direct match
+                }
+                else if (_editorAssetPathMap.TryGetValue(fileName + "_Phone", out editorPath))
+                {
+                    // Device suffix match
+                    if (_logger != null) _logger.Debug(string.Format("KampaiResources: Resolved '{0}' to '{1}'", fileName, fileName + "_Phone"));
+                }
+                else if (_editorAssetPathMap.TryGetValue(fileName + "_Tablet", out editorPath))
+                {
+                    // Device suffix match
+                    if (_logger != null) _logger.Debug(string.Format("KampaiResources: Resolved '{0}' to '{1}'", fileName, fileName + "_Tablet"));
+                }
+            }
+
+            if (editorPath != null)
             {
 #if UNITY_EDITOR
                 resolvedPath = editorPath;
                 isEditorPath = true;
                 return true;
 #else
+                if (editorPath.StartsWith("Assets/Resources/", StringComparison.OrdinalIgnoreCase))
+                {
+                    resolvedPath = editorPath;
+                    return true;
+                }
                 if (editorPath.Contains("/Resources/"))
                 {
                     int resIndex = editorPath.IndexOf("/Resources/", StringComparison.Ordinal) + 11;
                     resolvedPath = Path.ChangeExtension(editorPath.Substring(resIndex), null);
                     return true;
                 }
+                // Fallback for Android naming
+                resolvedPath = editorPath;
+                return true;
 #endif
             }
+#endif
 
-            string localKey = Path.GetFileName(path);
+            string localKey = global::System.IO.Path.GetFileName(path);
             if (_localContentService != null && _localContentService.IsLocalAsset(localKey))
             {
                 resolvedPath = _localContentService.GetAssetPath(localKey);
                 return true;
             }
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+            // On Android with bundles disabled, we might want to try Resources.Load directly as a fallback
+            resolvedPath = path; 
+            return true;
 #endif
             return false;
         }
 
-        private static AssetBundle GetBundleFromService(string location)
-        {
-            if (_assetBundlesService.IsSharedBundle(location))
-            {
-                AssetBundle b = _assetBundlesService.GetSharedBundle(location);
-                if (b == null) _logger.Debug(string.Format("Shared bundle {0} is null", location));
-                return b;
-            }
-            else
-            {
-                AssetBundle b = _assetBundlesService.GetDLCBundle(location);
-                if (b == null) _logger.Debug(string.Format("DLC bundle {0} is null", location));
-                return b;
-            }
-        }
+
     }
 }

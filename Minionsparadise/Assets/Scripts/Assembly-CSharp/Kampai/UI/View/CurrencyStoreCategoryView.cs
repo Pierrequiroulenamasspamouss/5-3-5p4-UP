@@ -43,27 +43,37 @@ namespace Kampai.UI.View
 
 		private void UpdateSalePackButton(global::Kampai.UI.View.CurrencyButtonView btnView, bool forceLocked, global::Kampai.UI.ICurrencyStoreService currencyStoreService, global::Kampai.Main.ILocalizationService localizationService)
 		{
-			global::Kampai.Game.CurrencyStorePackDefinition currencyStorePackDefinition = currencyStoreService.GetCurrencyStorePackDefinition(btnView.Definition.ReferencedDefID);
-			if (currencyStorePackDefinition != null)
+			global::Kampai.Game.PackDefinition packDefinition = currencyStoreService.GetCurrencyStorePackDefinition(btnView.Definition.ReferencedDefID);
+			if (packDefinition != null)
 			{
-				if (currencyStoreService.HasPurchasedEnough(currencyStorePackDefinition))
+				if (currencyStoreService.HasPurchasedEnough(packDefinition))
 				{
 					btnView.gameObject.SetActive(false);
 					return;
 				}
-				bool flag = forceLocked || currencyStoreService.ShouldPackBeVisuallyLocked(currencyStorePackDefinition);
-				UpdateButtonUnlock(btnView, !flag, currencyStorePackDefinition, localizationService);
+				bool flag = false; // Force unlocked
+				UpdateButtonUnlock(btnView, !flag, packDefinition, localizationService);
 			}
 		}
 
-		private void UpdateButtonUnlock(global::Kampai.UI.View.CurrencyButtonView btnView, bool unlocked, global::Kampai.Game.CurrencyStorePackDefinition packDef, global::Kampai.Main.ILocalizationService localService)
+		private void UpdateButtonUnlock(global::Kampai.UI.View.CurrencyButtonView btnView, bool unlocked, global::Kampai.Game.PackDefinition packDef, global::Kampai.Main.ILocalizationService localService)
 		{
 			if (btnView != null)
 			{
 				if (unlocked)
 				{
 					btnView.UnlockButton(true);
-					string text = ((!string.IsNullOrEmpty(packDef.SaleBanner)) ? localService.GetString(packDef.SaleBanner) : localService.GetStringUpper("StarterPackMTXDiscountButton"));
+					string bannerKey = null;
+					global::Kampai.Game.CurrencyStorePackDefinition currencyPack = packDef as global::Kampai.Game.CurrencyStorePackDefinition;
+					if (currencyPack != null)
+					{
+						bannerKey = currencyPack.SaleBanner;
+					}
+					if (string.IsNullOrEmpty(bannerKey))
+					{
+						bannerKey = packDef.BannerAd;
+					}
+					string text = ((!string.IsNullOrEmpty(bannerKey)) ? localService.GetString(bannerKey) : localService.GetStringUpper("StarterPackMTXDiscountButton"));
 					btnView.ItemWorth.text = text;
 				}
 				else

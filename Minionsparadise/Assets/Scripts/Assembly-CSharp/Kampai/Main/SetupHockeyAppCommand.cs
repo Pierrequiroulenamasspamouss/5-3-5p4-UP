@@ -20,7 +20,8 @@ namespace Kampai.Main
 
 		public override void Execute()
 		{
-			// Only initialize HockeyApp on real Android devices; skip on Windows/Editor to avoid crashes and unnecessary telemetry
+			// De-integrated HockeyApp: Skip initialization to avoid ClassNotFoundException and potential hangs on Android.
+			return;
 #if !UNITY_ANDROID || UNITY_EDITOR
 			return;
 #else

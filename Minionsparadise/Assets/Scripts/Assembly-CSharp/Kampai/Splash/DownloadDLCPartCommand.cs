@@ -12,18 +12,7 @@ namespace Kampai.Splash
 
 		public override void Execute()
 		{
-			if (dlcModel.PendingRequests == null || dlcModel.RunningRequests == null)
-			{
-				logger.Error("Attempting to run DLCPartCommand with no model!");
-				return;
-			}
-			global::Kampai.Main.LoadState.Set(global::Kampai.Main.LoadStateType.DLC);
-			while (dlcModel.PendingRequests.Count > 0 && dlcModel.RunningRequests.Count < 5)
-			{
-				global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequest request = dlcModel.PendingRequests.Dequeue();
-				dlcModel.RunningRequests.Add(request);
-				downloadService.Perform(request);
-			}
+			logger.Info("DownloadDLCPartCommand: DLC downloading bypassed.");
 		}
 	}
 }

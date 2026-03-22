@@ -42,26 +42,10 @@ namespace Kampai.Splash
 
 		private void OnNetworkTypeChanged(global::UnityEngine.NetworkReachability type)
 		{
-			switch (type)
-			{
-			case global::UnityEngine.NetworkReachability.ReachableViaLocalAreaNetwork:
-				dlcModel.AllowDownloadOnMobileNetwork = false;
-				break;
-			case global::UnityEngine.NetworkReachability.ReachableViaCarrierDataNetwork:
-				if (!networkModel.isConnectionLost && !dlcModel.AllowDownloadOnMobileNetwork)
-				{
-					PauseDownload();
-				}
-				break;
-			}
 		}
 
 		private void OnNetworkResume()
 		{
-			if (networkModel.reachability == global::UnityEngine.NetworkReachability.ReachableViaCarrierDataNetwork && !dlcModel.AllowDownloadOnMobileNetwork)
-			{
-				PauseDownload();
-			}
 		}
 
 		private void PauseDownload()

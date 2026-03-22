@@ -15,26 +15,19 @@ namespace Kampai.Util
 
 		public static void Start()
 		{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR && !UNITY_STANDALONE_WIN
-			media_client_start(global::System.IntPtr.Zero, 0);
-#endif
+			// De-integrated: media_client_start is not used to bypass missing libmedia_client.so
 		}
 
 		public static string ConvertUrl(string url)
 		{
 			url = url.Replace("https://", "http://");
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR && !UNITY_STANDALONE_WIN
-			return media_client_convert_url(url);
-#else
+			// De-integrated: media_client_convert_url is not used
 			return url;
-#endif
 		}
 
 		public static void Stop()
 		{
-#if !UNITY_WEBPLAYER && !UNITY_EDITOR && !UNITY_STANDALONE_WIN
-			global::Kampai.Util.Native.LogInfo(string.Format("MediaClient.Stop: {0}", media_client_stop()));
-#endif
+			// De-integrated: media_client_stop is not used
 		}
 	}
 }
