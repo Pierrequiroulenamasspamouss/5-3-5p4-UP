@@ -78,6 +78,17 @@ def init_db():
             UNIQUE(team_id, user_id)
         )
     ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS tse_invitations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_id INTEGER NOT NULL,
+            team_id INTEGER NOT NULL,
+            inviter_uid TEXT NOT NULL,
+            invitee_uid TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (team_id) REFERENCES tse_teams(team_id)
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -108,7 +119,9 @@ def get_tse_team_for_user(event_id, user_id):
         mid = m['user_id']
         member_list.append({
             "id": mid, "externalId": mid, "userId": mid,
-            "type": 0, "secret": "mock", "sessionKey": "mock"
+            "type": 1,
+            "secret": "mock", "sessionKey": "mock",
+            "iconUrl": f"http://localhost:44732/api/{mid}/icon.png"
         })
     
     team = {
@@ -139,7 +152,9 @@ def create_tse_team_for_user(event_id, user_id):
         "socialEventId": event_id,
         "members": [
             {"id": str(user_id), "externalId": str(user_id), "userId": str(user_id),
-             "type": 0, "secret": "mock", "sessionKey": "mock"}
+             "type": 1,
+             "secret": "mock", "sessionKey": "mock",
+             "iconUrl": f"http://localhost:44732/api/{user_id}/icon.png"}
         ],
         "orderProgress": []
     }
@@ -166,6 +181,120 @@ def claim_tse_reward(team_id, user_id):
         return False  # Already claimed
     conn.execute('UPDATE tse_members SET reward_claimed = 1 WHERE team_id = ? AND user_id = ?',
                  (team_id, str(user_id)))
+    conn.commit()
+    conn.close()
+    return True
+
+def get_tse_team_by_id(team_id):
+    """Get team info by ID."""
+    conn = get_db_connection()
+    row = conn.execute('SELECT * FROM tse_teams WHERE team_id = ?', (team_id,)).fetchone()
+    if not row:
+        conn.close()
+        return None
+    
+    event_id = row['event_id']
+    order_progress = json.loads(row['order_progress'] or '[]')
+    
+    members = conn.execute('SELECT user_id FROM tse_members WHERE team_id = ?', (team_id,)).fetchall()
+    conn.close()
+    
+    member_list = []
+    for m in members:
+        mid = m['user_id']
+        member_list.append({
+            "id": mid, "externalId": mid, "userId": mid,
+            "type": 1,
+            "secret": "mock", "sessionKey": "mock",
+            "iconUrl": f"http://localhost:44732/api/{mid}/icon.png"
+        })
+    
+    return {
+        "id": team_id,
+        "socialEventId": event_id,
+        "members": member_list,
+        "orderProgress": order_progress
+    }
+
+def join_tse_team(team_id, user_id):
+    """Add a user to a team."""
+    conn = get_db_connection()
+    # Check if team is full (max 4 members usually)
+    count = conn.execute('SELECT COUNT(*) FROM tse_members WHERE team_id = ?', (team_id,)).fetchone()[0]
+    if count >= 4:
+        conn.close()
+        return False, "TEAM_FULL"
+    
+    try:
+        conn.execute('INSERT INTO tse_members (team_id, user_id) VALUES (?, ?)', (team_id, str(user_id)))
+        # Also remove any invitations for this user to this team
+        conn.execute('DELETE FROM tse_invitations WHERE team_id = ? AND invitee_uid = ?', (team_id, str(user_id)))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        pass # Already a member
+    
+    conn.close()
+    return True, None
+
+def leave_tse_team(team_id, user_id):
+    """Remove a user from a team."""
+    conn = get_db_connection()
+    conn.execute('DELETE FROM tse_members WHERE team_id = ? AND user_id = ?', (team_id, str(user_id)))
+    # If no members left, maybe delete team? (Optional, skipping for now)
+    conn.commit()
+    conn.close()
+    return True
+
+def create_tse_invitation(event_id, team_id, inviter_uid, invitee_uid):
+    """Create an invitation."""
+    conn = get_db_connection()
+    conn.execute(
+        'INSERT INTO tse_invitations (event_id, team_id, inviter_uid, invitee_uid) VALUES (?, ?, ?, ?)',
+        (event_id, team_id, str(inviter_uid), str(invitee_uid))
+    )
+    conn.commit()
+    conn.close()
+
+def get_tse_invitations(user_id):
+    """Get all invitations for a user."""
+    conn = get_db_connection()
+    rows = conn.execute('''
+        SELECT i.event_id, i.team_id, i.inviter_uid
+        FROM tse_invitations i
+        WHERE i.invitee_uid = ?
+    ''', (str(user_id),)).fetchall()
+    
+    invites = []
+    for r in rows:
+        team_id = r['team_id']
+        # Get team view info
+        team_row = conn.execute('SELECT order_progress FROM tse_teams WHERE team_id = ?', (team_id,)).fetchone()
+        if not team_row: continue
+        
+        orders = json.loads(team_row['order_progress'] or '[]')
+        member_count = conn.execute('SELECT COUNT(*) FROM tse_members WHERE team_id = ?', (team_id,)).fetchone()[0]
+        
+        invites.append({
+            "eventId": r['event_id'],
+            "team": {
+                "id": team_id,
+                "socialEventId": r['event_id'],
+                "membersCount": member_count,
+                "completedOrdersCount": len(orders)
+            },
+            "inviter": {
+                "id": r['inviter_uid'], "externalId": r['inviter_uid'], "userId": r['inviter_uid'],
+                "type": 0
+            }
+        })
+    conn.close()
+    return invites
+
+def reject_tse_invitation(event_id, team_id, user_id):
+    """Remove an invitation."""
+    conn = get_db_connection()
+    conn.execute('DELETE FROM tse_invitations WHERE event_id = ? AND team_id = ? AND invitee_uid = ?',
+                 (event_id, team_id, str(user_id)))
     conn.commit()
     conn.close()
     return True

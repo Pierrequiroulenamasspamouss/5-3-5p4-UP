@@ -11,6 +11,9 @@ namespace Kampai.UI.View
 		public global::Kampai.UI.View.ShowMTXStoreSignal showMTXStoreSignal { get; set; }
 
 		public global::Kampai.Game.CloneUserFromEnvSignal cloneUserFromEnvSignal { get; set; }
+		
+		[Inject]
+		public global::Kampai.Game.ITimedSocialEventService timedSocialEventService { get; set; }
 
 		private void Awake()
 		{
@@ -75,6 +78,22 @@ namespace Kampai.UI.View
 					break;
 				}
 				logger.Error("Incorrect deeplink url: {0}", text);
+				break;
+			case "join":
+				if (array.Length == 3)
+				{
+					long teamId = global::System.Convert.ToInt64(array[2]);
+					global::Kampai.Game.TimedSocialEventDefinition currentSocialEvent = timedSocialEventService.GetCurrentSocialEvent();
+					if (currentSocialEvent != null)
+					{
+						logger.Debug("Joining team {0} for event {1}", teamId, currentSocialEvent.ID);
+						timedSocialEventService.JoinSocialTeam(currentSocialEvent.ID, teamId, null);
+					}
+					else
+					{
+						logger.Error("No active social event found to join team {0}", teamId);
+					}
+				}
 				break;
 			default:
 				logger.Error("Unsupported action: {0}", text2);
