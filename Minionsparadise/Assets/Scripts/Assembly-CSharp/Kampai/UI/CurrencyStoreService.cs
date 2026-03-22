@@ -83,26 +83,30 @@ namespace Kampai.UI
 			if (def.Type == global::Kampai.Game.StoreItemType.SalePack)
 			{
 				global::Kampai.Game.PackDefinition packDef = GetCurrencyStorePackDefinition(def.ReferencedDefID);
-				if (packDef == null)
+				if (packDef != null)
 				{
-					return false;
-				}
+					// Check server-updated dates on the Pack itself
+					global::Kampai.Util.IUTCRangeable rangeable = packDef as global::Kampai.Util.IUTCRangeable;
+					if (rangeable != null && !timeService.WithinRange(rangeable, true))
+					{
+						return false;
+					}
 
-				// Check server-updated dates on the Pack itself (if it supports ranges like SalePackDefinition)
-				global::Kampai.Util.IUTCRangeable rangeable = packDef as global::Kampai.Util.IUTCRangeable;
-				if (rangeable != null && !timeService.WithinRange(rangeable, true))
-				{
-					return false;
+					if (PackUtil.HasPurchasedEnough(packDef, playerService))
+					{
+						return false;
+					}
+					
+					return true;
 				}
-
-				if (PackUtil.HasPurchasedEnough(packDef, playerService))
-				{
-					return false;
-				}
+				
+				// Fallback: If it's a SalePack but no PackDefinition found (e.g. basic currency),
+				// use the StoreItemDefinition's own IsOnSale check.
 			}
-			else if (!def.IsOnSale(global::UnityEngine.Application.platform, timeService, localeService, logger))
+			
+			if (!def.IsOnSale(global::UnityEngine.Application.platform, timeService, localeService, logger))
 			{
-				// For non-packs, use original StoreItem date check
+				// For non-packs (or basic currency), use original StoreItem date check
 				return false;
 			}
 
