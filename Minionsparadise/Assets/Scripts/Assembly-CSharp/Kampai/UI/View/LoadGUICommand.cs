@@ -17,6 +17,10 @@ namespace Kampai.UI.View
 		{
 			logger.EventStart("LoadGUICommand.Execute");
 			global::UnityEngine.GameObject o = guiService.Execute(global::Kampai.UI.View.GUIOperation.LoadStatic, "screen_HUD");
+			if (o == null)
+			{
+				logger.Fatal(global::Kampai.Util.FatalCode.CMD_NULL_PREFAB, "LoadGUICommand: Failed to load 'screen_HUD' prefab! Check KampaiAssetManifest and Resources folder.", new object[0]);
+			}
 			base.injectionBinder.Bind<global::UnityEngine.GameObject>().ToValue(o).ToName(global::Kampai.UI.View.UIElement.HUD);
 			createXPBar.Dispatch();
 			createPartyMeter.Dispatch();

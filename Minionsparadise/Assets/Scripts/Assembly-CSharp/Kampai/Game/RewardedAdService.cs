@@ -67,7 +67,7 @@ namespace Kampai.Game
 		[Inject]
 		public global::Kampai.Game.ITimeService timeService { get; set; }
 
-		[Inject]
+		[Inject(optional = true)]
 		public global::Kampai.Game.ITimeEventService timeEventService { get; set; }
 
 		[Inject]

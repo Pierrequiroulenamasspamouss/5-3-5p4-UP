@@ -12,7 +12,7 @@ namespace Kampai.UI.View
 		[Inject(global::Kampai.UI.View.UIElement.CAMERA)]
 		public global::UnityEngine.Camera uiCamera { get; set; }
 
-		[Inject(global::Kampai.UI.View.UIElement.HUD)]
+		[Inject(global::Kampai.UI.View.UIElement.HUD, optional = true)]
 		public global::UnityEngine.GameObject hud { get; set; }
 
 		[Inject]

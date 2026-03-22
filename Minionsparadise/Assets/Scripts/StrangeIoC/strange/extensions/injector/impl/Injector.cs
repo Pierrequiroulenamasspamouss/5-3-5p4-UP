@@ -121,10 +121,17 @@ namespace strange.extensions.injector.impl
 			reflection.PerformInjection(target, this);
 		}
 
-		public object GetValueInjection(global::System.Type t, object name, object target)
+		public object GetValueInjection(global::System.Type t, object name, object target, bool optional)
 		{
 			global::strange.extensions.injector.api.IInjectionBinding binding = binder.GetBinding(t, name);
-			failIf(binding == null, "Attempt to Instantiate a null binding.", global::strange.extensions.injector.api.InjectionExceptionType.NULL_BINDING, t, name, target);
+			if (binding == null)
+			{
+				if (optional)
+				{
+					return null;
+				}
+				failIf(true, "Attempt to Instantiate a null binding.", global::strange.extensions.injector.api.InjectionExceptionType.NULL_BINDING, t, name, target);
+			}
 			if (binding.type == global::strange.extensions.injector.api.InjectionBindingType.VALUE)
 			{
 				if (!binding.toInject)

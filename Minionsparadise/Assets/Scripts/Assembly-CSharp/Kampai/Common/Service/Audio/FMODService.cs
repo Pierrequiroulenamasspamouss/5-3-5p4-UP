@@ -125,6 +125,10 @@ namespace Kampai.Common.Service.Audio
 #elif UNITY_ANDROID
 			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.persistentDataPath, "Raw_FMOD_GlobalMap.json");
 			if (global::System.IO.File.Exists(path)) return path;
+			
+			// Try StreamingAssets path (might be inside APK)
+			path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android/Raw_FMOD_GlobalMap.json");
+			return path;
 #endif
 			string assetFileByOriginalName = _manifestService.GetAssetFileByOriginalName("Raw_FMOD_GlobalMap");
 			string rawPath = GetRawAssetPathByOriginalName(assetFileByOriginalName);
@@ -149,9 +153,20 @@ namespace Kampai.Common.Service.Audio
 						fmodGlobalEventMap = global::Kampai.Util.FastJSONDeserializer.Deserialize<global::Kampai.Common.Service.Audio.FmodGlobalEventMap>(reader);
 					}
 				}
-				else
+				
+				if (fmodGlobalEventMap == null)
 				{
-					logger.Error("FmodGlobalEventMap file not found: {0}", eventMapFilePath);
+					logger.Info("FmodGlobalEventMap not found at {0}, trying Resources fallback...", eventMapFilePath);
+					global::UnityEngine.TextAsset textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>("content/Raw_FMOD_GlobalMap");
+					if (textAsset != null)
+					{
+						fmodGlobalEventMap = global::Newtonsoft.Json.JsonConvert.DeserializeObject<global::Kampai.Common.Service.Audio.FmodGlobalEventMap>(textAsset.text);
+						logger.Info("FmodGlobalEventMap loaded from Resources.");
+					}
+					else
+					{
+						logger.Error("FmodGlobalEventMap file not found in Resources either (checked 'content/Raw_FMOD_GlobalMap')");
+					}
 				}
 			}
 			catch (global::System.Exception ex)

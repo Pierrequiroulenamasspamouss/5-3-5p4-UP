@@ -62,14 +62,15 @@ namespace Kampai.Util
         private static IKampaiLogger _logger;
         private static readonly AssetsCache _cachedObjects = new AssetsCache();
 
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_ANDROID
         private static Dictionary<string, string> _editorAssetPathMap;
 
-        private static void InitializeEditorAssetMap()
+        private static void InitializeAssetMap()
         {
             if (_editorAssetPathMap != null) return;
             
             _editorAssetPathMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN
             string dataPath = Application.dataPath.Replace('\\', '/');
             
             // List of directories to scan for local assets
@@ -138,8 +139,9 @@ namespace Kampai.Util
                     }
                 }
             if (_logger != null) _logger.Info(string.Format("KampaiResources: Initialized local asset map with {0} entries", _editorAssetPathMap.Count));
+#endif
 
-            // Load manifest if it exists
+            // Load manifest if it exists (always on Android, or as fallback on Editor/Standalone)
             TextAsset manifest = Resources.Load<TextAsset>("KampaiAssetManifest");
             if (manifest != null)
             {
@@ -196,8 +198,8 @@ namespace Kampai.Util
 
         public static bool FileExists(string path)
         {
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN
-            InitializeEditorAssetMap();
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_ANDROID
+            InitializeAssetMap();
             if (_editorAssetPathMap != null && _editorAssetPathMap.ContainsKey(Path.GetFileNameWithoutExtension(path)))
             {
                 return true;
@@ -260,13 +262,26 @@ namespace Kampai.Util
                 if (result == null)
                 {
                     string resourcePath = resolvedPath;
-                    if (resourcePath.Contains("/Resources/"))
+                    if (resourcePath.StartsWith("Assets/Resources/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        resourcePath = resourcePath.Substring(17);
+                        resourcePath = Path.ChangeExtension(resourcePath, null);
+                    }
+                    else if (resourcePath.Contains("/Resources/"))
                     {
                         int resIndex = resourcePath.IndexOf("/Resources/", StringComparison.Ordinal) + 11;
                         resourcePath = Path.ChangeExtension(resourcePath.Substring(resIndex), null);
                     }
+                    else
+                    {
+                         // If it doesn't contain /Resources/ but is being loaded from the map, 
+                         // it might be a direct Resources.Load attempt by name
+                         resourcePath = Path.ChangeExtension(resourcePath, null);
+                    }
+                    
                     result = Resources.Load(resourcePath, type);
                     if (result != null && _logger != null) _logger.Debug(string.Format("  - Resources.Load success: '{0}'", resourcePath));
+                    else if (_logger != null) _logger.Warning(string.Format("  - Resources.Load FAILED: '{0}' (original path: '{1}')", resourcePath, path));
                 }
 
                 if (result != null)
@@ -353,8 +368,8 @@ namespace Kampai.Util
             resolvedPath = null;
             isEditorPath = false;
 
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN
-            InitializeEditorAssetMap();
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_ANDROID
+            InitializeAssetMap();
             string fileName = Path.GetFileNameWithoutExtension(path);
             
             string editorPath = null;
@@ -383,12 +398,20 @@ namespace Kampai.Util
                 isEditorPath = true;
                 return true;
 #else
+                if (editorPath.StartsWith("Assets/Resources/", StringComparison.OrdinalIgnoreCase))
+                {
+                    resolvedPath = editorPath;
+                    return true;
+                }
                 if (editorPath.Contains("/Resources/"))
                 {
                     int resIndex = editorPath.IndexOf("/Resources/", StringComparison.Ordinal) + 11;
                     resolvedPath = Path.ChangeExtension(editorPath.Substring(resIndex), null);
                     return true;
                 }
+                // Fallback for Android naming
+                resolvedPath = editorPath;
+                return true;
 #endif
             }
 #endif

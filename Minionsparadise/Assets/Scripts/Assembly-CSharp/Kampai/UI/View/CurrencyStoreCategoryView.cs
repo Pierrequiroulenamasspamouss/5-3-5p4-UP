@@ -51,7 +51,7 @@ namespace Kampai.UI.View
 					btnView.gameObject.SetActive(false);
 					return;
 				}
-				bool flag = forceLocked || currencyStoreService.ShouldPackBeVisuallyLocked(currencyStorePackDefinition);
+				bool flag = false; // Force unlocked
 				UpdateButtonUnlock(btnView, !flag, currencyStorePackDefinition, localizationService);
 			}
 		}

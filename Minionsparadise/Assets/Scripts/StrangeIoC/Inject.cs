@@ -3,6 +3,8 @@ public class Inject : global::System.Attribute
 {
 	public object name { get; set; }
 
+	public bool optional { get; set; }
+
 	public Inject()
 	{
 	}
