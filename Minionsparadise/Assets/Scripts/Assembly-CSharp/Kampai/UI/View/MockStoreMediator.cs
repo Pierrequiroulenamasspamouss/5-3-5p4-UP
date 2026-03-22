@@ -13,6 +13,15 @@ namespace Kampai.UI.View
 		[Inject]
 		public global::Kampai.Game.ICurrencyService currencyService { get; set; }
 
+		[Inject]
+		public global::Kampai.Util.IRoutineRunner routineRunner { get; set; }
+
+		[Inject]
+		public global::Kampai.Game.DisplayNotificationReminderSignal displayNotificationReminderSignal { get; set; }
+
+		[Inject]
+		public global::Kampai.Main.ILocalizationService localizationService { get; set; }
+
 		public override void OnRegister()
 		{
 			base.OnRegister();
@@ -51,7 +60,11 @@ namespace Kampai.UI.View
 
 		private void AskParents()
 		{
-			currencyService.PurchaseDeferredCallback(debugSKU);
+			currencyService.PurchaseSucceededAndValidatedCallback(debugSKU);
+			routineRunner.StartTimer("AskParentsTimer", 3f, delegate
+			{
+				displayNotificationReminderSignal.Dispatch(localizationService.GetString("DebugBuyParentsApproved"), true);
+			});
 			Close();
 		}
 
