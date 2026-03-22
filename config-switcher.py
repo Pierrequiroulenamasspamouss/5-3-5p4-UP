@@ -8,9 +8,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 PATHS = [
     {
-        "target": os.path.join(BASE_DIR, "Minionsparadise", "Assets", "StreamingAssets", "config.json"),
-        "local": os.path.join(BASE_DIR, "Minionsparadise", "Assets", "StreamingAssets", "config.json.local"),
-        "public": os.path.join(BASE_DIR, "Minionsparadise", "Assets", "StreamingAssets", "config.json.public"),
+        "target": os.path.join(BASE_DIR, "Minionsparadise", "Assets", "Resources", "config.json"),
+        "local": os.path.join(BASE_DIR, "Minionsparadise", "Assets", "Resources", "config.json.local"),
+        "public": os.path.join(BASE_DIR, "Minionsparadise", "Assets", "Resources", "config.json.public"),
     },
     {
         "target": os.path.join(BASE_DIR, "SERVER", "config.json"),

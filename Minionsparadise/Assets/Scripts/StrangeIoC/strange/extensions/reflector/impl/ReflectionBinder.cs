@@ -140,6 +140,7 @@ namespace strange.extensions.reflector.impl
 		{
 			global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<global::System.Type, global::System.Action<object, object>>> list = new global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<global::System.Type, global::System.Action<object, object>>>();
 			global::System.Collections.Generic.List<object> list2 = new global::System.Collections.Generic.List<object>();
+			global::System.Collections.Generic.List<bool> list3 = new global::System.Collections.Generic.List<bool>();
 			global::System.Reflection.MemberInfo[] array = type.FindMembers(global::System.Reflection.MemberTypes.Property, global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.FlattenHierarchy | global::System.Reflection.BindingFlags.SetProperty, null, null);
 			global::System.Reflection.MemberInfo[] array2 = array;
 			foreach (global::System.Reflection.MemberInfo memberInfo in array2)
@@ -153,6 +154,7 @@ namespace strange.extensions.reflector.impl
 			global::System.Reflection.MemberInfo[] array3 = type.FindMembers(global::System.Reflection.MemberTypes.Property, global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.Public | global::System.Reflection.BindingFlags.FlattenHierarchy | global::System.Reflection.BindingFlags.SetProperty, null, null);
 			list.Capacity = array3.Length;
 			list2.Capacity = array3.Length;
+			list3.Capacity = array3.Length;
 			global::System.Reflection.MemberInfo[] array4 = array3;
 			foreach (global::System.Reflection.MemberInfo memberInfo2 in array4)
 			{
@@ -183,9 +185,11 @@ namespace strange.extensions.reflector.impl
 				list.Add(item);
 				object name = inject.name;
 				list2.Add(name);
+				list3.Add(inject.optional);
 			}
 			reflected.Setters = list.ToArray();
 			reflected.SetterNames = list2.ToArray();
+			reflected.SetterOptional = list3.ToArray();
 		}
 	}
 }

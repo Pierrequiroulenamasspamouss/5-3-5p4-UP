@@ -203,7 +203,7 @@ namespace Kampai.UI.View
 
 		private bool AllItemsAreLocked()
 		{
-			return !currencyService.TransactionProcessingEnabled();
+			return false; // Force unlocked
 		}
 
 		private void OnMenuClose()

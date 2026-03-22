@@ -180,7 +180,7 @@ namespace Kampai.Main
 			base.commandBinder.Bind<global::Kampai.Game.RestoreMtxPurchaseSignal>().To<global::Kampai.Game.Mtx.RestoreMtxPurchaseCommand>();
 			injectionBinder.Bind<global::Kampai.Game.FinishPremiumPurchaseSignal>().ToSingleton().CrossContext()
 				.Weak();
-			injectionBinder.Bind<global::Kampai.Game.ICurrencyService>().To<global::Kampai.Game.DummyCurrencyService>().ToSingleton()
+			injectionBinder.Bind<global::Kampai.Game.ICurrencyService>().To<global::Kampai.Game.DebugCurrencyService>().ToSingleton()
 				.CrossContext();
 
 			injectionBinder.Bind<global::Kampai.Main.PauseSoundSignal>().ToSingleton().CrossContext();

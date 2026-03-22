@@ -16,6 +16,6 @@ namespace strange.extensions.injector.api
 
 		void Uninject(object target);
 
-		object GetValueInjection(global::System.Type t, object name, object target);
+		object GetValueInjection(global::System.Type t, object name, object target, bool optional);
 	}
 }

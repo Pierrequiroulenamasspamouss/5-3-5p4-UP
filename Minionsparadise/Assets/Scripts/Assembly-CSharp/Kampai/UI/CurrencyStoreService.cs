@@ -84,10 +84,10 @@ namespace Kampai.UI
 				logger.Warning("Unable to find currency item def with id: {0}", definition.ReferencedDefID);
 				return false;
 			}
-			if (definition2.COPPAGated && coppaService.Restricted())
+			/* if (definition2.COPPAGated && coppaService.Restricted())
 			{
 				return false;
-			}
+			} */
 			if (definition.Type == global::Kampai.Game.StoreItemType.SalePack)
 			{
 				global::Kampai.Game.CurrencyStorePackDefinition definition3;
@@ -100,29 +100,17 @@ namespace Kampai.UI
 				{
 					return false;
 				}
-				if (!countInLocked && playerService.GetHighestFtueCompleted() < definition3.StoreUnlockFTUELevel)
+				/* if (!countInLocked && playerService.GetHighestFtueCompleted() < definition3.StoreUnlockFTUELevel)
 				{
 					return false;
-				}
+				} */
 			}
 			return true;
 		}
 
 		public bool ShouldPackBeVisuallyLocked(global::Kampai.Game.CurrencyStorePackDefinition currencyStorePackDefinition)
 		{
-			if (playerService.GetHighestFtueCompleted() < currencyStorePackDefinition.StoreUnlockFTUELevel)
-			{
-				return true;
-			}
-			if (playerService.GetQuantity(global::Kampai.Game.StaticItem.LEVEL_ID) < currencyStorePackDefinition.UnlockLevel)
-			{
-				return true;
-			}
-			if (currencyStorePackDefinition.UnlockQuestId != 0 && !questService.IsQuestCompleted(currencyStorePackDefinition.UnlockQuestId))
-			{
-				return true;
-			}
-			return false;
+			return false; // Force unlocked
 		}
 
 		private bool ShouldItemBeMarkedAsViewed(global::Kampai.Game.StoreItemDefinition storeItemDef)

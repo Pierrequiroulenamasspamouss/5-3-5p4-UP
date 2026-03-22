@@ -107,5 +107,10 @@ namespace Kampai.Game
 		public override void RestorePurchases()
 		{
 		}
+
+		public override bool TransactionProcessingEnabled()
+		{
+			return true;
+		}
 	}
 }
