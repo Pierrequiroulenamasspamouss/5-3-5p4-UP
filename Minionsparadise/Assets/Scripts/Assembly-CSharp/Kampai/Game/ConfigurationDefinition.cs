@@ -14,6 +14,9 @@ namespace Kampai.Game
 		public bool serverPushNotifications { get; set; }
 
 		[global::Newtonsoft.Json.JsonProperty(NullValueHandling = global::Newtonsoft.Json.NullValueHandling.Ignore)]
+		public bool AprilsFool { get; set; }
+
+		[global::Newtonsoft.Json.JsonProperty(NullValueHandling = global::Newtonsoft.Json.NullValueHandling.Ignore)]
 		public float minimumVersion { get; set; }
 
 		[global::Newtonsoft.Json.JsonProperty(NullValueHandling = global::Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -120,6 +123,10 @@ namespace Kampai.Game
 			case "SERVERPUSHNOTIFICATIONS":
 				reader.Read();
 				serverPushNotifications = global::System.Convert.ToBoolean(reader.Value);
+				break;
+			case "APRILSFOOL":
+				reader.Read();
+				AprilsFool = global::System.Convert.ToBoolean(reader.Value);
 				break;
 			case "MINIMUMVERSION":
 				reader.Read();
@@ -253,6 +260,10 @@ namespace Kampai.Game
 			case "SERVERPUSHNOTIFICATIONS":
 				reader.Read();
 				serverPushNotifications = global::System.Convert.ToBoolean(reader.Value);
+				break;
+			case "APRILSFOOL":
+				reader.Read();
+				AprilsFool = global::System.Convert.ToBoolean(reader.Value);
 				break;
 			case "MINIMUMVERSION":
 				reader.Read();

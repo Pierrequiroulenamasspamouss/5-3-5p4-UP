@@ -54,6 +54,16 @@ namespace Kampai.UI.View
 		[Inject]
 		public global::Kampai.UI.View.PopupMessageSignal popupMessageSignal { get; set; }
 
+		[Inject]
+		public global::Kampai.Main.LanguageChangedSignal languageChangedSignal { get; set; }
+
+		[Inject]
+		public global::Kampai.Game.IConfigurationsService configurationsService { get; set; }
+
+		private static readonly string[] ALL_LANGUAGES = new string[] { "en", "fr", "de", "es", "it", "pt", "nl", "ko", "ru", "ja", "zh-cn", "zh-tw", "tr", "id", "lolcat", "minion" };
+
+		private global::System.Collections.Generic.List<string> m_availableLanguages;
+
 		private int buildNumberClickCount;
 
 		private float lastBuildNumberClickTime;
@@ -72,6 +82,16 @@ namespace Kampai.UI.View
 			view.notificationsOffButton.ClickedSignal.AddListener(NotificationsOffButton);
 			view.DLCButton.ClickedSignal.AddListener(DLCButton);
 			view.doubleConfirmButton.ClickedSignal.AddListener(OnDoubleConfirm);
+			if (view.languageButton != null)
+			{
+				view.languageButton.ClickedSignal.AddListener(OnLanguageButtonClicked);
+			}
+			m_availableLanguages = new global::System.Collections.Generic.List<string>(ALL_LANGUAGES);
+			if (configurationsService.GetConfigurations() == null || !configurationsService.GetConfigurations().AprilsFool)
+			{
+				m_availableLanguages.Remove("lolcat");
+				m_availableLanguages.Remove("minion");
+			}
 			Init();
 			setServer(ServerEnv);
 			setBuild(clientVersion.GetClientVersion());
@@ -97,6 +117,10 @@ namespace Kampai.UI.View
 			view.DLCButton.ClickedSignal.RemoveListener(DLCButton);
 			view.volumeSliderChangedSignal.RemoveListener(OnVolumeChanged);
 			view.doubleConfirmButton.ClickedSignal.RemoveListener(OnDoubleConfirm);
+			if (view.languageButton != null)
+			{
+				view.languageButton.ClickedSignal.RemoveListener(OnLanguageButtonClicked);
+			}
 		}
 
 		private void Init()
@@ -130,6 +154,38 @@ namespace Kampai.UI.View
 				view.ToggleNotificationsOn(true);
 			}
 			view.doubleConfirmText.text = localService.GetString("DoubleConfirm");
+			UpdateLanguageText();
+		}
+
+		private void UpdateLanguageText()
+		{
+			if (view.languageText != null)
+			{
+				view.languageText.text = localService.GetLanguage().ToUpper();
+			}
+		}
+
+		private void OnLanguageButtonClicked()
+		{
+			string language = prefs.GetDevicePrefs().Language;
+			if (string.IsNullOrEmpty(language))
+			{
+				language = global::Kampai.Util.Native.GetDeviceLanguage();
+			}
+			language = language.ToLower();
+			int num = m_availableLanguages.IndexOf(language);
+			if (num == -1)
+			{
+				num = 0;
+			}
+			num = (num + 1) % m_availableLanguages.Count;
+			string nextLang = m_availableLanguages[num];
+			prefs.GetDevicePrefs().Language = nextLang;
+			saveDevicePrefsSignal.Dispatch();
+			localService.Initialize(nextLang);
+			localService.Update();
+			UpdateLanguageText();
+			languageChangedSignal.Dispatch();
 		}
 
 		private void OnVolumeChanged(bool isMusicSlider)

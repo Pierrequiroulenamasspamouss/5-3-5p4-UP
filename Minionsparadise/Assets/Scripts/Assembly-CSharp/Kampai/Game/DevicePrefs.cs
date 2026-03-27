@@ -31,5 +31,8 @@ namespace Kampai.Game
 
 		[global::Newtonsoft.Json.JsonProperty("SFXVolume")]
 		public float SFXVolume = 1f;
+
+		[global::Newtonsoft.Json.JsonProperty("Language")]
+		public string Language = string.Empty;
 	}
 }

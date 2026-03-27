@@ -93,6 +93,14 @@ def init_db():
             FOREIGN KEY (team_id) REFERENCES tse_teams(team_id)
         )
     ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS global_chat (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            message TEXT NOT NULL,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
     conn.commit()
     
     # Try to add columns for existing databases
@@ -588,6 +596,39 @@ def migrate_files_to_db():
 def random_minion_name():
     import random
     return random.choice(MINION_NAMES)
+
+def add_chat_message(user_id, message):
+    """Adds a message to the global chat."""
+    conn = get_db_connection()
+    conn.execute(
+        'INSERT INTO global_chat (user_id, message) VALUES (?, ?)',
+        (str(user_id), message)
+    )
+    conn.commit()
+    conn.close()
+
+def get_chat_messages(limit=50):
+    """Returns the latest messages from the global chat."""
+    conn = get_db_connection()
+    rows = conn.execute('''
+        SELECT c.user_id, c.message, c.timestamp, p.name as username, p.discord_avatar
+        FROM global_chat c
+        LEFT JOIN players p ON c.user_id = p.uid
+        ORDER BY c.timestamp DESC
+        LIMIT ?
+    ''', (limit,)).fetchall()
+    conn.close()
+    
+    messages = []
+    for r in rows:
+        messages.append({
+            "userId": r['user_id'],
+            "username": r['username'] or f"Minion {r['user_id'][-4:]}",
+            "message": r['message'],
+            "timestamp": r['timestamp'],
+            "avatar": r['discord_avatar']
+        })
+    return messages
 
 if __name__ == "__main__":
     init_db()

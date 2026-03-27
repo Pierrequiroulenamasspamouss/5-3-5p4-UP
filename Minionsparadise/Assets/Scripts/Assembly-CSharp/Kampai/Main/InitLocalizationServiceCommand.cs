@@ -16,13 +16,20 @@ namespace Kampai.Main
 		[Inject]
 		public global::Kampai.Splash.SplashProgressUpdateSignal splashProgressDoneSignal { get; set; }
 
+		[Inject]
+		public global::Kampai.Game.IDevicePrefsService devicePrefsService { get; set; }
+
 		public override void Execute()
 		{
 			if (!localService.IsInitialized())
 			{
-				string deviceLanguage = global::Kampai.Util.Native.GetDeviceLanguage();
-				logger.Info("Got language code {0}", deviceLanguage);
-				localService.Initialize(deviceLanguage);
+				string language = devicePrefsService.GetDevicePrefs().Language;
+				if (string.IsNullOrEmpty(language))
+				{
+					language = global::Kampai.Util.Native.GetDeviceLanguage();
+				}
+				logger.Info("Got language code {0}", language);
+				localService.Initialize(language);
 				localEventService.Initialize("EN-US");
 				localizationServiceInitializedSignal.Dispatch();
 				splashProgressDoneSignal.Dispatch(20, 5f);
