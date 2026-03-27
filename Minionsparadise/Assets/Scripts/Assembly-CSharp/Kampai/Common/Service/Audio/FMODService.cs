@@ -261,7 +261,13 @@ namespace Kampai.Common.Service.Audio
 		private global::FMOD.Studio.Bank LoadLocalBankAsync(string bankFile)
 		{
 			global::FMOD.Studio.Bank bank = null;
-			global::FMOD.RESULT result = FMOD_StudioSystem.instance.System.loadBankFile(bankFile, global::FMOD.Studio.LOAD_BANK_FLAGS.NONBLOCKING, out bank);
+			global::FMOD.Studio.System system = FMOD_StudioSystem.instance.System;
+			if (system == null)
+			{
+				logger.Error("FMODService: Cannot load bank {0} because FMOD System is null", bankFile);
+				return null;
+			}
+			global::FMOD.RESULT result = system.loadBankFile(bankFile, global::FMOD.Studio.LOAD_BANK_FLAGS.NONBLOCKING, out bank);
 			if (result == global::FMOD.RESULT.OK)
 			{
 				bool wasEmpty = pendingBanks.Count == 0;

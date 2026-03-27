@@ -160,10 +160,14 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 #if !UNITY_WEBPLAYER
 		try
 		{
-			using (global::System.IO.StreamReader textReader = new global::System.IO.StreamReader(jsonPath))
+			string jsonText = global::System.IO.File.ReadAllText(jsonPath);
+			jsonText = jsonText.TrimEnd();
+			if (!jsonText.EndsWith("}"))
 			{
-				return DeserializeDefinitionsFromJson(textReader);
+				logger.Warning("FORCED JSON LOADING: Automatically appending missing closing brace on Android.");
+				jsonText += "}";
 			}
+			return DeserializeDefinitionsFromJsonString(jsonText);
 		}
 		catch (global::System.Exception e)
 		{
