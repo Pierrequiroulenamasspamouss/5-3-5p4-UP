@@ -116,26 +116,15 @@ namespace Kampai.Common.Service.Audio
 
 		private string GetEventMapFilePath()
 		{
-#if UNITY_EDITOR
-			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android/Raw_FMOD_GlobalMap.json");
+			string resourceFolder = global::Kampai.Util.GameConstants.PRE_INSTALLED_FMOD_PATH;
+			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.persistentDataPath, resourceFolder + "Raw_FMOD_GlobalMap.json");
 			if (global::System.IO.File.Exists(path)) return path;
-#elif UNITY_STANDALONE_WIN
-			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Windows/Raw_FMOD_GlobalMap.json");
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+			path = global::System.IO.Path.Combine(global::UnityEngine.Application.persistentDataPath, "Raw_FMOD_GlobalMap.json");
 			if (global::System.IO.File.Exists(path)) return path;
-#elif UNITY_ANDROID
-			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.persistentDataPath, "Raw_FMOD_GlobalMap.json");
-			if (global::System.IO.File.Exists(path)) return path;
-			
-			// Try StreamingAssets path (might be inside APK)
-			path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android/Raw_FMOD_GlobalMap.json");
-			return path;
 #endif
-			string assetFileByOriginalName = _manifestService.GetAssetFileByOriginalName("Raw_FMOD_GlobalMap");
-			string rawPath = GetRawAssetPathByOriginalName(assetFileByOriginalName);
-			if (global::System.IO.File.Exists(rawPath)) return rawPath;
-			if (global::System.IO.File.Exists(rawPath + ".json")) return rawPath + ".json";
-			
-			return rawPath;
+			return path;
 		}
 
 		private void LoadEventMapsFromRawFiles()
@@ -156,8 +145,16 @@ namespace Kampai.Common.Service.Audio
 				
 				if (fmodGlobalEventMap == null)
 				{
-					logger.Info("FmodGlobalEventMap not found at {0}, trying Resources fallback...", eventMapFilePath);
-					global::UnityEngine.TextAsset textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>("content/Raw_FMOD_GlobalMap");
+					string resourceFolder = global::Kampai.Util.GameConstants.PRE_INSTALLED_FMOD_PATH;
+					string resourcePath = resourceFolder + "Raw_FMOD_GlobalMap";
+					logger.Info("FmodGlobalEventMap not found at {0}, trying Resources fallback at {1}...", eventMapFilePath, resourcePath);
+					global::UnityEngine.TextAsset textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>(resourcePath);
+					if (textAsset == null)
+					{
+						// Legacy fallback
+						textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>("content/Raw_FMOD_GlobalMap");
+					}
+					
 					if (textAsset != null)
 					{
 						fmodGlobalEventMap = global::Newtonsoft.Json.JsonConvert.DeserializeObject<global::Kampai.Common.Service.Audio.FmodGlobalEventMap>(textAsset.text);
@@ -165,7 +162,7 @@ namespace Kampai.Common.Service.Audio
 					}
 					else
 					{
-						logger.Error("FmodGlobalEventMap file not found in Resources either (checked 'content/Raw_FMOD_GlobalMap')");
+						logger.Error("FmodGlobalEventMap file not found in Resources either (checked {0} and 'content/Raw_FMOD_GlobalMap')", resourcePath);
 					}
 				}
 			}
@@ -258,6 +255,34 @@ namespace Kampai.Common.Service.Audio
 			return pendingBanks.Count != 0;
 		}
 
+		private string ExtractBankToFile(global::UnityEngine.TextAsset asset)
+		{
+			if (asset == null) return null;
+			try
+			{
+				string bankDir = global::System.IO.Path.Combine(global::UnityEngine.Application.persistentDataPath, "FMOD");
+				if (!global::System.IO.Directory.Exists(bankDir))
+				{
+					global::System.IO.Directory.CreateDirectory(bankDir);
+				}
+				string bankPath = global::System.IO.Path.Combine(bankDir, asset.name);
+				if (!bankPath.EndsWith(".bank")) bankPath += ".bank";
+				
+				// Optional: Only write if file doesn't exist or is different size
+				if (!global::System.IO.File.Exists(bankPath) || new global::System.IO.FileInfo(bankPath).Length != asset.bytes.Length)
+				{
+					logger.Debug("FMODService: Extracting bank {0} to {1}", asset.name, bankPath);
+					global::System.IO.File.WriteAllBytes(bankPath, asset.bytes);
+				}
+				return bankPath;
+			}
+			catch (global::System.Exception ex)
+			{
+				logger.Error("FMODService: Failed to extract bank {0}: {1}", asset.name, ex.Message);
+				return null;
+			}
+		}
+
 		private global::FMOD.Studio.Bank LoadLocalBankAsync(string bankFile)
 		{
 			global::FMOD.Studio.Bank bank = null;
@@ -286,33 +311,50 @@ namespace Kampai.Common.Service.Audio
 
 		private string GetStreamingBankPath(string bank)
 		{
-#if UNITY_EDITOR
-			string path = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android/" + bank + ".bank");
-			if (global::System.IO.File.Exists(path)) return path;
-#endif
-			return global::Kampai.Util.GameConstants.PRE_INSTALLED_FMOD_PATH + bank + ".bytes";
+			string resourceFolder = global::Kampai.Util.GameConstants.PRE_INSTALLED_FMOD_PATH;
+			string resourcePath = resourceFolder + bank;
+			global::UnityEngine.TextAsset asset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>(resourcePath);
+			if (asset != null)
+			{
+				return ExtractBankToFile(asset);
+			}
+			
+			// Fallback to legacy path
+			return global::Kampai.Util.GameConstants.PRE_INSTALLED_DLC_PATH + bank + ".bank";
 		}
 
 		private global::System.Collections.IEnumerator LoadStreamingAudioBanks()
 		{
-			logger.Debug("FMODService: Loading Streaming Audio Banks");
-#if UNITY_EDITOR
-			string fmodPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Android");
-#elif UNITY_STANDALONE_WIN
-			string fmodPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "FMOD/Windows");
-#else
-			string fmodPath = global::Kampai.Util.GameConstants.PRE_INSTALLED_FMOD_PATH;
-#endif
-			if (global::System.IO.Directory.Exists(fmodPath))
+			logger.Debug("FMODService: Loading Streaming Audio Banks from Resources");
+			string resourceFolder = global::Kampai.Util.GameConstants.PRE_INSTALLED_FMOD_PATH;
+			if (resourceFolder.EndsWith("/") || resourceFolder.EndsWith("\\"))
 			{
-				string[] files = global::System.IO.Directory.GetFiles(fmodPath, "*.bank");
-				foreach (string file in files)
+				resourceFolder = resourceFolder.Substring(0, resourceFolder.Length - 1);
+			}
+
+			global::UnityEngine.TextAsset[] bankAssets = global::UnityEngine.Resources.LoadAll<global::UnityEngine.TextAsset>(resourceFolder);
+			if (bankAssets != null && bankAssets.Length > 0)
+			{
+				logger.Debug("FMODService: Found {0} banks in Resources/{1}", bankAssets.Length, resourceFolder);
+				foreach (var asset in bankAssets)
 				{
-					LoadLocalBankAsync(file);
+					if (asset.name.Contains("GlobalMap")) continue; // Skip map
+					
+					string bankPath = ExtractBankToFile(asset);
+					if (!string.IsNullOrEmpty(bankPath))
+					{
+						LoadLocalBankAsync(bankPath);
+					}
+					// Optional: resources can be large, maybe unload after getting bytes?
+					// Wait, we need it in memory for ExtractBankToFile.
 				}
 			}
+			else
+			{
+				logger.Warning("FMODService: No banks found in Resources/{0}", resourceFolder);
+			}
 			
-			// Fallback to localContentService list
+			// Fallback to localContentService list (for things that might not be in LoadAll)
 			if (localContentService != null)
 			{
 				var streamingBanks = localContentService.GetStreamingAudioBanks();
@@ -321,7 +363,10 @@ namespace Kampai.Common.Service.Audio
 					foreach (string bankName in streamingBanks)
 					{
 						string path = GetStreamingBankPath(bankName);
-						if (global::System.IO.File.Exists(path)) LoadLocalBankAsync(path);
+						if (!string.IsNullOrEmpty(path) && global::System.IO.File.Exists(path)) 
+						{
+							LoadLocalBankAsync(path);
+						}
 					}
 				}
 			}

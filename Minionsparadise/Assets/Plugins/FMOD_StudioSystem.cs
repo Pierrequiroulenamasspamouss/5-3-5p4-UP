@@ -130,6 +130,7 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 			global::FMOD.Studio.UnityUtil.Log("FMOD_StudioSystem: System_Create");
 			
 			global::UnityEngine.Debug.Log("[FMOD-DEBUG] Init: Calling System.create...");
+			
 			global::FMOD.RESULT result = global::FMOD.Studio.System.create(out this.system);
 			if (result != global::FMOD.RESULT.OK || this.system == null) {
 				global::UnityEngine.Debug.LogError("[FMOD-DEBUG] Init: System.create FAILED with " + result.ToString());

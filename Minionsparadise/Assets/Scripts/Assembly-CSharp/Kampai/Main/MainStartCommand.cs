@@ -13,6 +13,9 @@ namespace Kampai.Main
 		public global::Kampai.Main.InitLocalizationServiceSignal initLocalizationServiceSignal { get; set; }
 
 		[Inject]
+		public global::Kampai.Main.LoadDevicePrefsSignal loadDevicePrefsSignal { get; set; }
+
+		[Inject]
 		public global::Kampai.Common.CheckAvailableStorageSignal checkAvailableStorageSignal { get; set; }
 
 		[Inject]
@@ -59,6 +62,8 @@ namespace Kampai.Main
 			logger = global::Elevation.Logging.LogManager.GetClassLogger("MainStartCommand") as global::Kampai.Util.IKampaiLogger;
 			logger.EventStart("MainStartCommand.Execute");
 			global::Kampai.Util.KampaiResources.SetLogger();
+			global::Kampai.Util.AndroidPermissions.RequestPermissions();
+			loadDevicePrefsSignal.Dispatch();
 			initLocalizationServiceSignal.Dispatch();
 			checkAvailableStorageSignal.Dispatch(string.Empty, 2097152uL, ContinueExecution);
 			logger.EventStop("MainStartCommand.Execute");

@@ -22,7 +22,11 @@ namespace FMOD
     */
     public class VERSION
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        public const int    number = 0x00010610;
+#else
         public const int    number = 0x00010800;
+#endif
 #if (UNITY_IPHONE || UNITY_TVOS) && !UNITY_EDITOR
         public const string dll    = "__Internal";
 #elif (UNITY_PS4) && !UNITY_EDITOR

@@ -87,6 +87,9 @@ namespace Kampai.UI.View
 		[Inject]
 		public global::Kampai.Main.ILocalizationService service { get; set; }
 
+		[Inject]
+		public global::Kampai.Main.LanguageChangedSignal languageChangedSignal { get; set; }
+
 		protected override void Awake()
 		{
 			base.Awake();
@@ -96,6 +99,23 @@ namespace Kampai.UI.View
 		private void OnEnable()
 		{
 			global::Kampai.Util.KampaiView.BubbleToContextOnStart(this, ref currentContext);
+			if (languageChangedSignal != null)
+			{
+				languageChangedSignal.AddListener(OnLanguageChanged);
+			}
+		}
+
+		private void OnDisable()
+		{
+			if (languageChangedSignal != null)
+			{
+				languageChangedSignal.RemoveListener(OnLanguageChanged);
+			}
+		}
+
+		private void OnLanguageChanged()
+		{
+			Translate();
 		}
 
 		protected override void Start()

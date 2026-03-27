@@ -30,6 +30,10 @@ namespace Kampai.UI.View
 
 		public global::UnityEngine.UI.Slider SFXSlider;
 
+		public global::Kampai.UI.View.ButtonView languageButton;
+
+		public global::UnityEngine.UI.Text languageText;
+
 		public global::strange.extensions.signal.impl.Signal<bool> volumeSliderChangedSignal = new global::strange.extensions.signal.impl.Signal<bool>();
 
 		public void OnMusicSliderChanged()

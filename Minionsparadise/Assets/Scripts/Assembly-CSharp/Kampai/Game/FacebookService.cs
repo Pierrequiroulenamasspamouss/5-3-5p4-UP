@@ -156,8 +156,31 @@ namespace Kampai.Game
 			logger.Info("Discord: Attempting to open URL: {0}", url);
 			try
 			{
+				#if UNITY_ANDROID && !UNITY_EDITOR
+				try
+				{
+					using (var unityPlayer = new UnityEngine.AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+					{
+						using (var currentActivity = unityPlayer.GetStatic<UnityEngine.AndroidJavaObject>("currentActivity"))
+						{
+							using (var intentClass = new UnityEngine.AndroidJavaClass("android.content.Intent"))
+							{
+								using (var intent = new UnityEngine.AndroidJavaObject("android.content.Intent", intentClass.GetStatic<string>("ACTION_VIEW"), new UnityEngine.AndroidJavaClass("android.net.Uri").CallStatic<UnityEngine.AndroidJavaObject>("parse", url)))
+								{
+									currentActivity.Call("startActivity", intent);
+									logger.Info("Discord: Opened URL via Android Native Intent");
+									return;
+								}
+							}
+						}
+					}
+				}
+				catch (global::System.Exception e)
+				{
+					logger.Warning("Discord: Android Native Intent failed: {0}. Falling back to Application.OpenURL", e.Message);
+				}
+				#elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 				// Method 1: Process.Start with cmd (most reliable on Windows)
-				#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 				try
 				{
 					System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo

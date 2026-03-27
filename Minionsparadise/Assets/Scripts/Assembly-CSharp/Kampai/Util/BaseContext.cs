@@ -146,6 +146,7 @@ namespace Kampai.Util
 					.Weak();
 				injectionBinder.Bind<global::Kampai.Main.ReloadGameSignal>().ToSingleton().CrossContext()
 					.Weak();
+				injectionBinder.Bind<global::Kampai.Main.LanguageChangedSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Game.DisplayNotificationReminderSignal>().ToSingleton().CrossContext()
 					.Weak();
 				injectionBinder.Bind<global::Kampai.UI.View.ResetLairWayfinderIconSignal>().ToSingleton().CrossContext();

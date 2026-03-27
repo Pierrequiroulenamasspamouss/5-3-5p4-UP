@@ -315,7 +315,8 @@ def discord_login():
         f"&state={uid}"
     )
     
-    return f"<html><body><script>window.location.href='{auth_url}';</script></body></html>"
+    from flask import redirect
+    return redirect(auth_url)
 
 @user_bp.route('/auth/discord/callback', methods=['GET'])
 def discord_callback():
