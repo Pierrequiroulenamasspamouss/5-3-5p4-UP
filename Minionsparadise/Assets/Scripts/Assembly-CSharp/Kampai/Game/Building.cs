@@ -26,6 +26,8 @@ namespace Kampai.Game
 
 		public int StateStartTime { get; set; }
 
+		public bool IsRotated { get; set; }
+
 		protected Building(T definition)
 			: base(definition)
 		{
@@ -50,6 +52,10 @@ namespace Kampai.Game
 			case "STATESTARTTIME":
 				reader.Read();
 				StateStartTime = global::System.Convert.ToInt32(reader.Value);
+				break;
+			case "ISROTATED":
+				reader.Read();
+				IsRotated = global::System.Convert.ToBoolean(reader.Value);
 				break;
 			default:
 				return base.DeserializeProperty(propertyName, reader, converters);
@@ -83,6 +89,11 @@ namespace Kampai.Game
 			writer.WriteValue(BuildingNumber);
 			writer.WritePropertyName("StateStartTime");
 			writer.WriteValue(StateStartTime);
+			if (IsRotated)
+			{
+				writer.WritePropertyName("IsRotated");
+				writer.WriteValue(IsRotated);
+			}
 		}
 
 		public virtual bool HasDetailMenuToShow()
@@ -131,6 +142,8 @@ namespace Kampai.Game
 		bool IsFootprintable { get; }
 
 		int StateStartTime { get; set; }
+
+		bool IsRotated { get; set; }
 
 		bool HasDetailMenuToShow();
 

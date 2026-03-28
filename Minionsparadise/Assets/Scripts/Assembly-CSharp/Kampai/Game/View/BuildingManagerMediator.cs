@@ -142,6 +142,7 @@ namespace Kampai.Game.View
 		public global::Kampai.Game.BuildingReactionSignal buildingReactionSignal { get; set; }
 
 		[Inject]
+		public global::Kampai.Game.RotateBuildingSignal rotateBuildingSignal { get; set; }
 		public global::Kampai.Common.MinionTaskCompleteSignal minionTaskCompleteSignal { get; set; }
 
 		[Inject]
@@ -363,6 +364,7 @@ namespace Kampai.Game.View
 			rushRevealBuildingSignal = uiContext.injectionBinder.GetInstance<global::Kampai.UI.View.RushRevealBuildingSignal>();
 			setBuildingRushedSignal.AddListener(SetBuildingRushed);
 			rushRevealBuildingSignal.AddListener(RushRevealBuilding);
+			rotateBuildingSignal.AddListener(RotateBuilding);
 		}
 
 		public override void OnRemove()
@@ -413,6 +415,7 @@ namespace Kampai.Game.View
 			rushRevealBuildingSignal.RemoveListener(RushRevealBuilding);
 			setMinionPartyBuildingStateSignal.RemoveListener(SetMinionPartyBuildingState);
 			preLoadPartyAssetsSignal.RemoveListener(PreLoadMinionPartyBuildings);
+			rotateBuildingSignal.RemoveListener(RotateBuilding);
 		}
 
 		private global::System.Collections.IEnumerator Init()
@@ -1406,9 +1409,71 @@ namespace Kampai.Game.View
 		{
 			buildingID = buildingDefinition.ID;
 			currentDummyBuilding = view.CreateDummyBuilding(buildingDefinition, position);
+			global::Kampai.Game.Scaffolding instance = uiContext.injectionBinder.GetInstance<global::Kampai.Game.Scaffolding>();
+			if (instance != null && instance.Building != null)
+			{
+				currentDummyBuilding.IsRotated = instance.Building.IsRotated;
+				if (currentDummyBuilding.IsRotated)
+				{
+					currentDummyBuilding.transform.localEulerAngles = new global::UnityEngine.Vector3(0f, 90f, 0f);
+					currentDummyBuilding.transform.localScale = new global::UnityEngine.Vector3(1f, 1f, -1f);
+				}
+				currentDummyBuilding.SetRotated(currentDummyBuilding.IsRotated, definitionService);
+			}
 			showBuildingFootprintSignal.Dispatch(currentDummyBuilding, currentDummyBuilding.transform, global::Kampai.Util.Tuple.Create(currentDummyBuilding.Width, currentDummyBuilding.Depth), true);
 			showHUDSignal.Dispatch(false);
 			hideAllWayFindersSignal.Dispatch();
+		}
+
+		private void RotateBuilding()
+		{
+			if (currentDummyBuilding != null)
+			{
+				currentDummyBuilding.IsRotated = !currentDummyBuilding.IsRotated;
+				if (currentDummyBuilding.IsRotated)
+				{
+					currentDummyBuilding.transform.localEulerAngles = new global::UnityEngine.Vector3(0f, 90f, 0f);
+					currentDummyBuilding.transform.localScale = new global::UnityEngine.Vector3(1f, 1f, -1f);
+				}
+				else
+				{
+					currentDummyBuilding.transform.localEulerAngles = global::UnityEngine.Vector3.zero;
+					currentDummyBuilding.transform.localScale = global::UnityEngine.Vector3.one;
+				}
+				currentDummyBuilding.SetRotated(currentDummyBuilding.IsRotated, definitionService);
+				showBuildingFootprintSignal.Dispatch(currentDummyBuilding, currentDummyBuilding.transform, global::Kampai.Util.Tuple.Create(currentDummyBuilding.Width, currentDummyBuilding.Depth), true);
+				global::Kampai.Game.Scaffolding instance = uiContext.injectionBinder.GetInstance<global::Kampai.Game.Scaffolding>();
+				if (instance != null && instance.Building != null)
+				{
+					instance.Building.IsRotated = currentDummyBuilding.IsRotated;
+				}
+			}
+			else if (model.SelectedBuilding.HasValue && model.SelectedBuilding.Value != -1)
+			{
+				int value = model.SelectedBuilding.Value;
+				global::Kampai.Game.View.BuildingObject buildingObject = view.GetBuildingObject(value);
+				if (buildingObject != null)
+				{
+					global::Kampai.Game.Building byInstanceId = playerService.GetByInstanceId<global::Kampai.Game.Building>(value);
+					if (byInstanceId != null)
+					{
+						byInstanceId.IsRotated = !byInstanceId.IsRotated;
+						buildingObject.IsRotated = byInstanceId.IsRotated;
+						if (byInstanceId.IsRotated)
+						{
+							buildingObject.transform.localEulerAngles = new global::UnityEngine.Vector3(0f, 90f, 0f);
+							buildingObject.transform.localScale = new global::UnityEngine.Vector3(1f, 1f, -1f);
+						}
+						else
+						{
+							buildingObject.transform.localEulerAngles = global::UnityEngine.Vector3.zero;
+							buildingObject.transform.localScale = global::UnityEngine.Vector3.one;
+						}
+						buildingObject.SetRotated(byInstanceId.IsRotated, definitionService);
+						showBuildingFootprintSignal.Dispatch(buildingObject, buildingObject.transform, global::Kampai.Util.Tuple.Create(buildingObject.Width, buildingObject.Depth), true);
+					}
+				}
+			}
 		}
 
 		public global::Kampai.Game.View.DummyBuildingObject GetCurrentDummyBuilding()
