@@ -12,6 +12,7 @@ Shader "Kampai/Standard/Vert Animation" {
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dest Blend mode", Float) = 10
         [Enum(Kampai.Util.Graphics.CompareFunction)] _ZTest ("ZTest", Float) = 4
         [Enum(Kampai.Editor.AlphaMode)] _Alpha ("Transparent", Float) = 1
+        _NightGlow ("Night Glow", Range(0,1)) = 0
     }
     SubShader { 
         Tags { "QUEUE"="Geometry+1" }
@@ -24,6 +25,7 @@ Shader "Kampai/Standard/Vert Animation" {
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "KampaiNight.cginc"
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -43,6 +45,7 @@ Shader "Kampai/Standard/Vert Animation" {
             float4 _BlendedColor;
             float _Alpha;
             float _FadeAlpha;
+            half _NightGlow;
 
             v2f vert (appdata v) {
                 v2f o;
@@ -63,6 +66,10 @@ Shader "Kampai/Standard/Vert Animation" {
                 fixed4 tex = tex2D(_MainTex, i.uv) * _Color;
                 
                 fixed3 finalRGB = lerp(tex.rgb, _BlendedColor.rgb, _BlendedColor.a);
+                
+                // --- Night Mode Injection ---
+                finalRGB = ApplyKampaiNight(finalRGB, _NightGlow);
+                
                 fixed finalAlpha = _Alpha + (tex.a * _FadeAlpha);
                 
                 return fixed4(finalRGB, finalAlpha);

@@ -13,7 +13,6 @@ namespace Kampai.Game
 		[global::Newtonsoft.Json.JsonProperty(NullValueHandling = global::Newtonsoft.Json.NullValueHandling.Ignore)]
 		public bool serverPushNotifications { get; set; }
 
-		[global::Newtonsoft.Json.JsonProperty(NullValueHandling = global::Newtonsoft.Json.NullValueHandling.Ignore)]
 		public bool AprilsFool { get; set; }
 
 		[global::Newtonsoft.Json.JsonProperty(NullValueHandling = global::Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -22,6 +21,9 @@ namespace Kampai.Game
 		[global::Newtonsoft.Json.JsonProperty(NullValueHandling = global::Newtonsoft.Json.NullValueHandling.Ignore)]
 		[global::Kampai.Util.Deserializer("ReaderUtil.ReadRateAppTriggerConfig")]
 		public global::System.Collections.Generic.Dictionary<global::Kampai.Game.ConfigurationDefinition.RateAppAfterEvent, bool> rateAppAfter { get; set; }
+
+		[global::Newtonsoft.Json.JsonProperty(NullValueHandling = global::Newtonsoft.Json.NullValueHandling.Ignore)]
+		public bool? night { get; set; }
 
 		[global::Newtonsoft.Json.JsonProperty(NullValueHandling = global::Newtonsoft.Json.NullValueHandling.Ignore)]
 		public int maxRPS { get; set; }
@@ -135,6 +137,10 @@ namespace Kampai.Game
 			case "RATEAPPAFTER":
 				reader.Read();
 				rateAppAfter = global::Kampai.Util.ReaderUtil.ReadRateAppTriggerConfig(reader, converters);
+				break;
+			case "NIGHT":
+				reader.Read();
+				night = global::System.Convert.ToBoolean(reader.Value);
 				break;
 			case "MAXRPS":
 				reader.Read();
@@ -272,6 +278,10 @@ namespace Kampai.Game
 			case "RATEAPPAFTER":
 				reader.Read();
 				rateAppAfter = global::Kampai.Util.ReaderUtil.ReadRateAppTriggerConfig(reader, converters);
+				break;
+			case "NIGHT":
+				reader.Read();
+				night = global::System.Convert.ToBoolean(reader.Value);
 				break;
 			case "MAXRPS":
 				reader.Read();

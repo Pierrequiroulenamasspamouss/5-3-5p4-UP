@@ -22,14 +22,17 @@ Shader "Kampai/Animated/AnimVert_wDistort" {
         [Enum(UnityEngine.Rendering.StencilOp)] __StencilPassOp ("Pass Operation", Float) = 0
         [Enum(UnityEngine.Rendering.StencilOp)] __StencilFailOp ("Fail Operation", Float) = 0
         [Enum(UnityEngine.Rendering.StencilOp)] __StencilZFailOp ("ZFail Operation", Float) = 0
+        _NightGlow ("Night Glow", Range(0,1)) = 0
     }
 
     CGINCLUDE
     #include "UnityCG.cginc"
+    #include "KampaiNight.cginc"
 
     sampler2D _MainTex;
     float4 _MainTex_ST;
     half _FadeAlpha;
+    half _NightGlow;
 
     struct appdata {
         float4 vertex : POSITION;
@@ -92,9 +95,8 @@ Shader "Kampai/Animated/AnimVert_wDistort" {
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
                 
                 // 3. Calcul des UVs pour le Flow Mapping (décalage infini)
-                // Note : Le scale multiplicateur bizarre de -0.1 vient du code d'origine
                 float2 baseUV = TRANSFORM_TEX(v.uv0, _MainTex) * -0.1;
-                float timeVar = frac(_Time.x * 3.0);
+                float timeVar = frac(_Time.y * 0.2);
                 
                 o.phase0 = baseUV - (decodedFlowDir * timeVar);
                 o.phase1 = baseUV - (decodedFlowDir * frac(timeVar + 0.5));
@@ -111,19 +113,21 @@ Shader "Kampai/Animated/AnimVert_wDistort" {
                 float2 flow0 = tex2D(_MainTex, i.phase0).xy;
                 float2 flow1 = tex2D(_MainTex, i.phase1).xy;
                 
-                // Mélange parfait des deux phases pour éviter le "saut" de boucle
+                // Mélange parfait des deux phases
                 float2 blendedFlow = lerp(flow0, flow1, i.blendWeight);
                 
                 // On reconvertit les valeurs [0, 1] en directions [-1, 1] et on atténue (* 0.25)
                 float2 distortionUV = ((blendedFlow * 2.0) - 1.0) * 0.25;
                 
-                // On utilise cette nouvelle direction distordue comme une vraie coordonnée UV !
                 // On récupère uniquement le canal Bleu (.z/.b) de cette nouvelle lecture
                 half texBlue = tex2D(_MainTex, distortionUV).b;
                 
-                // Couleur par défaut grise
+                // Définition des couleurs
                 half4 baseColor = half4(0.5, 0.5, 0.5, 0.0);
                 half4 textureColor = texBlue * i.color;
+                
+                // --- Night Mode Injection (Apply only to visible texture before blending) ---
+                textureColor.rgb = ApplyKampaiNight(textureColor.rgb, _NightGlow);
                 
                 // Mélange final avec l'Alpha dynamique
                 half blendAlpha = i.color.a * _FadeAlpha;
@@ -167,7 +171,7 @@ Shader "Kampai/Animated/AnimVert_wDistort" {
                 o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
                 
                 float2 baseUV = TRANSFORM_TEX(v.uv0, _MainTex) * -0.1;
-                float timeVar = frac(_Time.x * 3.0);
+                float timeVar = frac(_Time.y * 0.2);
                 
                 o.phase0 = baseUV - (decodedFlowDir * timeVar);
                 o.phase1 = baseUV - (decodedFlowDir * frac(timeVar + 0.5));
@@ -177,7 +181,7 @@ Shader "Kampai/Animated/AnimVert_wDistort" {
                 return o;
             }
 
-            // Réutilisation exacte de la même fonction fragment !
+            // Réutilisation de la même fonction fragment
             half4 frag (v2f i) : SV_Target {
                 float2 flow0 = tex2D(_MainTex, i.phase0).xy;
                 float2 flow1 = tex2D(_MainTex, i.phase1).xy;
@@ -189,6 +193,9 @@ Shader "Kampai/Animated/AnimVert_wDistort" {
                 
                 half4 baseColor = half4(0.5, 0.5, 0.5, 0.0);
                 half4 textureColor = texBlue * i.color;
+                
+                // --- Night Mode Injection (Apply only to visible texture before blending) ---
+                textureColor.rgb = ApplyKampaiNight(textureColor.rgb, _NightGlow);
                 
                 half blendAlpha = i.color.a * _FadeAlpha;
                 return lerp(baseColor, textureColor, blendAlpha);

@@ -853,6 +853,7 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DCNTokenSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DLCProgressSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DLCService.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DayNightCycleManager.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DebrisBuilding.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DebrisBuildingDefinition.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DebrisDefinition.cs" />
@@ -2673,6 +2674,9 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AbstractQuestWayFinderView.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AbstractWayFinderMediator.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AbstractWayFinderView.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AchievementItemView.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AchievementModalMediator.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AchievementModalView.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AddFPSCounterSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AddQuestToExistingWayFinderSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AddStoreButtonSignal.cs" />
@@ -3235,6 +3239,8 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\SetupMockStoreDialogSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShouldRateAppSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShouldShowPredicateDelegate.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShowAchievementModalCommand.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShowAchievementModalSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShowActivitySpinnerCommand.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShowActivitySpinnerSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShowAllResourceIconsSignal.cs" />
@@ -4394,6 +4400,7 @@
      <None Include="Assets\Resources\lua\socket\ftp.txt" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_101220_pre.txt" />
      <None Include="Assets\Shader\Unlit_plusOffset1.shader" />
+     <None Include="Assets\Shader\KampaiNight.cginc" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_101311_pre.txt" />
      <None Include="Assets\Shader\Hidden.shader" />
      <None Include="Assets\Shader\Unlit_minusOffset1.shader" />
