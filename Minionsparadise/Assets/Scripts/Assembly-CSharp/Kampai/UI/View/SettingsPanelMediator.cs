@@ -108,6 +108,15 @@ namespace Kampai.UI.View
 			}
 			button.transition = global::UnityEngine.UI.Selectable.Transition.None;
 			button.onClick.AddListener(OnBuildNumberClicked);
+
+			if (view.nightToggleButton != null)
+			{
+				view.nightToggleButton.ClickedSignal.AddListener(OnNightToggleClicked);
+				UpdateNightToggleText();
+			}
+			
+			// Auto-layout the 4 buttons in a 2x2 grid
+			view.LayoutButtons();
 		}
 
 		private void OnDisable()
@@ -120,6 +129,10 @@ namespace Kampai.UI.View
 			if (view.languageButton != null)
 			{
 				view.languageButton.ClickedSignal.RemoveListener(OnLanguageButtonClicked);
+			}
+			if (view.nightToggleButton != null)
+			{
+				view.nightToggleButton.ClickedSignal.RemoveListener(OnNightToggleClicked);
 			}
 		}
 
@@ -289,6 +302,33 @@ namespace Kampai.UI.View
 				global::UnityEngine.PlayerPrefs.Save();
 				buildNumberClickCount = 0;
 				popupMessageSignal.Dispatch("Debug Console " + ((num2 == 1) ? "Enabled" : "Disabled") + "\nPlease re-open settings menu.", global::Kampai.UI.View.PopupMessageType.NORMAL);
+			}
+		}
+
+		private void OnNightToggleClicked()
+		{
+			global::Kampai.Game.DayNightCycleManager manager = global::UnityEngine.Object.FindObjectOfType<global::Kampai.Game.DayNightCycleManager>();
+			if (manager != null)
+			{
+				manager.CycleNightMode();
+				UpdateNightToggleText();
+				soundFXSignal.Dispatch("Play_minion_confirm_select_02");
+			}
+		}
+
+		private void UpdateNightToggleText()
+		{
+			if (view.nightToggleText != null)
+			{
+				global::Kampai.Game.DayNightCycleManager manager = global::UnityEngine.Object.FindObjectOfType<global::Kampai.Game.DayNightCycleManager>();
+				if (manager != null)
+				{
+					view.nightToggleText.text = "MODE: " + manager.GetCurrentMode().ToString();
+				}
+				else
+				{
+					view.nightToggleText.text = "NIGHT: NO MGR";
+				}
 			}
 		}
 	}
