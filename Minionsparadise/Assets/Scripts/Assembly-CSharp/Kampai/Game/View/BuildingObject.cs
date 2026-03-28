@@ -76,8 +76,14 @@ namespace Kampai.Game.View
 			base.logger = logger;
 			this.definitionService = definitionService;
 			ID = building.ID;
+			base.IsRotated = building.IsRotated;
 			Init(building.Definition, definitionService);
 			UpdateColliderState(building.State);
+			if (building.IsRotated)
+			{
+				base.transform.localEulerAngles = new global::UnityEngine.Vector3(0f, 90f, 0f);
+				base.transform.localScale = new global::UnityEngine.Vector3(1f, 1f, -1f);
+			}
 			cachedAnimation = GetComponent<global::UnityEngine.Animation>();
 			if (base.colliders.Length > 0)
 			{
@@ -188,6 +194,23 @@ namespace Kampai.Game.View
 		public override bool CanFadeSFX()
 		{
 			return true;
+		}
+
+		protected virtual void LateUpdate()
+		{
+			if (IsRotated)
+			{
+				global::UnityEngine.Vector3 localScale = base.transform.localScale;
+				if (localScale.z > 0f)
+				{
+					base.transform.localScale = new global::UnityEngine.Vector3(global::UnityEngine.Mathf.Abs(localScale.x), global::UnityEngine.Mathf.Abs(localScale.y), 0f - global::UnityEngine.Mathf.Abs(localScale.z));
+				}
+				global::UnityEngine.Vector3 localEulerAngles = base.transform.localEulerAngles;
+				if (global::UnityEngine.Mathf.Abs(localEulerAngles.y - 90f) > 0.1f)
+				{
+					base.transform.localEulerAngles = new global::UnityEngine.Vector3(localEulerAngles.x, 90f, localEulerAngles.z);
+				}
+			}
 		}
 	}
 }

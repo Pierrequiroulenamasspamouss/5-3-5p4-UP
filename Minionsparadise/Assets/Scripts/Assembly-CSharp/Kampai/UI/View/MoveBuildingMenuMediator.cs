@@ -53,6 +53,10 @@ namespace Kampai.UI.View
 			base.view.InventoryButton.ClickedSignal.AddListener(OnInventory);
 			base.view.AcceptButton.ClickedSignal.AddListener(OnAccept);
 			base.view.CloseButton.ClickedSignal.AddListener(OnClose);
+			if (base.view.RotateButton != null)
+			{
+				base.view.RotateButton.ClickedSignal.AddListener(OnRotate);
+			}
 			UpdateCostPanel();
 			base.OnRegister();
 		}
@@ -64,6 +68,10 @@ namespace Kampai.UI.View
 			base.view.InventoryButton.ClickedSignal.RemoveListener(OnInventory);
 			base.view.AcceptButton.ClickedSignal.RemoveListener(OnAccept);
 			base.view.CloseButton.ClickedSignal.RemoveListener(OnClose);
+			if (base.view.RotateButton != null)
+			{
+				base.view.RotateButton.ClickedSignal.RemoveListener(OnRotate);
+			}
 			disableSignal.RemoveListener(DisableInventory);
 			base.OnRemove();
 		}
@@ -82,6 +90,13 @@ namespace Kampai.UI.View
 		private void OnClose()
 		{
 			Cancel();
+		}
+
+		private void OnRotate()
+		{
+			playSFXSignal.Dispatch("Play_low_woosh_01");
+			global::Kampai.Game.RotateBuildingSignal instance = gameContext.injectionBinder.GetInstance<global::Kampai.Game.RotateBuildingSignal>();
+			instance.Dispatch();
 		}
 
 		private void DisableInventory()
