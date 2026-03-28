@@ -23,16 +23,19 @@ Shader "Kampai/Animated/AnimVert_wOverlay" {
         [Enum(UnityEngine.Rendering.StencilOp)] __StencilPassOp ("Pass Operation", Float) = 0
         [Enum(UnityEngine.Rendering.StencilOp)] __StencilFailOp ("Fail Operation", Float) = 0
         [Enum(UnityEngine.Rendering.StencilOp)] __StencilZFailOp ("ZFail Operation", Float) = 0
+        _NightGlow ("Night Glow", Range(0,1)) = 0
     }
 
     CGINCLUDE
     #include "UnityCG.cginc"
+    #include "KampaiNight.cginc"
 
     sampler2D _MainTex;
     float4 _MainTex_ST;
     sampler2D _WaveTex;
     float4 _WaveTex_ST;
     half _FadeAlpha;
+    half _NightGlow;
 
     struct appdata {
         float4 vertex : POSITION;
@@ -139,6 +142,10 @@ Shader "Kampai/Animated/AnimVert_wOverlay" {
                 
                 half4 finalCol;
                 finalCol.rgb = baseMix * waveEffect;
+                
+                // --- Night Mode Injection ---
+                finalCol.rgb = ApplyKampaiNight(finalCol.rgb, _NightGlow);
+                
                 finalCol.a = _FadeAlpha; // Transparence globale
 
                 return finalCol;
@@ -211,6 +218,10 @@ Shader "Kampai/Animated/AnimVert_wOverlay" {
                 
                 half4 finalCol;
                 finalCol.rgb = baseMix * waveEffect;
+                
+                // --- Night Mode Injection ---
+                finalCol.rgb = ApplyKampaiNight(finalCol.rgb, _NightGlow);
+                
                 finalCol.a = _FadeAlpha;
 
                 return finalCol;

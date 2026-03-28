@@ -226,6 +226,8 @@ namespace Kampai.UI.View
 			injectionBinder.Bind<global::Kampai.UI.View.MasterPlanComponentBonusStartedSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.UI.View.DisplayMasterPlanOnboardingSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.DisplayMasterPlanSelectComponentSimpleSignal>().ToSingleton().CrossContext();
+			injectionBinder.Bind<global::Kampai.UI.View.ShowAchievementModalSignal>().ToSingleton().CrossContext();
+
 			base.mediationBinder.Bind<global::Kampai.UI.View.OfflineView>().To<global::Kampai.UI.View.OfflineMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.BuildMenuView>().To<global::Kampai.UI.View.BuildMenuMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.HUDView>().To<global::Kampai.UI.View.HUDMediator>();
@@ -323,6 +325,8 @@ namespace Kampai.UI.View
 			base.mediationBinder.Bind<global::Kampai.UI.View.OrderBoardTicketDetailView>().To<global::Kampai.UI.View.OrderBoardTicketDetailMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.BuddyBarView>().To<global::Kampai.UI.View.BuddyBarMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.QuestPanelView>().To<global::Kampai.UI.View.QuestPanelMediator>();
+			base.mediationBinder.Bind<global::Kampai.UI.View.AchievementModalView>().To<global::Kampai.UI.View.AchievementModalMediator>();
+
 			base.mediationBinder.Bind<global::Kampai.UI.View.QuestLineProgressBarView>().To<global::Kampai.UI.View.QuestLineProgressBarMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.ProceduralQuestView>().To<global::Kampai.UI.View.ProceduralQuestMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.NotificationsView>().To<global::Kampai.UI.View.NotificationsMediator>();
@@ -477,7 +481,9 @@ namespace Kampai.UI.View
 			base.commandBinder.Bind<global::Kampai.UI.View.AddFPSCounterSignal>().To<global::Kampai.UI.AddFPSCounterCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.CreateSkrimSignal>().To<global::Kampai.UI.View.CreateSkrimCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowPetsXPromoSignal>().To<global::Kampai.UI.ShowPetsXPromoCommand>();
+			base.commandBinder.Bind<global::Kampai.UI.View.ShowAchievementModalSignal>().To<global::Kampai.UI.View.ShowAchievementModalCommand>();
 		}
+
 
 		protected override void PostBindings()
 		{

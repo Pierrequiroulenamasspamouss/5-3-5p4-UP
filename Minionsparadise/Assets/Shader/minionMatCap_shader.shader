@@ -3,6 +3,7 @@ Shader "Kampai/Standard/Minion" {
         _MainTex ("Base (RGB)", 2D) = "gray" {}
         _MatCapBase ("MatCapBase (RGB)", 2D) = "gray" {}
         _LightColor ("Light Color (RGB)", Color) = (0.733,0.706,0.525,1)
+        _NightGlow ("Night Glow", Range(0,1)) = 0
         // ... (Stencils à rajouter au besoin)
     }
 
@@ -15,10 +16,12 @@ Shader "Kampai/Standard/Minion" {
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "KampaiNight.cginc"
 
             sampler2D _MainTex; float4 _MainTex_ST;
             sampler2D _MatCapBase;
             fixed4 _LightColor;
+            half _NightGlow;
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -63,6 +66,9 @@ Shader "Kampai/Standard/Minion" {
                 
                 // Canal Vert du sommet = Illumination propre / Emission
                 fixed3 finalRGB = ((spec + rim) * diffuse) + (i.color.g * 0.1);
+                
+                // --- Night Mode Injection ---
+                finalRGB = ApplyKampaiNight(finalRGB, _NightGlow);
                 
                 return fixed4(finalRGB, 1.0);
             }

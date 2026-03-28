@@ -202,12 +202,7 @@ namespace Kampai.UI.View
 
 		private void AchievementButton()
 		{
-			global::Kampai.Game.ISocialService socialService = null;
-			socialService = googleService;
-			if (!ShouldLogin(socialService))
-			{
-				achievementService.ShowAchievements();
-			}
+			achievementService.ShowAchievements();
 		}
 
 		private bool ShouldLogin(global::Kampai.Game.ISocialService socialService)

@@ -7,6 +7,7 @@ Properties
     _colorG ("Color G", Color) = (0.0205991,0.366995,0.933824,1)
     _colorB ("Color B", Color) = (0.522059,0.822008,1,1)
     _color_boost ("Color Boost", Float) = 1
+    _NightGlow ("Night Glow", Range(0,1)) = 0
 }
 
 //////////////////////////////////////////////////////////////////
@@ -53,6 +54,9 @@ SubShader
         uniform lowp vec4 _colorG;
         uniform lowp vec4 _colorB;
         uniform lowp float _color_boost;
+        uniform lowp vec3 _GlobalNightTint;
+        uniform lowp float _GlobalNightFactor;
+        uniform lowp float _NightGlow;
 
         varying mediump vec2 xlv_TEXCOORD0;
 
@@ -65,6 +69,12 @@ SubShader
 
             lowp vec4 finalColor;
             finalColor.xyz = colRGB * _color_boost;
+            
+            // --- Manual Night Mode Injection for GLSL ---
+            lowp vec3 nightColor = finalColor.xyz * _GlobalNightTint;
+            finalColor.xyz = mix(finalColor.xyz, nightColor, _GlobalNightFactor);
+            finalColor.xyz = mix(finalColor.xyz, colRGB * _color_boost, _NightGlow * _GlobalNightFactor);
+
             finalColor.w = mask.w * float(mask.w >= 0.5);
 
             gl_FragData[0] = finalColor;
@@ -99,11 +109,13 @@ SubShader
 
         sampler2D _TransparencyMask;
         float4 _TransparencyMask_ST;
+        #include "KampaiNight.cginc"
 
         fixed4 _colorR;
         fixed4 _colorG;
         fixed4 _colorB;
         fixed _color_boost;
+        half _NightGlow;
 
         struct appdata
         {
@@ -134,6 +146,10 @@ SubShader
 
             fixed4 finalColor;
             finalColor.rgb = colRGB * _color_boost;
+            
+            // --- Night Mode Injection ---
+            finalColor.rgb = ApplyKampaiNight(finalColor.rgb, _NightGlow);
+            
             finalColor.a = mask.a * step(0.5, mask.a);
 
             return finalColor;
