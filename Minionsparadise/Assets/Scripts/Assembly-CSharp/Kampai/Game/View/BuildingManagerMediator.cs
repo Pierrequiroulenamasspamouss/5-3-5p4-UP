@@ -143,6 +143,8 @@ namespace Kampai.Game.View
 
 		[Inject]
 		public global::Kampai.Game.RotateBuildingSignal rotateBuildingSignal { get; set; }
+
+		[Inject]
 		public global::Kampai.Common.MinionTaskCompleteSignal minionTaskCompleteSignal { get; set; }
 
 		[Inject]
@@ -360,10 +362,19 @@ namespace Kampai.Game.View
 			highlightBuildingSignal.AddListener(HighlightBuilding);
 			prepareTaskingMinionsForPartySignal.AddListener(PrepareTaskingMinionForMinionParty);
 			restoreTaskingMinionFromPartySignal.AddListener(RestoreTaskingMinionFromParty);
-			setBuildingRushedSignal = uiContext.injectionBinder.GetInstance<global::Kampai.UI.View.SetBuildingRushedSignal>();
-			rushRevealBuildingSignal = uiContext.injectionBinder.GetInstance<global::Kampai.UI.View.RushRevealBuildingSignal>();
-			setBuildingRushedSignal.AddListener(SetBuildingRushed);
-			rushRevealBuildingSignal.AddListener(RushRevealBuilding);
+			if (uiContext != null && uiContext.injectionBinder != null)
+			{
+				setBuildingRushedSignal = uiContext.injectionBinder.GetInstance<global::Kampai.UI.View.SetBuildingRushedSignal>();
+				rushRevealBuildingSignal = uiContext.injectionBinder.GetInstance<global::Kampai.UI.View.RushRevealBuildingSignal>();
+				if (setBuildingRushedSignal != null)
+				{
+					setBuildingRushedSignal.AddListener(SetBuildingRushed);
+				}
+				if (rushRevealBuildingSignal != null)
+				{
+					rushRevealBuildingSignal.AddListener(RushRevealBuilding);
+				}
+			}
 			rotateBuildingSignal.AddListener(RotateBuilding);
 		}
 
@@ -396,6 +407,15 @@ namespace Kampai.Game.View
 			stopGagAnimationSignal.RemoveListener(StopGagAnimation);
 			showHarvestReadySignal.RemoveListener(ShowHarvestReady);
 			view.initBuildingObject.RemoveListener(InitBuildingObject);
+			if (setBuildingRushedSignal != null)
+			{
+				setBuildingRushedSignal.RemoveListener(SetBuildingRushed);
+			}
+			if (rushRevealBuildingSignal != null)
+			{
+				rushRevealBuildingSignal.RemoveListener(RushRevealBuilding);
+			}
+			rotateBuildingSignal.RemoveListener(RotateBuilding);
 		}
 
 		private void ManageRemoveStackSize()
@@ -1409,17 +1429,17 @@ namespace Kampai.Game.View
 		{
 			buildingID = buildingDefinition.ID;
 			currentDummyBuilding = view.CreateDummyBuilding(buildingDefinition, position);
-			global::Kampai.Game.Scaffolding instance = uiContext.injectionBinder.GetInstance<global::Kampai.Game.Scaffolding>();
-			if (instance != null && instance.Building != null)
+			if (currentScaffolding != null && currentScaffolding.Building != null)
 			{
-				currentDummyBuilding.IsRotated = instance.Building.IsRotated;
+				currentDummyBuilding.IsRotated = currentScaffolding.Building.IsRotated;
 				if (currentDummyBuilding.IsRotated)
 				{
 					currentDummyBuilding.transform.localEulerAngles = new global::UnityEngine.Vector3(0f, 90f, 0f);
 					currentDummyBuilding.transform.localScale = new global::UnityEngine.Vector3(1f, 1f, -1f);
 				}
-				currentDummyBuilding.SetRotated(currentDummyBuilding.IsRotated, definitionService);
 			}
+			// Always call SetRotated to ensure BroadFootprint is updated even for new purchases
+			currentDummyBuilding.SetRotated(currentDummyBuilding.IsRotated, definitionService);
 			showBuildingFootprintSignal.Dispatch(currentDummyBuilding, currentDummyBuilding.transform, global::Kampai.Util.Tuple.Create(currentDummyBuilding.Width, currentDummyBuilding.Depth), true);
 			showHUDSignal.Dispatch(false);
 			hideAllWayFindersSignal.Dispatch();
@@ -1442,10 +1462,9 @@ namespace Kampai.Game.View
 				}
 				currentDummyBuilding.SetRotated(currentDummyBuilding.IsRotated, definitionService);
 				showBuildingFootprintSignal.Dispatch(currentDummyBuilding, currentDummyBuilding.transform, global::Kampai.Util.Tuple.Create(currentDummyBuilding.Width, currentDummyBuilding.Depth), true);
-				global::Kampai.Game.Scaffolding instance = uiContext.injectionBinder.GetInstance<global::Kampai.Game.Scaffolding>();
-				if (instance != null && instance.Building != null)
+				if (currentScaffolding != null && currentScaffolding.Building != null)
 				{
-					instance.Building.IsRotated = currentDummyBuilding.IsRotated;
+					currentScaffolding.Building.IsRotated = currentDummyBuilding.IsRotated;
 				}
 			}
 			else if (model.SelectedBuilding.HasValue && model.SelectedBuilding.Value != -1)
