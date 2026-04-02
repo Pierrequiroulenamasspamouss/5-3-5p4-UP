@@ -11,11 +11,13 @@ qs.setDialogSound('Play_menu_popUp_01')
 
 -- instruct user to repair storage building
 storageId = 314
-qs.setBuildingState(storageId, qsutil.BuildingState.Broken)
-qs.showWayFinder(storageId, true)
-qs.panCameraToInstance(storageId)
---Removed dialog
---qsutil.waitForDialog('ftue_03_start')
-qsutil.waitForBuilding(storageId, qsutil.BuildingState.Idle)
+if qs.getBuildingState(storageId) ~= qsutil.BuildingState.Idle then
+    qs.setBuildingState(storageId, qsutil.BuildingState.Broken)
+    qs.showWayFinder(storageId, true)
+    qs.panCameraToInstance(storageId)
+    --Removed dialog
+    --qsutil.waitForDialog('ftue_03_start')
+    qsutil.waitForBuilding(storageId, qsutil.BuildingState.Idle)
+end
 
 -- end step 1

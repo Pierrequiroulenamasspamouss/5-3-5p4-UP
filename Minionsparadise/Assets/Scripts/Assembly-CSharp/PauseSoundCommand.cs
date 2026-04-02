@@ -14,8 +14,13 @@ public class PauseSoundCommand : global::strange.extensions.command.impl.Command
 	private void Pause(string busName, bool isPaused)
 	{
 		FMOD_StudioSystem instance = FMOD_StudioSystem.instance;
+		global::FMOD.Studio.System system = instance.System;
+		if (system == null)
+		{
+			return;
+		}
 		global::FMOD.Studio.Bus bus;
-		instance.System.getBus(busName, out bus);
+		system.getBus(busName, out bus);
 		if (bus != null)
 		{
 			bus.setPaused(isPaused);

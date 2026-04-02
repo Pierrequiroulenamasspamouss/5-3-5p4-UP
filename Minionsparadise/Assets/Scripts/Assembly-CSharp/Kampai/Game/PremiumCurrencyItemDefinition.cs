@@ -22,7 +22,12 @@ namespace Kampai.Game
 				{
 					return string.Empty;
 				}
-				return PlatformStoreSku[ActiveSKUIndex].googlePlay;
+				string sku = PlatformStoreSku[ActiveSKUIndex].defaultStore;
+				if (string.IsNullOrEmpty(sku))
+				{
+					sku = PlatformStoreSku[ActiveSKUIndex].googlePlay;
+				}
+				return sku ?? string.Empty;
 			}
 		}
 

@@ -6,6 +6,8 @@ from routes.user import user_bp
 from routes.game import game_bp
 from routes.metrics import metrics_bp
 from routes.sales import sales_bp
+from routes.dashboard import dashboard_bp
+from routes.chat import chat_bp
 from utils.db import init_db, migrate_files_to_db
 
 # Disable verbose logs
@@ -28,6 +30,8 @@ def create_app(port):
     app.register_blueprint(game_bp)
     app.register_blueprint(metrics_bp)
     app.register_blueprint(sales_bp)
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(chat_bp)
 
     from flask import request
     @app.before_request
@@ -55,8 +59,8 @@ if __name__ == '__main__':
     t2 = threading.Thread(target=run_secondary, daemon=True)
     t2.start()
 
-    # Main port with reloader
+    # Main port without reloader to avoid multi-process start issues
     app_main = create_app(44733)
-    print(">>> Main Server started on port 44733 (with auto-reload)", flush=True)
-    app_main.run(host='0.0.0.0', port=44733, debug=True, threaded=True, use_reloader=True)
+    print(">>> Main Server started on port 44733", flush=True)
+    app_main.run(host='0.0.0.0', port=44733, debug=False, threaded=True, use_reloader=False)
 # trigger reload 1773787109.4464663

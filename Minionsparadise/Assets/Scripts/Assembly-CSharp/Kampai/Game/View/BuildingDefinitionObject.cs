@@ -8,6 +8,8 @@ namespace Kampai.Game.View
 
 		public bool HasSidewalk { get; protected set; }
 
+		public bool IsRotated { get; set; }
+
 		public global::UnityEngine.Vector3 ResourceIconPosition
 		{
 			get
@@ -35,7 +37,19 @@ namespace Kampai.Game.View
 			string buildingFootprint = definitionService.GetBuildingFootprint(buildingDefinition.FootprintID);
 			Width = BuildingUtil.GetFootprintWidth(buildingFootprint);
 			Depth = BuildingUtil.GetFootprintDepth(buildingFootprint);
+			if (IsRotated)
+			{
+				int width = Width;
+				Width = Depth;
+				Depth = width;
+			}
 			HasSidewalk = buildingFootprint.Contains(".");
+		}
+
+		public void SetRotated(bool isRotated, global::Kampai.Game.IDefinitionService definitionService)
+		{
+			IsRotated = isRotated;
+			UpdateFootprint(definitionService);
 		}
 
 		public override void OnDefinitionsHotSwap(global::Kampai.Game.IDefinitionService definitionService)

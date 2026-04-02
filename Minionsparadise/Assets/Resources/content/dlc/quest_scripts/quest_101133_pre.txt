@@ -1,7 +1,9 @@
 -- Leisure Quest Step 5
+qs.setBuildMenuEnabled(true)
+qs.enableCallButtons(true)
+qs.showSettingsMenuButton(true)
+
 if qs.getFtueLevelCompleted() ~= 3 then
-	qs.setBuildMenuEnabled(true)
-	qs.enableCallButtons(true)
 	qs.enablePurchaseButton(false)
 	
 	pinataDefID = 3123
@@ -29,7 +31,9 @@ if qs.getFtueLevelCompleted() ~= 3 then
 	qs.highlightHarvest(false)
 	
 	if qs.hasSeenPlayerTraining(19000025) == false then
-		qs.waitSignal('UpdateResourceIconCountSignal', 0)
+		if qs.getPlayerItemQuantity(2) == 0 then
+			qs.waitSignal('UpdateResourceIconCountSignal', 2)
+		end
 	
 		qs.closeAllDialogs()
 	
@@ -45,6 +49,6 @@ if qs.getFtueLevelCompleted() ~= 3 then
 	qs.showSettingsMenuButton(true)
 	qs.setLimitTikiBarWayFinders(false)
 	
-	qs.waitSignal('EndMinionPartySignal', 0)
+	qs.waitSignal('EndMinionPartySignal', 2)
 	qs.setLimitTikiBarWayFinders(false)
 end

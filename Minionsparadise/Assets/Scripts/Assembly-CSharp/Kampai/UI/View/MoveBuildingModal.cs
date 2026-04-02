@@ -8,6 +8,8 @@ namespace Kampai.UI.View
 
 		public global::Kampai.UI.View.ButtonView CloseButton;
 
+		public global::Kampai.UI.View.ButtonView RotateButton;
+
 		public global::UnityEngine.GameObject ItemCostPanel;
 
 		public global::Kampai.UI.View.KampaiImage ItemIcon;

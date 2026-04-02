@@ -22,7 +22,7 @@ namespace Kampai.Game
 				.CrossContext();
 			gameObject.transform.parent = contextView.transform;
 			gameObject.gameObject.AddComponent<FMOD_Listener>();
-			global::UnityEngine.GameObject gameObject2 = global::UnityEngine.GameObject.Find("FMOD_StudioSystem");
+			global::UnityEngine.GameObject gameObject2 = global::FMOD_StudioSystem.instance.gameObject;
 			gameObject2.transform.parent = managers.transform;
 			global::UnityEngine.GameObject gameObject3 = new global::UnityEngine.GameObject("EnvironmentAudioManager");
 			gameObject3.AddComponent<EnvironmentAudioManagerView>();

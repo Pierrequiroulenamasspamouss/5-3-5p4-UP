@@ -7,6 +7,8 @@ public class SocialPartyFillOrderProfileButtonMediator : global::Kampai.UI.View.
 		public global::UnityEngine.GameObject parent;
 
 		public int index;
+		
+		public long teamId;
 	}
 
 	public global::Kampai.Util.IKampaiLogger logger = global::Elevation.Logging.LogManager.GetClassLogger("SocialPartyFillOrderProfileButtonMediator") as global::Kampai.Util.IKampaiLogger;
@@ -32,6 +34,9 @@ public class SocialPartyFillOrderProfileButtonMediator : global::Kampai.UI.View.
 
 	[Inject]
 	public global::Kampai.UI.View.SocialPartyFillOrderProfileButtonMediatorUpdateSignal socialPartyFillOrderProfileButtonMediatorUpdateSignal { get; set; }
+
+	[Inject]
+	public global::Kampai.UI.View.DisplayFloatingTextSignal displayFloatingTextSignal { get; set; }
 
 	public override void Initialize(global::Kampai.UI.View.GUIArguments args)
 	{
@@ -138,6 +143,12 @@ public class SocialPartyFillOrderProfileButtonMediator : global::Kampai.UI.View.
 		global::Kampai.Game.FacebookService facebookService = this.facebookService as global::Kampai.Game.FacebookService;
 		if (facebookService.isLoggedIn)
 		{
+			if (data != null && data.teamId != 0)
+			{
+				string text = string.Format("http://localhost:44732/join/{0}", data.teamId);
+				global::UnityEngine.GUIUtility.systemCopyBuffer = text;
+				displayFloatingTextSignal.Dispatch(new global::Kampai.UI.View.FloatingTextSettings(0, "Invite link copied to clipboard!"));
+			}
 			sendSocialPartyInviteSignal.Dispatch();
 			return;
 		}

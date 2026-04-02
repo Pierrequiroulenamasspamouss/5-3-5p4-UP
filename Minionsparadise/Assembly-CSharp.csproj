@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Temp\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_3_5;UNITY_5_3;UNITY_5;UNITY_64;ENABLE_NEW_BUGREPORTER;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_SPRITE_POLYGON;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;ENABLE_LOCALIZATION;ENABLE_ANDROID_ATLAS_ETC1_COMPRESSION;ENABLE_EDITOR_TESTS_RUNNER;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_TEXTUREID_MAP;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_LOG_MIXED_STACKTRACE;ENABLE_UNITYWEBREQUEST;ENABLE_EVENT_QUEUE;ENABLE_CLUSTERINPUT;ENABLE_WEBSOCKET_HOST;ENABLE_MONO;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_3_5;UNITY_5_3;UNITY_5;UNITY_64;ENABLE_NEW_BUGREPORTER;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_SPRITE_POLYGON;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_UNITYEVENTS;ENABLE_VR;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;INCLUDE_DIRECTX12;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;ENABLE_LOCALIZATION;ENABLE_ANDROID_ATLAS_ETC1_COMPRESSION;ENABLE_EDITOR_TESTS_RUNNER;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_TEXTUREID_MAP;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_LOG_MIXED_STACKTRACE;ENABLE_UNITYWEBREQUEST;ENABLE_EVENT_QUEUE;ENABLE_CLUSTERINPUT;ENABLE_WEBSOCKET_HOST;ENABLE_MONO;ENABLE_PROFILER;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
@@ -853,6 +853,7 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DCNTokenSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DLCProgressSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DLCService.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DayNightCycleManager.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DebrisBuilding.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DebrisBuildingDefinition.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Game\DebrisDefinition.cs" />
@@ -2444,6 +2445,7 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\KampaiFatalTarget.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\KampaiLogglyTarget.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\KampaiNativeTarget.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LanguageChangedSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LoadAudioSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LoadDevicePrefsSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Main\LoadLocalizationServiceCommand.cs" />
@@ -2672,6 +2674,9 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AbstractQuestWayFinderView.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AbstractWayFinderMediator.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AbstractWayFinderView.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AchievementItemView.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AchievementModalMediator.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AchievementModalView.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AddFPSCounterSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AddQuestToExistingWayFinderSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\AddStoreButtonSignal.cs" />
@@ -3234,6 +3239,8 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\SetupMockStoreDialogSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShouldRateAppSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShouldShowPredicateDelegate.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShowAchievementModalCommand.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShowAchievementModalSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShowActivitySpinnerCommand.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShowActivitySpinnerSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\ShowAllResourceIconsSignal.cs" />
@@ -3487,6 +3494,7 @@
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\AI\SteeringBehaviour.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\ActionSignal.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\AndroidDeviceInspector.cs" />
+     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\AndroidPermissions.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\AnimatorStateInfo\AnimatorStateMediator.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\AnimatorStateInfo\AnimatorStateView.cs" />
      <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Util\AnimatorStateInfo\LoadAnimatorStateInfoCommand.cs" />
@@ -4392,6 +4400,7 @@
      <None Include="Assets\Resources\lua\socket\ftp.txt" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_101220_pre.txt" />
      <None Include="Assets\Shader\Unlit_plusOffset1.shader" />
+     <None Include="Assets\Shader\KampaiNight.cginc" />
      <None Include="Assets\Resources\content\dlc\quest_scripts\quest_101311_pre.txt" />
      <None Include="Assets\Shader\Hidden.shader" />
      <None Include="Assets\Shader\Unlit_minusOffset1.shader" />

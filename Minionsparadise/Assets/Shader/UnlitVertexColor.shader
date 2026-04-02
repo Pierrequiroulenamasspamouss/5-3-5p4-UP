@@ -2,6 +2,7 @@ Shader "Kampai/Standard/Vertex Color" {
     Properties {
         _MainTex ("MainTex", 2D) = "white" {}
         _boost ("Boost", Float) = 0
+        _NightGlow ("Night Glow", Range(0,1)) = 0
     }
     SubShader { 
         Tags { "RenderType"="Opaque" }
@@ -13,6 +14,7 @@ Shader "Kampai/Standard/Vertex Color" {
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "KampaiNight.cginc"
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -28,6 +30,7 @@ Shader "Kampai/Standard/Vertex Color" {
 
             sampler2D _MainTex; float4 _MainTex_ST;
             float _boost;
+            half _NightGlow;
 
             v2f vert (appdata v) {
                 v2f o;
@@ -46,6 +49,9 @@ Shader "Kampai/Standard/Vertex Color" {
                 // Calcul restauré à partir de : c_1.xyz = diff_2 * ((tex - (v.color * -_boost)) * tex)
                 fixed3 colorMix = tex.rgb + (i.color.rgb * _boost);
                 fixed3 finalRGB = ambientLight * (colorMix * tex.rgb);
+                
+                // --- Night Mode Injection ---
+                finalRGB = ApplyKampaiNight(finalRGB, _NightGlow);
                 
                 return fixed4(finalRGB, 1.0);
             }

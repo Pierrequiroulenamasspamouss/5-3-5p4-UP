@@ -9,8 +9,14 @@ public class UpdateVolumeCommand : global::strange.extensions.command.impl.Comma
 	{
 		global::Kampai.Game.DevicePrefs devicePrefs = prefs.GetDevicePrefs();
 		FMOD_StudioSystem instance = FMOD_StudioSystem.instance;
+		global::FMOD.Studio.System system = instance.System;
+		if (system == null)
+		{
+			logger.Log(global::Kampai.Util.KampaiLogLevel.Warning, "FMOD System is null, skipping volume update.");
+			return;
+		}
 		global::FMOD.Studio.Bus bus;
-		instance.System.getBus("bus:/Non-Diegetic/u_Music", out bus);
+		system.getBus("bus:/Non-Diegetic/u_Music", out bus);
 		if (bus != null)
 		{
 			if (!global::Kampai.Audio.AudioSettingsModel.MusicMuted)
@@ -29,7 +35,7 @@ public class UpdateVolumeCommand : global::strange.extensions.command.impl.Comma
 			logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "Could not find Music bus.");
 		}
 		global::FMOD.Studio.Bus bus2;
-		instance.System.getBus("bus:/Diagetic/u_SFX", out bus2);
+		system.getBus("bus:/Diagetic/u_SFX", out bus2);
 		if (bus2 != null)
 		{
 			bus2.setFaderLevel(devicePrefs.SFXVolume);
@@ -39,7 +45,7 @@ public class UpdateVolumeCommand : global::strange.extensions.command.impl.Comma
 			logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "Could not find SFX bus.");
 		}
 		global::FMOD.Studio.Bus bus3;
-		instance.System.getBus("bus:/Non-Diegetic/u_UI", out bus3);
+		system.getBus("bus:/Non-Diegetic/u_UI", out bus3);
 		if (bus3 != null)
 		{
 			bus3.setFaderLevel(devicePrefs.SFXVolume);

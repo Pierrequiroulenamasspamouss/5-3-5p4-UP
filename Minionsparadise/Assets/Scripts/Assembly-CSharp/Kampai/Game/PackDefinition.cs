@@ -94,7 +94,13 @@ namespace Kampai.Game
 				break;
 			case "UNLOCKLEVEL":
 				reader.Read();
-				UnlockLevel = global::System.Convert.ToInt32(reader.Value);
+				{
+					int nValue = global::System.Convert.ToInt32(reader.Value);
+					if (UnlockLevel == 0 || nValue != 0)
+					{
+						UnlockLevel = nValue;
+					}
+				}
 				break;
 			case "CURRENCYIMAGEID":
 				reader.Read();

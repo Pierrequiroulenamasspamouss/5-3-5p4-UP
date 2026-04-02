@@ -12,6 +12,7 @@ Shader "Kampai/Standard/Texture_plusOffset1" {
         [HideInInspector] [Enum(Kampai.Util.Graphics.BlendMode)] _Mode ("Rendering Queue", Float) = 0
         [HideInInspector] _LayerIndex ("Layer index", Float) = 0
         _TransparencyLM ("Transmissive Color", 2D) = "white" { }
+        _NightGlow ("Night Glow", Range(0,1)) = 0
         
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Source Blend mode", Float) = 5
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dest Blend mode", Float) = 10
@@ -61,6 +62,7 @@ Shader "Kampai/Standard/Texture_plusOffset1" {
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
             #include "AutoLight.cginc"
+            #include "KampaiNight.cginc"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
@@ -76,6 +78,7 @@ Shader "Kampai/Standard/Texture_plusOffset1" {
             half _Saturation;
             half _AlphaClip;
             half _VertexColor;
+            half _NightGlow;
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -130,6 +133,9 @@ Shader "Kampai/Standard/Texture_plusOffset1" {
 
                 half3 finalRGB = lerp(baseColor.rgb, _BlendedColor.rgb, _BlendedColor.a) * attenuation;
 
+
+                // --- Night Mode Injection ---
+                finalRGB = ApplyKampaiNight(finalRGB, _NightGlow);
                 return half4(finalRGB, finalAlpha * _FadeAlpha);
             }
             ENDCG

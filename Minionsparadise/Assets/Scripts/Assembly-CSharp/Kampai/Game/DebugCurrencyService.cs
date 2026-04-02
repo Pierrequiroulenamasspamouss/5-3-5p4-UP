@@ -163,7 +163,7 @@ namespace Kampai.Game
 			case "SKU_EXPAND_AND_EXPLORE":
 				return "$1.99";
 			default:
-				return "$9.99";
+				return string.Format("<NO PRICE FOR {0}>", SKU);
 			}
 		}
 

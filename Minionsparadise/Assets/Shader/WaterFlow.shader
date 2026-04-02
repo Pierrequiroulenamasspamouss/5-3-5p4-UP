@@ -14,6 +14,7 @@ Shader "Kampai/Water/Flowing Water" {
         _BlendedColor ("Blended Color", Color) = (0,0,0,0)
         [PerRendererData] _FadeAlpha ("Fade Alpha", Range(0,1)) = 1
         _Color ("Color", Color) = (1,1,1,1)
+        _NightGlow ("Night Glow", Range(0,1)) = 0
         [Enum(Kampai.Util.Graphics.ColorMask)] _ColorMask ("Color Mask", Float) = 15
         [HideInInspector] [Enum(Kampai.Util.Graphics.BlendMode)] _Mode ("Rendering Queue", Float) = 0
         [HideInInspector] _LayerIndex ("Layer index", Float) = 0
@@ -48,6 +49,7 @@ Shader "Kampai/Water/Flowing Water" {
             #pragma multi_compile_fwdbase 
             #include "UnityCG.cginc"
             #include "AutoLight.cginc" // Indispensable pour les macros d'ombres
+            #include "KampaiNight.cginc"
 
             sampler2D _MainTex; float4 _MainTex_ST;
             sampler2D _WaterTex; float4 _WaterTex_ST;
@@ -58,6 +60,7 @@ Shader "Kampai/Water/Flowing Water" {
             fixed4 _BlendedColor;
             float _FadeAlpha;
             fixed4 _Color;
+            half _NightGlow;
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -136,6 +139,9 @@ Shader "Kampai/Water/Flowing Water" {
                 // Atténuation de la lumière standard Unity
                 UNITY_LIGHT_ATTENUATION(atten, i, i.pos);
                 float3 finalRGB = blended * atten; // Application de l'ombre au pixel
+                
+                // --- Night Mode Injection ---
+                finalRGB = ApplyKampaiNight(finalRGB, _NightGlow);
                 
                 float finalAlpha = tex2D(_AlphaTex, finalDir).r * _Color.a * _FadeAlpha;
                 return fixed4(finalRGB, finalAlpha);
