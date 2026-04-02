@@ -257,6 +257,14 @@ namespace Kampai.Main
 			{
 				return "JA";
 			}
+			if (text.Equals("lolcat"))
+			{
+				return "LOLCAT";
+			}
+			if (text.Equals("minion"))
+			{
+				return "MINION";
+			}
 			if (languageCode.Equals("zh-hans") || languageCode.Equals("zh_hans") || languageCode.Equals("zh_cn") || languageCode.Equals("zh-cn"))
 			{
 				return "ZH-CN";

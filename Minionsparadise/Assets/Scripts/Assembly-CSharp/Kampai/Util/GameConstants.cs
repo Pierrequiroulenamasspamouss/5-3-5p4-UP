@@ -1610,6 +1610,10 @@ namespace Kampai.Util
 			public const string TURKISH = "TR";
 
 			public const string BAHASA_INDONESIAN = "ID";
+
+			public const string LOLCAT = "LOLCAT";
+
+			public const string MINION = "MINION";
 		}
 
 		public static class LocaleKeys
@@ -3111,7 +3115,11 @@ namespace Kampai.Util
 
 		public static readonly string PRE_INSTALLED_DLC_PATH = global::UnityEngine.Application.streamingAssetsPath + "/DLC/";
 
-		public static readonly string PRE_INSTALLED_FMOD_PATH = global::UnityEngine.Application.streamingAssetsPath + "/DLC/";
+#if UNITY_STANDALONE_WIN
+		public static readonly string PRE_INSTALLED_FMOD_PATH = "FMOD/Windows/";
+#else
+		public static readonly string PRE_INSTALLED_FMOD_PATH = "FMOD/Android/";
+#endif
 
 		private static readonly float[] DEFAULT_MINION_LOD_HEIGHTS = new float[3] { 0.2f, 0.12f, 0f };
 

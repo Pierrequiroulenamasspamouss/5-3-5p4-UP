@@ -437,6 +437,118 @@ namespace Kampai.Util
 		}
 
 		[global::Kampai.Util.DebugCommand]
+		public void ResetQuest(string[] args)
+		{
+			global::Kampai.Game.IQuestController targetQuest = null;
+			bool isPrevious = false;
+
+			var activeQuests = new global::System.Collections.Generic.List<global::Kampai.Game.IQuestController>();
+			foreach (var kvp in questService.GetQuestMap())
+			{
+				if (kvp.Value.State != global::Kampai.Game.QuestState.Complete && kvp.Value.State != global::Kampai.Game.QuestState.Notstarted)
+				{
+					activeQuests.Add(kvp.Value);
+				}
+			}
+
+			activeQuests.Sort((a, b) => b.Definition.NarrativeOrder.CompareTo(a.Definition.NarrativeOrder));
+
+			if (activeQuests.Count > 0)
+			{
+				targetQuest = activeQuests[0];
+				if (targetQuest.State == global::Kampai.Game.QuestState.RunningStartScript)
+				{
+					targetQuest = null; 
+				}
+			}
+
+			if (targetQuest == null)
+			{
+				var completedQuests = new global::System.Collections.Generic.List<global::Kampai.Game.IQuestController>();
+				foreach (var kvp in questService.GetQuestMap())
+				{
+					if (kvp.Value.State == global::Kampai.Game.QuestState.Complete)
+					{
+						completedQuests.Add(kvp.Value);
+					}
+				}
+				completedQuests.Sort((a, b) => b.Definition.NarrativeOrder.CompareTo(a.Definition.NarrativeOrder));
+
+				if (completedQuests.Count > 0)
+				{
+					targetQuest = completedQuests[0];
+					isPrevious = true;
+				}
+			}
+
+			if (targetQuest == null)
+			{
+				outBuilder.AppendLine("Could not find any quest to reset.");
+				return;
+			}
+
+			if (targetQuest.Definition.QuestSteps != null)
+			{
+				for (int i = 0; i < targetQuest.Definition.QuestSteps.Count; i++)
+				{
+					var stepDef = targetQuest.Definition.QuestSteps[i];
+					if (stepDef.Type == global::Kampai.Game.QuestStepType.StageRepair ||
+						stepDef.Type == global::Kampai.Game.QuestStepType.CabanaRepair ||
+						stepDef.Type == global::Kampai.Game.QuestStepType.WelcomeHutRepair ||
+						stepDef.Type == global::Kampai.Game.QuestStepType.FountainRepair ||
+						stepDef.Type == global::Kampai.Game.QuestStepType.StorageRepair ||
+						stepDef.Type == global::Kampai.Game.QuestStepType.LairPortalRepair ||
+						stepDef.Type == global::Kampai.Game.QuestStepType.MinionUpgradeBuildingRepair)
+					{
+						int trackedId = stepDef.ItemDefinitionID;
+						if (stepDef.Type == global::Kampai.Game.QuestStepType.MinionUpgradeBuildingRepair) trackedId = 375;
+						
+						var builds = playerService.GetByDefinitionId<global::Kampai.Game.Building>(trackedId);
+						if (builds != null)
+						{
+							foreach (var b in builds)
+							{
+								if (b.State == global::Kampai.Game.BuildingState.Complete || b.State == global::Kampai.Game.BuildingState.Construction)
+								{
+									b.SetState(global::Kampai.Game.BuildingState.Broken);
+									repairBuildingSignal.Dispatch(b);
+								}
+							}
+						}
+					}
+					
+					if (i < targetQuest.Quest.Steps.Count)
+					{
+						targetQuest.Quest.Steps[i].state = global::Kampai.Game.QuestStepState.Notstarted;
+						targetQuest.Quest.Steps[i].AmountCompleted = 0;
+					}
+				}
+			}
+
+			targetQuest.Quest.state = global::Kampai.Game.QuestState.Notstarted;
+			
+			if (isPrevious)
+			{
+				foreach (var kvp in questService.GetQuestMap())
+				{
+					if (kvp.Value.Definition.QuestLineID == targetQuest.Definition.QuestLineID && 
+						kvp.Value.Definition.NarrativeOrder > targetQuest.Definition.NarrativeOrder)
+					{
+						kvp.Value.Quest.state = global::Kampai.Game.QuestState.Notstarted;
+						foreach(var s in kvp.Value.Quest.Steps) 
+						{
+							s.state = global::Kampai.Game.QuestStepState.Notstarted;
+							s.AmountCompleted = 0;
+						}
+					}
+				}
+			}
+
+			targetQuest.GoToQuestState(global::Kampai.Game.QuestState.RunningStartScript);
+			outBuilder.AppendLine("Reset quest: " + targetQuest.Definition.ID + " (" + (isPrevious ? "regressed to previous" : "restarted current") + ").");
+		}
+
+		[global::Kampai.Util.DebugCommand]
 		public void Help2(string[] args)
 		{
 			string text = "quantity items:\n    ";

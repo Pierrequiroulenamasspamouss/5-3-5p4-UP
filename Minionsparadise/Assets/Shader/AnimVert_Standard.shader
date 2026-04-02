@@ -14,6 +14,7 @@ Shader "Kampai/Animated/AnimVert_Standard" {
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 2
         [Enum(Kampai.Editor.ToggleValue)] _VertexColor ("Vertex Color", Float) = 0
         [Enum(Kampai.Util.Graphics.ColorMask)] _ColorMask ("Color Mask", Float) = 15
+        _NightGlow ("Night Glow", Range(0,1)) = 0
         
         __Stencil ("Ref", Float) = 0
         [Enum(UnityEngine.Rendering.CompareFunction)] __StencilComp ("Comparison", Float) = 8
@@ -26,10 +27,12 @@ Shader "Kampai/Animated/AnimVert_Standard" {
 
     CGINCLUDE
     #include "UnityCG.cginc"
+    #include "KampaiNight.cginc"
 
     sampler2D _MainTex;
     float4 _MainTex_ST;
     float _FadeAlpha;
+    half _NightGlow;
 
     struct appdata_anim {
         float4 vertex : POSITION;
@@ -99,6 +102,10 @@ Shader "Kampai/Animated/AnimVert_Standard" {
             fixed4 frag (v2f i) : SV_Target {
                 fixed4 col = tex2D(_MainTex, i.uv) * i.color;
                 col.a = i.color.a * _FadeAlpha; // Applique la transparence globale
+                
+                // --- Night Mode Injection ---
+                col.rgb = ApplyKampaiNight(col.rgb, _NightGlow);
+                
                 return col;
             }
             ENDCG
@@ -141,6 +148,10 @@ Shader "Kampai/Animated/AnimVert_Standard" {
             fixed4 frag (v2f i) : SV_Target {
                 fixed4 col = tex2D(_MainTex, i.uv) * i.color;
                 col.a = i.color.a * _FadeAlpha;
+                
+                // --- Night Mode Injection ---
+                col.rgb = ApplyKampaiNight(col.rgb, _NightGlow);
+                
                 return col;
             }
             ENDCG

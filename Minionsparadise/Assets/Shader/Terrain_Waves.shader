@@ -7,6 +7,7 @@ Shader "Kampai/Water/Terrain Waves" {
         _FadeAlpha ("Fade Alpha", Range(0,1)) = 1
         [HideInInspector] _Mode ("Rendering Queue", Float) = 0
         [HideInInspector] _LayerIndex ("Layer index", Float) = 0
+        _NightGlow ("Night Glow", Range(0,1)) = 0
     }
 
     SubShader { 
@@ -25,6 +26,7 @@ Shader "Kampai/Water/Terrain Waves" {
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "KampaiNight.cginc"
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -43,6 +45,7 @@ Shader "Kampai/Water/Terrain Waves" {
             float4 _Color;
             float _Speed;
             float _FadeAlpha;
+            half _NightGlow;
 
             v2f vert (appdata v) {
                 v2f o;
@@ -62,6 +65,10 @@ Shader "Kampai/Water/Terrain Waves" {
                 fixed mask = tex2D(_AlphaMask, i.uvMask).r;
                 
                 fixed3 finalRGB = _Color.rgb + diff.rgb;
+                
+                // --- Night Mode Injection ---
+                finalRGB = ApplyKampaiNight(finalRGB, _NightGlow);
+
                 // L'alpha est multiplié par le canal Rouge de la diffuse ET du masque
                 fixed finalAlpha = diff.r * mask * _Color.a * _FadeAlpha;
                 

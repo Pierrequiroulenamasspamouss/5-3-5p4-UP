@@ -11,9 +11,17 @@ namespace Kampai.Game
 		[Inject(global::Kampai.Game.SocialServices.GOOGLEPLAY)]
 		public global::Kampai.Game.ISocialService gpService { get; set; }
 
+		[Inject]
+		public global::Kampai.UI.View.ShowAchievementModalSignal showAchievementModalSignal { get; set; }
+
 		public void ShowAchievements()
 		{
-			gpService.ShowAchievements();
+			showAchievementModalSignal.Dispatch();
+		}
+
+		public global::Kampai.Game.Achievement GetAchievementByDefinitionID(int definitionID)
+		{
+			return playerService.GetFirstInstanceByDefinitionId<global::Kampai.Game.Achievement>(definitionID);
 		}
 
 		public void UpdateIncrementalAchievement(int defID, int stepsCompleted)

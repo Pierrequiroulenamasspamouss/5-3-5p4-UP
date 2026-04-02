@@ -8,11 +8,15 @@ namespace Kampai.UI.View
 
 		internal global::Kampai.UI.View.ButtonView CloseButton;
 
+		internal global::Kampai.UI.View.ButtonView RotateButton;
+
 		private global::UnityEngine.UI.Button inventoryButton;
 
 		private global::UnityEngine.UI.Button acceptButton;
 
 		private global::UnityEngine.UI.Button closeButton;
+
+		private global::UnityEngine.UI.Button rotateButton;
 
 		private global::Kampai.UI.View.MoveBuildingModal myModal;
 
@@ -38,9 +42,14 @@ namespace Kampai.UI.View
 			InventoryButton = myModal.InventoryButton;
 			AcceptButton = myModal.AcceptButton;
 			CloseButton = myModal.CloseButton;
+			RotateButton = myModal.RotateButton;
 			inventoryButton = InventoryButton.GetComponent<global::UnityEngine.UI.Button>();
 			acceptButton = AcceptButton.GetComponent<global::UnityEngine.UI.Button>();
 			closeButton = CloseButton.GetComponent<global::UnityEngine.UI.Button>();
+			if (RotateButton != null)
+			{
+				rotateButton = RotateButton.GetComponent<global::UnityEngine.UI.Button>();
+			}
 			myModal.gameObject.transform.SetAsLastSibling();
 			if (moveBuildingSetting.Mask == 1)
 			{

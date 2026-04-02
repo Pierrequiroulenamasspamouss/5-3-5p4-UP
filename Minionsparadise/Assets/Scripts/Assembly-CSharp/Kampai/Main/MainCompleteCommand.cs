@@ -139,7 +139,11 @@ namespace Kampai.Main
 			logger.EventStart("MainCompleteCommand.LoadUI");
 			autoSavePlayerSignal.Dispatch();
 			reloadConfigs.Dispatch();
-			// nimbleOTSignal.Dispatch();
+			// --- Day/Night Cycle Initialization ---
+			global::UnityEngine.GameObject dnManagerGo = new global::UnityEngine.GameObject("DayNightCycleManager");
+			global::Kampai.Game.DayNightCycleManager dnManager = dnManagerGo.AddComponent<global::Kampai.Game.DayNightCycleManager>();
+			base.injectionBinder.injector.Inject(dnManager);
+			global::UnityEngine.Object.DontDestroyOnLoad(dnManagerGo);
 			clientHealthService.MarkMeterEvent("AppFlow.AppStart");
 			telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("100 - Load Complete", playerService.SWRVEGroup, dlcService.GetDownloadQualityLevel());
 			loadDevicePrefsSignal.Dispatch();

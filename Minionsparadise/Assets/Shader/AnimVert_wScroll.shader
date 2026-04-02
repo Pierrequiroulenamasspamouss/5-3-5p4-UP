@@ -22,14 +22,17 @@ Shader "Kampai/Animated/AnimVert_wScroll" {
         [Enum(UnityEngine.Rendering.StencilOp)] __StencilPassOp ("Pass Operation", Float) = 0
         [Enum(UnityEngine.Rendering.StencilOp)] __StencilFailOp ("Fail Operation", Float) = 0
         [Enum(UnityEngine.Rendering.StencilOp)] __StencilZFailOp ("ZFail Operation", Float) = 0
+        _NightGlow ("Night Glow", Range(0,1)) = 0
     }
 
     CGINCLUDE
     #include "UnityCG.cginc"
+    #include "KampaiNight.cginc"
 
     sampler2D _MainTex;
     float4 _MainTex_ST;
     half _FadeAlpha;
+    half _NightGlow;
 
     struct appdata {
         float4 vertex : POSITION;
