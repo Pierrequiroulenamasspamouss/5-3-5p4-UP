@@ -8,6 +8,33 @@ PLAYER_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'player_data')
 LEADERBOARD_JSON_PATH = os.path.join(PLAYER_DATA_DIR, 'leaderboard.json')
 
 MINION_NAMES = ["Kevin", "Stuart", "Bob", "Dave", "Jerry", "Carl", "Mel", "Otto", "Tim", "Mark", "Phil", "Paul", "Donny", "Ken", "Mike"]
+NOPROMOUSERS_PATH = os.path.join(os.path.dirname(__file__), '..', 'nopromousers.txt')
+
+def is_nopromo_user(user_id):
+    """
+    Checks if a user_id (or any ID in a comma-separated list) is in nopromousers.txt.
+    Returns True if restricted, False otherwise.
+    """
+    if not user_id:
+        return False
+        
+    if not os.path.exists(NOPROMOUSERS_PATH):
+        return False
+        
+    try:
+        with open(NOPROMOUSERS_PATH, 'r') as f:
+            restricted_ids = [line.strip() for line in f if line.strip()]
+            
+        user_id_str = str(user_id)
+        # Handle comma-separated list (from resolve_master_uid logic)
+        for uid_part in user_id_str.split(','):
+            if uid_part.strip() in restricted_ids:
+                return True
+                
+        return False
+    except Exception as e:
+        print(f"[DB] Error reading nopromousers.txt: {e}")
+        return False
 
 
 def get_db_connection():

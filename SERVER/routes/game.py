@@ -229,6 +229,13 @@ def reset_gamestate(user_id):
     return jsonify({"success": True})
 @game_bp.route('/contents/featured', methods=['GET'])
 def get_featured_contents():
+    from utils.db import is_nopromo_user
+    user_id = request.args.get('user_id') or request.args.get('uid') or request.headers.get('X-SWRVE-ID')
+    
+    if user_id and is_nopromo_user(user_id):
+        print(f"[GAME] Restricted user {user_id} requesting featured content - Returning empty", flush=True)
+        return jsonify({})
+
     print("[GAME] REQUESTING FEATURED CONTENTS", flush=True)
     return jsonify({
         "id": 1,

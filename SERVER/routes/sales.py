@@ -49,7 +49,13 @@ def get_sales(user_id):
     """
     Returns available sales for a user, filtered by ShopSchedule.json and player level.
     """
-    from utils.db import get_player_data
+    from utils.db import get_player_data, is_nopromo_user
+    
+    # 0. Check restricted users first
+    if is_nopromo_user(user_id):
+        print(f"[SALES] User {user_id} is in nopromousers.txt, returning NO OFFERS", flush=True)
+        return jsonify([])
+
     print(f"[SALES] Fetching sales for user {user_id}", flush=True)
     
     # 1. Get Player Profile
