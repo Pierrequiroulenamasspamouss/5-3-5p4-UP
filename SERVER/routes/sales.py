@@ -51,10 +51,9 @@ def get_sales(user_id):
     """
     from utils.db import get_player_data, is_nopromo_user
     
-    # 0. Check restricted users first
-    if is_nopromo_user(user_id):
-        print(f"[SALES] User {user_id} is in nopromousers.txt, returning NO OFFERS", flush=True)
-        return jsonify([])
+    nopromo_active = is_nopromo_user(user_id)
+    if nopromo_active:
+        print(f"[SALES] User {user_id} is in nopromousers.txt, forcing ALL OFFERS to DISABLED / Level 999", flush=True)
 
     print(f"[SALES] Fetching sales for user {user_id}", flush=True)
     
@@ -186,6 +185,19 @@ def get_sales(user_id):
                 })
                 handled_ids.add(pid_str)
             
+        # Last step: if user is restricted, force everything to be disabled and level 999
+        if nopromo_active:
+            for sale in user_sales:
+                try:
+                    sd = json.loads(sale["SaleDefinition"])
+                    sd["DISABLED"] = True
+                    sd["UNLOCKLEVEL"] = 999
+                    sd["UTCSTARTDATE"] = 0
+                    sd["UTCENDDATE"] = 1
+                    sale["SaleDefinition"] = json.dumps(sd)
+                except Exception as e:
+                    print(f"[SALES] Error overriding sale for restricted user: {e}")
+
         print(f"[SALES] Returning {len(user_sales)} sale overrides for user {user_id}", flush=True)
         return jsonify(user_sales)
         

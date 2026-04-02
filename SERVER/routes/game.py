@@ -13,7 +13,7 @@ from utils.db import (
 
 game_bp = Blueprint('game', __name__)
 
-BASE_HOST = "http://localhost"
+# Dynamic host resolution is handled per request via request.host_url
 SERVER_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VIDEO_PATH = os.path.join(SERVER_DIR, "assets", "video.mp4")
 INTRO_VIDEO_PATH = os.path.join(SERVER_DIR, "assets", "intro.mp4")
@@ -67,7 +67,7 @@ def get_manifest(filename):
         print(f"[GAME] SERVING REAL MANIFEST from {MANIFEST_PATH}", flush=True)
         return send_file(MANIFEST_PATH, mimetype='application/json')
     print(f"[GAME] WARNING: MANIFEST NOT FOUND at {MANIFEST_PATH}, serving dummy", flush=True)
-    return jsonify({ "id": filename.replace(".json", ""), "baseURL": f"{BASE_HOST}:44733/assets/", "assets": {}, "bundles": [], "bundledAssets": [] })
+    return jsonify({ "id": filename.replace(".json", ""), "baseURL": f"{request.host_url}assets/", "assets": {}, "bundles": [], "bundledAssets": [] })
 
 @game_bp.route('/rest/definitions/<path:filename>', methods=['GET'])
 def get_definitions(filename):
@@ -233,8 +233,19 @@ def get_featured_contents():
     user_id = request.args.get('user_id') or request.args.get('uid') or request.headers.get('X-SWRVE-ID')
     
     if user_id and is_nopromo_user(user_id):
-        print(f"[GAME] Restricted user {user_id} requesting featured content - Returning empty", flush=True)
-        return jsonify({})
+        print(f"[GAME] Restricted user {user_id} requesting featured content - Returning expired one", flush=True)
+        return jsonify({
+            "id": 0,
+            "title": "Expired Content",
+            "description": "None",
+            "type": "featured",
+            "mime_type": "text/html",
+            "created_at": "2000-01-01T00:00:00Z",
+            "updated_at": "2000-01-01T00:00:00Z",
+            "expires_in": "2000-01-01T00:00:00Z",
+            "urls": { "html5": request.host_url },
+            "featured": False
+        })
 
     print("[GAME] REQUESTING FEATURED CONTENTS", flush=True)
     return jsonify({
@@ -260,9 +271,9 @@ def swrve_resources_and_campaigns():
     """
     return jsonify({
         "version": 1,
-        "cdn_root": "http://localhost:44733/assets/",
+        "cdn_root": f"{request.host_url}assets/",
         "game_data": {
-            "1": { "app_store_url": "http://localhost" }
+            "1": { "app_store_url": request.host_url }
         },
         "rules": {
             "delay_first_message": 0,
