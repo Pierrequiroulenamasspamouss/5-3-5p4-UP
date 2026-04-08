@@ -2,11 +2,12 @@ from flask import Blueprint, jsonify, current_app
 import os
 import json
 
+from config import Config
 sales_bp = Blueprint('sales', __name__)
 
-SERVER_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFINITIONS_PATH = os.path.join(SERVER_DIR, "definitions.json")
-MARKET_PRICES_PATH = os.path.join(SERVER_DIR, "MarketPrices.json")
+SERVER_DIR = str(Config.BASE_DIR)
+DEFINITIONS_PATH = Config.DEFINITIONS_PATH
+MARKET_PRICES_PATH = Config.MARKET_PRICES_PATH
 
 _cached_definitions = None
 _cached_defs_indexed = None
@@ -186,8 +187,14 @@ def get_sales(user_id):
                 handled_ids.add(pid_str)
             
         # Last step: if user is restricted, force everything to be disabled and level 999
+        # EXCEPT for permanent items (currency, basic packs) to avoid client crashes
         if nopromo_active:
+            restricted_count = 0
             for sale in user_sales:
+                sale_id_str = str(sale.get("SaleId", ""))
+                if sale_id_str in PERMANENT_IDS:
+                    continue
+                    
                 try:
                     sd = json.loads(sale["SaleDefinition"])
                     sd["DISABLED"] = True
@@ -195,12 +202,19 @@ def get_sales(user_id):
                     sd["UTCSTARTDATE"] = 0
                     sd["UTCENDDATE"] = 1
                     sale["SaleDefinition"] = json.dumps(sd)
+                    restricted_count += 1
                 except Exception as e:
                     print(f"[SALES] Error overriding sale for restricted user: {e}")
+            print(f"[SALES] Restricted user {user_id}: {restricted_count} promo packs disabled, permanent packs kept active.", flush=True)
 
+        if not user_sales:
+            print(f"[SALES] WARNING: Returning empty sales list for user {user_id}", flush=True)
+            
         print(f"[SALES] Returning {len(user_sales)} sale overrides for user {user_id}", flush=True)
         return jsonify(user_sales)
         
     except Exception as e:
         print(f"[SALES] Route Error: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
         return jsonify([])

@@ -102,6 +102,11 @@ namespace Kampai.UI.View
 			base.view.playMovieButton.ClickedSignal.AddListener(PlayMovieButton);
 			tempHidden.AddListener(TempHide);
 			init();
+			// MODS tab listener (if populated by SettingsPanelView at runtime)
+			if (base.view.mods != null)
+			{
+				base.view.mods.ClickedSignal.AddListener(ShowMods);
+			}
 		}
 
 		public override void OnRemove()
@@ -121,6 +126,10 @@ namespace Kampai.UI.View
 			facebookStateSignal.RemoveListener(setFacebookStatus);
 			base.view.playMovieButton.ClickedSignal.RemoveListener(PlayMovieButton);
 			tempHidden.RemoveListener(TempHide);
+			if (base.view.mods != null)
+			{
+				base.view.mods.ClickedSignal.RemoveListener(ShowMods);
+			}
 		}
 
 		private void init()
@@ -316,6 +325,11 @@ namespace Kampai.UI.View
 			ShowPanel(global::Kampai.UI.View.SettingsMenuPanel.HELP);
 		}
 
+		private void ShowMods()
+		{
+			ShowPanel(global::Kampai.UI.View.SettingsMenuPanel.MODS);
+		}
+
 		private void ShowPanel(global::Kampai.UI.View.SettingsMenuPanel panel)
 		{
 			if (currentPanel != panel)
@@ -329,6 +343,13 @@ namespace Kampai.UI.View
 				bool active2 = panel == global::Kampai.UI.View.SettingsMenuPanel.HELP;
 				base.view.helpPanel.SetActive(active2);
 				base.view.helpClicked.SetActive(active2);
+				// MODS tab (runtime-created, may be null)
+				if (base.view.modsPanel != null)
+				{
+					bool active3 = panel == global::Kampai.UI.View.SettingsMenuPanel.MODS;
+					base.view.modsPanel.SetActive(active3);
+					base.view.modsClicked.SetActive(active3);
+				}
 				displayDebugButtonSignal.Dispatch(flag);
 				currentPanel = panel;
 			}

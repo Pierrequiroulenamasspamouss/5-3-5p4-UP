@@ -4,6 +4,7 @@ namespace Kampai.UI.View
 	{
 		SETTINGS = 0,
 		ABOUT = 1,
-		HELP = 2
+		HELP = 2,
+		MODS = 3
 	}
 }

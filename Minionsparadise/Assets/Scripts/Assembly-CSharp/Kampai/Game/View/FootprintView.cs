@@ -29,6 +29,20 @@ namespace Kampai.Game.View
 				parentObject.gameObject.SetLayerRecursively(14);
 			}
 			cachedTransform.parent = parentTransform;
+
+			// Fix for "Buildings rotation bug": 
+			// When rotated, the parent transform already applies a 90-degree rotation to children. 
+			// Because width/height are already swapped in the building definition logic, 
+			// applying them directly to a rotated parent rotates them twice (returning to original).
+			// We swap them back here so they align correctly in world space after parent's rotation.
+			global::Kampai.Game.View.BuildingDefinitionObject buildingDef = parentObject as global::Kampai.Game.View.BuildingDefinitionObject;
+			if (buildingDef != null && buildingDef.IsRotated)
+			{
+				int temp = width;
+				width = height;
+				height = temp;
+			}
+
 			cachedTransform.localPosition = new global::UnityEngine.Vector3((float)width / 2f - 0.5f, 0f, (float)(-height) / 2f + 0.5f);
 			cachedTransform.position = new global::UnityEngine.Vector3(cachedTransform.position.x, 0f, cachedTransform.position.z);
 			cachedTransform.localScale = new global::UnityEngine.Vector3(width, height, 1f);

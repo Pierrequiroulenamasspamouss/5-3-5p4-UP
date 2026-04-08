@@ -105,10 +105,12 @@ Shader "Kampai/Animated/AnimVert_wScroll" {
 
             half4 frag (v2f i) : SV_Target {
                 half4 texCol = tex2D(_MainTex, i.uv) * i.color;
-                half4 baseCol = half4(0.5, 0.5, 0.5, 1.0);
                 
-                // Un lerp basé sur l'alpha de la couleur des vertex, assez standard dans ce projet
-                half3 finalRGB = lerp(baseCol.rgb, texCol.rgb, i.color.aaa);
+                // Match AnimVert_wOverlay logic: lerp between vertex color and texture color based on vertex alpha
+                half3 finalRGB = lerp(i.color.rgb, texCol.rgb, i.color.aaa);
+                
+                // --- Night Mode Injection ---
+                finalRGB = ApplyKampaiNight(finalRGB, _NightGlow);
                 
                 return half4(finalRGB, i.color.a * _FadeAlpha);
             }
@@ -163,6 +165,9 @@ Shader "Kampai/Animated/AnimVert_wScroll" {
                 half4 baseCol = half4(0.5, 0.5, 0.5, 1.0);
                 
                 half3 finalRGB = lerp(baseCol.rgb, texCol.rgb, i.color.aaa);
+                
+                // --- Night Mode Injection ---
+                finalRGB = ApplyKampaiNight(finalRGB, _NightGlow);
                 
                 return half4(finalRGB, i.color.a * _FadeAlpha);
             }
