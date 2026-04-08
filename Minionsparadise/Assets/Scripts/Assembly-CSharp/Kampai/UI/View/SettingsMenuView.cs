@@ -39,5 +39,11 @@ namespace Kampai.UI.View
 		public global::UnityEngine.GameObject aboutClicked;
 
 		public global::UnityEngine.GameObject helpClicked;
+
+		public global::Kampai.UI.View.ButtonView mods;
+
+		public global::UnityEngine.GameObject modsPanel;
+
+		public global::UnityEngine.GameObject modsClicked;
 	}
 }

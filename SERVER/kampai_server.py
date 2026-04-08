@@ -2,6 +2,7 @@ from flask import Flask
 import threading
 import logging
 
+from config import Config
 from routes.user import user_bp
 from routes.game import game_bp
 from routes.metrics import metrics_bp
@@ -43,7 +44,7 @@ def create_app(port):
 def run_server(port):
     app = create_app(port)
     print(f">>> Server started on port {port}", flush=True)
-    app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
+    app.run(host=Config.HOST, port=port, debug=Config.DEBUG, threaded=True)
 
 if __name__ == '__main__':
     # Using a single run for the main port with debug=True for auto-reload
@@ -51,16 +52,15 @@ if __name__ == '__main__':
     # Flask's reloader only works well in the main thread.
     
     def run_secondary():
-        # Secondary port without reloader to avoid conflicts
-        app_sec = create_app(44732)
-        print(">>> Secondary Server started on port 44732", flush=True)
-        app_sec.run(host='0.0.0.0', port=44732, debug=False, threaded=True, use_reloader=False)
+        # Secondary port
+        app_sec = create_app(Config.PORT_SECONDARY)
+        print(f">>> Secondary Server started on port {Config.PORT_SECONDARY}", flush=True)
+        app_sec.run(host=Config.HOST, port=Config.PORT_SECONDARY, debug=Config.DEBUG, threaded=True, use_reloader=False)
 
     t2 = threading.Thread(target=run_secondary, daemon=True)
     t2.start()
 
-    # Main port without reloader to avoid multi-process start issues
-    app_main = create_app(44733)
-    print(">>> Main Server started on port 44733", flush=True)
-    app_main.run(host='0.0.0.0', port=44733, debug=False, threaded=True, use_reloader=False)
-# trigger reload 1773787109.4464663
+    # Main port
+    app_main = create_app(Config.PORT_MAIN)
+    print(f">>> Main Server started on port {Config.PORT_MAIN}", flush=True)
+    app_main.run(host=Config.HOST, port=Config.PORT_MAIN, debug=Config.DEBUG, threaded=True, use_reloader=False)

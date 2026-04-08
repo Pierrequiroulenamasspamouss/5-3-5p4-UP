@@ -365,6 +365,7 @@ namespace Kampai.UI.View
 			base.mediationBinder.Bind<global::Kampai.UI.View.FAQPanelView>().To<global::Kampai.UI.View.FAQPanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.CreditsPanelView>().To<global::Kampai.UI.View.CreditsPanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.AboutPanelView>().To<global::Kampai.UI.View.AboutPanelMediator>();
+			base.mediationBinder.Bind<global::Kampai.UI.View.ModsPanelView>().To<global::Kampai.UI.View.ModsPanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.UsageSharingView>().To<global::Kampai.UI.View.UsageSharingMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.HelpPanelView>().To<global::Kampai.UI.View.HelpPanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.NotificationsPanelView>().To<global::Kampai.UI.View.NotificationsPanelMediator>();

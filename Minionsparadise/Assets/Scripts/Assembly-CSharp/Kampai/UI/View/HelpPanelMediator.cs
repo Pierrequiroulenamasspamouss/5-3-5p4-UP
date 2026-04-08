@@ -86,6 +86,7 @@ namespace Kampai.UI.View
 
 		private void Start()
 		{
+			if (configurationsService == null) return;
 			logger.Info("wwce killswitch :{0}", configurationsService.isKillSwitchOn(global::Kampai.Game.KillSwitch.WWCE));
 			view.onlineHelp.gameObject.SetActive(!configurationsService.isKillSwitchOn(global::Kampai.Game.KillSwitch.WWCE));
 		}

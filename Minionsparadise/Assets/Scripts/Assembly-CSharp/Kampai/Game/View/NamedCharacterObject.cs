@@ -126,11 +126,23 @@ namespace Kampai.Game.View
 			}
 			SetupLODs();
 			string stateMachine = definition.CharacterAnimations.StateMachine;
+			if (animators == null || animators.Count == 0)
+			{
+				animators = new global::System.Collections.Generic.List<global::UnityEngine.Animator>(base.gameObject.GetComponentsInChildren<global::UnityEngine.Animator>());
+			}
 			global::UnityEngine.Animator component = base.gameObject.GetComponent<global::UnityEngine.Animator>();
-			component.applyRootMotion = false;
-			component.runtimeAnimatorController = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.RuntimeAnimatorController>(stateMachine);
-			component.cullingMode = global::UnityEngine.AnimatorCullingMode.CullUpdateTransforms;
-			if (component.runtimeAnimatorController == null)
+			if (component == null && animators.Count > 0)
+			{
+				component = animators[0];
+			}
+			global::UnityEngine.RuntimeAnimatorController runtimeAnimatorController = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.RuntimeAnimatorController>(stateMachine);
+			if (component != null)
+			{
+				component.applyRootMotion = false;
+				component.cullingMode = global::UnityEngine.AnimatorCullingMode.CullUpdateTransforms;
+				SetAnimController(runtimeAnimatorController);
+			}
+			if (runtimeAnimatorController == null)
 			{
 				logger.Error("Failed to get default runtime animator controller for {0}: asm name: {1}", character.Name, stateMachine);
 			}
@@ -140,7 +152,7 @@ namespace Kampai.Game.View
 			{
 				skinnedMeshRenderer.rootBone = transform;
 			}
-			SetupCharacterObject(transform, component.runtimeAnimatorController, minionBuilder);
+			SetupCharacterObject(transform, runtimeAnimatorController, minionBuilder);
 			return this;
 		}
 
