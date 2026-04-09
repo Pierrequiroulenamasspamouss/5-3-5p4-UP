@@ -71,7 +71,6 @@ namespace Kampai.UI.View
 			view.notificationsButton.ClickedSignal.AddListener(NotificationsButton);
 			view.notificationsOffButton.ClickedSignal.AddListener(NotificationsOffButton);
 			view.DLCButton.ClickedSignal.AddListener(DLCButton);
-			view.doubleConfirmButton.ClickedSignal.AddListener(OnDoubleConfirm);
 			Init();
 			setServer(ServerEnv);
 			setBuild(clientVersion.GetClientVersion());
@@ -96,7 +95,6 @@ namespace Kampai.UI.View
 			view.notificationsOffButton.ClickedSignal.RemoveListener(NotificationsOffButton);
 			view.DLCButton.ClickedSignal.RemoveListener(DLCButton);
 			view.volumeSliderChangedSignal.RemoveListener(OnVolumeChanged);
-			view.doubleConfirmButton.ClickedSignal.RemoveListener(OnDoubleConfirm);
 		}
 
 		private void Init()
@@ -130,6 +128,19 @@ namespace Kampai.UI.View
 				view.ToggleNotificationsOn(true);
 			}
 			view.doubleConfirmText.text = localService.GetString("DoubleConfirm");
+			
+			// Fix: Correctly listen to the toggle state change
+			if (doubleConfirmToggle != null)
+			{
+				doubleConfirmToggle.onValueChanged.RemoveAllListeners();
+				doubleConfirmToggle.onValueChanged.AddListener(OnDoubleConfirmChanged);
+			}
+		}
+
+		private void OnDoubleConfirmChanged(bool isOn)
+		{
+			localPersistService.PutDataIntPlayer("DoublePurchaseConfirm", isOn ? 1 : 0);
+			soundFXSignal.Dispatch("Play_button_click_01");
 		}
 
 
@@ -204,10 +215,7 @@ namespace Kampai.UI.View
 			displayDialogSignal.Dispatch(localService.GetString("DLCConfirmationDialog"));
 		}
 
-		private void OnDoubleConfirm()
-		{
-			localPersistService.PutDataIntPlayer("DoublePurchaseConfirm", doubleConfirmToggle.isOn ? 1 : 0);
-		}
+
 
 		private void setServer(string serverString)
 		{
