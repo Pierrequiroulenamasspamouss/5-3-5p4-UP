@@ -9,5 +9,9 @@ namespace Kampai.UI.View
 		public global::Kampai.UI.View.ButtonView retryButton;
 
 		public global::UnityEngine.UI.Text retryButtonText;
+
+		public global::Kampai.UI.View.ButtonView playOfflineButton;
+
+		public global::UnityEngine.UI.Text playOfflineButtonText;
 	}
 }
