@@ -66,7 +66,20 @@ namespace Kampai.Game
 					goto IL_00fe;
 				}
 				case "remote":
-					RemoteLoadPlayerData();
+					if (userSessionService.IsOffline)
+					{
+						logger.Info("[OfflineMode] Offline mode detected, loading local save instead of remote.");
+						text2 = global::Kampai.Util.OfflineModeUtility.LoadLocal(global::Kampai.Util.OfflineModeUtility.PlayerSavePath);
+						if (string.IsNullOrEmpty(text2))
+						{
+							logger.Warning("[OfflineMode] No local save found, falling back to initial player.");
+							text2 = defService.GetInitialPlayer();
+						}
+					}
+					else
+					{
+						RemoteLoadPlayerData();
+					}
 					goto IL_00fe;
 				case "externalLogin":
 					RemoteLoadPlayerData();

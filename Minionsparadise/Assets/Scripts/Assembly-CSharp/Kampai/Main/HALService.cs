@@ -73,12 +73,21 @@ namespace Kampai.Main
 
 		public void Update()
 		{
-			global::UnityEngine.TextAsset textAsset = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.TextAsset>(jsonPath);
+			string fullPath = "content/dlc/loc_text/" + jsonPath;
+			global::UnityEngine.TextAsset textAsset = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.TextAsset>(fullPath);
+			if (textAsset == null)
+			{
+				logger.Debug("Full loc file not found at {0}, trying fallback {1}", fullPath, jsonPath);
+				textAsset = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.TextAsset>(jsonPath);
+			}
+
 			if (textAsset == null)
 			{
 				logger.Error("Error obtaining full localization asset: {0}", jsonPath);
 				return;
 			}
+			
+			logger.Info("ANTIGRAVITY: Loaded localization asset from {0}, size: {1}", textAsset.name, textAsset.text.Length);
 			foreach (global::System.Collections.Generic.KeyValuePair<string, global::Kampai.Main.ILocalString> item in GetLocalizedDictionary(textAsset.ToString()))
 			{
 				ParseLocalString(item.Value);

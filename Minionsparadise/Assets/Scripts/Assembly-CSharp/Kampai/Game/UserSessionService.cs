@@ -5,6 +5,8 @@ namespace Kampai.Game
 		public global::Kampai.Util.IKampaiLogger logger = global::Elevation.Logging.LogManager.GetClassLogger("UserSessionService") as global::Kampai.Util.IKampaiLogger;
 
 		private global::Kampai.Game.UserSession Session;
+		
+		public bool IsOffline { get; set; }
 
 		private global::strange.extensions.signal.impl.Signal loginCallback;
 
@@ -181,6 +183,22 @@ namespace Kampai.Game
 				// using (NimbleBridge_SynergyIdManager.GetComponent().Login(synergyID, session.UserID))
 				// {
 				// }
+			}
+		}
+
+		public void OfflineLogin()
+		{
+			logger.Info("[OfflineMode] Performing offline login...");
+			Session = new global::Kampai.Game.UserSession();
+			Session.UserID = LocalPersistService.GetData("UserID");
+			Session.SessionID = global::System.Guid.NewGuid().ToString();
+			
+			setupSwrveSignal.Dispatch(Session.UserID);
+			userSessionGrantedSignal.Dispatch();
+			
+			if (loginCallback != null)
+			{
+				loginCallback.Dispatch();
 			}
 		}
 	}
