@@ -49,6 +49,12 @@ namespace Kampai.Main
 		[Inject]
 		public global::Kampai.Main.IAssetsPreloadService assetsPreloadService { get; set; }
 
+		[Inject]
+		public global::Kampai.Game.IUserSessionService userSessionService { get; set; }
+
+		[Inject]
+		public IResourceService resourceService { get; set; }
+
 		public override void Execute()
 		{
 			// logger.Info("PostDownloadManifestCommand: DLC bypass flow triggered.");

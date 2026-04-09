@@ -26,7 +26,7 @@ namespace Kampai.Main
 
 		public override void Execute()
 		{
-			logger.Info("DownloadManifestCommand: Logic bypassed for bundle-free build.");
+			// logger.Info("DownloadManifestCommand: Logic bypassed for bundle-free build.");
 			postSignal.Dispatch();
 		}
 	}

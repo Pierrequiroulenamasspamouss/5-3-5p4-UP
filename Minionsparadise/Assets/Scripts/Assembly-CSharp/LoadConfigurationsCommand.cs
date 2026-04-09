@@ -19,6 +19,12 @@ public class LoadConfigurationsCommand : global::strange.extensions.command.impl
 	[Inject]
 	public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequestFactory requestFactory { get; set; }
 
+	[Inject]
+	public global::Kampai.Game.IUserSessionService userSessionService { get; set; }
+
+	[Inject]
+	public IResourceService resourceService { get; set; }
+
 	public override void Execute()
 	{
 		logger.EventStart("LoadConfigurationsCommand.Execute");
@@ -27,8 +33,17 @@ public class LoadConfigurationsCommand : global::strange.extensions.command.impl
 		string configURL = ConfigurationsService.GetConfigURL();
 		logger.Info("ClientConfigUrl: {0}", configURL);
 		localPersistService.PutData("configURL", configURL);
-		downloadResponse.AddListener(ConfigurationsService.GetConfigurationCallback);
 		ConfigurationsService.setInitonCallback(init);
+
+		if (userSessionService.IsOffline)
+		{
+			logger.Info("[OfflineMode] LoadConfigurationsCommand skipping download in offline mode.");
+			ConfigurationsService.LoadLocalConfiguration();
+			logger.EventStop("LoadConfigurationsCommand.Execute");
+			return;
+		}
+
+		downloadResponse.AddListener(ConfigurationsService.GetConfigurationCallback);
 		downloadService.Perform(requestFactory.Resource(configURL).WithResponseSignal(downloadResponse).WithRetry());
 		logger.EventStop("LoadConfigurationsCommand.Execute");
 	}

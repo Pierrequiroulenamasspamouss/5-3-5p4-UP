@@ -39,6 +39,9 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 	[Inject]
 	public global::Kampai.Splash.SplashProgressUpdateSignal splashProgressUpdateSignal { get; set; }
 
+	[Inject]
+	public global::ILocalPersistanceService localPersistanceService { get; set; }
+
 	public override void Execute()
 	{
 		logger.EventStart("LoadDefinitionsCommand.Execute");
@@ -71,7 +74,7 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 					global::Kampai.Game.DefinitionService.DeleteBinarySerialization();
 				}
 			} */
-			logger.Warning("FORCED JSON LOADING: Skipping binary definitions cache.");
+			logger.Info("LoadDefinitions: Skipping binary cache check, proceeding with JSON loading from {0}", jsonPath);
 #else
 			if (false)
 			{
@@ -84,9 +87,9 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 				{
 					if (global::System.IO.File.Exists(jsonPath)) {
 						long length = new global::System.IO.FileInfo(jsonPath).Length;
-						logger.Warning("FORCED JSON LOADING: File {0} size: {1} bytes", jsonPath, length);
+						logger.Info("LoadDefinitions: Loading JSON file from {0} ({1} bytes)", jsonPath, length);
 					} else {
-						logger.Error("FORCED JSON LOADING: File {0} DOES NOT EXIST!", jsonPath);
+						logger.Error("LoadDefinitions: FILE NOT FOUND at path: {0}", jsonPath);
 					}
 					bool flag2 = DeserializeDefinitionsFromJsonFile(jsonPath);
 					if (!flag2)
@@ -116,12 +119,16 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 	private void OnDeserializationSuccess()
 	{
 		this.telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("80 - Loaded Definitions", playerService.SWRVEGroup, dlcService.GetDownloadQualityLevel());
-		logger.Debug("LoadDefinitions: Deserialized successfully");
+		logger.Info("LoadDefinitionsCommand: Deserialization success, dispatching DefinitionsChangedSignal");
 		global::Kampai.Common.TelemetryService telemetryService = this.telemetryService as global::Kampai.Common.TelemetryService;
 		if (telemetryService != null)
 		{
 			telemetryService.SetDefinitionServiceReference(definitionService);
 		}
+		
+		// Set the local path as the DefinitionsUrl so DefinitionsChangedCommand doesn't log an error
+		localPersistanceService.PutData("DefinitionsUrl", "local://Assets/resources/content/definitions.json");
+		
 		definitionsChangedSignal.Dispatch(hotSwap);
 		splashProgressUpdateSignal.Dispatch(35, 10f);
 	}
@@ -164,7 +171,7 @@ public class LoadDefinitionsCommand : global::strange.extensions.command.impl.Co
 			jsonText = jsonText.TrimEnd();
 			if (!jsonText.EndsWith("}"))
 			{
-				logger.Warning("FORCED JSON LOADING: Automatically appending missing closing brace on Android.");
+				logger.Info("LoadDefinitions: Detected truncated JSON, attempting to repair with closing brace.");
 				jsonText += "}";
 			}
 			return DeserializeDefinitionsFromJsonString(jsonText);

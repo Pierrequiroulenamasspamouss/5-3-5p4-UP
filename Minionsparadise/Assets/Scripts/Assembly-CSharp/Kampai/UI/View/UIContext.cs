@@ -13,6 +13,7 @@ namespace Kampai.UI.View
 
 		protected override void MapBindings()
 		{
+			UnityEngine.Debug.Log("ANTIGRAVITY: UIContext.MapBindings() started");
 			injectionBinder.Bind<global::strange.extensions.context.api.ICrossContextCapable>().ToValue(this).ToName(global::Kampai.UI.View.UIElement.CONTEXT)
 				.CrossContext();
 			if (global::strange.extensions.context.impl.Context.firstContext == this)
@@ -257,7 +258,6 @@ namespace Kampai.UI.View
 			base.mediationBinder.Bind<global::Kampai.UI.View.MinionUpgradeTokenHUDInfoView>().To<global::Kampai.UI.View.MinionUpgradeTokenHUDInfoMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.MinionLevelTokenView>().To<global::Kampai.UI.View.MinionLevelTokenMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.FloatingTextPanelView>().To<global::Kampai.UI.View.FloatingTextPanelMediator>();
-			base.mediationBinder.Bind<global::Kampai.UI.View.WayFinderPanelView>().To<global::Kampai.UI.View.WayFinderPanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.WayFinderView>().To<global::Kampai.UI.View.WayFinderMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.QuestWayFinderView>().To<global::Kampai.UI.View.QuestWayFinderMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.OrderBoardWayFinderView>().To<global::Kampai.UI.View.OrderBoardWayFinderMediator>();
@@ -314,7 +314,6 @@ namespace Kampai.UI.View
 			base.mediationBinder.Bind<global::Kampai.UI.View.DragDropItemView>().To<global::Kampai.UI.View.DragDropItemMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.DropAreaView>().To<global::Kampai.UI.View.DropAreaMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.CompositeBuildingMenuView>().To<global::Kampai.UI.View.CompositeBuildingMenuMediator>();
-			base.mediationBinder.Bind<global::Kampai.UI.View.MoveBuildingMenuView>().To<global::Kampai.UI.View.MoveBuildingMenuMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.RandomDropView>().To<global::Kampai.UI.View.RandomDropMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.CurrencyWarningDialogView>().To<global::Kampai.UI.View.CurrencyWarningDialogMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.CraftingModalView>().To<global::Kampai.UI.View.CraftingModalMediator>();
@@ -373,8 +372,6 @@ namespace Kampai.UI.View
 			base.mediationBinder.Bind<global::Kampai.UI.View.RateAppPanelView>().To<global::Kampai.UI.View.RateAppPanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.BillingNotAvailablePanelView>().To<global::Kampai.UI.View.BillingNotAvailablePanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.BuddyWelcomePanelView>().To<global::Kampai.UI.View.BuddyWelcomePanelMediator>();
-			base.mediationBinder.Bind<global::Kampai.UI.View.COPPAAgeGatePanelView>().To<global::Kampai.UI.View.COPPAAgeGatePanelMediator>();
-			base.mediationBinder.Bind<global::Kampai.UI.View.TownHallDialogView>().To<global::Kampai.UI.View.TownHallDialogMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.NudgeUpgradeDialogView>().To<global::Kampai.UI.View.NudgeUpgradeDialogMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.SocialPartyFBConnectView>().To<global::Kampai.UI.View.SocialPartyFBConnectMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.SocialPartyInviteAlertView>().To<global::Kampai.UI.View.SocialPartyInviteAlertMediator>();
@@ -458,7 +455,6 @@ namespace Kampai.UI.View
 			base.mediationBinder.Bind<global::Kampai.UI.View.RewardedAdPickRewardModalView>().To<global::Kampai.UI.View.RewardedAdPickRewardModalMediator>();
 			base.commandBinder.Bind<global::Kampai.UI.View.OpenRewardedAdDailyRewardPickerModalSignal>().To<global::Kampai.UI.View.OpenRewardedAdDailyRewardPickerModalCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowDebugVisualizerSignal>().To<global::Kampai.Util.ShowDebugVisualizerCommand>();
-			base.commandBinder.Bind<global::Kampai.Game.UserAgeForCOPPAReceivedSignal>().To<global::Kampai.Game.UserAgeForCOPPAReceivedCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowSocialPartyStartSignal>().To<global::Kampai.Common.ShowSocialPartyStartCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowSocialPartyRewardSignal>().To<global::Kampai.Common.ShowSocialPartyRewardCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowSocialPartyInviteSignal>().To<global::Kampai.Common.ShowSocialPartyInviteCommand>();
@@ -483,6 +479,7 @@ namespace Kampai.UI.View
 			base.commandBinder.Bind<global::Kampai.UI.View.CreateSkrimSignal>().To<global::Kampai.UI.View.CreateSkrimCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowPetsXPromoSignal>().To<global::Kampai.UI.ShowPetsXPromoCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowAchievementModalSignal>().To<global::Kampai.UI.View.ShowAchievementModalCommand>();
+			UnityEngine.Debug.Log("ANTIGRAVITY: UIContext.MapBindings() finished");
 		}
 
 

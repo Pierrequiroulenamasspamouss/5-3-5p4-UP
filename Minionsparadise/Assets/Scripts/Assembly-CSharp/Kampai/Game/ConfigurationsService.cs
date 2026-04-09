@@ -393,9 +393,19 @@ namespace Kampai.Game
 			string json = global::Kampai.Util.OfflineModeUtility.LoadLocal(global::Kampai.Util.OfflineModeUtility.ConfigCachePath);
 			if (string.IsNullOrEmpty(json))
 			{
-				logger.Info("[OfflineMode] No cached config found, trying built-in resource...");
+				logger.Info("[OfflineMode] No cached config found at {0}, trying built-in resource...", global::Kampai.Util.OfflineModeUtility.ConfigCachePath);
 				// Try to load from Resources if cached is missing
-				json = resourceService.LoadText("config"); 
+				json = resourceService.LoadText("config");
+				if (string.IsNullOrEmpty(json))
+				{
+					json = resourceService.LoadText("config.json");
+				}
+
+				if (!string.IsNullOrEmpty(json))
+				{
+					logger.Info("[OfflineMode] Successfully loaded config from resources, caching to {0}", global::Kampai.Util.OfflineModeUtility.ConfigCachePath);
+					global::Kampai.Util.OfflineModeUtility.SaveLocal(global::Kampai.Util.OfflineModeUtility.ConfigCachePath, json);
+				}
 			}
 
 			if (!string.IsNullOrEmpty(json))

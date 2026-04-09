@@ -41,30 +41,36 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 
 		if (userSessionService.IsOffline)
 		{
-			logger.Info("[OfflineMode] Authoritative definitions check starting...");
-			string text = resourceService.LoadText("definitions");
-			if (!string.IsNullOrEmpty(text))
+			logger.Info("[OfflineMode] FetchDefinitionsCommand skipping download in offline mode.");
+			if (!global::System.IO.File.Exists(definitionPath))
 			{
-				logger.Info("[OfflineMode] Authoritative definitions.json loaded from resources (Length: " + text.Length + ")");
-				try
+				logger.Info("[OfflineMode] Cached definitions not found at {0}, checking resources...", definitionPath);
+				string text = resourceService.LoadText("definitions");
+				if (string.IsNullOrEmpty(text))
 				{
+					// Try with .json extension just in case, though usually not needed for Resources.Load
+					text = resourceService.LoadText("definitions.json");
+				}
+
+				if (!string.IsNullOrEmpty(text))
+				{
+					logger.Info("[OfflineMode] Successfully loaded definitions from resources, writing to {0}", definitionPath);
+					string directoryName = global::System.IO.Path.GetDirectoryName(definitionPath);
+					if (!global::System.IO.Directory.Exists(directoryName))
+					{
+						global::System.IO.Directory.CreateDirectory(directoryName);
+					}
 					global::System.IO.File.WriteAllText(definitionPath, text);
-					logger.Info("[OfflineMode] Successfully updated local cache at " + definitionPath);
 				}
-				catch (global::System.Exception ex)
+				else
 				{
-					logger.Error("[OfflineMode] Failed to update local cache: " + ex.Message);
+					logger.Error("[OfflineMode] FAILED to load definitions from resources 'definitions'!");
 				}
-			}
-			else if (!global::System.IO.File.Exists(definitionPath))
-			{
-				logger.Fatal(global::Kampai.Util.FatalCode.GS_ERROR_FETCH_DEFINITIONS, "[OfflineMode] No definitions found in resources or cache!");
 			}
 			else
 			{
-				logger.Warning("[OfflineMode] Resources version missing, falling back to cache at " + definitionPath);
+				logger.Info("[OfflineMode] Found cached definitions at {0}", definitionPath);
 			}
-
 			definitionsFetchedSignal.Dispatch();
 			LoadDefinitionsCommand.LoadDefinitionsData loadDefinitionsData = new LoadDefinitionsCommand.LoadDefinitionsData();
 			loadDefinitionsData.Path = definitionPath;
@@ -83,7 +89,7 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 
 	public static string GetDefinitionsPath()
 	{
-		return global::System.IO.Path.Combine(global::Kampai.Util.GameConstants.PERSISTENT_DATA_PATH, "definitions.json");
+		return global::Kampai.Util.OfflineModeUtility.DefinitionsCachePath;
 	}
 
 	private void DownloadResponseHandler(global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse response)

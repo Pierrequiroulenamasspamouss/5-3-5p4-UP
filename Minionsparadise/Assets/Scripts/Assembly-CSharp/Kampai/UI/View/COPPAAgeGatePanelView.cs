@@ -33,11 +33,17 @@ namespace Kampai.UI.View
 		{
 			if (AgeSlider != null && AgeText != null)
 			{
-				float num = (float)timeService.AppTime() - lastSoundPlayed;
-				if (num >= 0.17f)
+				if (timeService != null)
 				{
-					soundFXSignal.Dispatch("Play_minion_confirm_select_02");
-					lastSoundPlayed = timeService.AppTime();
+					float num = (float)timeService.AppTime() - lastSoundPlayed;
+					if (num >= 0.17f)
+					{
+						if (soundFXSignal != null)
+						{
+							soundFXSignal.Dispatch("Play_minion_confirm_select_02");
+						}
+						lastSoundPlayed = timeService.AppTime();
+					}
 				}
 				AgeText.text = AgeSlider.value.ToString();
 				bool flag = AgeSlider.value > 0f;

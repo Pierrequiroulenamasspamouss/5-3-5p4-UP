@@ -22,12 +22,12 @@ namespace Kampai.Util
 
         public static string ConfigCachePath
         {
-            get { return Path.Combine(BasePath, "config_cached.json"); }
+            get { return Path.Combine(BasePath, "server_config.json"); }
         }
 
         public static string DefinitionsCachePath
         {
-            get { return Path.Combine(BasePath, "definitions_cached.json"); }
+            get { return Path.Combine(BasePath, "definitions.json"); }
         }
 
         public static void SaveLocal(string path, string data)

@@ -9,7 +9,7 @@ namespace Kampai.Main
 
 		public override void Execute()
 		{
-			logger.Info("CheckDLCTierCommand: Logic bypassed for bundle-free build.");
+			// logger.Info("CheckDLCTierCommand: Logic bypassed for bundle-free build.");
 		}
 	}
 }
