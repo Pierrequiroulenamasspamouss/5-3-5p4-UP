@@ -1,36 +1,54 @@
+using System.Collections.Generic;
+using Kampai.Game;
+using Kampai.Main;
+using Kampai.Util;
+using strange.extensions.mediation.impl;
+using UnityEngine;
+using UnityEngine.UI;
+
 namespace Kampai.UI.View
 {
-	public class ModsPanelMediator : global::strange.extensions.mediation.impl.Mediator
+	public class ModsPanelMediator : Mediator
 	{
 		[Inject]
-		public global::Kampai.UI.View.ModsPanelView view { get; set; }
+		public ModsPanelView view { get; set; }
 
 		[Inject]
-		public global::Kampai.Main.PlayGlobalSoundFXSignal soundFXSignal { get; set; }
+		public ILocalizationService localService { get; set; }
 
 		[Inject]
-		public global::Kampai.Main.ILocalizationService localService { get; set; }
+		public IDevicePrefsService prefs { get; set; }
 
 		[Inject]
-		public global::Kampai.Game.IDevicePrefsService prefs { get; set; }
+		public SaveDevicePrefsSignal saveDevicePrefsSignal { get; set; }
 
 		[Inject]
-		public global::Kampai.Game.SaveDevicePrefsSignal saveDevicePrefsSignal { get; set; }
+		public LanguageChangedSignal languageChangedSignal { get; set; }
 
 		[Inject]
-		public global::Kampai.Main.LanguageChangedSignal languageChangedSignal { get; set; }
+		public IConfigurationsService configurationsService { get; set; }
 
 		[Inject]
-		public global::Kampai.Game.IConfigurationsService configurationsService { get; set; }
+		public PlayGlobalSoundFXSignal soundFXSignal { get; set; }
 
 		private static readonly string[] ALL_LANGUAGES = new string[] { "en", "fr", "de", "es", "it", "pt", "nl", "ko", "ru", "ja", "zh-cn", "zh-tw", "tr", "id", "lolcat", "minion" };
 
-		private global::System.Collections.Generic.List<string> m_availableLanguages;
+		private List<string> m_availableLanguages;
 
 		public override void OnRegister()
 		{
-			base.OnRegister();
-			
+			Debug.Log("[ModsMediator] Registering Mods Panel Logic...");
+
+			m_availableLanguages = new List<string>(ALL_LANGUAGES);
+			if (configurationsService.GetConfigurations() == null || !configurationsService.GetConfigurations().AprilsFool)
+			{
+				m_availableLanguages.Remove("lolcat");
+				m_availableLanguages.Remove("minion");
+			}
+
+			BindButton(view.languageButton);
+			BindButton(view.nightToggleButton);
+
 			if (view.languageButton != null)
 			{
 				view.languageButton.ClickedSignal.AddListener(OnLanguageButtonClicked);
@@ -39,23 +57,30 @@ namespace Kampai.UI.View
 			if (view.nightToggleButton != null)
 			{
 				view.nightToggleButton.ClickedSignal.AddListener(OnNightToggleClicked);
-				UpdateNightToggleText();
-			}
-
-			m_availableLanguages = new global::System.Collections.Generic.List<string>(ALL_LANGUAGES);
-			if (configurationsService.GetConfigurations() == null || !configurationsService.GetConfigurations().AprilsFool)
-			{
-				m_availableLanguages.Remove("lolcat");
-				m_availableLanguages.Remove("minion");
 			}
 
 			UpdateLanguageText();
+			UpdateNightToggleText();
+		}
+
+		private void BindButton(ButtonView bv)
+		{
+			if (bv == null) return;
+			Button btn = bv.GetComponent<Button>();
+			if (btn != null)
+			{
+				Debug.Log(string.Format("[ModsMediator] Programmatically binding onClick for {0}", bv.name));
+				btn.onClick.RemoveAllListeners();
+				btn.onClick.AddListener(bv.OnClickEvent);
+			}
+			else
+			{
+				Debug.LogWarning(string.Format("[ModsMediator] {0} is missing a native Button component!", bv.name));
+			}
 		}
 
 		public override void OnRemove()
 		{
-			base.OnRemove();
-
 			if (view.languageButton != null)
 			{
 				view.languageButton.ClickedSignal.RemoveListener(OnLanguageButtonClicked);
@@ -77,10 +102,11 @@ namespace Kampai.UI.View
 
 		private void OnLanguageButtonClicked()
 		{
+			Debug.Log("[ModsMediator] Language Button Clicked!");
 			string language = prefs.GetDevicePrefs().Language;
 			if (string.IsNullOrEmpty(language))
 			{
-				language = global::Kampai.Util.Native.GetDeviceLanguage();
+				language = Native.GetDeviceLanguage();
 			}
 			language = language.ToLower();
 			int num = m_availableLanguages.IndexOf(language);
@@ -90,22 +116,32 @@ namespace Kampai.UI.View
 			}
 			num = (num + 1) % m_availableLanguages.Count;
 			string nextLang = m_availableLanguages[num];
+			
+			Debug.Log(string.Format("[ModsMediator] Switching language from {0} to {1}", language, nextLang));
+			
 			prefs.GetDevicePrefs().Language = nextLang;
 			saveDevicePrefsSignal.Dispatch();
 			localService.Initialize(nextLang);
 			localService.Update();
 			UpdateLanguageText();
 			languageChangedSignal.Dispatch();
+			soundFXSignal.Dispatch("Play_minion_confirm_select_01");
 		}
 
 		private void OnNightToggleClicked()
 		{
-			global::Kampai.Game.DayNightCycleManager manager = global::UnityEngine.Object.FindObjectOfType<global::Kampai.Game.DayNightCycleManager>();
+			Debug.Log("[ModsMediator] Night Toggle Clicked!");
+			DayNightCycleManager manager = Object.FindObjectOfType<DayNightCycleManager>();
 			if (manager != null)
 			{
 				manager.CycleNightMode();
 				UpdateNightToggleText();
+				Debug.Log(string.Format("[ModsMediator] Night mode now: {0}", manager.GetCurrentMode()));
 				soundFXSignal.Dispatch("Play_minion_confirm_select_02");
+			}
+			else
+			{
+				Debug.LogError("[ModsMediator] Could not find DayNightCycleManager in scene!");
 			}
 		}
 
@@ -113,7 +149,7 @@ namespace Kampai.UI.View
 		{
 			if (view.nightToggleText != null)
 			{
-				global::Kampai.Game.DayNightCycleManager manager = global::UnityEngine.Object.FindObjectOfType<global::Kampai.Game.DayNightCycleManager>();
+				DayNightCycleManager manager = Object.FindObjectOfType<DayNightCycleManager>();
 				if (manager != null)
 				{
 					view.nightToggleText.text = "MODE: " + manager.GetCurrentMode().ToString();

@@ -3,7 +3,7 @@ using UnityEditor;
 
 public class FixMissingNormals
 {
-    [MenuItem("Tools/Fix Missing Normals (Run Me!)")]
+    [MenuItem("Kampai/Utilities/Fix Missing Normals")]
     public static void FixNormals()
     {
         int count = 0;

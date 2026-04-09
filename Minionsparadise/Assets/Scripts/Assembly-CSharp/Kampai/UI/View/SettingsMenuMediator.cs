@@ -149,19 +149,30 @@ namespace Kampai.UI.View
 
 		private void Start()
 		{
-			togglePopupSignal.Dispatch(true);
-			logger.Info("discord killswitch : {0}", facebookService.isKillSwitchEnabled);
-			logger.Info("google+ killswitch : {0}", googleService.isKillSwitchEnabled);
-			base.view.facebookButton.gameObject.SetActive(!coppaService.Restricted() && !facebookService.isKillSwitchEnabled);
+			if (togglePopupSignal != null) togglePopupSignal.Dispatch(true);
+			if (logger != null)
+			{
+				if (facebookService != null) logger.Info("facebook killswitch : {0}", facebookService.isKillSwitchEnabled);
+				if (googleService != null) logger.Info("google+ killswitch : {0}", googleService.isKillSwitchEnabled);
+			}
+			if (base.view != null && base.view.facebookButton != null)
+			{
+				base.view.facebookButton.gameObject.SetActive(coppaService != null && facebookService != null && !coppaService.Restricted() && !facebookService.isKillSwitchEnabled);
+			}
 			SetupButtons();
-			showStoreSignal.Dispatch(false);
-			global::Kampai.UI.View.SettingsMenuPanel? settingsMenuPanel = currentPanel;
-			if (!settingsMenuPanel.HasValue || !isTempHidden)
+			if (showStoreSignal != null) showStoreSignal.Dispatch(false);
+			
+			if (currentPanel != null)
+			{
+				ShowPanel(currentPanel.Value);
+			}
+			else if (!isTempHidden)
 			{
 				ShowSettings();
 			}
+			
 			isTempHidden = false;
-			if (playerService.GetHighestFtueCompleted() < 9)
+			if (playerService != null && playerService.GetHighestFtueCompleted() < 9 && questService != null)
 			{
 				questService.PauseQuestScripts();
 			}

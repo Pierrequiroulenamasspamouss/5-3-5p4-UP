@@ -25,8 +25,20 @@ namespace Kampai.UI.View
 
 		private void OnToggleSelected()
 		{
-			playSFXSignal.Dispatch("Play_button_click_01");
-			categorySelectedSignal.Dispatch(view.Definition.ID);
+			if (playSFXSignal != null) playSFXSignal.Dispatch("Play_button_click_01");
+			
+			// Freshly check the view's definition to avoid null-ref if it arrive late
+			if (view != null) 
+			{
+				if (view.Definition != null && categorySelectedSignal != null)
+				{
+					categorySelectedSignal.Dispatch(view.Definition.ID);
+				}
+				else if (view.Definition == null)
+				{
+					global::UnityEngine.Debug.LogWarning("Help Category clicked but Definition is null on " + view.name);
+				}
+			}
 		}
 
 		private void UpdateColor(int origin)
