@@ -40,6 +40,7 @@ namespace Kampai.Util
 		{
 			if (!(view == null) && view.autoRegisterWithContext && !view.registeredWithContext)
 			{
+				// UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: KampaiView.BubbleToContextOnAwake for {0}", view.name));
 				BubbleToContext(view, true, addIfFound, ref currentContext);
 			}
 		}
@@ -94,6 +95,7 @@ namespace Kampai.Util
 		{
 			if (toAdd)
 			{
+				// UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: KampaiView.AttachViewToContext attaching {0} to {1}", view.name, context.GetType().Name));
 				context.AddView(view);
 				currentContext = context;
 				view.registeredWithContext = true;
@@ -130,6 +132,7 @@ namespace Kampai.Util
 			if (s_contextCache.ContainsKey(layer))
 			{
 				currentContext = s_contextCache[layer];
+				// UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: KampaiView.FindViewContext FOUND CACHED context {0} for layer {1}", currentContext.GetType().Name, layer));
 				if (!toAdd || finalTry)
 				{
 					AttachViewToContext(view, currentContext, toAdd, ref currentContext);
@@ -137,9 +140,11 @@ namespace Kampai.Util
 			}
 			else if (!toAdd || finalTry)
 			{
+				// UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: KampaiView.FindViewContext BUBBLING UP from {0} on layer {1}", gameObject.name, layer));
 				int num = BubbleUpToContext(view, toAdd, gameObject, ref currentContext);
 				if (layer != 0 && currentContext != null && !s_contextCache.ContainsKey(layer))
 				{
+					// UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: KampaiView.FindViewContext CACHING context {0} for layer {1}", currentContext.GetType().Name, layer));
 					s_contextCache.Add(layer, currentContext);
 				}
 				if (view.requiresContext && finalTry && num != -1)

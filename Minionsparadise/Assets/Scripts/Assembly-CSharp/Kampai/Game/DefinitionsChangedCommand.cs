@@ -35,8 +35,12 @@ namespace Kampai.Game
 
 		public override void Execute()
 		{
-			configurationsService.GetConfigurations().definitions = localPersistanceService.GetData("DefinitionsUrl");
-			logger.Error("DefinitionsChangedCommand:: Definitions URL: {0}", configurationsService.GetConfigurations().definitions);
+			string defUrl = localPersistanceService.GetData("DefinitionsUrl");
+			if (string.IsNullOrEmpty(defUrl)) {
+				defUrl = "local://Assets/Resources/definitions.json"; // Fallback to avoid error
+			}
+			configurationsService.GetConfigurations().definitions = defUrl;
+			logger.Info("DefinitionsChangedCommand:: Definitions URL: {0}", configurationsService.GetConfigurations().definitions);
 			global::Kampai.Util.TargetPerformance lOD = (global::Kampai.Util.TargetPerformance)(int)global::System.Enum.Parse(typeof(global::Kampai.Util.TargetPerformance), dlcService.GetDownloadQualityLevel().ToUpper());
 			minionBuilder.SetLOD(lOD);
 			int num = -1;
@@ -69,6 +73,7 @@ namespace Kampai.Game
 			{
 				definitionsHotSwapCompleteSignal.Dispatch(base.injectionBinder as global::strange.extensions.injector.api.ICrossContextInjectionBinder);
 			}
+			logger.Info("DefinitionsChangedCommand: Execution complete (HotSwap: {0})", hotSwap);
 		}
 	}
 }

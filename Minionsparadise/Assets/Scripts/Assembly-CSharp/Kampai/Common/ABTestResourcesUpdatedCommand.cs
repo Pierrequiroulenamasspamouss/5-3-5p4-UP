@@ -28,10 +28,15 @@ namespace Kampai.Common
 		{
 			logger.Debug("FetchDefinitionsBasedOnCurrentABTest(): resourcesUpdateSucceed = {0}", resourcesUpdateSucceed);
 			string definitionsToFetchUrl;
-			if (NeedFetchDefinitions(out definitionsToFetchUrl))
+			bool isOffline = configurationsService is global::Kampai.Game.ConfigurationsService && (configurationsService as global::Kampai.Game.ConfigurationsService).userSessionService.IsOffline;
+			
+			if (NeedFetchDefinitions(out definitionsToFetchUrl) || (isOffline && !global::System.IO.File.Exists(FetchDefinitionsCommand.GetDefinitionsPath())))
 			{
 				logger.Debug("FetchDefinitionsBasedOnCurrentABTest(): fetch definitions, definitionsToFetchUrl = {0}", definitionsToFetchUrl);
-				configurationsService.GetConfigurations().definitions = definitionsToFetchUrl;
+				if (configurationsService.GetConfigurations() != null)
+				{
+					configurationsService.GetConfigurations().definitions = definitionsToFetchUrl;
+				}
 				fetchDefinitionsSignal.Dispatch(configurationsService.GetConfigurations());
 			}
 			else

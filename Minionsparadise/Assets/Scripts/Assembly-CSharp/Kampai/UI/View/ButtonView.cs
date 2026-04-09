@@ -13,10 +13,12 @@ namespace Kampai.UI.View
 
 		public virtual void OnClickEvent()
 		{
-			global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: ButtonView.OnClickEvent triggered on {0} (ObjHash: {1}, SignalHash: {2}, InstanceID: {3})", base.gameObject.name, this.GetHashCode(), ClickedSignal.GetHashCode(), base.gameObject.GetInstanceID()));
 			if (PlaySoundOnClick)
 			{
-				playSFXSignal.Dispatch(AudioButtonClick);
+				if (playSFXSignal != null)
+				{
+					playSFXSignal.Dispatch(AudioButtonClick);
+				}
 			}
 			ClickedSignal.Dispatch();
 		}

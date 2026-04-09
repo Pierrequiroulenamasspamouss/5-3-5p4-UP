@@ -141,7 +141,7 @@ namespace Kampai.Util
             switch (level)
             {
                 case global::Kampai.Util.KampaiLogLevel.Info:
-                    //global::UnityEngine.Debug.Log("<color=lightblue>[V2-INFO]</color> " + text);
+                    // global::UnityEngine.Debug.Log("<color=lightblue>[V2-INFO]</color> " + text);
                     Log(global::Elevation.Logging.LogEvent.Info(format, args));
                     break;
                 case global::Kampai.Util.KampaiLogLevel.Debug:
@@ -149,11 +149,11 @@ namespace Kampai.Util
                     Log(global::Elevation.Logging.LogEvent.Debug(format, args));
                     break;
                 case global::Kampai.Util.KampaiLogLevel.Warning:
-                    global::UnityEngine.Debug.LogWarning("<color=yellow>[V2-WARN]</color> " + text);
+                    // global::UnityEngine.Debug.LogWarning("<color=yellow>[V2-WARN]</color> " + text);
                     Log(global::Elevation.Logging.LogEvent.Warn(format, args));
                     break;
                 case global::Kampai.Util.KampaiLogLevel.Error:
-                    global::UnityEngine.Debug.LogError("<color=red>[V2-ERROR]</color> " + text);
+                    // global::UnityEngine.Debug.LogError("<color=red>[V2-ERROR]</color> " + text);
                     Log(global::Elevation.Logging.LogEvent.Error(format, args));
                     break;
                 case global::Kampai.Util.KampaiLogLevel.Verbose:
@@ -161,7 +161,7 @@ namespace Kampai.Util
                     Log(global::Elevation.Logging.LogEvent.Trace(format, args));
                     break;
                 default:
-                    global::UnityEngine.Debug.LogError("<color=red>[V2-UNKNOWN]</color> " + text);
+                    // global::UnityEngine.Debug.LogError("<color=red>[V2-UNKNOWN]</color> " + text);
                     Log(global::Elevation.Logging.LogEvent.Error(format, args));
                     break;
             }

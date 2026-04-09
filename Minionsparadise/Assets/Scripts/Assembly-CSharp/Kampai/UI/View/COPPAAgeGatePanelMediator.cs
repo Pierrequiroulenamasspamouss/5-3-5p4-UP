@@ -51,7 +51,9 @@ namespace Kampai.UI.View
 
 		public override void OnRegister()
 		{
+			global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: COPPAAgeGatePanelMediator.OnRegister - View Hash: {0}", view.GetHashCode()));
 			view.Init(soundFXSignal, timeService);
+			UnityEngine.Debug.Log("ANTIGRAVITY: COPPAAgeGatePanelMediator: Binding listeners to view buttons");
 			view.AcceptButton.ClickedSignal.AddListener(OnAccept);
 			view.TOSButton.ClickedSignal.AddListener(TermsOfServiceClicked);
 			view.EULAButton.ClickedSignal.AddListener(EulaClicked);
@@ -98,6 +100,7 @@ namespace Kampai.UI.View
 
 		private void OnAccept()
 		{
+			UnityEngine.Debug.Log("ANTIGRAVITY: COPPAAgeGatePanelMediator.OnAccept called");
 			global::System.DateTime now = global::System.DateTime.Now;
 			int num = now.Year - (int)view.AgeSlider.value;
 			global::System.DateTime userBirthdate = new global::System.DateTime(num, now.Month, 1);
@@ -108,6 +111,7 @@ namespace Kampai.UI.View
 
 		private void OnDecline()
 		{
+			UnityEngine.Debug.Log("ANTIGRAVITY: COPPAAgeGatePanelMediator.OnDecline called");
 			global::System.DateTime now = global::System.DateTime.Now;
 			global::System.DateTime userBirthdate = new global::System.DateTime(now.Year, now.Month, 1);
 			coppaService.SetUserBirthdate(userBirthdate);

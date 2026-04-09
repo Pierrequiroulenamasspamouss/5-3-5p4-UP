@@ -17,13 +17,17 @@ namespace Kampai.Util
 
 		protected override void addCoreComponents()
 		{
+			UnityEngine.Debug.Log("ANTIGRAVITY: " + GetType().Name + ".addCoreComponents() started");
 			base.addCoreComponents();
+			global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: {0} swapping to SignalCommandBinder", this.GetType().Name));
 			injectionBinder.Unbind<global::strange.extensions.command.api.ICommandBinder>();
 			injectionBinder.Bind<global::strange.extensions.command.api.ICommandBinder>().To<global::strange.extensions.command.impl.SignalCommandBinder>().ToSingleton();
+			UnityEngine.Debug.Log("ANTIGRAVITY: " + GetType().Name + ".addCoreComponents() finished");
 		}
 
 		public override void Launch()
 		{
+			global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: {0} Launching...", this.GetType().Name));
 			base.Launch();
 			if (global::strange.extensions.context.impl.Context.firstContext == this)
 			{
@@ -36,6 +40,7 @@ namespace Kampai.Util
 
 		protected override void mapBindings()
 		{
+			UnityEngine.Debug.Log("ANTIGRAVITY: " + GetType().Name + ".mapBindings() started");
 			base.mapBindings();
 			if (global::strange.extensions.context.impl.Context.firstContext == this)
 			{
@@ -251,6 +256,7 @@ namespace Kampai.Util
 				injectionBinder.Bind<global::Kampai.Game.DeselectBuildingSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Common.ZoomPercentageSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Common.RequestZoomPercentageSignal>().ToSingleton().CrossContext();
+
 				injectionBinder.Bind<global::Kampai.UI.View.SpawnDooberSignal>().ToSingleton().CrossContext()
 					.Weak();
 				injectionBinder.Bind<global::Kampai.UI.View.SpawnMignetteDooberSignal>().ToSingleton().CrossContext()
@@ -507,6 +513,11 @@ namespace Kampai.Util
 				base.commandBinder.Bind<global::Kampai.Splash.DownloadDLCPartSignal>().To<global::Kampai.Splash.DownloadDLCPartCommand>();
 				base.mediationBinder.Bind<AppTrackerView>().To<global::Kampai.Main.View.AppTrackerMediator>();
 				base.mediationBinder.Bind<global::Kampai.UI.View.OfflineView>().To<global::Kampai.UI.View.OfflineMediator>();
+				base.mediationBinder.Bind<global::Kampai.UI.View.COPPAAgeGatePanelView>().To<global::Kampai.UI.View.COPPAAgeGatePanelMediator>();
+				base.mediationBinder.Bind<global::Kampai.UI.View.MoveBuildingMenuView>().To<global::Kampai.UI.View.MoveBuildingMenuMediator>();
+				base.mediationBinder.Bind<global::Kampai.UI.View.TownHallDialogView>().To<global::Kampai.UI.View.TownHallDialogMediator>();
+				injectionBinder.Bind<global::Kampai.Game.UserAgeForCOPPAReceivedSignal>().ToSingleton().CrossContext();
+				base.commandBinder.Bind<global::Kampai.Game.UserAgeForCOPPAReceivedSignal>().To<global::Kampai.Game.UserAgeForCOPPAReceivedCommand>();
 			}
 			MapBindings();
 		}
