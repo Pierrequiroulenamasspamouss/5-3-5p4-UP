@@ -48,6 +48,7 @@ namespace Kampai.UI.View
 
 			BindButton(view.languageButton);
 			BindButton(view.nightToggleButton);
+			BindButton(view.offlineToggleButton);
 
 			if (view.languageButton != null)
 			{
@@ -58,9 +59,15 @@ namespace Kampai.UI.View
 			{
 				view.nightToggleButton.ClickedSignal.AddListener(OnNightToggleClicked);
 			}
+			
+			if (view.offlineToggleButton != null)
+			{
+				view.offlineToggleButton.ClickedSignal.AddListener(OnOfflineToggleClicked);
+			}
 
 			UpdateLanguageText();
 			UpdateNightToggleText();
+			UpdateOfflineToggleText();
 		}
 
 		private void BindButton(ButtonView bv)
@@ -89,6 +96,11 @@ namespace Kampai.UI.View
 			if (view.nightToggleButton != null)
 			{
 				view.nightToggleButton.ClickedSignal.RemoveListener(OnNightToggleClicked);
+			}
+			
+			if (view.offlineToggleButton != null)
+			{
+				view.offlineToggleButton.ClickedSignal.RemoveListener(OnOfflineToggleClicked);
 			}
 		}
 
@@ -158,6 +170,25 @@ namespace Kampai.UI.View
 				{
 					view.nightToggleText.text = "NIGHT: NO MGR";
 				}
+			}
+		}
+
+		private void OnOfflineToggleClicked()
+		{
+			DevicePrefs devicePrefs = prefs.GetDevicePrefs();
+			devicePrefs.OfflineMode_Pref = !devicePrefs.OfflineMode_Pref;
+			saveDevicePrefsSignal.Dispatch();
+			UpdateOfflineToggleText();
+			soundFXSignal.Dispatch("Play_minion_confirm_select_03");
+			Debug.Log(string.Format("[ModsMediator] Offline Preference toggled to: {0}", devicePrefs.OfflineMode_Pref));
+		}
+
+		private void UpdateOfflineToggleText()
+		{
+			if (view.offlineToggleText != null)
+			{
+				bool offlinePref = prefs.GetDevicePrefs().OfflineMode_Pref;
+				view.offlineToggleText.text = "OFFLINE: " + (offlinePref ? "ON" : "OFF");
 			}
 		}
 	}

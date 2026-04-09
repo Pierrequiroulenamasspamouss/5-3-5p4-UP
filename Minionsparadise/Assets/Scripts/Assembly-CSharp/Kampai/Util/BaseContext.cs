@@ -469,6 +469,7 @@ namespace Kampai.Util
 				injectionBinder.Bind<global::Kampai.Game.NetworkLostCloseSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.UI.View.UIAddedSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.UI.View.UIRemovedSignal>().ToSingleton().CrossContext();
+				injectionBinder.Bind<global::Kampai.UI.View.TransitionToOfflineModeSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Game.ToggleHitboxSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Game.CameraModel>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Game.StageService>().ToSingleton().CrossContext();
@@ -497,6 +498,7 @@ namespace Kampai.Util
 				base.commandBinder.Bind<global::Kampai.Common.NetworkConnectionLostSignal>().To<global::Kampai.Common.NetworkConnectionLostCommand>();
 				base.commandBinder.Bind<global::Kampai.Common.ResumeNetworkOperationSignal>().To<global::Kampai.Common.ResumeNetworkOperationCommand>();
 				base.commandBinder.Bind<global::Kampai.UI.View.ShowOfflinePopupSignal>().To<global::Kampai.UI.Controller.ShowOfflinePopupCommand>();
+				base.commandBinder.Bind<global::Kampai.UI.View.TransitionToOfflineModeSignal>().To<global::Kampai.UI.Controller.TransitionToOfflineModeCommand>();
 				base.commandBinder.Bind<global::Kampai.UI.View.SetupCanvasSignal>().To<global::Kampai.UI.View.SetupCanvasCommand>();
 				base.commandBinder.Bind<global::Kampai.UI.View.UIAddedSignal>().To<global::Kampai.UI.View.UIAddedCommand>();
 				base.commandBinder.Bind<global::Kampai.UI.View.UIRemovedSignal>().To<global::Kampai.UI.View.UIRemovedCommand>();

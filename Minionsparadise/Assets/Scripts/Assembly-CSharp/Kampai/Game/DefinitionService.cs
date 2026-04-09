@@ -195,6 +195,7 @@ namespace Kampai.Game
 			triggerRewardsDefinitions = GetTriggerRewardDefinitions(definitions);
 			triggerDefinitions = GetTriggerDefinitions(definitions);
 			currencyStoreCategoryDefinitions = GetCurrencyStoreCategoryDefinitions(definitions);
+			logger.Info(string.Format("ANTIGRAVITY: DefinitionService loaded {0} definitions from {1}", (AllDefinitions != null) ? AllDefinitions.Count : 0, callerTag));
 		}
 
 		public void DeserializeEnvironmentDefinition(global::System.IO.TextReader textReader)

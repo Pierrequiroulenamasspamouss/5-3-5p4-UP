@@ -93,11 +93,11 @@ namespace Kampai.Main
 			int quantity2 = (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_GATE_ID);
 			dlcService.SetPlayerDLCTier(quantity);
 			global::Kampai.Util.TimeProfiler.StartSection("loading scenes");
-			logger.Info("MainCompleteCommand: Dispatching loadDevicePrefsSignal...");
+			// logger.Info("MainCompleteCommand: Dispatching loadDevicePrefsSignal...");
 			loadDevicePrefsSignal.Dispatch();
-			logger.Info("MainCompleteCommand: Dispatching loadAudioSignal...");
+			// logger.Info("MainCompleteCommand: Dispatching loadAudioSignal...");
 			loadAudioSignal.Dispatch();
-			logger.Info("MainCompleteCommand: Starting PostExternalScenes coroutine...");
+			// logger.Info("MainCompleteCommand: Starting PostExternalScenes coroutine...");
 			routineRunner.StartCoroutine(PostExternalScenes());
 
 			hindsightService.Initialize();

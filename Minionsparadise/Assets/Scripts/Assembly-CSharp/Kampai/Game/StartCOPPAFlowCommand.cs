@@ -17,12 +17,12 @@ namespace Kampai.Game
         public override void Execute()
         {
             // LOG : On vérifie que la commande de départ est bien lancée
-            global::UnityEngine.Debug.Log("<color=cyan>[COPPA TRACE]</color> StartCOPPAFlowCommand a démarré.");
+            // global::UnityEngine.Debug.Log("<color=cyan>[COPPA TRACE]</color> StartCOPPAFlowCommand a démarré.");
 
             if (!coppaService.IsBirthdateKnown())
             {
                 // LOG : Le jeu ne connait pas l'âge, il va ouvrir le panel UI
-                global::UnityEngine.Debug.Log("<color=yellow>[COPPA TRACE]</color> Âge inconnu : Ouverture du panel COPPA_Age_Gate_Panel.");
+                // global::UnityEngine.Debug.Log("<color=yellow>[COPPA TRACE]</color> Âge inconnu : Ouverture du panel COPPA_Age_Gate_Panel.");
 
                 global::Kampai.UI.View.IGUICommand iGUICommand = guiService.BuildCommand(global::Kampai.UI.View.GUIOperation.Load, "COPPA_Age_Gate_Panel");
                 iGUICommand.skrimScreen = "CoppaAgeGate";
@@ -33,17 +33,17 @@ namespace Kampai.Game
             else
             {
                 // LOG : L'âge est déjà connu, on saute l'UI
-                global::UnityEngine.Debug.Log("<color=green>[COPPA TRACE]</color> Âge déjà connu : On lance la coroutine CompleteCoppa directement.");
+                // global::UnityEngine.Debug.Log("<color=green>[COPPA TRACE]</color> Âge déjà connu : On lance la coroutine CompleteCoppa directement.");
                 routineRunner.StartCoroutine(CompleteCoppa());
             }
         }
 
         private global::System.Collections.IEnumerator CompleteCoppa()
         {
-            global::UnityEngine.Debug.Log("<color=cyan>[COPPA TRACE]</color> Attente de 2 secondes...");
+            // global::UnityEngine.Debug.Log("<color=cyan>[COPPA TRACE]</color> Attente de 2 secondes...");
             yield return new global::UnityEngine.WaitForSeconds(2f);
 
-            global::UnityEngine.Debug.Log("<color=green>[COPPA TRACE]</color> DISPATCH de coppaCompletedSignal (depuis StartCOPPAFlow) !");
+            // global::UnityEngine.Debug.Log("<color=green>[COPPA TRACE]</color> DISPATCH de coppaCompletedSignal (depuis StartCOPPAFlow) !");
             coppaCompletedSignal.Dispatch();
         }
     }

@@ -24,6 +24,12 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 	[Inject]
 	public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequestFactory requestFactory { get; set; }
 
+	[Inject]
+	public global::Kampai.Game.IUserSessionService userSessionService { get; set; }
+
+	[Inject]
+	public IResourceService resourceService { get; set; }
+
 	public override void Execute()
 	{
 		logger.EventStart("FetchDefinitionsCommand.Execute");
@@ -32,6 +38,40 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 			config.definitions = global::Kampai.Util.ABTestModel.definitionURL;
 		}
 		definitionPath = GetDefinitionsPath();
+
+		if (userSessionService.IsOffline)
+		{
+			logger.Info("[OfflineMode] Authoritative definitions check starting...");
+			string text = resourceService.LoadText("definitions");
+			if (!string.IsNullOrEmpty(text))
+			{
+				logger.Info("[OfflineMode] Authoritative definitions.json loaded from resources (Length: " + text.Length + ")");
+				try
+				{
+					global::System.IO.File.WriteAllText(definitionPath, text);
+					logger.Info("[OfflineMode] Successfully updated local cache at " + definitionPath);
+				}
+				catch (global::System.Exception ex)
+				{
+					logger.Error("[OfflineMode] Failed to update local cache: " + ex.Message);
+				}
+			}
+			else if (!global::System.IO.File.Exists(definitionPath))
+			{
+				logger.Fatal(global::Kampai.Util.FatalCode.GS_ERROR_FETCH_DEFINITIONS, "[OfflineMode] No definitions found in resources or cache!");
+			}
+			else
+			{
+				logger.Warning("[OfflineMode] Resources version missing, falling back to cache at " + definitionPath);
+			}
+
+			definitionsFetchedSignal.Dispatch();
+			LoadDefinitionsCommand.LoadDefinitionsData loadDefinitionsData = new LoadDefinitionsCommand.LoadDefinitionsData();
+			loadDefinitionsData.Path = definitionPath;
+			loadDefinitionsSignal.Dispatch(false, loadDefinitionsData);
+			return;
+		}
+
 		downloadResponseSignal.AddListener(DownloadResponseHandler);
 		logger.Error("FetchDefinitionsCommand:: Definitions URL: {0}", config.definitions);
 		downloadService.Perform(requestFactory.Resource(config.definitions).WithOutputFile(definitionPath).WithGZip(true)

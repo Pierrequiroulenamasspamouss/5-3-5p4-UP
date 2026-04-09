@@ -51,9 +51,9 @@ namespace Kampai.Main
 
 		public override void Execute()
 		{
-			logger.Info("PostDownloadManifestCommand: DLC bypass flow triggered.");
+			// logger.Info("PostDownloadManifestCommand: DLC bypass flow triggered.");
 			
-			logger.Info("PostDownloadManifestCommand: Dispatching setupManifestSignal...");
+			// logger.Info("PostDownloadManifestCommand: Dispatching setupManifestSignal...");
 			setupManifestSignal.Dispatch();
 			
 			logger.Info("PostDownloadManifestCommand: Preloading all assets...");
@@ -62,7 +62,7 @@ namespace Kampai.Main
 			logger.Info("PostDownloadManifestCommand: Dispatching loginSignal...");
 			loginSignal.Dispatch();
 			
-			logger.Info("PostDownloadManifestCommand: Flow complete.");
+			// logger.Info("PostDownloadManifestCommand: Flow complete.");
 		}
 	}
 }

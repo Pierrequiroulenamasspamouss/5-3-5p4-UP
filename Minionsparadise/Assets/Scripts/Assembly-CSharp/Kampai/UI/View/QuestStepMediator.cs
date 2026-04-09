@@ -138,18 +138,17 @@ namespace Kampai.UI.View
 
 		private bool QuestControllerValidating()
 		{
-			global::Kampai.Game.IQuestController obj = this.questController ?? questService.GetQuestControllerByInstanceID(view.questInstanceID);
-			global::Kampai.Game.IQuestController questController = obj;
-			this.questController = obj;
-			if (questController == null)
+			global::Kampai.Game.IQuestController qc = questService.GetQuestControllerByInstanceID(view.questInstanceID);
+			if (qc == null)
 			{
-				logger.Error("Quest Controller Doesn't exist for instance {0}", view.questInstanceID);
+				logger.Error("ANTIGRAVITY: Quest Controller Doesn't exist for instance {0}", view.questInstanceID);
 				return false;
 			}
-			questStepController = questStepController ?? this.questController.GetStepController(view.stepNumber);
-			if (questStepController == null)
+			this.questController = qc;
+			this.questStepController = qc.GetStepController(view.stepNumber);
+			if (this.questStepController == null)
 			{
-				logger.Error("Step Controller Doesn't Exist For Quest {0} Index {1}", this.questController.ID, view.stepNumber);
+				logger.Error("ANTIGRAVITY: Step Controller Doesn't Exist For Quest {0} Index {1}", qc.ID, view.stepNumber);
 				return false;
 			}
 			return true;

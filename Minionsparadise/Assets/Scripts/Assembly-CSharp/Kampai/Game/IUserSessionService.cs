@@ -3,6 +3,8 @@ namespace Kampai.Game
 	public interface IUserSessionService
 	{
 		global::Kampai.Game.UserSession UserSession { get; set; }
+		
+		bool IsOffline { get; set; }
 
 		void LoginRequestCallback(global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse response);
 
@@ -13,5 +15,7 @@ namespace Kampai.Game
 		void OpenURL(string url);
 
 		void setLoginCallback(global::strange.extensions.signal.impl.Signal a);
+		
+		void OfflineLogin();
 	}
 }

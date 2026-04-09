@@ -9,5 +9,9 @@ namespace Kampai.UI.View
 		public global::Kampai.UI.View.ButtonView nightToggleButton;
 
 		public global::UnityEngine.UI.Text nightToggleText;
+
+		public global::Kampai.UI.View.ButtonView offlineToggleButton;
+
+		public global::UnityEngine.UI.Text offlineToggleText;
 	}
 }

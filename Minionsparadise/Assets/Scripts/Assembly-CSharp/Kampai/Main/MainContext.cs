@@ -98,6 +98,7 @@ namespace Kampai.Main
 				.Weak();
 			injectionBinder.Bind<global::Kampai.Game.SocialInitSuccessSignal>().ToSingleton().CrossContext()
 				.Weak();
+			injectionBinder.Bind<global::Kampai.UI.View.ShowMockStoreDialogSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.Game.GooglePlayServerAuthCodeReceivedSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.Game.SocialInitFailureSignal>().ToSingleton().CrossContext()
 				.Weak();
