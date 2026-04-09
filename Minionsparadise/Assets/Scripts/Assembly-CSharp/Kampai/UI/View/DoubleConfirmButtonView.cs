@@ -29,12 +29,14 @@ namespace Kampai.UI.View
 
 		public override void OnClickEvent()
 		{
+			global::UnityEngine.Debug.Log("ANTIGRAVITY: DoubleConfirmButtonView.OnClickEvent triggered on " + base.gameObject.name + " | isInConfirmState: " + isInConfirmState);
 			if (PlaySoundOnClick)
 			{
 				base.playSFXSignal.Dispatch("Play_button_click_01");
 			}
 			updateTapCount();
 			bool flag = isDoubleConfirmed();
+			global::UnityEngine.Debug.Log("ANTIGRAVITY: isDoubleConfirmed: " + flag + " | tapCount: " + tapCount);
 			if (!flag)
 			{
 				ShowConfirmMessage();
@@ -43,6 +45,7 @@ namespace Kampai.UI.View
 					return;
 				}
 			}
+			global::UnityEngine.Debug.Log("ANTIGRAVITY: DoubleConfirmButtonView dispatching ClickedSignal");
 			ClickedSignal.Dispatch();
 			if (flag)
 			{
