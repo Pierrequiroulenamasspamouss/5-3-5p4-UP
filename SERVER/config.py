@@ -26,6 +26,7 @@ class Config:
     DEFINITIONS_PATH = os.getenv("DEFINITIONS_PATH", str(BASE_DIR / "definitions.json"))
     PLAYER_DATA_DIR = os.getenv("PLAYER_DATA_DIR", str(BASE_DIR / "player_data"))
     NOPROMOUSERS_PATH = os.getenv("NOPROMOUSERS_PATH", str(BASE_DIR / "nopromousers.txt"))
+    MARKET_PRICES_PATH = os.getenv("MARKET_PRICES_PATH", str(BASE_DIR / "market_prices.json"))
     
     # URL configurations
     BASE_URL = os.getenv("BASE_URL", f"http://localhost:{PORT_MAIN}")

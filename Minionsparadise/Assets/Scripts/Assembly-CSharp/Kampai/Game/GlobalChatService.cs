@@ -55,11 +55,30 @@ namespace Kampai.Game
 			return m_cachedMessages;
 		}
 
+		private string GetUrl()
+		{
+			string baseUrl = GameConstants.Server.SERVER_URL;
+			if (string.IsNullOrEmpty(baseUrl)) 
+			{
+				Debug.LogWarning("[GlobalChat] SERVER_URL is empty!");
+				return string.Empty;
+			}
+			
+			string url = baseUrl;
+			if (!url.StartsWith("http"))
+			{
+				url = "http://" + url;
+			}
+			return url.TrimEnd('/') + "/chat";
+		}
+
 		private IEnumerator PollCoroutine()
 		{
 			while (true)
 			{
-				string url = "http://" + GameConstants.Server.SERVER_URL + "/chat";
+				string url = GetUrl();
+				if (string.IsNullOrEmpty(url)) yield break;
+
 				WWW www = new WWW(url);
 				yield return www;
 
@@ -90,7 +109,9 @@ namespace Kampai.Game
 
 		private IEnumerator SendCoroutine(string text)
 		{
-			string url = "http://" + GameConstants.Server.SERVER_URL + "/chat";
+			string url = GetUrl();
+			if (string.IsNullOrEmpty(url)) yield break;
+
 			string playerName = "Minion " + (playerService != null ? playerService.ID.ToString() : "0");
 			
 			if (PlayerPrefs.HasKey("PlayerName"))
@@ -117,7 +138,9 @@ namespace Kampai.Game
 
 		private IEnumerator FetchOnceCoroutine()
 		{
-			string url = "http://" + GameConstants.Server.SERVER_URL + "/chat";
+			string url = GetUrl();
+			if (string.IsNullOrEmpty(url)) yield break;
+
 			WWW www = new WWW(url);
 			yield return www;
 
