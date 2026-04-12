@@ -24,7 +24,9 @@ namespace Kampai.Game
 
 		private List<ChatMessage> m_cachedMessages = new List<ChatMessage>();
 		private IEnumerator m_pollingEnumerator;
-		private float m_pollInterval = 5f;
+		private float m_pollInterval = 2.5f;
+		private string m_lastTimestamp = string.Empty;
+		private bool m_isFirstPoll = true;
 
 		public void StartPolling()
 		{
@@ -47,6 +49,7 @@ namespace Kampai.Game
 		public void SendMessage(string text)
 		{
 			if (string.IsNullOrEmpty(text)) return;
+			Debug.Log("[GlobalChat] Sending message: " + text);
 			routineRunner.StartCoroutine(SendCoroutine(text));
 		}
 
@@ -69,7 +72,14 @@ namespace Kampai.Game
 			{
 				url = "http://" + url;
 			}
-			return url.TrimEnd('/') + "/chat";
+			url = url.TrimEnd('/') + "/chat";
+			
+			if (!string.IsNullOrEmpty(m_lastTimestamp))
+			{
+				url += (url.Contains("?") ? "&" : "?") + "since=" + WWW.EscapeURL(m_lastTimestamp);
+			}
+			
+			return url;
 		}
 
 		private IEnumerator PollCoroutine()
@@ -89,7 +99,23 @@ namespace Kampai.Game
 						ChatResponse response = JsonConvert.DeserializeObject<ChatResponse>(www.text);
 						if (response != null && response.messages != null)
 						{
-							m_cachedMessages = response.messages;
+							if (m_isFirstPoll)
+							{
+								m_cachedMessages = response.messages;
+								m_isFirstPoll = false;
+								Debug.Log(string.Format("[GlobalChat] Initialized with {0} messages.", m_cachedMessages.Count));
+							}
+							else if (response.messages.Count > 0)
+							{
+								Debug.Log(string.Format("[GlobalChat] Received {0} new messages.", response.messages.Count));
+								m_cachedMessages.AddRange(response.messages);
+							}
+
+							if (m_cachedMessages.Count > 0)
+							{
+								m_lastTimestamp = m_cachedMessages[m_cachedMessages.Count - 1].timestamp;
+							}
+
 							if (m_cachedMessages.Count > 100)
 							{
 								m_cachedMessages.RemoveRange(0, m_cachedMessages.Count - 100);
@@ -111,6 +137,9 @@ namespace Kampai.Game
 		{
 			string url = GetUrl();
 			if (string.IsNullOrEmpty(url)) yield break;
+			
+			// For POST sending, we remove any polling parameters
+			if (url.Contains("?")) url = url.Split('?') [0];
 
 			string playerName = "Minion " + (playerService != null ? playerService.ID.ToString() : "0");
 			

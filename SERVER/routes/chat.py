@@ -37,7 +37,8 @@ def global_chat():
     # GET logic (Polling)
     try:
         limit = request.args.get('limit', default=100, type=int)
-        raw_messages = get_chat_messages(limit)
+        since = request.args.get('since') # e.g. 2026-04-12 15:48:21
+        raw_messages = get_chat_messages(limit, since)
         
         # Map DB keys to Unity ChatMessage keys (user, text)
         formatted_messages = []

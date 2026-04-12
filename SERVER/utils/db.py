@@ -636,16 +636,30 @@ def add_chat_message(user_id, message):
     conn.commit()
     conn.close()
 
-def get_chat_messages(limit=50):
+def get_chat_messages(limit=50, since=None):
     """Returns the latest messages from the global chat."""
     conn = get_db_connection()
-    rows = conn.execute('''
-        SELECT c.user_id, c.message, c.timestamp, p.name as username, p.discord_avatar
-        FROM global_chat c
-        LEFT JOIN players p ON c.user_id = p.uid
-        ORDER BY c.timestamp DESC
-        LIMIT ?
-    ''', (limit,)).fetchall()
+    if since:
+        query = '''
+            SELECT c.user_id, c.message, c.timestamp, p.name as username, p.discord_avatar
+            FROM global_chat c
+            LEFT JOIN players p ON c.user_id = p.uid
+            WHERE c.timestamp > ?
+            ORDER BY c.timestamp DESC
+            LIMIT ?
+        '''
+        params = (since, limit)
+    else:
+        query = '''
+            SELECT c.user_id, c.message, c.timestamp, p.name as username, p.discord_avatar
+            FROM global_chat c
+            LEFT JOIN players p ON c.user_id = p.uid
+            ORDER BY c.timestamp DESC
+            LIMIT ?
+        '''
+        params = (limit,)
+    
+    rows = conn.execute(query, params).fetchall()
     conn.close()
     
     messages = []
