@@ -187,8 +187,17 @@ namespace Kampai.UI.View
 		private void SetupButtons()
 		{
 			UpdateLoginButtonText();
-			base.view.googleButton.gameObject.SetActive(true);
-			base.view.achievementButton.gameObject.SetActive(true);
+			if (base.view != null)
+			{
+				if (base.view.googleButton != null)
+				{
+					base.view.googleButton.gameObject.SetActive(true);
+				}
+				if (base.view.achievementButton != null)
+				{
+					base.view.achievementButton.gameObject.SetActive(true);
+				}
+			}
 		}
 
 		protected override void OnDisable()
@@ -275,8 +284,18 @@ namespace Kampai.UI.View
 
 		private void UpdateLoginButtonText()
 		{
-			base.view.facebookButtonText.text = localService.GetString((!facebookService.isLoggedIn) ? "facebooklogin" : "facebooklogout");
-			base.view.googleButtonText.text = localService.GetString((coppaService.Restricted() || !googleService.isLoggedIn) ? "googleplaylogin" : "googleplaylogout");
+			if (base.view == null || localService == null)
+			{
+				return;
+			}
+			if (base.view.facebookButtonText != null && facebookService != null)
+			{
+				base.view.facebookButtonText.text = localService.GetString((!facebookService.isLoggedIn) ? "facebooklogin" : "facebooklogout");
+			}
+			if (base.view.googleButtonText != null && googleService != null && coppaService != null)
+			{
+				base.view.googleButtonText.text = localService.GetString((coppaService.Restricted() || !googleService.isLoggedIn) ? "googleplaylogin" : "googleplaylogout");
+			}
 		}
 
 		private void FacebookButton()
