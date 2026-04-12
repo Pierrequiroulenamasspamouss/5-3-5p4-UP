@@ -48,7 +48,6 @@ namespace Kampai.Util
                 }
 
                 File.WriteAllText(path, data);
-                Debug.Log("[OfflineMode] Successfully saved to " + path);
             }
             catch (Exception e)
             {
@@ -92,7 +91,6 @@ namespace Kampai.Util
                 long serverTime = GetLastPlayedTime(serverData);
                 long localTime = GetLastPlayedTime(localData);
 
-                Debug.Log(string.Format("[OfflineMode] Comparing saves: Server={0}, Local={1}", serverTime, localTime));
                 return (localTime > serverTime) ? localData : serverData;
             }
             catch (Exception e)

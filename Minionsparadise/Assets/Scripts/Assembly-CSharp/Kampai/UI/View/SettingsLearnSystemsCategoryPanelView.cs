@@ -13,7 +13,6 @@ namespace Kampai.UI.View
 			global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>("cmp_SettingsPlayerTrainingCategory"));
 			gameObject.transform.SetParent(CategoryParent, false);
 			global::Kampai.UI.View.SettingsLearnSystemsCategoryView[] components = gameObject.GetComponentsInChildren<global::Kampai.UI.View.SettingsLearnSystemsCategoryView>(true);
-			// global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: AddCategory - GameObject: {0}, Components in hierarchy: {1}", gameObject.name, components.Length));
 			
 			foreach (global::Kampai.UI.View.SettingsLearnSystemsCategoryView comp in components)
 			{

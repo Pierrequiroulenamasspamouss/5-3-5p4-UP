@@ -17,17 +17,13 @@ namespace Kampai.Util
 
 		protected override void addCoreComponents()
 		{
-			UnityEngine.Debug.Log("ANTIGRAVITY: " + GetType().Name + ".addCoreComponents() started");
 			base.addCoreComponents();
-			global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: {0} swapping to SignalCommandBinder", this.GetType().Name));
 			injectionBinder.Unbind<global::strange.extensions.command.api.ICommandBinder>();
 			injectionBinder.Bind<global::strange.extensions.command.api.ICommandBinder>().To<global::strange.extensions.command.impl.SignalCommandBinder>().ToSingleton();
-			UnityEngine.Debug.Log("ANTIGRAVITY: " + GetType().Name + ".addCoreComponents() finished");
 		}
 
 		public override void Launch()
 		{
-			global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: {0} Launching...", this.GetType().Name));
 			base.Launch();
 			if (global::strange.extensions.context.impl.Context.firstContext == this)
 			{
@@ -40,7 +36,6 @@ namespace Kampai.Util
 
 		protected override void mapBindings()
 		{
-			UnityEngine.Debug.Log("ANTIGRAVITY: " + GetType().Name + ".mapBindings() started");
 			base.mapBindings();
 			if (global::strange.extensions.context.impl.Context.firstContext == this)
 			{

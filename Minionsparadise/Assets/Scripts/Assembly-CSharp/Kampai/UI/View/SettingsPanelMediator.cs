@@ -117,7 +117,6 @@ namespace Kampai.UI.View
 			}
 			view.notificationsText.text = localService.GetString("NotificationsLabel");
 			doubleConfirmToggle = view.doubleConfirmButton.GetComponent<global::UnityEngine.UI.Toggle>();
-			// global::UnityEngine.Debug.Log("ANTIGRAVITY: Init() - doubleConfirmToggle found: " + (doubleConfirmToggle != null));
 			if (localPersistService.HasKeyPlayer("DoublePurchaseConfirm"))
 			{
 				doubleConfirmToggle.isOn = localPersistService.GetDataIntPlayer("DoublePurchaseConfirm") != 0;
@@ -167,12 +166,10 @@ namespace Kampai.UI.View
 
 		private void OnDoubleConfirmClicked()
 		{
-			// global::UnityEngine.Debug.Log("ANTIGRAVITY: OnDoubleConfirmClicked triggered in Mediator");
 			if (doubleConfirmToggle != null)
 			{
 				bool isCurrentlyOn = localPersistService.GetDataIntPlayer("DoublePurchaseConfirm") != 0;
 				bool nextState = !isCurrentlyOn;
-				// global::UnityEngine.Debug.Log("ANTIGRAVITY: Toggling state. Was: " + isCurrentlyOn + " -> Now: " + nextState);
 				localPersistService.PutDataIntPlayer("DoublePurchaseConfirm", nextState ? 1 : 0);
 				
 				doubleConfirmToggle.isOn = nextState;
@@ -182,7 +179,6 @@ namespace Kampai.UI.View
 			}
 			else
 			{
-				// global::UnityEngine.Debug.LogError("ANTIGRAVITY: doubleConfirmToggle is NULL in Mediator!");
 			}
 		}
 

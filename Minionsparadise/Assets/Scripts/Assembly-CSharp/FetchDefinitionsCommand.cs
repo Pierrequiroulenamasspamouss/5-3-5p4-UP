@@ -41,10 +41,8 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 
 		if (userSessionService.IsOffline)
 		{
-			logger.Info("[OfflineMode] FetchDefinitionsCommand skipping download in offline mode.");
 			if (!global::System.IO.File.Exists(definitionPath))
 			{
-				logger.Info("[OfflineMode] Cached definitions not found at {0}, checking resources...", definitionPath);
 				
 				string text = resourceService.LoadText("definitions_server");
 				if (string.IsNullOrEmpty(text)) text = resourceService.LoadText("definitions_server.json");
@@ -57,7 +55,6 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 
 				if (!string.IsNullOrEmpty(text))
 				{
-					logger.Info("[OfflineMode] Successfully loaded definitions from resources, writing to {0}", definitionPath);
 					string directoryName = global::System.IO.Path.GetDirectoryName(definitionPath);
 					if (!global::System.IO.Directory.Exists(directoryName))
 					{
@@ -72,7 +69,6 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 			}
 			else
 			{
-				logger.Info("[OfflineMode] Found cached definitions at {0}", definitionPath);
 			}
 			definitionsFetchedSignal.Dispatch();
 			LoadDefinitionsCommand.LoadDefinitionsData loadDefinitionsData = new LoadDefinitionsCommand.LoadDefinitionsData();

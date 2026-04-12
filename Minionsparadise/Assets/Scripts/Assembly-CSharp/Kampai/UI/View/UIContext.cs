@@ -13,8 +13,6 @@ namespace Kampai.UI.View
 
 		protected override void MapBindings()
 		{
-			UnityEngine.Debug.Log("ANTIGRAVITY: UIContext.MapBindings() TRACE 2");
-			UnityEngine.Debug.Log("ANTIGRAVITY: UIContext.MapBindings() started");
 			injectionBinder.Bind<global::strange.extensions.context.api.ICrossContextCapable>().ToValue(this).ToName(global::Kampai.UI.View.UIElement.CONTEXT)
 				.CrossContext();
 			if (global::strange.extensions.context.impl.Context.firstContext == this)
@@ -485,7 +483,6 @@ namespace Kampai.UI.View
 			base.commandBinder.Bind<global::Kampai.UI.View.CreateSkrimSignal>().To<global::Kampai.UI.View.CreateSkrimCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowPetsXPromoSignal>().To<global::Kampai.UI.ShowPetsXPromoCommand>();
 			base.commandBinder.Bind<global::Kampai.UI.View.ShowAchievementModalSignal>().To<global::Kampai.UI.View.ShowAchievementModalCommand>();
-			UnityEngine.Debug.Log("ANTIGRAVITY: UIContext.MapBindings() finished");
 		}
 
 
