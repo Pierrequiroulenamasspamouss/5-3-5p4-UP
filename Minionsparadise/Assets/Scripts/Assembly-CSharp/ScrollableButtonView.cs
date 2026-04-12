@@ -93,13 +93,11 @@ public class ScrollableButtonView : global::Kampai.Util.KampaiView, global::Unit
 			}
 			else
 			{
-				// global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: ScrollableButtonView - Click rejected as drag. Offset: {0}, Max: {1}", currentOffset, MaxClickOffset));
 				ResetAnim();
 			}
 		}
 		else
 		{
-			// global::UnityEngine.Debug.Log("ANTIGRAVITY: ScrollableButtonView - Click rejected: not interactable");
 		}
 		
 		if (component != null)

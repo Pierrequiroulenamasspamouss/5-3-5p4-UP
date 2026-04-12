@@ -13,7 +13,6 @@ namespace Kampai.UI.View
 		public void Init(global::Kampai.Game.PlayerTrainingCategoryDefinition definition, global::Kampai.Main.ILocalizationService localizationService, bool selected)
 		{
 			Definition = definition;
-			// global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: SettingsLearnSystemsCategoryView.Init - View: {0}, ID: {1}, Definition: {2}", name, GetInstanceID(), (definition != null) ? definition.categoryTitleLocalizedKey : "NULL"));
 			Title.text = localizationService.GetString(definition.categoryTitleLocalizedKey);
 			if (selected)
 			{

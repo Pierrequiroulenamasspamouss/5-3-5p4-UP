@@ -98,7 +98,6 @@ namespace Kampai.Main
 			// logger.Info("MainCompleteCommand: Dispatching loadAudioSignal...");
 			loadAudioSignal.Dispatch();
 			// logger.Info("MainCompleteCommand: Starting PostExternalScenes coroutine...");
-			// logger.Info("ANTIGRAVITY: MainCompleteCommand.Execute() started");
 			routineRunner.StartCoroutine(PostExternalScenes());
 
 			hindsightService.Initialize();
@@ -114,17 +113,14 @@ namespace Kampai.Main
 			{
 				yield return null;
 			}
-			// logger.Debug("ANTIGRAVITY: MainCompleteCommand.PostExternalScenes: Waiting for running tasks finished.");
 			logger.Debug("Starting Load Post External Scene");
 
 			assetsPreloadService.StopAssetsPreload();
 			localServiceSignal.Dispatch();
 			global::Kampai.Util.DeviceCapabilities.Initialize();
 			global::Kampai.Util.TimeProfiler.StartSection("loading game scene");
-			// logger.Info("ANTIGRAVITY: MainCompleteCommand.PostExternalScenes: Loading Game and UI scenes...");
 			global::UnityEngine.SceneManagement.SceneManager.LoadScene("Game", global::UnityEngine.SceneManagement.LoadSceneMode.Additive);
 			global::UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("UI", global::UnityEngine.SceneManagement.LoadSceneMode.Additive);
-			// logger.Info("ANTIGRAVITY: MainCompleteCommand.PostExternalScenes: Scenes load calls initiated.");
 			splashProgressDoneSignal.Dispatch(100, 3f);
 			routineRunner.StartCoroutine(LevelLoadComplete());
 		}

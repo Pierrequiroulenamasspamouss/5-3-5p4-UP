@@ -49,13 +49,13 @@ namespace Kampai.UI.View
 			
 			if (view.playOfflineButton != null)
 			{
-				UnityEngine.Debug.Log(string.Format("[OfflineMode] OfflineMediator: Linked to playOfflineButton (Hash: {0}, Name: {1})", view.playOfflineButton.GetHashCode(), view.playOfflineButton.name));
+				// UnityEngine.Debug.Log(string.Format("[OfflineMod[OfflineMode]] OfflineMediator: Linked to playOfflineButton (Hash: {0}, Name: {1})", view.playOfflineButton.GetHashCode(), view.playOfflineButton.name));
 				view.playOfflineButton.ClickedSignal.AddListener(OnPlayOffline);
 				view.playOfflineButtonText.text = locService.GetString("OfflinePlayOffline");
 			}
 			else
 			{
-				UnityEngine.Debug.LogError("[OfflineMode] OfflineMediator: Could not find btn_playOffline in children!");
+				// UnityEngine.Debug.LogError("[OfflineMode] OfflineMediator: Could not find btn_playOffline in children!");
 			}
 			
 			view.OnMenuClose.AddListener(OnMenuClose);
@@ -99,7 +99,6 @@ namespace Kampai.UI.View
 
 		private void OnPlayOffline()
 		{
-			UnityEngine.Debug.Log("[OfflineMode] OfflineMediator OnPlayOffline triggered.");
 			transitionToOfflineModeSignal.Dispatch();
 		}
 

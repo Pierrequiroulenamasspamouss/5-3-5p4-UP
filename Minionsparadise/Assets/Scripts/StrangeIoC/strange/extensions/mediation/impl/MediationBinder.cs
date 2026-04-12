@@ -12,7 +12,6 @@ namespace strange.extensions.mediation.impl
 
 		public void Trigger(global::strange.extensions.mediation.api.MediationEvent evt, global::strange.extensions.mediation.api.IView view)
 		{
-			UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: MediationBinder.Trigger for {0} (Event: {1})", view.GetType().Name, evt));
 			global::System.Type type = view.GetType();
 			global::strange.extensions.mediation.api.IMediationBinding mediationBinding = GetBinding(type) as global::strange.extensions.mediation.api.IMediationBinding;
 			if (mediationBinding != null)
@@ -52,11 +51,9 @@ namespace strange.extensions.mediation.impl
 
 		protected virtual void mapView(global::strange.extensions.mediation.api.IView view, global::strange.extensions.mediation.api.IMediationBinding binding)
 		{
-			UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: MediationBinder.mapView for {0} (Binding: {1})", view.GetType().Name, binding.key));
 			global::System.Type type = view.GetType();
 			if (!bindings.ContainsKey(type))
 			{
-				UnityEngine.Debug.LogWarning(string.Format("ANTIGRAVITY: MediationBinder.mapView NO BINDING for {0}", type.Name));
 				return;
 			}
 			object[] array = binding.value as object[];
@@ -84,7 +81,6 @@ namespace strange.extensions.mediation.impl
 				injectionBinder.Unbind(key);
 				if (monoBehaviour2 is global::strange.extensions.mediation.api.IMediator)
 				{
-					UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: MediationBinder.mapView CALLING OnRegister for {0}", type2.Name));
 					((global::strange.extensions.mediation.api.IMediator)monoBehaviour2).OnRegister();
 				}
 			}

@@ -194,7 +194,6 @@ namespace Kampai.Game
 			logger.Info("[OfflineMode] Loaded UserID from persistence: '{0}'", savedUserId);
 			if (string.IsNullOrEmpty(savedUserId))
 			{
-				logger.Info("[OfflineMode] No UserID found in persistence, using default '1'");
 				savedUserId = "1";
 			}
 			Session.UserID = savedUserId;

@@ -67,12 +67,10 @@ namespace Kampai.Main
 			setupLoggingTargetsSignal.Dispatch();
 			logger = global::Elevation.Logging.LogManager.GetClassLogger("MainStartCommand") as global::Kampai.Util.IKampaiLogger;
 			
-			logger.Info("[OfflineMode] MainStartCommand: Ensuring early local definitions and config exist...");
 			
 			string defPath = global::Kampai.Util.OfflineModeUtility.DefinitionsCachePath;
 			if (!global::System.IO.File.Exists(defPath))
 			{
-				logger.Info("[OfflineMode] Definitions missing from persistent path, copying from resources...");
 				string defsText = resourceService.LoadText("definitions");
 				if (!string.IsNullOrEmpty(defsText))
 				{
@@ -83,7 +81,6 @@ namespace Kampai.Main
 			string configServerPath = global::Kampai.Util.OfflineModeUtility.ConfigCachePath;
 			if (!global::System.IO.File.Exists(configServerPath))
 			{
-				logger.Info("[OfflineMode] Server config missing from persistent path, copying from resources...");
 				// config_server.json is the resource name mentioned by the user
 				string configServerText = resourceService.LoadText("config_server");
 				if (!string.IsNullOrEmpty(configServerText) && !configServerText.Contains("ERROR")) // Basic check

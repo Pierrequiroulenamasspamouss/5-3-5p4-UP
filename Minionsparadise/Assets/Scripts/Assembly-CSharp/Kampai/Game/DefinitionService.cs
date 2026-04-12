@@ -53,7 +53,6 @@ namespace Kampai.Game
 			if (textReader != null)
 			{
 				global::System.Diagnostics.Stopwatch stopwatch = global::System.Diagnostics.Stopwatch.StartNew();
-				logger.Info("DeserializeJson: Starting JSON parsing...");
 				global::Kampai.Game.Definitions definitions = null;
 				try
 				{
@@ -79,8 +78,6 @@ namespace Kampai.Game
 					return;
 				}
 
-				global::UnityEngine.Debug.Log("[DefinitionService] Parsing complete. Calling LoadDefinitions...");
-				logger.Info("DeserializeJson: Parsing complete, calling LoadDefinitions...");
 				LoadDefinitions(definitions, validateDefinitions, "DefinitionService.DeserializeJson()");
 				
 				if (validateDefinitions)
@@ -88,7 +85,6 @@ namespace Kampai.Game
 					SerializeBinary(definitions);
 				}
 				stopwatch.Stop();
-				logger.Info("DeserializeJson: Total JSON loading and processing took {0} seconds", stopwatch.Elapsed.TotalSeconds);
 			}
 			else
 			{
@@ -172,7 +168,6 @@ namespace Kampai.Game
 		{
 			global::Kampai.Game.Definitions definitions = null;
 			initialPlayer = global::Kampai.Util.BinarySerializationUtil.ReadString(binaryReader);
-			logger.Info("DeserializeBinary: Initializing definitions from binary cache. Initial Player size: {0}", (initialPlayer != null) ? initialPlayer.Length : 0);
 			definitions = global::Kampai.Util.BinarySerializationUtil.ReadObject<global::Kampai.Game.Definitions>(binaryReader);
 			LoadDefinitions(definitions, validateDefinitions, "DeserializeBinary");
 		}
@@ -187,8 +182,6 @@ namespace Kampai.Game
 			AllDefinitions = new global::System.Collections.Generic.Dictionary<int, global::Kampai.Game.Definition>(2500);
 			definitionsTypeMap = new global::System.Collections.Generic.Dictionary<global::System.Type, global::System.Collections.IList>();
 			
-			global::UnityEngine.Debug.LogFormat("[DefinitionService] LoadDefinitions: Starting marking definitions... (Tag: {0})", callerTag);
-			logger.Info("LoadDefinitions: Starting marking definitions... (Tag: {0})", callerTag);
 			MarkDefinitions(definitions);
 			MarkMoreDefinitions(definitions);
 			MarkMarketplaceDefinitions(definitions);
@@ -201,7 +194,6 @@ namespace Kampai.Game
 			MarkXPromoDefinitions(definitions);
 			MarkHindsightDefinitions(definitions);
 			
-			logger.Info("LoadDefinitions: Assembling systems...");
 			AssembleGachaAnimationDefinitions();
 			AddLevelUpDefinition(definitions);
 			AddMinionBenefitDefinition(definitions);
@@ -217,11 +209,7 @@ namespace Kampai.Game
 			triggerDefinitions = GetTriggerDefinitions(definitions);
 			currencyStoreCategoryDefinitions = GetCurrencyStoreCategoryDefinitions(definitions);
 			
-			global::UnityEngine.Debug.LogFormat("[DefinitionService] LoadDefinitions: Successfully loaded {0} total definitions. Caller: {1}", AllDefinitions.Count, callerTag);
-			logger.Info("LoadDefinitions: Successfully loaded {0} total definitions. Caller: {1}", AllDefinitions.Count, callerTag);
 			if (AllDefinitions.Count == 0) {
-				global::UnityEngine.Debug.LogWarning("[DefinitionService] LoadDefinitions: AllDefinitions is EMPTY!");
-				logger.Warning("LoadDefinitions: AllDefinitions is EMPTY after loading! Something went wrong during deserialization or population.");
 			}
 		}
 
@@ -666,7 +654,6 @@ namespace Kampai.Game
 			}
 			if (!levelUnlockLookUpTable.ContainsKey(definitionID))
 			{
-				logger.Fatal(global::Kampai.Util.FatalCode.TE_MISSING_UNLOCK, definitionID);
 				return 0;
 			}
 			return levelUnlockLookUpTable[definitionID];
@@ -965,9 +952,6 @@ namespace Kampai.Game
 					// OFFLINE FIX: Register all definitions to prevent missing JSON subsets
 					MarkDefinitionAsUsed(item);
 					registered++;
-				}
-				if (total > 0) {
-					global::UnityEngine.Debug.LogFormat("[DefinitionService] MarkDefinitionsAsUsed<{0}>: Processed {1} items, registered {2} (Skipped {3} disabled)", typeof(T).Name, total, registered, total - registered);
 				}
 			}
 			return used;

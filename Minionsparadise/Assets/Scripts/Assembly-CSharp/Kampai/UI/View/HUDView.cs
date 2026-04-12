@@ -104,19 +104,16 @@ namespace Kampai.UI.View
 
 		protected override void Awake()
 		{
-			UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: HUDView.Awake on {0} (activeInHierarchy: {1})", name, gameObject.activeInHierarchy));
 			base.Awake();
 		}
 
 		protected override void Start()
 		{
-			UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: HUDView.Start on {0} (activeInHierarchy: {1})", name, gameObject.activeInHierarchy));
 			base.Start();
 		}
 
 		protected virtual void OnEnable()
 		{
-			UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: HUDView.OnEnable on {0} (activeInHierarchy: {1})", name, gameObject.activeInHierarchy));
 		}
 
 		public void Init(global::Kampai.UI.View.HUDChangedSiblingIndexSignal hudChangedSiblingIndexSignal)

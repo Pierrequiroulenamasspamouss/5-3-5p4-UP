@@ -37,7 +37,6 @@ public class LoadConfigurationsCommand : global::strange.extensions.command.impl
 
 		if (userSessionService.IsOffline)
 		{
-			logger.Info("[OfflineMode] LoadConfigurationsCommand skipping download in offline mode.");
 			ConfigurationsService.LoadLocalConfiguration();
 			logger.EventStop("LoadConfigurationsCommand.Execute");
 			return;
