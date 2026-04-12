@@ -107,6 +107,11 @@ namespace Kampai.UI.View
 			{
 				base.view.mods.ClickedSignal.AddListener(ShowMods);
 			}
+			if (global::Kampai.Util.GameConstants.StaticConfig.DEBUG_ENABLED || global::UnityEngine.PlayerPrefs.GetInt("DebugConsoleEnabled", 0) == 1)
+			{
+				global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>("DebugConsoleButton"));
+				gameObject.transform.SetParent(base.view.transform, false);
+			}
 		}
 
 		public override void OnRemove()
@@ -157,7 +162,7 @@ namespace Kampai.UI.View
 			}
 			if (base.view != null && base.view.facebookButton != null)
 			{
-				base.view.facebookButton.gameObject.SetActive(coppaService != null && facebookService != null && !coppaService.Restricted() && !facebookService.isKillSwitchEnabled);
+				base.view.facebookButton.gameObject.SetActive(true);
 			}
 			SetupButtons();
 			if (showStoreSignal != null) showStoreSignal.Dispatch(false);
@@ -182,8 +187,8 @@ namespace Kampai.UI.View
 		private void SetupButtons()
 		{
 			UpdateLoginButtonText();
-			base.view.googleButton.gameObject.SetActive(!coppaService.Restricted() && !googleService.isKillSwitchEnabled);
-			base.view.achievementButton.gameObject.SetActive(!coppaService.Restricted() && !googleService.isKillSwitchEnabled);
+			base.view.googleButton.gameObject.SetActive(true);
+			base.view.achievementButton.gameObject.SetActive(true);
 		}
 
 		protected override void OnDisable()

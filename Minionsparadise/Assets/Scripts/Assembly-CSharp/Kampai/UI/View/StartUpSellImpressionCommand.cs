@@ -22,7 +22,8 @@ namespace Kampai.UI.View
 			}
 			else
 			{
-				openUpSellModalSignal.Dispatch(definition, "Impression", false);
+				// Impression popups disabled per user request
+				// openUpSellModalSignal.Dispatch(definition, "Impression", false);
 			}
 		}
 	}
