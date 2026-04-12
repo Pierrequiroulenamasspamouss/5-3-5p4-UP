@@ -1,0 +1,10 @@
+-- Repair Storage Quest
+storageId = 314
+
+qs.setFtueLevelCompleted(4)
+
+qs.setDialogSound('Play_menu_popUp_01')
+qsutil.waitForDialog('ftue_storage_narrative_01')
+
+qs.setBuildingState(storageId, qsutil.BuildingState.Broken)
+qs.showWayFinder(storageId, true)

@@ -1,0 +1,8 @@
+//[assembly: global::System.Reflection.AssemblyTitle("P31RestKit")]
+//[assembly: global::System.Reflection.AssemblyDescription("")]
+//[assembly: global::System.Reflection.AssemblyConfiguration("")]
+//[assembly: global::System.Reflection.AssemblyCompany("")]
+//[assembly: global::System.Reflection.AssemblyProduct("")]
+//[assembly: global::System.Reflection.AssemblyCopyright("desaro")]
+//[assembly: global::System.Reflection.AssemblyTrademark("")]
+//[assembly: global::System.Reflection.AssemblyVersion("2.0.0.0")]

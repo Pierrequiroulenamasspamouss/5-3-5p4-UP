@@ -1,0 +1,20 @@
+<linker>
+       <assembly fullname="System.Core">
+               <type fullname="System.Linq.Enumerable" preserve="all"/>
+       </assembly>
+
+       <assembly fullname="System">
+               <type fullname="System.ComponentModel.ReferenceConverter" preserve="all"/>
+               <type fullname="System.ComponentModel.ComponentConverter" preserve="all"/>
+       </assembly>
+
+       <assembly fullname="Newtonsoft.Json" preserve="all" ignoreIfMissing="1" />
+       <assembly fullname="JsonDotNet.Newtonsoft.Json" preserve="all" ignoreIfMissing="1" />
+
+       <assembly fullname="strange" preserve="all" ignoreIfMissing="1" />
+       
+       <assembly fullname="mscorlib">
+               <type fullname="System.Runtime.Serialization.*" preserve="all"/>
+               <type fullname="System.Collections.Generic.List`1" preserve="all"/>
+       </assembly>
+</linker>

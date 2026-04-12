@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: waterslide_water_base
+  m_Shader: {fileID: 4800000, guid: 1df62a056ea82894baf3b534a941a6a7, type: 3}
+  m_ShaderKeywords:
+  m_LightmapFlags: 5
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _AlphaMask
+        second:
+          m_Texture: {fileID: 2800000, guid: d50d9ac4da70d2240a875ac14d518801, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _diffuse1
+        second:
+          m_Texture: {fileID: 2800000, guid: 0263a17a029bd6b44b51912ddbbac366, type: 3}
+          m_Scale: {x: 2, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _diffuse2
+        second:
+          m_Texture: {fileID: 2800000, guid: 67ffd5d57b12fa84eac2822c999d40d3, type: 3}
+          m_Scale: {x: 3, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _time_scale
+        second: 20
+    m_Colors: {}

@@ -1,0 +1,42 @@
+-- FTUE Coconuts step 7
+coconutId = 200
+coconutsToHarvest = 3
+coconutTreeID = 342
+
+qs.setFtueLevelCompleted(6)
+
+qs.showWayFinder(coconutTreeID,true)
+
+if qs.getPlayerItemQuantity(coconutId) < coconutsToHarvest then 
+	if qs.getFtueLevelCompleted() < 8 then
+
+		qs.enablePurchaseButton(false)
+
+		coconutTreeID = 342
+		coconutId = 200
+		coconutsToHarvest = 3
+
+		-- Harvest icon pulses
+		qs.highlightHarvest(true)
+
+		while qs.getPlayerItemQuantity(coconutId) < coconutsToHarvest do
+			qs.wait(0.1)
+		end
+		
+		qs.showWayFinder(coconutTreeID, false)
+		qs.enablePurchaseButton(true)
+		qs.highlightHarvest(false)
+
+		for i = 1,100 do
+			if qs.getPlayerItemQuantity(coconutId) >= coconutsToHarvest then
+				qs.wait(1.5)
+				qs.openTikiHut(true)
+				break 
+			end
+			qs.wait(0.1)
+		end
+
+	end
+end
+
+qs.showWayFinder(coconutTreeID,false)

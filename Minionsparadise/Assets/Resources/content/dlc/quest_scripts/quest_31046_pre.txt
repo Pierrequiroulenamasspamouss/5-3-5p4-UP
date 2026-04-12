@@ -1,0 +1,23 @@
+-- FTUE Quest 3, step 1
+
+qs.setFtueLevelCompleted(2)
+qs.setBuildMenuEnabled(false)
+qs.enablePurchaseButton(false)
+
+-- Narrative dialog opens
+qs.setDialogType('Normal')
+qs.setCharacterImage(40000)
+qs.setDialogSound('Play_menu_popUp_01')
+
+-- instruct user to repair storage building
+storageId = 314
+if qs.getBuildingState(storageId) ~= qsutil.BuildingState.Idle then
+    qs.setBuildingState(storageId, qsutil.BuildingState.Broken)
+    qs.showWayFinder(storageId, true)
+    qs.panCameraToInstance(storageId)
+    --Removed dialog
+    --qsutil.waitForDialog('ftue_03_start')
+    qsutil.waitForBuilding(storageId, qsutil.BuildingState.Idle)
+end
+
+-- end step 1

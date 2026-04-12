@@ -1,0 +1,29 @@
+-- FTUE Coconuts step 6
+coconutsToHarvest = 3
+coconutId = 200
+coconutTreeID = 342
+if qs.getPlayerItemQuantity(coconutId) < coconutsToHarvest then 
+	if qs.getFtueLevelCompleted() < 8 then
+
+		qs.enableCallButtons(true)
+		qs.enablePurchaseButton(false)
+		qs.throbCallButtons(false)
+
+		qs.wait(1.5)
+
+		qs.throbRushButtons(true)
+		qs.panToBuildingAndOpen(coconutTreeID)
+
+		-- Pulse the rush while you wait for either the resource modal to open or the coconut to reach a harvestable state, then stop pulsing
+		while qs.getBuildingState(coconutTreeID) ~= qsutil.BuildingState.Harvestable do
+			signal = qs.waitAnySignal('ShowBuildingDetailMenuSignal', 'BuildingChangeStateSignal')
+		end
+		qs.throbRushButtons(false)
+	else
+		qs.wait(1.5)
+		qs.openTikiHut(true)
+	end
+else
+	qs.wait(1.0)
+	qs.openTikiHut(true)
+end

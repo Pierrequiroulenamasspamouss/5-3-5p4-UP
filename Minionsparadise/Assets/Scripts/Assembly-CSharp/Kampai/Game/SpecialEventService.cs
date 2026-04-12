@@ -1,0 +1,24 @@
+namespace Kampai.Game
+{
+	public class SpecialEventService : global::Kampai.Game.ISpecialEventService
+	{
+		[Inject]
+		public global::Kampai.Game.IPlayerService playerService { get; set; }
+
+		[Inject]
+		public global::Kampai.Game.IDefinitionService definitionService { get; set; }
+
+		public bool IsSpecialEventActive()
+		{
+			foreach (global::Kampai.Game.SpecialEventItemDefinition item in definitionService.GetAll<global::Kampai.Game.SpecialEventItemDefinition>())
+			{
+				global::Kampai.Game.SpecialEventItem firstInstanceByDefinitionId = playerService.GetFirstInstanceByDefinitionId<global::Kampai.Game.SpecialEventItem>(item.ID);
+				if (firstInstanceByDefinitionId != null && !firstInstanceByDefinitionId.HasEnded && item.IsActive)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+}
