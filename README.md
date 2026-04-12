@@ -75,15 +75,14 @@ Offline mode should consist in a button in the ModsPanelView that allows the pla
 
 
 
-- [x] **Fix Shop Crashes**: Resolve client-side crash when the server returns filtered or empty sales definitions for restricted users. (Fixed: Server now returns permanent fallback items)
-- [x] **Robust Sales Engine**: Refine the `sales.py` logic to allow better dynamic offer management without UI side-effects. (Optimized and localized config)
+
 - [ ] **Android 8+ crash**: Self explanatory, I assume there is an issue with ARM7 libraries for FMOD 
 - [ ] **REBUILD FMOD PROJECT TO ADD CUSTOM AUDIO LOOPS**: Currently using raw banks extracted from the game, it is difficult to add new audio to the game
 - [ ] **Adding debug command to remove limited time offers**: Self explanatory 
 - [ ] **Events and server-related issues**: Social events not automatically restarted when a week has passed for example, or definitions not working properly
 - [ ] **Loading time very long on Android**: Maybe I should add a bundle mechanic back, if I have a way to rebuild the bundles. 
-- [ ] **Android Discord login doesn't work**: Add media playing and discord login 
-- [ ] **Video doesn't always play for new user.**: Self explanatory, depending on the platform the intro video should play, thoo it doesn't  
+- [ ] **Android Discord login doesn't work**: Add media playing and discord login on Android. 
+- [ ] **Video doesn't always play for new user.**: Self explanatory, depending on the platform the intro video should play, tho it doesn't.
 - [ ] **Some users get stuck at 30% loading on Android**: adding some telemetry back MIGHT be useful, some simple one that will send the logs to the server and then upload them in a Google drive folder
 - [ ] **Softlocks in early-game**: pretty common stuff, lua quests issues, I should fix the commands to unlock yourself 
 - [ ] **TeamOrderBoard no audio**: Self explanatory 

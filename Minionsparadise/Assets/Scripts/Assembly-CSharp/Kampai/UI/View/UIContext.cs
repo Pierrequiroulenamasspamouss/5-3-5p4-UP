@@ -96,6 +96,7 @@ namespace Kampai.UI.View
 				.CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.IPlayerTrainingService>().To<global::Kampai.UI.PlayerTrainingService>().ToSingleton()
 				.CrossContext();
+			injectionBinder.Bind<global::Kampai.Game.IGlobalChatService>().To<global::Kampai.Game.GlobalChatService>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.LoadBuddyBarSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.UI.View.CloseBuddyFarewellPanelSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.OnDragItemSignal>().ToSingleton().CrossContext();
@@ -139,6 +140,8 @@ namespace Kampai.UI.View
 				.Weak();
 			injectionBinder.Bind<global::Kampai.UI.View.SettingsLearnSystemsCategorySelectedSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.SettingsLearnSystemsCategoryItemSelectedSignal>().ToSingleton().CrossContext();
+			injectionBinder.Bind<global::Kampai.UI.View.GlobalChatUpdateSignal>().ToSingleton().CrossContext();
+			injectionBinder.Bind<global::Kampai.UI.View.GlobalChatErrorSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.UpdatePartyCountDownTextSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.DisplayCameraControlsSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.UI.View.DisplayDisco3DElements>().ToSingleton();

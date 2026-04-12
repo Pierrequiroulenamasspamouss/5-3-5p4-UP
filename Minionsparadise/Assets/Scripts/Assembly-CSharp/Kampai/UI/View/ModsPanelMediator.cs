@@ -31,6 +31,18 @@ namespace Kampai.UI.View
 		[Inject]
 		public PlayGlobalSoundFXSignal soundFXSignal { get; set; }
 
+		[Inject]
+		public IGlobalChatService chatService { get; set; }
+
+		[Inject]
+		public GlobalChatUpdateSignal chatUpdateSignal { get; set; }
+
+		[Inject]
+		public GlobalChatErrorSignal chatErrorSignal { get; set; }
+
+		[Inject]
+		public PopupMessageSignal popupMessageSignal { get; set; }
+
 		private static readonly string[] ALL_LANGUAGES = new string[] { "en", "fr", "de", "es", "it", "pt", "nl", "ko", "ru", "ja", "zh-cn", "zh-tw", "tr", "id", "lolcat", "minion" };
 
 		private List<string> m_availableLanguages;
@@ -68,6 +80,17 @@ namespace Kampai.UI.View
 			UpdateLanguageText();
 			UpdateNightToggleText();
 			UpdateOfflineToggleText();
+
+			if (view.sendButton != null)
+			{
+				view.sendButton.ClickedSignal.AddListener(OnSendClicked);
+			}
+
+			chatUpdateSignal.AddListener(OnChatUpdated);
+			chatErrorSignal.AddListener(OnChatError);
+
+			chatService.StartPolling();
+			OnChatUpdated(chatService.GetCachedMessages());
 		}
 
 		private void BindButton(ButtonView bv)
@@ -102,6 +125,16 @@ namespace Kampai.UI.View
 			{
 				view.offlineToggleButton.ClickedSignal.RemoveListener(OnOfflineToggleClicked);
 			}
+
+			if (view.sendButton != null)
+			{
+				view.sendButton.ClickedSignal.RemoveListener(OnSendClicked);
+			}
+
+			chatUpdateSignal.RemoveListener(OnChatUpdated);
+			chatErrorSignal.RemoveListener(OnChatError);
+			
+			chatService.StopPolling();
 		}
 
 		private void UpdateLanguageText()
@@ -190,6 +223,45 @@ namespace Kampai.UI.View
 				bool offlinePref = prefs.GetDevicePrefs().OfflineMode_Pref;
 				view.offlineToggleText.text = "OFFLINE: " + (offlinePref ? "ON" : "OFF");
 			}
+		}
+
+		private void OnSendClicked()
+		{
+			if (view.chatInput != null && !string.IsNullOrEmpty(view.chatInput.text))
+			{
+				string text = view.chatInput.text;
+				chatService.SendMessage(text);
+				view.chatInput.text = string.Empty;
+				soundFXSignal.Dispatch("Play_button_click_01");
+			}
+		}
+
+		private void OnChatUpdated(List<ChatMessage> messages)
+		{
+			if (messages == null) return;
+			
+			if (view.chatDisplayText != null)
+			{
+				System.Text.StringBuilder sb = new System.Text.StringBuilder();
+				for (int i = 0; i < messages.Count; i++)
+				{
+					ChatMessage msg = messages[i];
+					sb.AppendFormat("<b>{0}:</b> {1}\n", msg.user, msg.text);
+				}
+				view.chatDisplayText.text = sb.ToString();
+			}
+
+			if (view.chatScrollView != null)
+			{
+				// Advanced: could instantiate items here, but text display is the current fallback.
+			}
+		}
+
+		private void OnChatError(string error)
+		{
+			Debug.LogError("[ModsMediator] Chat Error: " + error);
+			// Optional: Show popup
+			// popupMessageSignal.Dispatch("Chat Error: " + error, PopupMessageType.NORMAL);
 		}
 	}
 }
