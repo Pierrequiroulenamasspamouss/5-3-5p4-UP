@@ -115,13 +115,14 @@ namespace Kampai.Game
 
         private void Continue(params DynValue[] args)
         {
-            if (!canContinue || coroutine == null || coroutine.State == CoroutineState.Dead) return;
+            if (!canContinue || coroutine == null || coroutine.State == CoroutineState.Dead || coroutine.State == CoroutineState.Running) return;
 
+            var previousRunner = CurrentRunner;
             CurrentRunner = this;
             try
             {
-                logger.Info("Lua: {0} Continue - Pre Globals Check", fileName);
-                qsKernel.LogGlobals();
+                // logger.Info("Lua: {0} Continue - Pre Globals Check", fileName);
+                // qsKernel.LogGlobals();
 
                 coroutine.Resume(args);
 
@@ -141,7 +142,10 @@ namespace Kampai.Game
             }
             finally
             {
-                if (CurrentRunner == this) CurrentRunner = null;
+                if (CurrentRunner == this) 
+                {
+                    CurrentRunner = previousRunner;
+                }
             }
         }
 

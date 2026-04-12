@@ -34,10 +34,41 @@ namespace Kampai.Game
 			{
 				reconcileSalesSignal.Dispatch(0);
 			}
+			else if (userSessionService != null && userSessionService.IsOffline)
+			{
+				routineRunner.StartCoroutine(LoadFromLocalResources());
+			}
 			else
 			{
 				routineRunner.StartCoroutine(LoadFromServer());
 			}
+		}
+
+		private global::System.Collections.IEnumerator LoadFromLocalResources()
+		{
+			yield return null;
+			logger.Info("[OfflineMode] Loading sales from local resources...");
+			
+			string salesJson = string.Empty;
+			try
+			{
+				global::UnityEngine.TextAsset textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>("sales_server");
+				if (textAsset != null)
+				{
+					salesJson = textAsset.text;
+					ProcessSalesJson(salesJson);
+				}
+				else
+				{
+					logger.Error("[OfflineMode] sales_server resource NOT FOUND.");
+				}
+			}
+			catch (global::System.Exception e)
+			{
+				logger.Error("[OfflineMode] Error loading local sales: {0}", e);
+			}
+			
+			reconcileSalesSignal.Dispatch(0);
 		}
 
 		private global::System.Collections.IEnumerator LoadFromServer()
@@ -56,67 +87,73 @@ namespace Kampai.Game
 		{
 			if (response.Success)
 			{
-				try
-				{
-					global::System.Collections.Generic.List<global::Kampai.Game.UserSale> list = null;
-					using (global::System.IO.StringReader reader = new global::System.IO.StringReader(response.Body))
-					{
-						using (global::Newtonsoft.Json.JsonTextReader reader2 = new global::Newtonsoft.Json.JsonTextReader(reader))
-						{
-							list = global::Kampai.Util.ReaderUtil.PopulateList<global::Kampai.Game.UserSale>(reader2);
-						}
-					}
-					global::System.Collections.Generic.IList<global::Kampai.Game.SalePackDefinition> list2 = new global::System.Collections.Generic.List<global::Kampai.Game.SalePackDefinition>();
-					foreach (global::Kampai.Game.UserSale item in list)
-					{
-						global::Kampai.Game.SalePackDefinition salePackDefinition = global::Kampai.Util.FastJSONDeserializer.Deserialize<global::Kampai.Game.SalePackDefinition>(item.SaleDefinition);
-						salePackDefinition.ServerSaleId = item.SaleId.ToString();
-						list2.Add(salePackDefinition);
-					}
-					foreach (global::Kampai.Game.SalePackDefinition item2 in list2)
-					{
-						global::Kampai.Game.Transaction.TransactionDefinition transactionDefinition = item2.TransactionDefinition.ToDefinition();
-						
-						int uTCEndDate = item2.UTCEndDate;
-						int num = timeService.CurrentTime();
-						
-						if (definitionService.Has<global::Kampai.Game.SalePackDefinition>(item2.ID))
-						{
-							// UPDATE EXISTING
-							global::Kampai.Game.SalePackDefinition existing = definitionService.Get<global::Kampai.Game.SalePackDefinition>(item2.ID);
-							existing.UTCStartDate = item2.UTCStartDate;
-							existing.UTCEndDate = item2.UTCEndDate;
-							existing.CanBuyThisManyTimes = item2.CanBuyThisManyTimes;
-							existing.Disabled = item2.Disabled;
-							existing.Impressions = item2.Impressions;
-							logger.Info("ServerSales - Updated SalePackDefinition ID = " + item2.ID + " EndDate: " + item2.UTCEndDate);
-						}
-						else if (uTCEndDate > num && !definitionService.Has<global::Kampai.Game.Transaction.TransactionDefinition>(transactionDefinition.ID))
-						{
-							// ADD NEW
-							definitionService.Add(item2);
-							if (item2.TransactionDefinition != null)
-							{
-								definitionService.Add(transactionDefinition);
-							}
-							logger.Info("ServerSales - Added new SalePackDefinition ID = " + item2.ID);
-						}
-					}
-				}
-				catch (global::Newtonsoft.Json.JsonSerializationException e)
-				{
-					HandleJsonException(e);
-				}
-				catch (global::Newtonsoft.Json.JsonReaderException e2)
-				{
-					HandleJsonException(e2);
-				}
+				ProcessSalesJson(response.Body);
 			}
 			else
 			{
 				logger.Error("ServerSales - Error downloading sales from server: {0}", response.Body ?? "null body");
 			}
 			reconcileSalesSignal.Dispatch(0);
+		}
+
+		private void ProcessSalesJson(string body)
+		{
+			try
+			{
+				global::System.Collections.Generic.List<global::Kampai.Game.UserSale> list = null;
+				using (global::System.IO.StringReader reader = new global::System.IO.StringReader(body))
+				{
+					using (global::Newtonsoft.Json.JsonTextReader reader2 = new global::Newtonsoft.Json.JsonTextReader(reader))
+					{
+						list = global::Kampai.Util.ReaderUtil.PopulateList<global::Kampai.Game.UserSale>(reader2);
+					}
+				}
+				
+				global::System.Collections.Generic.IList<global::Kampai.Game.SalePackDefinition> list2 = new global::System.Collections.Generic.List<global::Kampai.Game.SalePackDefinition>();
+				foreach (global::Kampai.Game.UserSale item in list)
+				{
+					global::Kampai.Game.SalePackDefinition salePackDefinition = global::Kampai.Util.FastJSONDeserializer.Deserialize<global::Kampai.Game.SalePackDefinition>(item.SaleDefinition);
+					salePackDefinition.ServerSaleId = item.SaleId.ToString();
+					list2.Add(salePackDefinition);
+				}
+				foreach (global::Kampai.Game.SalePackDefinition item2 in list2)
+				{
+					global::Kampai.Game.Transaction.TransactionDefinition transactionDefinition = item2.TransactionDefinition.ToDefinition();
+					
+					int uTCEndDate = item2.UTCEndDate;
+					int num = timeService.CurrentTime();
+					
+					if (definitionService.Has<global::Kampai.Game.SalePackDefinition>(item2.ID))
+					{
+						// UPDATE EXISTING
+						global::Kampai.Game.SalePackDefinition existing = definitionService.Get<global::Kampai.Game.SalePackDefinition>(item2.ID);
+						existing.UTCStartDate = item2.UTCStartDate;
+						existing.UTCEndDate = item2.UTCEndDate;
+						existing.CanBuyThisManyTimes = item2.CanBuyThisManyTimes;
+						existing.Disabled = item2.Disabled;
+						existing.Impressions = item2.Impressions;
+						logger.Info("ServerSales - Updated SalePackDefinition ID = " + item2.ID + " EndDate: " + item2.UTCEndDate);
+					}
+					else if (uTCEndDate > num && !definitionService.Has<global::Kampai.Game.Transaction.TransactionDefinition>(transactionDefinition.ID))
+					{
+						// ADD NEW
+						definitionService.Add(item2);
+						if (item2.TransactionDefinition != null)
+						{
+							definitionService.Add(transactionDefinition);
+						}
+						logger.Info("ServerSales - Added new SalePackDefinition ID = " + item2.ID);
+					}
+				}
+			}
+			catch (global::Newtonsoft.Json.JsonSerializationException e)
+			{
+				HandleJsonException(e);
+			}
+			catch (global::Newtonsoft.Json.JsonReaderException e2)
+			{
+				HandleJsonException(e2);
+			}
 		}
 
 		private void HandleJsonException(global::System.Exception e)

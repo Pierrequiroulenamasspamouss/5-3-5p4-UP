@@ -237,8 +237,13 @@ namespace Kampai.Util
             return Load(path, typeof(Object));
         }
 
-        public static Object Load(string path, Type type)
-        {
+		public static global::UnityEngine.Object Load(string path, global::System.Type type)
+		{
+			if (string.IsNullOrEmpty(path))
+			{
+				return null;
+			}
+			bool isEditorPath;
             if (_logger != null) _logger.Debug(string.Format("KampaiResources.Load('{0}', type={1})", path, type != null ? type.Name : "null"));
             
             Object cached = _cachedObjects.Get(path, type);
@@ -363,12 +368,15 @@ namespace Kampai.Util
             }
         }
 
-        private static bool TryGetLocalAssetPath(string path, out string resolvedPath, out bool isEditorPath)
-        {
-            resolvedPath = null;
-            isEditorPath = false;
-
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_ANDROID
+		public static bool TryGetLocalAssetPath(string path, out string resolvedPath, out bool isEditorPath)
+		{
+			resolvedPath = string.Empty;
+			isEditorPath = false;
+			if (string.IsNullOrEmpty(path))
+			{
+				return false;
+			}
+			string key = global::System.IO.Path.GetFileNameWithoutExtension(path);
             InitializeAssetMap();
             string fileName = Path.GetFileNameWithoutExtension(path);
             
@@ -414,8 +422,7 @@ namespace Kampai.Util
                 return true;
 #endif
             }
-#endif
-
+            
             string localKey = global::System.IO.Path.GetFileName(path);
             if (_localContentService != null && _localContentService.IsLocalAsset(localKey))
             {
