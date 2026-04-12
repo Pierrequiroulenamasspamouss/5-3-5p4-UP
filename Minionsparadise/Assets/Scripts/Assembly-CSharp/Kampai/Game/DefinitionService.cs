@@ -406,7 +406,7 @@ namespace Kampai.Game
 			{
 				return AllDefinitions[id];
 			}
-			logger.Fatal(global::Kampai.Util.FatalCode.DS_NO_ITEM_DEF, id);
+			logger.FatalNoThrow(global::Kampai.Util.FatalCode.DS_NO_ITEM_DEF, id);
 			return null;
 		}
 
@@ -420,7 +420,6 @@ namespace Kampai.Game
 			if (val == null)
 			{
 				logger.Error("Get<{1}>: Definition ID {0} not found in DefinitionService!", id, typeof(T).Name);
-				logger.Fatal(global::Kampai.Util.FatalCode.DS_NO_ITEM_TYPE_DEF, id);
 			}
 			return val;
 		}

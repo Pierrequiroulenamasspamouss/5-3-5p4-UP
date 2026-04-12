@@ -19,8 +19,14 @@ namespace Kampai.UI.View
 
 		public override void OnRemove()
 		{
-			view.Button.ClickedSignal.RemoveListener(OnToggleSelected);
-			categorySelectedSignal.RemoveListener(UpdateColor);
+			if (view != null && view.Button != null && view.Button.ClickedSignal != null)
+			{
+				view.Button.ClickedSignal.RemoveListener(OnToggleSelected);
+			}
+			if (categorySelectedSignal != null)
+			{
+				categorySelectedSignal.RemoveListener(UpdateColor);
+			}
 		}
 
 		private void OnToggleSelected()
@@ -43,6 +49,10 @@ namespace Kampai.UI.View
 
 		private void UpdateColor(int origin)
 		{
+			if (view == null || view.Definition == null || view.toggleImage == null)
+			{
+				return;
+			}
 			if (origin != view.Definition.ID)
 			{
 				view.toggleImage.gameObject.SetActive(false);

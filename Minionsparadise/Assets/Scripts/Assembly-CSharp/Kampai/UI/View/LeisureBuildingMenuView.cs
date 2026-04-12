@@ -149,11 +149,7 @@ namespace Kampai.UI.View
 
 		public bool IsCallButtonEnabled()
 		{
-			if (playerService.HasStorageBuilding())
-			{
-				return true;
-			}
-			return playerService.GetQuantity(global::Kampai.Game.StaticItem.LEVEL_ID) == 0 && minionParty.CurrentPartyPoints == 0;
+			return true;
 		}
 
 		public void DisableRushButton()

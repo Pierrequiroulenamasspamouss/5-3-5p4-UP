@@ -112,18 +112,27 @@ namespace Kampai.UI.View
 
 		private static void CheckForTransactions(global::Kampai.UI.View.StoreButtonView view, int totalIncrementalCost)
 		{
-			if (global::Kampai.Game.Transaction.TransactionUtil.IsOnlyPremiumInputs(view.transactionDef))
+			if (view.transactionDef != null)
 			{
-				view.Cost.text = UIUtils.FormatLargeNumber(global::Kampai.Game.Transaction.TransactionUtil.SumOutputsForStaticItem(view.transactionDef, global::Kampai.Game.StaticItem.PREMIUM_CURRENCY_ID, true) + totalIncrementalCost);
-				view.MoneyIcon.sprite = UIUtils.LoadSpriteFromPath(Textures[2]);
-				view.MoneyIcon.maskSprite = UIUtils.LoadSpriteFromPath(Textures[3]);
+				if (global::Kampai.Game.Transaction.TransactionUtil.IsOnlyPremiumInputs(view.transactionDef))
+				{
+					view.Cost.text = UIUtils.FormatLargeNumber(global::Kampai.Game.Transaction.TransactionUtil.SumOutputsForStaticItem(view.transactionDef, global::Kampai.Game.StaticItem.PREMIUM_CURRENCY_ID, true) + totalIncrementalCost);
+					view.MoneyIcon.sprite = UIUtils.LoadSpriteFromPath(Textures[2]);
+					view.MoneyIcon.maskSprite = UIUtils.LoadSpriteFromPath(Textures[3]);
+				}
+				else
+				{
+					view.Cost.text = UIUtils.FormatLargeNumber(global::Kampai.Game.Transaction.TransactionUtil.SumOutputsForStaticItem(view.transactionDef, global::Kampai.Game.StaticItem.GRIND_CURRENCY_ID, true) + totalIncrementalCost);
+					view.MoneyIcon.sprite = UIUtils.LoadSpriteFromPath(Textures[0]);
+					view.MoneyIcon.maskSprite = UIUtils.LoadSpriteFromPath(Textures[1]);
+					view.DisableDoubleConfirm();
+				}
 			}
 			else
 			{
-				view.Cost.text = UIUtils.FormatLargeNumber(global::Kampai.Game.Transaction.TransactionUtil.SumOutputsForStaticItem(view.transactionDef, global::Kampai.Game.StaticItem.GRIND_CURRENCY_ID, true) + totalIncrementalCost);
+				view.Cost.text = "0";
 				view.MoneyIcon.sprite = UIUtils.LoadSpriteFromPath(Textures[0]);
 				view.MoneyIcon.maskSprite = UIUtils.LoadSpriteFromPath(Textures[1]);
-				view.DisableDoubleConfirm();
 			}
 		}
 
