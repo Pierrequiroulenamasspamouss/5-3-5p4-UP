@@ -560,7 +560,6 @@ namespace Kampai.UI.View
 			component.localPosition = new global::UnityEngine.Vector3(0f, 0f, 0f);
 			global::Kampai.UI.View.KampaiImage component2 = dragIcon.GetComponent<global::Kampai.UI.View.KampaiImage>();
 			component.anchoredPosition = new global::UnityEngine.Vector2(eventData.position.x / UIUtils.GetHeightScale(), eventData.position.y / UIUtils.GetHeightScale() + component2.sprite.rect.height * component2.pixelsPerUnit / 2f);
-			component.localScale = global::UnityEngine.Vector3.one;
 			component.anchorMin = new global::UnityEngine.Vector2(0f, 0f);
 			component.anchorMax = new global::UnityEngine.Vector2(0f, 0f);
 			component.pivot = new global::UnityEngine.Vector2(0.5f, 0.5f);

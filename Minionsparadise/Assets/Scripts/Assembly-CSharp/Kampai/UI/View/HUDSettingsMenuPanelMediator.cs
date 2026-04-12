@@ -70,7 +70,6 @@ namespace Kampai.UI.View
 				rect.anchorMax = global::UnityEngine.Vector2.one;
 				rect.offsetMin = global::UnityEngine.Vector2.zero;
 				rect.offsetMax = global::UnityEngine.Vector2.zero;
-				rect.localScale = global::UnityEngine.Vector3.one;
 			}
 
 			settingsMenuPanelGO.SetActive(false);
