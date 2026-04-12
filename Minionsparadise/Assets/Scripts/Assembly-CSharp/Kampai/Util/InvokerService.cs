@@ -37,7 +37,7 @@ namespace Kampai.Util
 					break;
 				}
 
-				global::UnityEngine.Debug.LogFormat("InvokerService: Executing action. Remaining in queue: {0}", work.Count);
+				// global::UnityEngine.Debug.LogFormat("InvokerService: Executing action. Remaining in queue: {0}", work.Count);
 				try
 				{
 					action();

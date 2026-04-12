@@ -34,6 +34,7 @@ namespace Kampai.UI.View
 			global::Kampai.Util.TimeProfiler.StartSection("ui");
 			global::Kampai.Util.TimeProfiler.StartSection("canvas");
 			canvasSignal.Dispatch(global::Kampai.Util.Tuple.Create("GlassCanvas", global::Kampai.Main.MainElement.UI_GLASSCANVAS, uiCamera));
+			canvasSignal.Dispatch(global::Kampai.Util.Tuple.Create("OverlayCanvas", global::Kampai.Main.MainElement.UI_OVERLAY_CANVAS, uiCamera));
 			canvasSignal.Dispatch(global::Kampai.Util.Tuple.Create("WorldCanvas", global::Kampai.Main.MainElement.UI_WORLDCANVAS, mainCamera));
 			global::Kampai.Util.TimeProfiler.EndSection("canvas");
 			global::Kampai.Util.TimeProfiler.StartSection("gui");

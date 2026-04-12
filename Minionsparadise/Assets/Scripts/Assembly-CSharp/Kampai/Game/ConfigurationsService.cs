@@ -40,10 +40,16 @@ namespace Kampai.Game
 		public global::Kampai.Game.KillSwitchChangedSignal killSwitchChangedSignal { get; set; }
 
 		[Inject]
+		public global::Kampai.Game.IUserSessionService userSessionService { get; set; }
+
+		[Inject]
 		public global::Kampai.Game.LoadConfigurationSignal loadConfigurationSignal { get; set; }
 
 		[Inject]
 		public global::Kampai.UI.View.ShowOfflinePopupSignal showOfflinePopupSignal { get; set; }
+
+		[Inject]
+		public IResourceService resourceService { get; set; }
 
 		private global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<global::Kampai.Game.KillSwitch, bool>> killswitchOverrides { get; set; }
 
@@ -74,6 +80,10 @@ namespace Kampai.Game
 			{
 				logger.Info("ConfigurationsService.GetConfigurationCallback: Attempting to deserialize configuration definition...");
 				string body = response.Body;
+				
+				// Cache config locally for Offline Mode fallback
+				global::Kampai.Util.OfflineModeUtility.SaveLocal(global::Kampai.Util.OfflineModeUtility.ConfigCachePath, body);
+
 				global::Kampai.Game.ConfigurationDefinition configurationDefinition = null;
 				try
 				{
@@ -112,7 +122,7 @@ namespace Kampai.Game
 					config = configurationDefinition;
 					logger.SetAllowedLevel(configurationDefinition.logLevel);
 					fpsUtil.SetFpsHeartbeat(configurationDefinition.fpsHeartbeat);
-					global::Kampai.Util.HttpRequestConfig.SetConfig(configurationDefinition);
+					global::Kampai.Util.HttpRequestConfig.SetConfig(config);
 					configurationsLoadedSignal.Dispatch(init);
 				}
 			}
@@ -129,6 +139,10 @@ namespace Kampai.Game
 
 		private global::Kampai.Game.ConfigurationDefinition LoadConfig(string json)
 		{
+			if (!json.Trim().StartsWith("{\"allConfigs\""))
+			{
+				json = "{\"allConfigs\": " + json + "}";
+			}
 			global::Kampai.Util.KampaiStringReader kampaiStringReader = new global::Kampai.Util.KampaiStringReader(json);
 			global::Newtonsoft.Json.JsonTextReader jsonTextReader = new global::Newtonsoft.Json.JsonTextReader(kampaiStringReader);
 			MoveReadingPositionToFirstConfig(jsonTextReader);
@@ -301,6 +315,19 @@ namespace Kampai.Game
 
 		public bool isKillSwitchOn(global::Kampai.Game.KillSwitch killswitchType)
 		{
+			if (userSessionService.IsOffline)
+			{
+				// Disable online features when offline
+				if (killswitchType == global::Kampai.Game.KillSwitch.MARKETPLACESERVER ||
+					killswitchType == global::Kampai.Game.KillSwitch.FACEBOOK ||
+					killswitchType == global::Kampai.Game.KillSwitch.SYNERGY ||
+					killswitchType == global::Kampai.Game.KillSwitch.SWRVE ||
+					killswitchType == global::Kampai.Game.KillSwitch.LOGGLY)
+				{
+					return true;
+				}
+			}
+
 			if (killswitchOverrides != null)
 			{
 				foreach (global::System.Collections.Generic.KeyValuePair<global::Kampai.Game.KillSwitch, bool> killswitchOverride in killswitchOverrides)
@@ -358,6 +385,47 @@ namespace Kampai.Game
 					global::UnityEngine.PlayerPrefs.DeleteKey("KS-" + killswitchOverrides[num].Key);
 					killswitchOverrides.RemoveAt(num);
 				}
+			}
+		}
+
+		public void LoadLocalConfiguration()
+		{
+			string json = global::Kampai.Util.OfflineModeUtility.LoadLocal(global::Kampai.Util.OfflineModeUtility.ConfigCachePath);
+			if (string.IsNullOrEmpty(json))
+			{
+				logger.Info("[OfflineMode] No cached config found at {0}, trying built-in resource...", global::Kampai.Util.OfflineModeUtility.ConfigCachePath);
+				// Try to load from Resources if cached is missing
+				json = resourceService.LoadText("config_server");
+				if (string.IsNullOrEmpty(json)) json = resourceService.LoadText("config_server.json");
+				if (string.IsNullOrEmpty(json)) json = resourceService.LoadText("config_server_local.json");
+				
+				if (string.IsNullOrEmpty(json))
+				{
+					string rawPath = global::System.IO.Path.Combine(global::UnityEngine.Application.dataPath, "Resources/config_server.json");
+					if (global::System.IO.File.Exists(rawPath)) json = global::System.IO.File.ReadAllText(rawPath);
+				}
+				
+				if (!string.IsNullOrEmpty(json))
+				{
+					logger.Info("[OfflineMode] Successfully loaded config from resources, caching to {0}", global::Kampai.Util.OfflineModeUtility.ConfigCachePath);
+					global::Kampai.Util.OfflineModeUtility.SaveLocal(global::Kampai.Util.OfflineModeUtility.ConfigCachePath, json);
+				}
+			}
+
+			if (!string.IsNullOrEmpty(json))
+			{
+				logger.Info("[OfflineMode] Loading configurations from local source...");
+				global::Kampai.Game.ConfigurationDefinition configurationDefinition = LoadConfig(json);
+				if (configurationDefinition != null)
+				{
+					config = configurationDefinition;
+					configurationsLoadedSignal.Dispatch(init);
+				}
+			}
+			else
+			{
+				logger.Error("[OfflineMode] Failed to load any configuration source!");
+				showOfflinePopupSignal.Dispatch(true);
 			}
 		}
 	}

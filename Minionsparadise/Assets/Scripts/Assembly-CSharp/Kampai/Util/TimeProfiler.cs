@@ -226,8 +226,8 @@ namespace Kampai.Util
 
 		private void LogLongFrame(int frameNumber, float time)
 		{
-			string message = string.Format("!!!! Frame {0} took {1} s.\n", frameNumber, time);
-			Write(message);
+			// string message = string.Format("!!!! Frame {0} took {1} s.\n", frameNumber, time);
+			// Write(message);
 		}
 
 		private static string GetTimeStamp()

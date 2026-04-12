@@ -312,7 +312,30 @@ namespace Kampai.Game
 			{
 				yield return null;
 			}
-			playerService.ID = global::System.Convert.ToInt64(userSessionService.UserSession.UserID);
+			string userIdStr = userSessionService.UserSession.UserID;
+			long userId = 1L;
+			if (!long.TryParse(userIdStr, out userId))
+			{
+				if (userIdStr != null && userIdStr.StartsWith("OFFLINE_"))
+				{
+					string numericPart = userIdStr.Substring(8);
+					if (!long.TryParse(numericPart, out userId))
+					{
+						logger.Error("Failed to parse numeric part of offline UserID: '{0}'. Using default '1'.", userIdStr);
+						userId = 1L;
+					}
+					else
+					{
+						logger.Info("Parsed offline UserID '{0}' as long: {1}", userIdStr, userId);
+					}
+				}
+				else
+				{
+					logger.Error("Failed to parse UserID: '{0}'. Using default '1'.", userIdStr);
+					userId = 1L;
+				}
+			}
+			playerService.ID = userId;
 			global::UnityEngine.GameObject footprint = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load("Footprint")) as global::UnityEngine.GameObject;
 			footprint.transform.parent = contextView.transform;
 			footprint.AddComponent<global::Kampai.Game.View.FootprintView>();

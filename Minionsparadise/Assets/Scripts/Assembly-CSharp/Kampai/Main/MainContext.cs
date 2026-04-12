@@ -2,6 +2,8 @@ namespace Kampai.Main
 {
 	public class MainContext : global::Kampai.Util.BaseContext
 	{
+		private global::Kampai.Game.TimeEventService earlyTimeEventService;
+
 		public MainContext()
 		{
 		}
@@ -178,8 +180,20 @@ namespace Kampai.Main
 			base.commandBinder.Bind<global::Kampai.Game.FinishMtxReceiptValidationSignal>().To<global::Kampai.Game.Mtx.FinishMtxReceiptValidationCommand>();
 			base.commandBinder.Bind<global::Kampai.Game.ProcessNextPendingTransactionSignal>().To<global::Kampai.Game.Mtx.ProcessNextPendingTransactionCommand>();
 			base.commandBinder.Bind<global::Kampai.Game.RestoreMtxPurchaseSignal>().To<global::Kampai.Game.Mtx.RestoreMtxPurchaseCommand>();
-			injectionBinder.Bind<global::Kampai.Game.FinishPremiumPurchaseSignal>().ToSingleton().CrossContext()
-				.Weak();
+			
+			// Cross-context signals required by MainContext services (like DebugCurrencyService)
+			// These are bound weakly in case they are already provided by BaseContext or UIContext
+			injectionBinder.Bind<global::Kampai.Game.FinishPremiumPurchaseSignal>().ToSingleton().CrossContext().Weak();
+			injectionBinder.Bind<global::Kampai.Game.CancelPremiumPurchaseSignal>().ToSingleton().CrossContext().Weak();
+			injectionBinder.Bind<global::Kampai.Game.EndPartyBuffTimerSignal>().ToSingleton().CrossContext().Weak();
+			injectionBinder.Bind<global::Kampai.UI.View.ShowMockStoreDialogSignal>().ToSingleton().CrossContext().Weak();
+
+			// Early initialization of ITimeEventService for GuestOfHonorService
+			global::UnityEngine.GameObject timeEventGo = new global::UnityEngine.GameObject("TimeEventService_Persistent");
+			earlyTimeEventService = timeEventGo.AddComponent<global::Kampai.Game.TimeEventService>();
+			injectionBinder.Bind<global::Kampai.Game.ITimeEventService>().ToValue(earlyTimeEventService).CrossContext().ToSingleton();
+			global::UnityEngine.Object.DontDestroyOnLoad(timeEventGo);
+
 			injectionBinder.Bind<global::Kampai.Game.ICurrencyService>().To<global::Kampai.Game.DebugCurrencyService>().ToSingleton()
 				.CrossContext();
 
@@ -264,6 +278,14 @@ namespace Kampai.Main
 		protected virtual string PlayerDataSource()
 		{
 			return "test_player";
+		}
+		protected override void postBindings()
+		{
+			if (earlyTimeEventService != null)
+			{
+				injectionBinder.injector.Inject(earlyTimeEventService);
+			}
+			base.postBindings();
 		}
 	}
 }

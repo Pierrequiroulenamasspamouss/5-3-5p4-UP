@@ -102,6 +102,16 @@ namespace Kampai.UI.View
 			base.view.playMovieButton.ClickedSignal.AddListener(PlayMovieButton);
 			tempHidden.AddListener(TempHide);
 			init();
+			// MODS tab listener (if populated by SettingsPanelView at runtime)
+			if (base.view.mods != null)
+			{
+				base.view.mods.ClickedSignal.AddListener(ShowMods);
+			}
+			if (global::Kampai.Util.GameConstants.StaticConfig.DEBUG_ENABLED || global::UnityEngine.PlayerPrefs.GetInt("DebugConsoleEnabled", 0) == 1)
+			{
+				global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>("DebugConsoleButton"));
+				gameObject.transform.SetParent(base.view.transform, false);
+			}
 		}
 
 		public override void OnRemove()
@@ -121,6 +131,10 @@ namespace Kampai.UI.View
 			facebookStateSignal.RemoveListener(setFacebookStatus);
 			base.view.playMovieButton.ClickedSignal.RemoveListener(PlayMovieButton);
 			tempHidden.RemoveListener(TempHide);
+			if (base.view.mods != null)
+			{
+				base.view.mods.ClickedSignal.RemoveListener(ShowMods);
+			}
 		}
 
 		private void init()
@@ -140,19 +154,30 @@ namespace Kampai.UI.View
 
 		private void Start()
 		{
-			togglePopupSignal.Dispatch(true);
-			logger.Info("discord killswitch : {0}", facebookService.isKillSwitchEnabled);
-			logger.Info("google+ killswitch : {0}", googleService.isKillSwitchEnabled);
-			base.view.facebookButton.gameObject.SetActive(!coppaService.Restricted() && !facebookService.isKillSwitchEnabled);
+			if (togglePopupSignal != null) togglePopupSignal.Dispatch(true);
+			if (logger != null)
+			{
+				if (facebookService != null) logger.Info("facebook killswitch : {0}", facebookService.isKillSwitchEnabled);
+				if (googleService != null) logger.Info("google+ killswitch : {0}", googleService.isKillSwitchEnabled);
+			}
+			if (base.view != null && base.view.facebookButton != null)
+			{
+				base.view.facebookButton.gameObject.SetActive(true);
+			}
 			SetupButtons();
-			showStoreSignal.Dispatch(false);
-			global::Kampai.UI.View.SettingsMenuPanel? settingsMenuPanel = currentPanel;
-			if (!settingsMenuPanel.HasValue || !isTempHidden)
+			if (showStoreSignal != null) showStoreSignal.Dispatch(false);
+			
+			if (currentPanel != null)
+			{
+				ShowPanel(currentPanel.Value);
+			}
+			else if (!isTempHidden)
 			{
 				ShowSettings();
 			}
+			
 			isTempHidden = false;
-			if (playerService.GetHighestFtueCompleted() < 9)
+			if (playerService != null && playerService.GetHighestFtueCompleted() < 9 && questService != null)
 			{
 				questService.PauseQuestScripts();
 			}
@@ -162,8 +187,17 @@ namespace Kampai.UI.View
 		private void SetupButtons()
 		{
 			UpdateLoginButtonText();
-			base.view.googleButton.gameObject.SetActive(!coppaService.Restricted() && !googleService.isKillSwitchEnabled);
-			base.view.achievementButton.gameObject.SetActive(!coppaService.Restricted() && !googleService.isKillSwitchEnabled);
+			if (base.view != null)
+			{
+				if (base.view.googleButton != null)
+				{
+					base.view.googleButton.gameObject.SetActive(true);
+				}
+				if (base.view.achievementButton != null)
+				{
+					base.view.achievementButton.gameObject.SetActive(true);
+				}
+			}
 		}
 
 		protected override void OnDisable()
@@ -250,8 +284,18 @@ namespace Kampai.UI.View
 
 		private void UpdateLoginButtonText()
 		{
-			base.view.facebookButtonText.text = localService.GetString((!facebookService.isLoggedIn) ? "facebooklogin" : "facebooklogout");
-			base.view.googleButtonText.text = localService.GetString((coppaService.Restricted() || !googleService.isLoggedIn) ? "googleplaylogin" : "googleplaylogout");
+			if (base.view == null || localService == null)
+			{
+				return;
+			}
+			if (base.view.facebookButtonText != null && facebookService != null)
+			{
+				base.view.facebookButtonText.text = localService.GetString((!facebookService.isLoggedIn) ? "facebooklogin" : "facebooklogout");
+			}
+			if (base.view.googleButtonText != null && googleService != null && coppaService != null)
+			{
+				base.view.googleButtonText.text = localService.GetString((coppaService.Restricted() || !googleService.isLoggedIn) ? "googleplaylogin" : "googleplaylogout");
+			}
 		}
 
 		private void FacebookButton()
@@ -316,6 +360,11 @@ namespace Kampai.UI.View
 			ShowPanel(global::Kampai.UI.View.SettingsMenuPanel.HELP);
 		}
 
+		private void ShowMods()
+		{
+			ShowPanel(global::Kampai.UI.View.SettingsMenuPanel.MODS);
+		}
+
 		private void ShowPanel(global::Kampai.UI.View.SettingsMenuPanel panel)
 		{
 			if (currentPanel != panel)
@@ -329,6 +378,13 @@ namespace Kampai.UI.View
 				bool active2 = panel == global::Kampai.UI.View.SettingsMenuPanel.HELP;
 				base.view.helpPanel.SetActive(active2);
 				base.view.helpClicked.SetActive(active2);
+				// MODS tab (runtime-created, may be null)
+				if (base.view.modsPanel != null)
+				{
+					bool active3 = panel == global::Kampai.UI.View.SettingsMenuPanel.MODS;
+					base.view.modsPanel.SetActive(active3);
+					base.view.modsClicked.SetActive(active3);
+				}
 				displayDebugButtonSignal.Dispatch(flag);
 				currentPanel = panel;
 			}

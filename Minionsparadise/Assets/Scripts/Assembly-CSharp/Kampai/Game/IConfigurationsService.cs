@@ -21,5 +21,7 @@ namespace Kampai.Game
 		void ClearKillswitchOverride(global::Kampai.Game.KillSwitch killswitchType);
 
 		void ClearAllKillswitchOverrides();
+
+		void LoadLocalConfiguration();
 	}
 }

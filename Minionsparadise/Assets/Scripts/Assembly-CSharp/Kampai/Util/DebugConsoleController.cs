@@ -381,6 +381,23 @@ namespace Kampai.Util
 			}
 		}
 
+		[global::Kampai.Util.DebugCommand]
+		public void fixBuildings(string[] args)
+		{
+			global::System.Collections.Generic.List<global::Kampai.Game.Building> buildings = playerService.GetInstancesByType<global::Kampai.Game.Building>();
+			int repairCount = 0;
+			foreach (global::Kampai.Game.Building building in buildings)
+			{
+				if (building.State == global::Kampai.Game.BuildingState.Broken || building.State == global::Kampai.Game.BuildingState.Inaccessible)
+				{
+					building.SetState(global::Kampai.Game.BuildingState.Idle);
+					repairBuildingSignal.Dispatch(building);
+					repairCount++;
+				}
+			}
+			outBuilder.AppendFormat("Fixed {0} broken or inaccessible buildings.", repairCount);
+		}
+
 		[global::Kampai.Util.DebugCommand(Args = new string[] { "command_name" })]
 		[global::Kampai.Util.DebugCommand(Name = "?")]
 		public void Help(string[] args)

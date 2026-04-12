@@ -46,10 +46,32 @@ namespace Kampai.UI.View
 		[Inject]
 		public global::Kampai.UI.View.TempHideSettingsMenuSignal tempHideSettingsMenuSignal { get; set; }
 
+		[Inject(global::Kampai.Main.MainElement.UI_OVERLAY_CANVAS)]
+		public global::UnityEngine.GameObject overlayCanvas { get; set; }
+
 		public override void OnRegister()
 		{
 			settingsMenuPanelGO = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>("screen_HUD_Panel_Settings_Menu"));
-			settingsMenuPanelGO.transform.SetParent(base.transform, false);
+			
+			if (overlayCanvas != null)
+			{
+				settingsMenuPanelGO.transform.SetParent(overlayCanvas.transform, false);
+			}
+			else
+			{
+				global::UnityEngine.Debug.LogError("[HUDSettingsMenuPanelMediator] overlayCanvas is null! Settings menu could not be parented correctly.");
+				settingsMenuPanelGO.transform.SetParent(base.transform, false);
+			}
+
+			global::UnityEngine.RectTransform rect = settingsMenuPanelGO.GetComponent<global::UnityEngine.RectTransform>();
+			if (rect != null)
+			{
+				rect.anchorMin = global::UnityEngine.Vector2.zero;
+				rect.anchorMax = global::UnityEngine.Vector2.one;
+				rect.offsetMin = global::UnityEngine.Vector2.zero;
+				rect.offsetMax = global::UnityEngine.Vector2.zero;
+			}
+
 			settingsMenuPanelGO.SetActive(false);
 			if (global::Kampai.Util.GameConstants.StaticConfig.DEBUG_ENABLED || global::UnityEngine.PlayerPrefs.GetInt("DebugConsoleEnabled", 0) == 1)
 			{
@@ -83,6 +105,7 @@ namespace Kampai.UI.View
 			updateFacebookDialogState.Dispatch(facebookService.isLoggedIn);
 			closeAllMenuSignal.Dispatch(settingsMenuPanelGO);
 			settingsMenuPanelGO.SetActive(true);
+			settingsMenuPanelGO.transform.SetAsLastSibling();
 		}
 
 		private void ButtonClicked()

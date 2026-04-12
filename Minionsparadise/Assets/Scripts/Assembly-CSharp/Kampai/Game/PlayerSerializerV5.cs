@@ -23,7 +23,7 @@ namespace Kampai.Game
 				{
 					long iD = player.ID;
 					string country = player.country;
-					logger.Warning("Old user has not completed ftue, let's reset their inventory.");
+					logger.Warning("[Migration] Old user (Version: "+player.Version+") has not completed ftue (FTUE: "+player.HighestFtueLevel+"), let's reset their inventory.");
 					json = definitionService.GetInitialPlayer();
 					player = base.Deserialize(json, definitionService, localPersistanceService, partyService, logger);
 					player.ID = iD;

@@ -158,6 +158,17 @@ namespace Kampai.Game
 		private void PassedSanityCheck(byte[] playerData, global::Kampai.Game.Player currentSave)
 		{
 			playerService.LastSave = currentSave;
+			
+			// Always save a local copy for Offline Mode fallback
+			string jsonBody = global::System.Text.Encoding.UTF8.GetString(playerData);
+			logger.Info("[OfflineMode] Saving game to {0}. Version: {1}, FTUE Level: {2}, Items: {3}", 
+				global::Kampai.Util.OfflineModeUtility.PlayerSavePath, 
+				currentSave.Version, 
+				currentSave.HighestFtueLevel,
+				currentSave.GetInstancesByDefinition().Count);
+			
+			global::Kampai.Util.OfflineModeUtility.SaveLocal(global::Kampai.Util.OfflineModeUtility.PlayerSavePath, jsonBody);
+
 			if (saveLocation == global::Kampai.Game.SaveLocation.REMOTE || saveLocation == global::Kampai.Game.SaveLocation.REMOTE_NOSANITY)
 			{
 				if (saveImmediately || persistService.HasKey("AutoSaveLock"))
@@ -171,7 +182,7 @@ namespace Kampai.Game
 			}
 			else
 			{
-				persistService.PutData("Player_" + saveID, global::System.Text.Encoding.UTF8.GetString(playerData));
+				persistService.PutData("Player_" + saveID, jsonBody);
 				OnSavingResult(true);
 			}
 		}

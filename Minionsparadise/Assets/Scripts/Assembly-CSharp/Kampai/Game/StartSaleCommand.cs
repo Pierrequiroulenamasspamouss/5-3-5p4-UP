@@ -50,10 +50,12 @@ namespace Kampai.Game
 			}
 			if (item.Definition.Type == global::Kampai.Game.SalePackType.Upsell && !started)
 			{
+				/* Automatic popups disabled per user request
 				routineRunner.StartCoroutine(WaitAFrame(delegate
 				{
 					openUpSellModalSignal.Dispatch(item.Definition, "Automatic", false);
 				}));
+				*/
 			}
 		}
 

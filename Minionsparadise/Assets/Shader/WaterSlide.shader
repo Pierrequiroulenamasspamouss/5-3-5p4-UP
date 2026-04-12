@@ -4,6 +4,7 @@ Shader "Kampai/Water/WaterSlide" {
         _diffuse1 ("diffuse1", 2D) = "gray" { }
         _diffuse2 ("diffuse2", 2D) = "gray" { }
         _time_scale ("time_scale", Float) = 10
+        _NightGlow ("Night Glow", Range(0,1)) = 0
         
         // Ajoutés pour éviter les erreurs de compilation avec la commande Offset
         [HideInInspector] _OffsetFactor ("Offset Factor", Float) = 0
@@ -26,6 +27,7 @@ Shader "Kampai/Water/WaterSlide" {
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
+            #include "KampaiNight.cginc"
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -45,6 +47,7 @@ Shader "Kampai/Water/WaterSlide" {
             sampler2D _diffuse1; float4 _diffuse1_ST;
             sampler2D _diffuse2; float4 _diffuse2_ST;
             float _time_scale;
+            half _NightGlow;
 
             v2f vert (appdata v) {
                 v2f o;
@@ -79,6 +82,9 @@ Shader "Kampai/Water/WaterSlide" {
                 // L'opacité combine l'alpha du sommet (Vertex Color) 
                 // avec l'addition des canaux Rouge et Bleu du masque
                 fixed finalAlpha = i.color.a * saturate(mask.r + mask.b);
+                
+                // --- Night Mode Injection ---
+                finalRGB = ApplyKampaiNight(finalRGB, _NightGlow);
                 
                 return fixed4(finalRGB, finalAlpha);
             }

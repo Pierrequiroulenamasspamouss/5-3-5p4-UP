@@ -22,7 +22,7 @@ namespace Kampai.Game
 		[Inject]
 		public global::Kampai.Game.IPlayerService playerService { get; set; }
 
-		[Inject(global::Kampai.Game.GameElement.CONTEXT)]
+		[Inject(global::Kampai.Game.GameElement.CONTEXT, optional = true)]
 		public global::strange.extensions.context.api.ICrossContextCapable gameContext { get; set; }
 
 		[Inject]

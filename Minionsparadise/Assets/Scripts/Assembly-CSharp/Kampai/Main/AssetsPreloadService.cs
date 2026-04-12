@@ -135,6 +135,10 @@ namespace Kampai.Main
 			{
 				"UnityEngine.RuntimeAnimatorController",
 				typeof(global::UnityEngine.RuntimeAnimatorController)
+			},
+			{
+				"UnityEditor.Animations.AnimatorController",
+				typeof(global::UnityEngine.RuntimeAnimatorController)
 			}
 		};
 

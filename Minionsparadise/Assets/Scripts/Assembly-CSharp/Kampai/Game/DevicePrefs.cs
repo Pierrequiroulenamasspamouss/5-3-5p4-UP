@@ -34,5 +34,8 @@ namespace Kampai.Game
 
 		[global::Newtonsoft.Json.JsonProperty("Language")]
 		public string Language = string.Empty;
+
+		[global::Newtonsoft.Json.JsonProperty("OfflineMode_Pref")]
+		public bool OfflineMode_Pref = false;
 	}
 }

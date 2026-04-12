@@ -233,10 +233,13 @@ namespace Kampai.UI.View
 					}
 				}
 			}
-			global::UnityEngine.RectTransform rectTransform = storeButtonView.transform as global::UnityEngine.RectTransform;
-			float y = rectTransform.sizeDelta.y;
-			float paddingInPixels = storeButtonView.PaddingInPixels;
-			base.view.SetupButtonHeight(y, paddingInPixels);
+			if (storeButtonView != null)
+			{
+				global::UnityEngine.RectTransform rectTransform = storeButtonView.transform as global::UnityEngine.RectTransform;
+				float y = rectTransform.sizeDelta.y;
+				float paddingInPixels = storeButtonView.PaddingInPixels;
+				base.view.SetupButtonHeight(y, paddingInPixels);
+			}
 			buildMenuService.RetoreBuidMenuState(base.view.GetAllButtonViews());
 		}
 
@@ -329,9 +332,12 @@ namespace Kampai.UI.View
 			foreach (global::Kampai.Game.StoreItemType key in storeTabs.Keys)
 			{
 				global::System.Collections.Generic.List<global::Kampai.UI.View.StoreButtonView> storeButtonViews = base.view.GetStoreButtonViews(key);
-				foreach (global::Kampai.UI.View.StoreButtonView item in storeButtonViews)
+				if (storeButtonViews != null)
 				{
-					item.SetHighlight(false);
+					foreach (global::Kampai.UI.View.StoreButtonView item in storeButtonViews)
+					{
+						item.SetHighlight(false);
+					}
 				}
 			}
 		}
@@ -554,7 +560,6 @@ namespace Kampai.UI.View
 			component.localPosition = new global::UnityEngine.Vector3(0f, 0f, 0f);
 			global::Kampai.UI.View.KampaiImage component2 = dragIcon.GetComponent<global::Kampai.UI.View.KampaiImage>();
 			component.anchoredPosition = new global::UnityEngine.Vector2(eventData.position.x / UIUtils.GetHeightScale(), eventData.position.y / UIUtils.GetHeightScale() + component2.sprite.rect.height * component2.pixelsPerUnit / 2f);
-			component.localScale = global::UnityEngine.Vector3.one;
 			component.anchorMin = new global::UnityEngine.Vector2(0f, 0f);
 			component.anchorMax = new global::UnityEngine.Vector2(0f, 0f);
 			component.pivot = new global::UnityEngine.Vector2(0.5f, 0.5f);

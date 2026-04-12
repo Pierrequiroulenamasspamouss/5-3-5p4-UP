@@ -56,10 +56,39 @@ namespace Kampai.Main
 		[Inject]
 		public global::Kampai.Main.ReloadGameSignal reloadGameSignal { get; set; }
 
+		[Inject]
+		public global::Kampai.Game.IUserSessionService userSessionService { get; set; }
+
+		[Inject]
+		public IResourceService resourceService { get; set; }
+
 		public override void Execute()
 		{
 			setupLoggingTargetsSignal.Dispatch();
 			logger = global::Elevation.Logging.LogManager.GetClassLogger("MainStartCommand") as global::Kampai.Util.IKampaiLogger;
+			
+			
+			string defPath = global::Kampai.Util.OfflineModeUtility.DefinitionsCachePath;
+			if (!global::System.IO.File.Exists(defPath))
+			{
+				string defsText = resourceService.LoadText("definitions");
+				if (!string.IsNullOrEmpty(defsText))
+				{
+					global::Kampai.Util.OfflineModeUtility.SaveLocal(defPath, defsText);
+				}
+			}
+
+			string configServerPath = global::Kampai.Util.OfflineModeUtility.ConfigCachePath;
+			if (!global::System.IO.File.Exists(configServerPath))
+			{
+				// config_server.json is the resource name mentioned by the user
+				string configServerText = resourceService.LoadText("config_server");
+				if (!string.IsNullOrEmpty(configServerText) && !configServerText.Contains("ERROR")) // Basic check
+				{
+					global::Kampai.Util.OfflineModeUtility.SaveLocal(configServerPath, configServerText);
+				}
+			}
+
 			logger.EventStart("MainStartCommand.Execute");
 			global::Kampai.Util.KampaiResources.SetLogger();
 			global::Kampai.Util.AndroidPermissions.RequestPermissions();

@@ -251,6 +251,7 @@ namespace Kampai.Util
 				injectionBinder.Bind<global::Kampai.Game.DeselectBuildingSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Common.ZoomPercentageSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Common.RequestZoomPercentageSignal>().ToSingleton().CrossContext();
+
 				injectionBinder.Bind<global::Kampai.UI.View.SpawnDooberSignal>().ToSingleton().CrossContext()
 					.Weak();
 				injectionBinder.Bind<global::Kampai.UI.View.SpawnMignetteDooberSignal>().ToSingleton().CrossContext()
@@ -469,6 +470,7 @@ namespace Kampai.Util
 				injectionBinder.Bind<global::Kampai.Game.NetworkLostCloseSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.UI.View.UIAddedSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.UI.View.UIRemovedSignal>().ToSingleton().CrossContext();
+				injectionBinder.Bind<global::Kampai.UI.View.TransitionToOfflineModeSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Game.ToggleHitboxSignal>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Game.CameraModel>().ToSingleton().CrossContext();
 				injectionBinder.Bind<global::Kampai.Game.StageService>().ToSingleton().CrossContext();
@@ -497,6 +499,7 @@ namespace Kampai.Util
 				base.commandBinder.Bind<global::Kampai.Common.NetworkConnectionLostSignal>().To<global::Kampai.Common.NetworkConnectionLostCommand>();
 				base.commandBinder.Bind<global::Kampai.Common.ResumeNetworkOperationSignal>().To<global::Kampai.Common.ResumeNetworkOperationCommand>();
 				base.commandBinder.Bind<global::Kampai.UI.View.ShowOfflinePopupSignal>().To<global::Kampai.UI.Controller.ShowOfflinePopupCommand>();
+				base.commandBinder.Bind<global::Kampai.UI.View.TransitionToOfflineModeSignal>().To<global::Kampai.UI.Controller.TransitionToOfflineModeCommand>();
 				base.commandBinder.Bind<global::Kampai.UI.View.SetupCanvasSignal>().To<global::Kampai.UI.View.SetupCanvasCommand>();
 				base.commandBinder.Bind<global::Kampai.UI.View.UIAddedSignal>().To<global::Kampai.UI.View.UIAddedCommand>();
 				base.commandBinder.Bind<global::Kampai.UI.View.UIRemovedSignal>().To<global::Kampai.UI.View.UIRemovedCommand>();
@@ -505,6 +508,11 @@ namespace Kampai.Util
 				base.commandBinder.Bind<global::Kampai.Splash.DownloadDLCPartSignal>().To<global::Kampai.Splash.DownloadDLCPartCommand>();
 				base.mediationBinder.Bind<AppTrackerView>().To<global::Kampai.Main.View.AppTrackerMediator>();
 				base.mediationBinder.Bind<global::Kampai.UI.View.OfflineView>().To<global::Kampai.UI.View.OfflineMediator>();
+				base.mediationBinder.Bind<global::Kampai.UI.View.COPPAAgeGatePanelView>().To<global::Kampai.UI.View.COPPAAgeGatePanelMediator>();
+				base.mediationBinder.Bind<global::Kampai.UI.View.MoveBuildingMenuView>().To<global::Kampai.UI.View.MoveBuildingMenuMediator>();
+				base.mediationBinder.Bind<global::Kampai.UI.View.TownHallDialogView>().To<global::Kampai.UI.View.TownHallDialogMediator>();
+				injectionBinder.Bind<global::Kampai.Game.UserAgeForCOPPAReceivedSignal>().ToSingleton().CrossContext();
+				base.commandBinder.Bind<global::Kampai.Game.UserAgeForCOPPAReceivedSignal>().To<global::Kampai.Game.UserAgeForCOPPAReceivedCommand>();
 			}
 			MapBindings();
 		}

@@ -48,7 +48,13 @@ namespace Kampai.UI.View
 				text = "villainLair";
 				break;
 			case global::Kampai.Game.StoreItemType.SpecialEvent:
+			case global::Kampai.Game.StoreItemType.SalePack:
+			case global::Kampai.Game.StoreItemType.Redeemable:
 				text = "event";
+				break;
+			case global::Kampai.Game.StoreItemType.PremiumCurrency:
+			case global::Kampai.Game.StoreItemType.GrindCurrency:
+				text = "villainLair";
 				break;
 			default:
 				logger.Error("store tab key doesn't exist for StoreItemTyoe: {0}", type);

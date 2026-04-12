@@ -164,7 +164,6 @@ namespace Kampai.UI.View
 				rectTransform.anchorMin = new global::UnityEngine.Vector2(0f, num / m_rowNumber * (float)num6);
 				rectTransform.anchorMax = new global::UnityEngine.Vector2(0f, num / m_rowNumber * (float)(num6 + 1));
 			}
-			rectTransform.localScale = global::UnityEngine.Vector3.one;
 			return rectTransform;
 		}
 

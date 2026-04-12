@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, send_file, current_app, redirect
 
 import os
 import json
+from config import Config
 from utils.profile import generate_new_player_profile
 from utils.db import (
     update_player_in_db, get_db_connection, init_db, get_player_data,
@@ -13,11 +14,11 @@ from utils.db import (
 
 game_bp = Blueprint('game', __name__)
 
-# Dynamic host resolution is handled per request via request.host_url
-SERVER_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Paths from Config
+SERVER_DIR = str(Config.BASE_DIR)
 VIDEO_PATH = os.path.join(SERVER_DIR, "assets", "video.mp4")
 INTRO_VIDEO_PATH = os.path.join(SERVER_DIR, "assets", "intro.mp4")
-DEFINITIONS_PATH = os.path.join(SERVER_DIR, "definitions.json")
+DEFINITIONS_PATH = Config.DEFINITIONS_PATH
 CONFIG_PATH = os.path.join(SERVER_DIR, "config.json")
 MANIFEST_PATH = os.path.join(SERVER_DIR, "DLC_Manifest.json")
 MARKETPLACE_PATH = os.path.join(SERVER_DIR, "marketplace", "marketplace.json")

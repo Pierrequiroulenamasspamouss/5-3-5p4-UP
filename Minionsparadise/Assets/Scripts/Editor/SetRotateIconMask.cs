@@ -5,7 +5,7 @@ using System.IO;
 
 public class SetRotateIconMask : EditorWindow
 {
-    [MenuItem("Kampai Tools/Set Rotate Button Icon")]
+    [MenuItem("Kampai/UI/Set Rotate Button Icon")]
     public static void SetIcon()
     {
         // 1. Find the MoveBuildingModal prefab (or instance)

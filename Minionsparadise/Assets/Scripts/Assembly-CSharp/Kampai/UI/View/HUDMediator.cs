@@ -197,6 +197,11 @@ namespace Kampai.UI.View
 			CheckStorageExpansionLimitReached();
 			UpdateSaleBadgeCount();
 			CheckShowPetsXPromo();
+
+			// Initial updates
+			SetGrindCurrency();
+			SetPremiumCurrency();
+			SetStorage();
 		}
 
 		public override void OnRemove()
@@ -245,7 +250,7 @@ namespace Kampai.UI.View
 			view.GrindIconButton.ClickedSignal.AddListener(OnGrindButtonClicked);
 			view.GrindTextButton.ClickedSignal.AddListener(OnGrindButtonClicked);
 			view.StoreMenuButton.ClickedSignal.AddListener(OnStoreButtonClicked);
-			view.BackgroundButton.ClickedSignal.AddListener(CloseMenuAndCurrency);
+				view.BackgroundButton.ClickedSignal.AddListener(CloseMenuAndCurrency);
 		}
 
 		private void RemoveCurrencySignals()
@@ -391,12 +396,14 @@ namespace Kampai.UI.View
 
 		internal void SetGrindCurrency()
 		{
-			view.SetGrindCurrency(playerService.GetQuantity(global::Kampai.Game.StaticItem.GRIND_CURRENCY_ID));
+			uint quantity = playerService.GetQuantity(global::Kampai.Game.StaticItem.GRIND_CURRENCY_ID);
+			view.SetGrindCurrency(quantity);
 		}
 
 		internal void SetPremiumCurrency()
 		{
-			view.SetPremiumCurrency(playerService.GetQuantity(global::Kampai.Game.StaticItem.PREMIUM_CURRENCY_ID));
+			uint quantity = playerService.GetQuantity(global::Kampai.Game.StaticItem.PREMIUM_CURRENCY_ID);
+			view.SetPremiumCurrency(quantity);
 		}
 
 		internal void CloseMenu(bool closeCurrency)

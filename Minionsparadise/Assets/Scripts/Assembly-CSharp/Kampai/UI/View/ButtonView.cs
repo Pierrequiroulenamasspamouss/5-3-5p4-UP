@@ -15,7 +15,10 @@ namespace Kampai.UI.View
 		{
 			if (PlaySoundOnClick)
 			{
-				playSFXSignal.Dispatch(AudioButtonClick);
+				if (playSFXSignal != null)
+				{
+					playSFXSignal.Dispatch(AudioButtonClick);
+				}
 			}
 			ClickedSignal.Dispatch();
 		}

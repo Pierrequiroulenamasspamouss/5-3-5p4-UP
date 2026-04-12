@@ -162,7 +162,7 @@ public class GoTween : AbstractGoTween
 		}
 		else
 		{
-			global::UnityEngine.Debug.Log("tween failed to validate target: " + tweenProp);
+			// global::UnityEngine.Debug.Log("tween failed to validate target: " + tweenProp);
 		}
 	}
 

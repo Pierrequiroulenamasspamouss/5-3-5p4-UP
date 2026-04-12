@@ -102,6 +102,20 @@ namespace Kampai.UI.View
 
 		public int grindTweenCount { get; set; }
 
+		protected override void Awake()
+		{
+			base.Awake();
+		}
+
+		protected override void Start()
+		{
+			base.Start();
+		}
+
+		protected virtual void OnEnable()
+		{
+		}
+
 		public void Init(global::Kampai.UI.View.HUDChangedSiblingIndexSignal hudChangedSiblingIndexSignal)
 		{
 			this.hudChangedSiblingIndexSignal = hudChangedSiblingIndexSignal;
