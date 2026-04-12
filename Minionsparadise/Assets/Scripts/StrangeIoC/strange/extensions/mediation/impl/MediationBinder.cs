@@ -12,6 +12,7 @@ namespace strange.extensions.mediation.impl
 
 		public void Trigger(global::strange.extensions.mediation.api.MediationEvent evt, global::strange.extensions.mediation.api.IView view)
 		{
+			UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: MediationBinder.Trigger for {0} (Event: {1})", view.GetType().Name, evt));
 			global::System.Type type = view.GetType();
 			global::strange.extensions.mediation.api.IMediationBinding mediationBinding = GetBinding(type) as global::strange.extensions.mediation.api.IMediationBinding;
 			if (mediationBinding != null)

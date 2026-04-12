@@ -13,7 +13,7 @@ namespace Kampai.UI.View
 
 		public override void OnRegister()
 		{
-			global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: SettingsLearnSystemsCategoryMediator.OnRegister - View: {0}, ID: {1}", (view != null) ? view.name : "NULL", (view != null) ? view.GetInstanceID().ToString() : "N/A"));
+			// global::UnityEngine.Debug.Log(string.Format("ANTIGRAVITY: SettingsLearnSystemsCategoryMediator.OnRegister - View: {0}, ID: {1}", (view != null) ? view.name : "NULL", (view != null) ? view.GetInstanceID().ToString() : "N/A"));
 			view.Button.ClickedSignal.AddListener(OnToggleSelected);
 			categorySelectedSignal.AddListener(UpdateColor);
 		}
@@ -26,7 +26,7 @@ namespace Kampai.UI.View
 
 		private void OnToggleSelected()
 		{
-			global::UnityEngine.Debug.Log("ANTIGRAVITY: SettingsLearnSystemsCategoryMediator - Category clicked: " + ((view != null && view.Definition != null) ? view.Definition.categoryTitleLocalizedKey : "NULL"));
+			// global::UnityEngine.Debug.Log("ANTIGRAVITY: SettingsLearnSystemsCategoryMediator - Category clicked: " + ((view != null && view.Definition != null) ? view.Definition.categoryTitleLocalizedKey : "NULL"));
 			
 			if (playSFXSignal != null) playSFXSignal.Dispatch("Play_button_click_01");
 			

@@ -395,12 +395,16 @@ namespace Kampai.Game
 			{
 				logger.Info("[OfflineMode] No cached config found at {0}, trying built-in resource...", global::Kampai.Util.OfflineModeUtility.ConfigCachePath);
 				// Try to load from Resources if cached is missing
-				json = resourceService.LoadText("config");
+				json = resourceService.LoadText("config_server");
+				if (string.IsNullOrEmpty(json)) json = resourceService.LoadText("config_server.json");
+				if (string.IsNullOrEmpty(json)) json = resourceService.LoadText("config_server_local.json");
+				
 				if (string.IsNullOrEmpty(json))
 				{
-					json = resourceService.LoadText("config.json");
+					string rawPath = global::System.IO.Path.Combine(global::UnityEngine.Application.dataPath, "Resources/config_server.json");
+					if (global::System.IO.File.Exists(rawPath)) json = global::System.IO.File.ReadAllText(rawPath);
 				}
-
+				
 				if (!string.IsNullOrEmpty(json))
 				{
 					logger.Info("[OfflineMode] Successfully loaded config from resources, caching to {0}", global::Kampai.Util.OfflineModeUtility.ConfigCachePath);

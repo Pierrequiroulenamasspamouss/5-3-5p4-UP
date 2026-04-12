@@ -90,14 +90,23 @@ namespace Kampai.UI.View
 		{
 			if (QuestTextTransform != null)
 			{
-				float height = QuestTextTransform.rect.height;
-				if (DialogSizeCheck(height))
+				try
 				{
-					ProcessDialog_Normal();
+					float height = QuestTextTransform.rect.height;
+					if (DialogSizeCheck(height))
+					{
+						ProcessDialog_Normal();
+					}
+					else
+					{
+						BreakDialogByTextBoxSize(height, logger);
+					}
 				}
-				else
+				catch (global::System.Exception ex)
 				{
-					BreakDialogByTextBoxSize(height, logger);
+					if (logger != null) logger.Error("Exception in QuestDialogView.ProcessText: {0}", ex);
+					global::UnityEngine.Debug.LogError("Exception in QuestDialogView.ProcessText: " + ex);
+					ProcessDialog_Normal();
 				}
 			}
 		}
@@ -112,7 +121,7 @@ namespace Kampai.UI.View
 		{
 			int pieceCount = global::UnityEngine.Mathf.CeilToInt(height / DialogBackground.rect.height);
 			string text = localizationService.GetString("PunctuationDelimiters");
-			if (string.IsNullOrEmpty(text))
+			if (string.IsNullOrEmpty(text) || text == "PunctuationDelimiters")
 			{
 				text = ",.?!";
 			}

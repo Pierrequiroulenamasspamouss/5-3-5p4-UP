@@ -52,7 +52,7 @@ namespace Kampai.UI.View
 
 		private void OnCategoryItemSelected(int categoryItemDefinitionId)
 		{
-			global::UnityEngine.Debug.Log("ANTIGRAVITY: OnCategoryItemSelected - Item clicked: " + categoryItemDefinitionId);
+			// global::UnityEngine.Debug.Log("ANTIGRAVITY: OnCategoryItemSelected - Item clicked: " + categoryItemDefinitionId);
 			playerTrainingService.MarkSeen(categoryItemDefinitionId, global::Kampai.UI.PlayerTrainingVisiblityType.SETTINGS);
 			global::Kampai.Game.PlayerTrainingDefinition playerTrainingDefinition = definitionService.Get<global::Kampai.Game.PlayerTrainingDefinition>(categoryItemDefinitionId);
 			if (playerTrainingDefinition != null)
