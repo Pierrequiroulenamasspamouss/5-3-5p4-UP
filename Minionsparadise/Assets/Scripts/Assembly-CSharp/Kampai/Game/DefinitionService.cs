@@ -52,34 +52,44 @@ namespace Kampai.Game
 		{
 			if (textReader != null)
 			{
+				global::System.Diagnostics.Stopwatch stopwatch = global::System.Diagnostics.Stopwatch.StartNew();
 				global::Kampai.Game.Definitions definitions = null;
 				try
 				{
 					using (global::Newtonsoft.Json.JsonTextReader reader = new global::Newtonsoft.Json.JsonTextReader(textReader))
 					{
-						definitions = global::Kampai.Util.FastJSONDeserializer.Deserialize<global::Kampai.Game.Definitions>(reader, GetJsonDefinitionsFastConverters());
+						// IMPORTANT: definitions.json uses a custom deserialization logic.
+						// We must use a JsonConverters object, not just an array.
+						JsonConverters converters = GetJsonDefinitionsFastConverters();
+						definitions = new global::Kampai.Game.Definitions();
+						definitions.Deserialize(reader, converters);
 					}
 				}
-				catch (global::Newtonsoft.Json.JsonSerializationException ex)
+				catch (global::System.Exception ex)
 				{
-					global::UnityEngine.Debug.LogErrorFormat("DefinitionService: JsonSerializationException: {0}\n{1}", ex.Message, ex.StackTrace);
-					logger.Error(ex.StackTrace);
+					global::UnityEngine.Debug.LogErrorFormat("DefinitionService: Exception during JSON deserialization: {0}\n{1}", ex.Message, ex.StackTrace);
+					logger.Error("DefinitionService: Exception during JSON deserialization: {0}", ex);
 					throw new global::Kampai.Util.FatalException(global::Kampai.Util.FatalCode.DS_PARSE_ERROR, ex, "Def json error: {0}", ex);
 				}
-				catch (global::Newtonsoft.Json.JsonReaderException ex2)
+
+				if (definitions == null)
 				{
-					global::UnityEngine.Debug.LogErrorFormat("DefinitionService: JsonReaderException: {0}\n{1}", ex2.Message, ex2.StackTrace);
-					logger.Error(ex2.StackTrace);
-					throw new global::Kampai.Util.FatalException(global::Kampai.Util.FatalCode.DS_PARSE_ERROR, ex2, "Def json error: {0}", ex2);
+					logger.Error("DefinitionService: DeserializeJson produced NULL definitions!");
+					return;
 				}
+
 				LoadDefinitions(definitions, validateDefinitions, "DefinitionService.DeserializeJson()");
+				
 				if (validateDefinitions)
 				{
 					SerializeBinary(definitions);
 				}
-				return;
+				stopwatch.Stop();
 			}
-			throw new global::Kampai.Util.FatalException(global::Kampai.Util.FatalCode.DS_EMPTY_JSON, "DefinitionService.Deserialize(): empty json");
+			else
+			{
+				throw new global::Kampai.Util.FatalException(global::Kampai.Util.FatalCode.DS_EMPTY_JSON, "DefinitionService.Deserialize(): empty json");
+			}
 		}
 
 		public JsonConverters GetJsonDefinitionsFastConverters()
@@ -171,6 +181,7 @@ namespace Kampai.Game
 			this.validateDefinitions = validateDefinitions;
 			AllDefinitions = new global::System.Collections.Generic.Dictionary<int, global::Kampai.Game.Definition>(2500);
 			definitionsTypeMap = new global::System.Collections.Generic.Dictionary<global::System.Type, global::System.Collections.IList>();
+			
 			MarkDefinitions(definitions);
 			MarkMoreDefinitions(definitions);
 			MarkMarketplaceDefinitions(definitions);
@@ -182,6 +193,7 @@ namespace Kampai.Game
 			MarkMasterPlanDefinitions(definitions);
 			MarkXPromoDefinitions(definitions);
 			MarkHindsightDefinitions(definitions);
+			
 			AssembleGachaAnimationDefinitions();
 			AddLevelUpDefinition(definitions);
 			AddMinionBenefitDefinition(definitions);
@@ -189,12 +201,16 @@ namespace Kampai.Game
 			AddLevelXPTable(definitions);
 			AddLevelFunTable(definitions);
 			AddDropLevelBandDefinition(definitions);
+			
 			taskDefinition = GetTaskDefintion(definitions);
 			rushDefinitions = GetRushDefinitions(definitions);
 			achievementDefinitions = GetAchievementDefinitions(definitions);
 			triggerRewardsDefinitions = GetTriggerRewardDefinitions(definitions);
 			triggerDefinitions = GetTriggerDefinitions(definitions);
 			currencyStoreCategoryDefinitions = GetCurrencyStoreCategoryDefinitions(definitions);
+			
+			if (AllDefinitions.Count == 0) {
+			}
 		}
 
 		public void DeserializeEnvironmentDefinition(global::System.IO.TextReader textReader)
@@ -390,7 +406,7 @@ namespace Kampai.Game
 			{
 				return AllDefinitions[id];
 			}
-			logger.Fatal(global::Kampai.Util.FatalCode.DS_NO_ITEM_DEF, id);
+			logger.FatalNoThrow(global::Kampai.Util.FatalCode.DS_NO_ITEM_DEF, id);
 			return null;
 		}
 
@@ -403,7 +419,7 @@ namespace Kampai.Game
 			}
 			if (val == null)
 			{
-				logger.Fatal(global::Kampai.Util.FatalCode.DS_NO_ITEM_TYPE_DEF, id);
+				logger.Error("Get<{1}>: Definition ID {0} not found in DefinitionService!", id, typeof(T).Name);
 			}
 			return val;
 		}
@@ -637,7 +653,6 @@ namespace Kampai.Game
 			}
 			if (!levelUnlockLookUpTable.ContainsKey(definitionID))
 			{
-				logger.Fatal(global::Kampai.Util.FatalCode.TE_MISSING_UNLOCK, definitionID);
 				return 0;
 			}
 			return levelUnlockLookUpTable[definitionID];
@@ -928,12 +943,14 @@ namespace Kampai.Game
 		{
 			if (used != null)
 			{
+				int total = 0;
+				int registered = 0;
 				foreach (T item in used)
 				{
-					if (!item.Disabled)
-					{
-						MarkDefinitionAsUsed(item);
-					}
+					total++;
+					// OFFLINE FIX: Register all definitions to prevent missing JSON subsets
+					MarkDefinitionAsUsed(item);
+					registered++;
 				}
 			}
 			return used;

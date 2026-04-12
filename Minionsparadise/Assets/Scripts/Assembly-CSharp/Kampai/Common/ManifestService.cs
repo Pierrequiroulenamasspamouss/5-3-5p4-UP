@@ -21,7 +21,7 @@ namespace Kampai.Common
 #if !UNITY_WEBPLAYER
 			if (!global::System.IO.File.Exists(global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH))
 			{
-				logger.Warning("ManifestService.GenerateMasterManifest: manifest file NOT found at {0}", global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH);
+				// logger.WarniDLC bypass flow triggered.g("ManifestService.GenerateMasterManifest: manifest file NOT found at {0}", global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH);
 				return;
 			}
 			if (new global::System.IO.FileInfo(global::Kampai.Util.GameConstants.RESOURCE_MANIFEST_PATH).Length == 0L)

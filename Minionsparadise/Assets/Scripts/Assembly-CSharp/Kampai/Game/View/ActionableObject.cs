@@ -679,10 +679,13 @@ namespace Kampai.Game.View
 			using (global::System.Collections.Generic.List<global::UnityEngine.Animator>.Enumerator enumerator = animators.GetEnumerator())
 			{
 				currentRuntimeController = controller;
-				global::System.Collections.Generic.List<string> list = new global::System.Collections.Generic.List<string>(activeProps.Keys);
-				foreach (string item in list)
+				if (activeProps != null)
 				{
-					RemoveProp(item);
+					global::System.Collections.Generic.List<string> list = new global::System.Collections.Generic.List<string>(activeProps.Keys);
+					foreach (string item in list)
+					{
+						RemoveProp(item);
+					}
 				}
 				while (enumerator.MoveNext())
 				{

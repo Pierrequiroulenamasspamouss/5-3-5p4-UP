@@ -96,6 +96,7 @@ namespace Kampai.UI.View
 				.CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.IPlayerTrainingService>().To<global::Kampai.UI.PlayerTrainingService>().ToSingleton()
 				.CrossContext();
+			injectionBinder.Bind<global::Kampai.Game.IGlobalChatService>().To<global::Kampai.Game.GlobalChatService>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.LoadBuddyBarSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.UI.View.CloseBuddyFarewellPanelSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.OnDragItemSignal>().ToSingleton().CrossContext();
@@ -139,6 +140,8 @@ namespace Kampai.UI.View
 				.Weak();
 			injectionBinder.Bind<global::Kampai.UI.View.SettingsLearnSystemsCategorySelectedSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.SettingsLearnSystemsCategoryItemSelectedSignal>().ToSingleton().CrossContext();
+			injectionBinder.Bind<global::Kampai.UI.View.GlobalChatUpdateSignal>().ToSingleton().CrossContext();
+			injectionBinder.Bind<global::Kampai.UI.View.GlobalChatErrorSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.UpdatePartyCountDownTextSignal>().ToSingleton().CrossContext();
 			injectionBinder.Bind<global::Kampai.UI.View.DisplayCameraControlsSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.UI.View.DisplayDisco3DElements>().ToSingleton();
@@ -365,6 +368,7 @@ namespace Kampai.UI.View
 			base.mediationBinder.Bind<global::Kampai.UI.View.FAQPanelView>().To<global::Kampai.UI.View.FAQPanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.CreditsPanelView>().To<global::Kampai.UI.View.CreditsPanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.AboutPanelView>().To<global::Kampai.UI.View.AboutPanelMediator>();
+			base.mediationBinder.Bind<global::Kampai.UI.View.ModsPanelView>().To<global::Kampai.UI.View.ModsPanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.UsageSharingView>().To<global::Kampai.UI.View.UsageSharingMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.HelpPanelView>().To<global::Kampai.UI.View.HelpPanelMediator>();
 			base.mediationBinder.Bind<global::Kampai.UI.View.NotificationsPanelView>().To<global::Kampai.UI.View.NotificationsPanelMediator>();

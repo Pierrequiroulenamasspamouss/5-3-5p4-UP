@@ -3,7 +3,7 @@ using UnityEditor;
 
 public class CleanMissingScripts
 {
-    [MenuItem("Tools/Clean Missing Scripts In Scene")]
+    [MenuItem("Kampai/Utilities/Clean Missing Scripts In Scene")]
     static void CleanScene()
     {
         GameObject[] gos = Resources.FindObjectsOfTypeAll<GameObject>();

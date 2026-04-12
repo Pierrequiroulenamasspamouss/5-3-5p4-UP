@@ -38,10 +38,21 @@ def login():
 
 @user_bp.route('/rest/user/register', methods=['POST'])
 def register():
-    new_numeric_id = 1000000000 + int(uuid.uuid4().int % 2000000000)
-    new_id_str = str(new_numeric_id)
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+    except Exception:
+        data = {}
+        
+    # Check if a client-provided UID is present (used for offline-to-online transition)
+    requested_uid = data.get('userId')
+    if requested_uid:
+        new_id_str = requested_uid
+        print(f"[REGISTER] Using requested UserID={new_id_str}")
+    else:
+        new_numeric_id = 1000000000 + int(uuid.uuid4().int % 2000000000)
+        new_id_str = str(new_numeric_id)
+        print(f"[REGISTER] Generated UserID={new_id_str}", flush=True)
     
-    print(f"[REGISTER] UserID={new_id_str}", flush=True)
     return jsonify({
         "userId": new_id_str,
         "sessionId": str(uuid.uuid4()),

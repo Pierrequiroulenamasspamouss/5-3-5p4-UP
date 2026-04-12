@@ -41,7 +41,7 @@ namespace Kampai.UI.View
 		protected virtual global::UnityEngine.GameObject GetViewGameObject()
 		{
 			T val = view;
-			return val.gameObject;
+			return (val != null) ? val.gameObject : null;
 		}
 
 		protected virtual void OnCloseAllMenu(global::UnityEngine.GameObject exception)
@@ -65,7 +65,11 @@ namespace Kampai.UI.View
 
 		private void RemoveView()
 		{
-			uiRemovedSignal.Dispatch(GetViewGameObject());
+			global::UnityEngine.GameObject viewGameObject = GetViewGameObject();
+			if (viewGameObject != null)
+			{
+				uiRemovedSignal.Dispatch(viewGameObject);
+			}
 		}
 	}
 }

@@ -24,6 +24,12 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 	[Inject]
 	public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequestFactory requestFactory { get; set; }
 
+	[Inject]
+	public global::Kampai.Game.IUserSessionService userSessionService { get; set; }
+
+	[Inject]
+	public IResourceService resourceService { get; set; }
+
 	public override void Execute()
 	{
 		logger.EventStart("FetchDefinitionsCommand.Execute");
@@ -32,6 +38,45 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 			config.definitions = global::Kampai.Util.ABTestModel.definitionURL;
 		}
 		definitionPath = GetDefinitionsPath();
+
+		if (userSessionService.IsOffline)
+		{
+			if (!global::System.IO.File.Exists(definitionPath))
+			{
+				
+				string text = resourceService.LoadText("definitions_server");
+				if (string.IsNullOrEmpty(text)) text = resourceService.LoadText("definitions_server.json");
+				
+				if (string.IsNullOrEmpty(text))
+				{
+					string rawPath = global::System.IO.Path.Combine(global::UnityEngine.Application.dataPath, "Resources/definitions_server.json");
+					if (global::System.IO.File.Exists(rawPath)) text = global::System.IO.File.ReadAllText(rawPath);
+				}
+
+				if (!string.IsNullOrEmpty(text))
+				{
+					string directoryName = global::System.IO.Path.GetDirectoryName(definitionPath);
+					if (!global::System.IO.Directory.Exists(directoryName))
+					{
+						global::System.IO.Directory.CreateDirectory(directoryName);
+					}
+					global::System.IO.File.WriteAllText(definitionPath, text);
+				}
+				else
+				{
+					logger.Error("[OfflineMode] FAILED to load definitions from resources 'definitions_server'!");
+				}
+			}
+			else
+			{
+			}
+			definitionsFetchedSignal.Dispatch();
+			LoadDefinitionsCommand.LoadDefinitionsData loadDefinitionsData = new LoadDefinitionsCommand.LoadDefinitionsData();
+			loadDefinitionsData.Path = definitionPath;
+			loadDefinitionsSignal.Dispatch(false, loadDefinitionsData);
+			return;
+		}
+
 		downloadResponseSignal.AddListener(DownloadResponseHandler);
 		logger.Error("FetchDefinitionsCommand:: Definitions URL: {0}", config.definitions);
 		downloadService.Perform(requestFactory.Resource(config.definitions).WithOutputFile(definitionPath).WithGZip(true)
@@ -43,7 +88,7 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 
 	public static string GetDefinitionsPath()
 	{
-		return global::System.IO.Path.Combine(global::Kampai.Util.GameConstants.PERSISTENT_DATA_PATH, "definitions.json");
+		return global::Kampai.Util.OfflineModeUtility.DefinitionsCachePath;
 	}
 
 	private void DownloadResponseHandler(global::Ea.Sharkbite.HttpPlugin.Http.Api.IResponse response)

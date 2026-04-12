@@ -2,13 +2,15 @@ import sqlite3
 import os
 import json
 
-DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'player_data', 'players.db')
-DEFINITIONS_PATH = os.path.join(os.path.dirname(__file__), '..', 'definitions.json')
-PLAYER_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'player_data')
+from config import Config
+
+DB_PATH = Config.DB_PATH
+DEFINITIONS_PATH = Config.DEFINITIONS_PATH
+PLAYER_DATA_DIR = Config.PLAYER_DATA_DIR
 LEADERBOARD_JSON_PATH = os.path.join(PLAYER_DATA_DIR, 'leaderboard.json')
 
 MINION_NAMES = ["Kevin", "Stuart", "Bob", "Dave", "Jerry", "Carl", "Mel", "Otto", "Tim", "Mark", "Phil", "Paul", "Donny", "Ken", "Mike"]
-NOPROMOUSERS_PATH = os.path.join(os.path.dirname(__file__), '..', 'nopromousers.txt')
+NOPROMOUSERS_PATH = Config.NOPROMOUSERS_PATH
 
 def is_nopromo_user(user_id):
     """
@@ -176,7 +178,7 @@ def get_tse_team_for_user(event_id, user_id):
             "id": mid, "externalId": mid, "userId": mid,
             "type": 1,
             "secret": "mock", "sessionKey": "mock",
-            "iconUrl": f"http://localhost:44732/api/{mid}/icon.png"
+            "iconUrl": f"{Config.SECONDARY_URL}/api/{mid}/icon.png"
         })
     
     team = {
@@ -209,7 +211,7 @@ def create_tse_team_for_user(event_id, user_id):
             {"id": str(user_id), "externalId": str(user_id), "userId": str(user_id),
              "type": 1,
              "secret": "mock", "sessionKey": "mock",
-             "iconUrl": f"http://localhost:44732/api/{user_id}/icon.png"}
+             "iconUrl": f"{Config.SECONDARY_URL}/api/{user_id}/icon.png"}
         ],
         "orderProgress": []
     }
@@ -261,7 +263,7 @@ def get_tse_team_by_id(team_id):
             "id": mid, "externalId": mid, "userId": mid,
             "type": 1,
             "secret": "mock", "sessionKey": "mock",
-            "iconUrl": f"http://localhost:44732/api/{mid}/icon.png"
+            "iconUrl": f"{Config.SECONDARY_URL}/api/{mid}/icon.png"
         })
     
     return {
@@ -634,16 +636,30 @@ def add_chat_message(user_id, message):
     conn.commit()
     conn.close()
 
-def get_chat_messages(limit=50):
+def get_chat_messages(limit=50, since=None):
     """Returns the latest messages from the global chat."""
     conn = get_db_connection()
-    rows = conn.execute('''
-        SELECT c.user_id, c.message, c.timestamp, p.name as username, p.discord_avatar
-        FROM global_chat c
-        LEFT JOIN players p ON c.user_id = p.uid
-        ORDER BY c.timestamp DESC
-        LIMIT ?
-    ''', (limit,)).fetchall()
+    if since:
+        query = '''
+            SELECT c.user_id, c.message, c.timestamp, p.name as username, p.discord_avatar
+            FROM global_chat c
+            LEFT JOIN players p ON c.user_id = p.uid
+            WHERE c.timestamp > ?
+            ORDER BY c.timestamp DESC
+            LIMIT ?
+        '''
+        params = (since, limit)
+    else:
+        query = '''
+            SELECT c.user_id, c.message, c.timestamp, p.name as username, p.discord_avatar
+            FROM global_chat c
+            LEFT JOIN players p ON c.user_id = p.uid
+            ORDER BY c.timestamp DESC
+            LIMIT ?
+        '''
+        params = (limit,)
+    
+    rows = conn.execute(query, params).fetchall()
     conn.close()
     
     messages = []

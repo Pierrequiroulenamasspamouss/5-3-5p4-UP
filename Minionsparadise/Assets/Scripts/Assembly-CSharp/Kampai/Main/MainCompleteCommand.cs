@@ -93,11 +93,11 @@ namespace Kampai.Main
 			int quantity2 = (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_GATE_ID);
 			dlcService.SetPlayerDLCTier(quantity);
 			global::Kampai.Util.TimeProfiler.StartSection("loading scenes");
-			logger.Info("MainCompleteCommand: Dispatching loadDevicePrefsSignal...");
+			// logger.Info("MainCompleteCommand: Dispatching loadDevicePrefsSignal...");
 			loadDevicePrefsSignal.Dispatch();
-			logger.Info("MainCompleteCommand: Dispatching loadAudioSignal...");
+			// logger.Info("MainCompleteCommand: Dispatching loadAudioSignal...");
 			loadAudioSignal.Dispatch();
-			logger.Info("MainCompleteCommand: Starting PostExternalScenes coroutine...");
+			// logger.Info("MainCompleteCommand: Starting PostExternalScenes coroutine...");
 			routineRunner.StartCoroutine(PostExternalScenes());
 
 			hindsightService.Initialize();
@@ -113,14 +113,12 @@ namespace Kampai.Main
 			{
 				yield return null;
 			}
-			logger.Debug("MainCompleteCommand: PostExternalScenes: All tasks finished.");
 			logger.Debug("Starting Load Post External Scene");
 
 			assetsPreloadService.StopAssetsPreload();
 			localServiceSignal.Dispatch();
 			global::Kampai.Util.DeviceCapabilities.Initialize();
 			global::Kampai.Util.TimeProfiler.StartSection("loading game scene");
-			logger.EventStart("MainCompleteCommand.LoadGame");
 			global::UnityEngine.SceneManagement.SceneManager.LoadScene("Game", global::UnityEngine.SceneManagement.LoadSceneMode.Additive);
 			global::UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("UI", global::UnityEngine.SceneManagement.LoadSceneMode.Additive);
 			splashProgressDoneSignal.Dispatch(100, 3f);

@@ -13,8 +13,21 @@ namespace Kampai.UI.Controller
 		[Inject(global::Kampai.Splash.SplashElement.CONTEXT)]
 		public global::strange.extensions.context.api.ICrossContextCapable splashContext { get; set; }
 
+		[Inject]
+		public global::Kampai.Game.IDevicePrefsService devicePrefsService { get; set; }
+
+		[Inject]
+		public global::Kampai.UI.View.TransitionToOfflineModeSignal transitionToOfflineModeSignal { get; set; }
+
 		public override void Execute()
 		{
+			UnityEngine.Debug.Log("[OfflineMode] ShowOfflinePopupCommand.Execute(isShow=" + isShow + ")");
+			if (isShow && devicePrefsService.GetDevicePrefs().OfflineMode_Pref)
+			{
+				logger.Info("[OfflineMode] Automatic transition to offline mode due to preference.");
+				transitionToOfflineModeSignal.Dispatch();
+				return;
+			}
 			global::Kampai.UI.View.IGUIService iGUIService = null;
 			try
 			{

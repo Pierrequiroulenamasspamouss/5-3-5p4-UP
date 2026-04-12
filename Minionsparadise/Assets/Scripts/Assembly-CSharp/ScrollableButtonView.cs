@@ -32,7 +32,12 @@ public class ScrollableButtonView : global::Kampai.Util.KampaiView, global::Unit
 	{
 		get
 		{
-			return 0.15f * global::UnityEngine.Screen.dpi;
+			float dpi = global::UnityEngine.Screen.dpi;
+			if (dpi <= 0)
+			{
+				dpi = 96f;
+			}
+			return 0.15f * dpi;
 		}
 	}
 
@@ -78,19 +83,25 @@ public class ScrollableButtonView : global::Kampai.Util.KampaiView, global::Unit
 			myScrollView.OnEndDrag(eventData);
 		}
 		global::UnityEngine.UI.Button component = GetComponent<global::UnityEngine.UI.Button>();
+		bool interactable = component == null || component.interactable;
+		
+		if (interactable)
+		{
+			if (currentOffset < MaxClickOffset)
+			{
+				ButtonClicked();
+			}
+			else
+			{
+				ResetAnim();
+			}
+		}
+		else
+		{
+		}
+		
 		if (component != null)
 		{
-			if (component.interactable)
-			{
-				if (currentOffset < MaxClickOffset)
-				{
-					ButtonClicked();
-				}
-				else
-				{
-					ResetAnim();
-				}
-			}
 			global::Kampai.UI.View.KampaiButton kampaiButton = component as global::Kampai.UI.View.KampaiButton;
 			if (kampaiButton != null)
 			{

@@ -16,9 +16,15 @@ namespace Kampai.UI.View
 			}
 			global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>("cmp_SettingsPlayerTrainingCategoryItem"));
 			gameObject.transform.SetParent(PlayerTrainingParent, false);
-			global::Kampai.UI.View.SettingsLearnSystemsCategoryItemView component = gameObject.GetComponent<global::Kampai.UI.View.SettingsLearnSystemsCategoryItemView>();
-			component.Init(definition, localizationService, hasSeen);
-			children[definition.ID] = component;
+			global::Kampai.UI.View.SettingsLearnSystemsCategoryItemView[] components = gameObject.GetComponentsInChildren<global::Kampai.UI.View.SettingsLearnSystemsCategoryItemView>(true);
+			foreach (global::Kampai.UI.View.SettingsLearnSystemsCategoryItemView comp in components)
+			{
+				comp.Init(definition, localizationService, hasSeen);
+			}
+			if (components.Length > 0)
+			{
+				children[definition.ID] = components[0];
+			}
 		}
 
 		internal void ClearPlayerTraining()

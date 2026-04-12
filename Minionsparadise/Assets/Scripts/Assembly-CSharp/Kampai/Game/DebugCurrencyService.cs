@@ -24,7 +24,43 @@ namespace Kampai.Game
 		[PostConstruct]
 		public void PostConstruct()
 		{
-			RefreshCatalog();
+			if (userSessionService != null && userSessionService.IsOffline)
+			{
+				TryLoadLocalPrices();
+			}
+			else
+			{
+				RefreshCatalog();
+			}
+		}
+
+		private void TryLoadLocalPrices()
+		{
+			logger.Info("[PRICES] Loading prices from local resource...");
+			try
+			{
+				global::UnityEngine.TextAsset textAsset = global::UnityEngine.Resources.Load<global::UnityEngine.TextAsset>("MarketPrices");
+				if (textAsset != null)
+				{
+					using (global::System.IO.StringReader reader = new global::System.IO.StringReader(textAsset.text))
+					{
+						using (global::Newtonsoft.Json.JsonTextReader reader2 = new global::Newtonsoft.Json.JsonTextReader(reader))
+						{
+							global::Newtonsoft.Json.JsonSerializer serializer = new global::Newtonsoft.Json.JsonSerializer();
+							serverPrices = serializer.Deserialize<global::System.Collections.Generic.Dictionary<string, string>>(reader2);
+							logger.Info("[PRICES] Local Load Successful. Found {0} prices.", serverPrices.Count);
+						}
+					}
+				}
+				else
+				{
+					logger.Warning("[PRICES] Local MarketPrices resource NOT FOUND.");
+				}
+			}
+			catch (global::System.Exception e)
+			{
+				logger.Error("[PRICES] Error loading local prices: {0}", e);
+			}
 		}
 
 		public override void RequestPurchase(global::Kampai.Game.KampaiPendingTransaction item)
@@ -92,10 +128,18 @@ namespace Kampai.Game
 				return serverPrices["default"];
 			}
 
+			// Check for localized SKU format if the raw SKU wasn't found
+			string price;
+			if (serverPrices != null && TryGetNormalizedPrice(SKU, out price))
+			{
+				return price;
+			}
+
 			switch (SKU)
 			{
 			case "SKU_FEW_DIAMONDS":
 				return "$1.99";
+// ... (rest of switch)
 			case "SKU_PILE_DIAMONDS":
 				return "$4.99";
 			case "SKU_SACK_DIAMONDS":
@@ -165,6 +209,24 @@ namespace Kampai.Game
 			default:
 				return string.Format("<NO PRICE FOR {0}>", SKU);
 			}
+		}
+
+		private bool TryGetNormalizedPrice(string SKU, out string price)
+		{
+			price = null;
+			if (serverPrices == null) return false;
+			
+			// Some SKUs might be passed as full identifiers (e.g. com.ea.minions.diamonds.1)
+			// We try to match the last part if it starts with SKU_
+			int lastDot = SKU.LastIndexOf('.');
+			if (lastDot != -1)
+			{
+				string shortSku = SKU.Substring(lastDot + 1).ToUpper();
+				if (!shortSku.StartsWith("SKU_")) shortSku = "SKU_" + shortSku;
+				if (serverPrices.TryGetValue(shortSku, out price)) return true;
+			}
+			
+			return false;
 		}
 
 		public override void ReceiptValidationCallback(global::Kampai.Game.Mtx.ReceiptValidationResult result)

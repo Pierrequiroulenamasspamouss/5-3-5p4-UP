@@ -12,14 +12,27 @@ namespace Kampai.UI.View
 		{
 			global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(global::Kampai.Util.KampaiResources.Load<global::UnityEngine.GameObject>("cmp_SettingsPlayerTrainingCategory"));
 			gameObject.transform.SetParent(CategoryParent, false);
-			global::Kampai.UI.View.SettingsLearnSystemsCategoryView component = gameObject.GetComponent<global::Kampai.UI.View.SettingsLearnSystemsCategoryView>();
-			bool selected = false;
-			if (!firstCategory)
+			global::Kampai.UI.View.SettingsLearnSystemsCategoryView[] components = gameObject.GetComponentsInChildren<global::Kampai.UI.View.SettingsLearnSystemsCategoryView>(true);
+			
+			foreach (global::Kampai.UI.View.SettingsLearnSystemsCategoryView comp in components)
 			{
-				firstCategory = true;
-				selected = true;
+				bool selected = false;
+				if (!firstCategory)
+				{
+					firstCategory = true;
+					selected = true;
+				}
+				comp.Init(categoryDefinition, localizationService, selected);
 			}
-			component.Init(categoryDefinition, localizationService, selected);
+		}
+
+		internal void ClearCategories()
+		{
+			foreach (global::UnityEngine.Transform child in CategoryParent)
+			{
+				global::UnityEngine.Object.Destroy(child.gameObject);
+			}
+			firstCategory = false;
 		}
 	}
 }

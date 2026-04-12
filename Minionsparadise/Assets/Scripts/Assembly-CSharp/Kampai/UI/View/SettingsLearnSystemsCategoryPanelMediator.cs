@@ -21,6 +21,7 @@ namespace Kampai.UI.View
 
 		private void SetupCategories()
 		{
+			view.ClearCategories();
 			global::System.Collections.Generic.List<global::Kampai.Game.PlayerTrainingCategoryDefinition> all = definitionService.GetAll<global::Kampai.Game.PlayerTrainingCategoryDefinition>();
 			if (all == null || all.Count < 1)
 			{

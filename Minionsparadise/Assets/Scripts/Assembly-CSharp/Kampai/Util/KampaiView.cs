@@ -127,21 +127,9 @@ namespace Kampai.Util
 		{
 			global::UnityEngine.GameObject gameObject = view.gameObject;
 			int layer = gameObject.layer;
-			if (s_contextCache.ContainsKey(layer))
-			{
-				currentContext = s_contextCache[layer];
-				if (!toAdd || finalTry)
-				{
-					AttachViewToContext(view, currentContext, toAdd, ref currentContext);
-				}
-			}
-			else if (!toAdd || finalTry)
+			if (!toAdd || finalTry)
 			{
 				int num = BubbleUpToContext(view, toAdd, gameObject, ref currentContext);
-				if (layer != 0 && currentContext != null && !s_contextCache.ContainsKey(layer))
-				{
-					s_contextCache.Add(layer, currentContext);
-				}
 				if (view.requiresContext && finalTry && num != -1)
 				{
 					FinalTryToGetContext(view, num, ref currentContext);

@@ -54,52 +54,20 @@ namespace Kampai.UI.View
 		[Inject]
 		public global::Kampai.UI.View.PopupMessageSignal popupMessageSignal { get; set; }
 
-		[Inject]
-		public global::Kampai.Main.LanguageChangedSignal languageChangedSignal { get; set; }
-
-		[Inject]
-		public global::Kampai.Game.IConfigurationsService configurationsService { get; set; }
-
-		private static readonly string[] ALL_LANGUAGES = new string[] { "en", "fr", "de", "es", "it", "pt", "nl", "ko", "ru", "ja", "zh-cn", "zh-tw", "tr", "id", "lolcat", "minion" };
-
-		private global::System.Collections.Generic.List<string> m_availableLanguages;
-
 		private int buildNumberClickCount;
 
 		private float lastBuildNumberClickTime;
 
-		private void OnEnable()
+		public override void OnRegister()
 		{
-			if (view != null)
-			{
-				Start();
-			}
-		}
-
-		private void Start()
-		{
+			base.OnRegister();
+			
 			view.notificationsButton.ClickedSignal.AddListener(NotificationsButton);
 			view.notificationsOffButton.ClickedSignal.AddListener(NotificationsOffButton);
 			view.DLCButton.ClickedSignal.AddListener(DLCButton);
-			view.doubleConfirmButton.ClickedSignal.AddListener(OnDoubleConfirm);
-			if (view.languageButton != null)
-			{
-				view.languageButton.ClickedSignal.AddListener(OnLanguageButtonClicked);
-			}
-			m_availableLanguages = new global::System.Collections.Generic.List<string>(ALL_LANGUAGES);
-			if (configurationsService.GetConfigurations() == null || !configurationsService.GetConfigurations().AprilsFool)
-			{
-				m_availableLanguages.Remove("lolcat");
-				m_availableLanguages.Remove("minion");
-			}
-			Init();
-			setServer(ServerEnv);
-			setBuild(clientVersion.GetClientVersion());
-			view.MusicSlider.value = ((!global::Kampai.Audio.AudioSettingsModel.MusicMuted) ? prefs.GetDevicePrefs().MusicVolume : 0f);
-			view.SFXSlider.value = prefs.GetDevicePrefs().SFXVolume;
-			view.musicValue.text = ((int)(100f * view.MusicSlider.value)).ToString();
-			view.soundValue.text = ((int)(100f * view.SFXSlider.value)).ToString();
+			view.doubleConfirmButton.ClickedSignal.AddListener(OnDoubleConfirmClicked);
 			view.volumeSliderChangedSignal.AddListener(OnVolumeChanged);
+			
 			view.buildNumber.raycastTarget = true;
 			global::UnityEngine.UI.Button button = view.buildNumber.GetComponent<global::UnityEngine.UI.Button>();
 			if (button == null)
@@ -108,31 +76,31 @@ namespace Kampai.UI.View
 			}
 			button.transition = global::UnityEngine.UI.Selectable.Transition.None;
 			button.onClick.AddListener(OnBuildNumberClicked);
-
-			if (view.nightToggleButton != null)
-			{
-				view.nightToggleButton.ClickedSignal.AddListener(OnNightToggleClicked);
-				UpdateNightToggleText();
-			}
 			
-			// Auto-layout the 4 buttons in a 2x2 grid
-			view.LayoutButtons();
+			// Initial setup
+			Init();
+			setServer(ServerEnv);
+			setBuild(clientVersion.GetClientVersion());
+			view.MusicSlider.value = ((!global::Kampai.Audio.AudioSettingsModel.MusicMuted) ? prefs.GetDevicePrefs().MusicVolume : 0f);
+			view.SFXSlider.value = prefs.GetDevicePrefs().SFXVolume;
+			view.musicValue.text = ((int)(100f * view.MusicSlider.value)).ToString();
+			view.soundValue.text = ((int)(100f * view.SFXSlider.value)).ToString();
 		}
 
-		private void OnDisable()
+		public override void OnRemove()
 		{
+			base.OnRemove();
+			
 			view.notificationsButton.ClickedSignal.RemoveListener(NotificationsButton);
 			view.notificationsOffButton.ClickedSignal.RemoveListener(NotificationsOffButton);
 			view.DLCButton.ClickedSignal.RemoveListener(DLCButton);
+			view.doubleConfirmButton.ClickedSignal.RemoveListener(OnDoubleConfirmClicked);
 			view.volumeSliderChangedSignal.RemoveListener(OnVolumeChanged);
-			view.doubleConfirmButton.ClickedSignal.RemoveListener(OnDoubleConfirm);
-			if (view.languageButton != null)
+			
+			global::UnityEngine.UI.Button button = view.buildNumber.GetComponent<global::UnityEngine.UI.Button>();
+			if (button != null)
 			{
-				view.languageButton.ClickedSignal.RemoveListener(OnLanguageButtonClicked);
-			}
-			if (view.nightToggleButton != null)
-			{
-				view.nightToggleButton.ClickedSignal.RemoveListener(OnNightToggleClicked);
+				button.onClick.RemoveListener(OnBuildNumberClicked);
 			}
 		}
 
@@ -158,6 +126,10 @@ namespace Kampai.UI.View
 				doubleConfirmToggle.isOn = true;
 				localPersistService.PutDataIntPlayer("DoublePurchaseConfirm", 1);
 			}
+			
+			// Force visual sync
+			SyncCheckmarkVisual(doubleConfirmToggle != null && doubleConfirmToggle.isOn);
+			
 			if (!global::Kampai.Util.Native.AreNotificationsEnabled() || coppaService.Restricted())
 			{
 				view.ToggleNotificationsOn(false);
@@ -167,39 +139,50 @@ namespace Kampai.UI.View
 				view.ToggleNotificationsOn(true);
 			}
 			view.doubleConfirmText.text = localService.GetString("DoubleConfirm");
-			UpdateLanguageText();
 		}
 
-		private void UpdateLanguageText()
+		private void SyncCheckmarkVisual(bool isOn)
 		{
-			if (view.languageText != null)
+			if (view != null && view.doubleConfirmButton != null)
 			{
-				view.languageText.text = localService.GetLanguage().ToUpper();
+				global::UnityEngine.Transform transform = view.doubleConfirmButton.transform.Find("icn_CheckMark");
+				if (transform != null)
+				{
+					transform.gameObject.SetActive(isOn);
+				}
+				else
+				{
+					global::UnityEngine.UI.Image[] componentsInChildren = view.doubleConfirmButton.GetComponentsInChildren<global::UnityEngine.UI.Image>(true);
+					foreach (global::UnityEngine.UI.Image image in componentsInChildren)
+					{
+						if (image.name == "icn_CheckMark")
+						{
+							image.gameObject.SetActive(isOn);
+						}
+					}
+				}
 			}
 		}
 
-		private void OnLanguageButtonClicked()
+		private void OnDoubleConfirmClicked()
 		{
-			string language = prefs.GetDevicePrefs().Language;
-			if (string.IsNullOrEmpty(language))
+			if (doubleConfirmToggle != null)
 			{
-				language = global::Kampai.Util.Native.GetDeviceLanguage();
+				bool isCurrentlyOn = localPersistService.GetDataIntPlayer("DoublePurchaseConfirm") != 0;
+				bool nextState = !isCurrentlyOn;
+				localPersistService.PutDataIntPlayer("DoublePurchaseConfirm", nextState ? 1 : 0);
+				
+				doubleConfirmToggle.isOn = nextState;
+				SyncCheckmarkVisual(nextState);
+				
+				soundFXSignal.Dispatch("Play_button_click_01");
 			}
-			language = language.ToLower();
-			int num = m_availableLanguages.IndexOf(language);
-			if (num == -1)
+			else
 			{
-				num = 0;
 			}
-			num = (num + 1) % m_availableLanguages.Count;
-			string nextLang = m_availableLanguages[num];
-			prefs.GetDevicePrefs().Language = nextLang;
-			saveDevicePrefsSignal.Dispatch();
-			localService.Initialize(nextLang);
-			localService.Update();
-			UpdateLanguageText();
-			languageChangedSignal.Dispatch();
 		}
+
+
 
 		private void OnVolumeChanged(bool isMusicSlider)
 		{
@@ -271,10 +254,7 @@ namespace Kampai.UI.View
 			displayDialogSignal.Dispatch(localService.GetString("DLCConfirmationDialog"));
 		}
 
-		private void OnDoubleConfirm()
-		{
-			localPersistService.PutDataIntPlayer("DoublePurchaseConfirm", doubleConfirmToggle.isOn ? 1 : 0);
-		}
+
 
 		private void setServer(string serverString)
 		{
@@ -305,31 +285,6 @@ namespace Kampai.UI.View
 			}
 		}
 
-		private void OnNightToggleClicked()
-		{
-			global::Kampai.Game.DayNightCycleManager manager = global::UnityEngine.Object.FindObjectOfType<global::Kampai.Game.DayNightCycleManager>();
-			if (manager != null)
-			{
-				manager.CycleNightMode();
-				UpdateNightToggleText();
-				soundFXSignal.Dispatch("Play_minion_confirm_select_02");
-			}
-		}
 
-		private void UpdateNightToggleText()
-		{
-			if (view.nightToggleText != null)
-			{
-				global::Kampai.Game.DayNightCycleManager manager = global::UnityEngine.Object.FindObjectOfType<global::Kampai.Game.DayNightCycleManager>();
-				if (manager != null)
-				{
-					view.nightToggleText.text = "MODE: " + manager.GetCurrentMode().ToString();
-				}
-				else
-				{
-					view.nightToggleText.text = "NIGHT: NO MGR";
-				}
-			}
-		}
 	}
 }
