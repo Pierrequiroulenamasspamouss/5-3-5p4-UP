@@ -22,7 +22,7 @@ namespace Kampai.Util
 
         public static string ConfigCachePath
         {
-            get { return Path.Combine(BasePath, "server_config.json"); }
+            get { return Path.Combine(BasePath, "config.json"); }
         }
 
         public static string DefinitionsCachePath
@@ -89,8 +89,8 @@ namespace Kampai.Util
             try
             {
                 // Simple parsing to find lastPlayedTime without full deserialization
-                int serverTime = GetLastPlayedTime(serverData);
-                int localTime = GetLastPlayedTime(localData);
+                long serverTime = GetLastPlayedTime(serverData);
+                long localTime = GetLastPlayedTime(localData);
 
                 Debug.Log(string.Format("[OfflineMode] Comparing saves: Server={0}, Local={1}", serverTime, localTime));
                 return (localTime > serverTime) ? localData : serverData;
@@ -102,7 +102,7 @@ namespace Kampai.Util
             }
         }
 
-        private static int GetLastPlayedTime(string json)
+        private static long GetLastPlayedTime(string json)
         {
             // We use a simple search to avoid dependency on specific JObject versions
             string search = "\"lastPlayedTime\":";
@@ -114,8 +114,8 @@ namespace Kampai.Util
             if (end == -1) end = json.Length;
             
             string valueStr = json.Substring(start, end - start).Trim();
-            int result;
-            if (int.TryParse(valueStr, out result)) return result;
+            long result;
+            if (long.TryParse(valueStr, out result)) return result;
             return 0;
         }
     }

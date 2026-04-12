@@ -16,16 +16,16 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 		{
 			if (sInstance == null)
 			{
-				global::UnityEngine.Debug.Log("[FMOD-DEBUG] Creating FMOD_StudioSystem GameObject...");
+				// global::UnityEngine.Debug.Log("[FMOD-DEBUG] Creating FMOD_StudioSystem GameObject...");
 				global::UnityEngine.GameObject gameObject = new global::UnityEngine.GameObject("FMOD_StudioSystem");
 				sInstance = gameObject.AddComponent<FMOD_StudioSystem>();
-				global::UnityEngine.Debug.Log("[FMOD-DEBUG] Attempting ForceLoadLowLevelBinary...");
+				// global::UnityEngine.Debug.Log("[FMOD-DEBUG] Attempting ForceLoadLowLevelBinary...");
 				if (!global::FMOD.Studio.UnityUtil.ForceLoadLowLevelBinary())
 				{
 					global::FMOD.Studio.UnityUtil.LogError("Unable to load low level binary!");
 					return sInstance;
 				}
-				global::UnityEngine.Debug.Log("[FMOD-DEBUG] Calling Init()...");
+				// global::UnityEngine.Debug.Log("[FMOD-DEBUG] Calling Init()...");
 				sInstance.Init();
 			}
 			return sInstance;
@@ -121,19 +121,19 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 		global::FMOD.Studio.UnityUtil.Log("FMOD_StudioSystem: Initialize");
 		if (!isInitialized)
 		{
-			global::UnityEngine.Debug.Log("[FMOD-DEBUG] Init: Starting...");
+			// global::UnityEngine.Debug.Log("[FMOD-DEBUG] Init: Starting...");
 			if (base.gameObject == null) {
-				global::UnityEngine.Debug.LogError("[FMOD-DEBUG] Init: base.gameObject is NULL!");
+				// global::UnityEngine.Debug.LogError("[FMOD-DEBUG] Init: base.gameObject is NULL!");
 				return;
 			}
 			global::UnityEngine.Object.DontDestroyOnLoad(base.gameObject);
-			global::FMOD.Studio.UnityUtil.Log("FMOD_StudioSystem: System_Create");
+			// global::FMOD.Studio.UnityUtil.Log("FMOD_StudioSystem: System_Create");
 			
-			global::UnityEngine.Debug.Log("[FMOD-DEBUG] Init: Calling System.create...");
+			// global::UnityEngine.Debug.Log("[FMOD-DEBUG] Init: Calling System.create...");
 			
 			global::FMOD.RESULT result = global::FMOD.Studio.System.create(out this.system);
 			if (result != global::FMOD.RESULT.OK || this.system == null) {
-				global::UnityEngine.Debug.LogError("[FMOD-DEBUG] Init: System.create FAILED with " + result.ToString());
+				// global::UnityEngine.Debug.LogError("[FMOD-DEBUG] Init: System.create FAILED with " + result.ToString());
 				return;
 			}
 			
@@ -141,7 +141,7 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 			global::FMOD.Studio.UnityUtil.Log("FMOD_StudioSystem: system.init");
 			global::FMOD.RESULT rESULT = global::FMOD.RESULT.OK;
 			
-			global::UnityEngine.Debug.Log("[FMOD-DEBUG] Init: Calling system.initialize...");
+			// global::UnityEngine.Debug.Log("[FMOD-DEBUG] Init: Calling system.initialize...");
 			rESULT = this.system.initialize(1024, iNITFLAGS, global::FMOD.INITFLAGS.NORMAL, global::System.IntPtr.Zero);
 			if (rESULT == global::FMOD.RESULT.ERR_HEADER_MISMATCH)
 			{
@@ -150,7 +150,7 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 			}
 			else if (rESULT != global::FMOD.RESULT.OK)
 			{
-				global::UnityEngine.Debug.LogError("[FMOD-DEBUG] Init: system.initialize FAILED with " + rESULT.ToString());
+				// global::UnityEngine.Debug.LogError("[FMOD-DEBUG] Init: system.initialize FAILED with " + rESULT.ToString());
 				return;
 			}
 			

@@ -45,11 +45,14 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 			if (!global::System.IO.File.Exists(definitionPath))
 			{
 				logger.Info("[OfflineMode] Cached definitions not found at {0}, checking resources...", definitionPath);
-				string text = resourceService.LoadText("definitions");
+				
+				string text = resourceService.LoadText("definitions_server");
+				if (string.IsNullOrEmpty(text)) text = resourceService.LoadText("definitions_server.json");
+				
 				if (string.IsNullOrEmpty(text))
 				{
-					// Try with .json extension just in case, though usually not needed for Resources.Load
-					text = resourceService.LoadText("definitions.json");
+					string rawPath = global::System.IO.Path.Combine(global::UnityEngine.Application.dataPath, "Resources/definitions_server.json");
+					if (global::System.IO.File.Exists(rawPath)) text = global::System.IO.File.ReadAllText(rawPath);
 				}
 
 				if (!string.IsNullOrEmpty(text))
@@ -64,7 +67,7 @@ public class FetchDefinitionsCommand : global::strange.extensions.command.impl.C
 				}
 				else
 				{
-					logger.Error("[OfflineMode] FAILED to load definitions from resources 'definitions'!");
+					logger.Error("[OfflineMode] FAILED to load definitions from resources 'definitions_server'!");
 				}
 			}
 			else

@@ -962,11 +962,9 @@ namespace Kampai.Game
 				foreach (T item in used)
 				{
 					total++;
-					if (!item.Disabled)
-					{
-						MarkDefinitionAsUsed(item);
-						registered++;
-					}
+					// OFFLINE FIX: Register all definitions to prevent missing JSON subsets
+					MarkDefinitionAsUsed(item);
+					registered++;
 				}
 				if (total > 0) {
 					global::UnityEngine.Debug.LogFormat("[DefinitionService] MarkDefinitionsAsUsed<{0}>: Processed {1} items, registered {2} (Skipped {3} disabled)", typeof(T).Name, total, registered, total - registered);

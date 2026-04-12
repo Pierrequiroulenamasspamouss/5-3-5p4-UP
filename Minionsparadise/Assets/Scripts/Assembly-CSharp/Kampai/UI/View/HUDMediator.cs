@@ -164,6 +164,7 @@ namespace Kampai.UI.View
 
 		public override void OnRegister()
 		{
+			UnityEngine.Debug.Log("ANTIGRAVITY: HUDMediator.OnRegister() CALLED");
 			view.Init(hudChangingSiblingIndexSignal);
 			setStorageSignal.AddListener(SetStorage);
 			closeAllOtherMenusSignal.AddListener(CloseAllMenu);
@@ -391,12 +392,16 @@ namespace Kampai.UI.View
 
 		internal void SetGrindCurrency()
 		{
-			view.SetGrindCurrency(playerService.GetQuantity(global::Kampai.Game.StaticItem.GRIND_CURRENCY_ID));
+			uint quantity = playerService.GetQuantity(global::Kampai.Game.StaticItem.GRIND_CURRENCY_ID);
+			global::UnityEngine.Debug.Log("[CurrencyDebug] PLAYER SAND DOLLARS AMOUNT : " + quantity);
+			view.SetGrindCurrency(quantity);
 		}
 
 		internal void SetPremiumCurrency()
 		{
-			view.SetPremiumCurrency(playerService.GetQuantity(global::Kampai.Game.StaticItem.PREMIUM_CURRENCY_ID));
+			uint quantity = playerService.GetQuantity(global::Kampai.Game.StaticItem.PREMIUM_CURRENCY_ID);
+			global::UnityEngine.Debug.Log("[CurrencyDebug] PLAYER DOUBLOONS AMOUNT : " + quantity);
+			view.SetPremiumCurrency(quantity);
 		}
 
 		internal void CloseMenu(bool closeCurrency)
