@@ -23,5 +23,9 @@ namespace Kampai.UI.View
 		public global::Kampai.UI.View.KampaiScrollView chatScrollView;
 
 		public global::UnityEngine.UI.Text chatDisplayText;
+		
+		[global::UnityEngine.Header("Dynamic Chat")]
+		public global::UnityEngine.GameObject chatItemPrefab;
+		public global::UnityEngine.Transform chatItemsContainer;
 	}
 }

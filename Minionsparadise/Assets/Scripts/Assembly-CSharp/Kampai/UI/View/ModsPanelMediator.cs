@@ -46,6 +46,7 @@ namespace Kampai.UI.View
 		private static readonly string[] ALL_LANGUAGES = new string[] { "en", "fr", "de", "es", "it", "pt", "nl", "ko", "ru", "ja", "zh-cn", "zh-tw", "tr", "id", "lolcat", "minion" };
 
 		private List<string> m_availableLanguages;
+		private HashSet<string> m_renderedTimestamps = new HashSet<string>();
 
 		public override void OnRegister()
 		{
@@ -230,6 +231,16 @@ namespace Kampai.UI.View
 			if (view.chatInput != null && !string.IsNullOrEmpty(view.chatInput.text))
 			{
 				string text = view.chatInput.text;
+				
+				// Optimistic Update: Show message immediately in UI
+				Debug.Log("[ModsMediator] Optimistically adding message to UI.");
+				ChatMessage localMsg = new ChatMessage();
+				localMsg.user = "You";
+				localMsg.text = text;
+				localMsg.timestamp = System.DateTime.Now.ToString("HH:mm:ss");
+				
+				CreateChatItem(localMsg, true);
+
 				chatService.SendMessage(text);
 				view.chatInput.text = string.Empty;
 				soundFXSignal.Dispatch("Play_button_click_01");
@@ -240,6 +251,7 @@ namespace Kampai.UI.View
 		{
 			if (messages == null) return;
 			
+			// Legacy text fallback
 			if (view.chatDisplayText != null)
 			{
 				System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -251,9 +263,50 @@ namespace Kampai.UI.View
 				view.chatDisplayText.text = sb.ToString();
 			}
 
+			// New Dynamic Item Spawner
+			if (view.chatItemPrefab != null && view.chatItemsContainer != null)
+			{
+				foreach (var msg in messages)
+				{
+					// Use a key combination to avoid duplicates (timestamp + user + first 20 chars of text)
+					string key = msg.timestamp + msg.user + (msg.text.Length > 20 ? msg.text.Substring(0, 20) : msg.text);
+					if (!m_renderedTimestamps.Contains(key))
+					{
+						CreateChatItem(msg, false);
+						m_renderedTimestamps.Add(key);
+					}
+				}
+			}
+		}
+
+		private void CreateChatItem(ChatMessage msg, bool isOptimistic)
+		{
+			if (view.chatItemPrefab == null || view.chatItemsContainer == null) return;
+
+			GameObject go = Object.Instantiate(view.chatItemPrefab) as GameObject;
+			go.transform.SetParent(view.chatItemsContainer, false);
+			
+			ChatItemView item = go.GetComponent<ChatItemView>();
+			if (item != null)
+			{
+				string userLabel = isOptimistic ? "<b>" + msg.user + " (Sending...)</b>" : "<b>" + msg.user + ":</b>";
+				item.Setup(userLabel, msg.text, msg.timestamp);
+			}
+
+			// Limit children count
+			if (view.chatItemsContainer.childCount > 100)
+			{
+				Object.Destroy(view.chatItemsContainer.GetChild(0).gameObject);
+			}
+			
+			// Trigger scroll update next frame
 			if (view.chatScrollView != null)
 			{
-				// Advanced: could instantiate items here, but text display is the current fallback.
+				AutoScrollToBottom autoScroll = view.chatScrollView.GetComponent<AutoScrollToBottom>();
+				if (autoScroll != null)
+				{
+					autoScroll.ScrollToBottom();
+				}
 			}
 		}
 
