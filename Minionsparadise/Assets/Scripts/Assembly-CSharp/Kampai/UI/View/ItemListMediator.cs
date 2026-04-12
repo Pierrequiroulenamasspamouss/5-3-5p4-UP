@@ -233,10 +233,13 @@ namespace Kampai.UI.View
 					}
 				}
 			}
-			global::UnityEngine.RectTransform rectTransform = storeButtonView.transform as global::UnityEngine.RectTransform;
-			float y = rectTransform.sizeDelta.y;
-			float paddingInPixels = storeButtonView.PaddingInPixels;
-			base.view.SetupButtonHeight(y, paddingInPixels);
+			if (storeButtonView != null)
+			{
+				global::UnityEngine.RectTransform rectTransform = storeButtonView.transform as global::UnityEngine.RectTransform;
+				float y = rectTransform.sizeDelta.y;
+				float paddingInPixels = storeButtonView.PaddingInPixels;
+				base.view.SetupButtonHeight(y, paddingInPixels);
+			}
 			buildMenuService.RetoreBuidMenuState(base.view.GetAllButtonViews());
 		}
 
@@ -329,9 +332,12 @@ namespace Kampai.UI.View
 			foreach (global::Kampai.Game.StoreItemType key in storeTabs.Keys)
 			{
 				global::System.Collections.Generic.List<global::Kampai.UI.View.StoreButtonView> storeButtonViews = base.view.GetStoreButtonViews(key);
-				foreach (global::Kampai.UI.View.StoreButtonView item in storeButtonViews)
+				if (storeButtonViews != null)
 				{
-					item.SetHighlight(false);
+					foreach (global::Kampai.UI.View.StoreButtonView item in storeButtonViews)
+					{
+						item.SetHighlight(false);
+					}
 				}
 			}
 		}

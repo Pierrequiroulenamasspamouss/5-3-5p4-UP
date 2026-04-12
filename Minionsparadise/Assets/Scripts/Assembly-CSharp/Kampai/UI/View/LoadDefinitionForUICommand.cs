@@ -68,6 +68,10 @@ namespace Kampai.UI.View
 				case global::Kampai.Game.StoreItemType.Decoration:
 				case global::Kampai.Game.StoreItemType.Leisure:
 				case global::Kampai.Game.StoreItemType.Special:
+				case global::Kampai.Game.StoreItemType.PremiumCurrency:
+				case global::Kampai.Game.StoreItemType.GrindCurrency:
+				case global::Kampai.Game.StoreItemType.SalePack:
+				case global::Kampai.Game.StoreItemType.Redeemable:
 				case global::Kampai.Game.StoreItemType.SpecialEvent:
 				case global::Kampai.Game.StoreItemType.MasterPlanLeftOvers:
 				case global::Kampai.Game.StoreItemType.Connectable:
@@ -132,6 +136,16 @@ namespace Kampai.UI.View
 				break;
 			case global::Kampai.Game.StoreItemType.Connectable:
 				result = "ConnectableStuff";
+				break;
+			case global::Kampai.Game.StoreItemType.PremiumCurrency:
+			case global::Kampai.Game.StoreItemType.GrindCurrency:
+				result = "Currencies";
+				break;
+			case global::Kampai.Game.StoreItemType.SalePack:
+				result = "SalePacks";
+				break;
+			case global::Kampai.Game.StoreItemType.Redeemable:
+				result = "Redeemables";
 				break;
 			}
 			return result;

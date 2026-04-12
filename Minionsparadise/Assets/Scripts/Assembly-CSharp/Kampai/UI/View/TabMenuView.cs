@@ -86,11 +86,15 @@ namespace Kampai.UI.View
 		{
 			tabViews.Add(tabView);
 			count = tabViews.Count;
-			ScrollViewParent.offsetMin = new global::UnityEngine.Vector2(0f, (float)(-count) * buttonHeight + ScrollViewParent.offsetMax.y);
+			
+			float h = (buttonHeight > 0f) ? buttonHeight : 100f; // Sane default height for menu tabs
+			float p = (padding >= 0f) ? padding : 5f;
+			
+			ScrollViewParent.offsetMin = new global::UnityEngine.Vector2(0f, (float)(-count) * h + ScrollViewParent.offsetMax.y);
 			ScrollViewParent.offsetMax = global::UnityEngine.Vector2.zero;
 			global::UnityEngine.RectTransform rectTransform = tabViews[count - 1].transform as global::UnityEngine.RectTransform;
-			rectTransform.offsetMin = new global::UnityEngine.Vector2(padding, (0f - buttonHeight - padding) * (float)count);
-			rectTransform.offsetMax = new global::UnityEngine.Vector2(0f - padding, (0f - buttonHeight - padding) * (float)(count - 1) - padding);
+			rectTransform.offsetMin = new global::UnityEngine.Vector2(p, (0f - h - p) * (float)count);
+			rectTransform.offsetMax = new global::UnityEngine.Vector2(0f - p, (0f - h - p) * (float)(count - 1) - p);
 			tabViews[count - 1].gameObject.SetActive(true);
 		}
 

@@ -11,17 +11,20 @@ namespace Kampai.UI.View
 			global::UnityEngine.GameObject original = global::Kampai.Util.KampaiResources.Load("cmp_purchaseCurrencyButton") as global::UnityEngine.GameObject;
 			global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(original);
 			global::Kampai.UI.View.CurrencyButtonView component = gameObject.GetComponent<global::Kampai.UI.View.CurrencyButtonView>();
-			if (hasVFX)
+			if (hasVFX && !global::System.String.IsNullOrEmpty(definition.VFX))
 			{
 				global::UnityEngine.GameObject original2 = global::Kampai.Util.KampaiResources.Load(definition.VFX) as global::UnityEngine.GameObject;
-				global::UnityEngine.GameObject gameObject2 = global::UnityEngine.Object.Instantiate(original2);
-				global::Kampai.Util.Vector3Serialize vFXOffset = definition.VFXOffset;
-				if (vFXOffset != null)
+				if (original2 != null)
 				{
-					gameObject2.transform.position = new global::UnityEngine.Vector3(vFXOffset.x, vFXOffset.y, vFXOffset.z);
+					global::UnityEngine.GameObject gameObject2 = global::UnityEngine.Object.Instantiate(original2);
+					global::Kampai.Util.Vector3Serialize vFXOffset = definition.VFXOffset;
+					if (vFXOffset != null)
+					{
+						gameObject2.transform.position = new global::UnityEngine.Vector3(vFXOffset.x, vFXOffset.y, vFXOffset.z);
+					}
+					gameObject2.transform.SetParent(component.VFXRoot, false);
+					component.VFXPrefab = gameObject2;
 				}
-				gameObject2.transform.SetParent(component.VFXRoot, false);
-				component.VFXPrefab = gameObject2;
 			}
 			component.Description.text = localService.GetStringUpper(definition.LocalizedKey);
 			component.isCOPPAGated = definition.COPPAGated;

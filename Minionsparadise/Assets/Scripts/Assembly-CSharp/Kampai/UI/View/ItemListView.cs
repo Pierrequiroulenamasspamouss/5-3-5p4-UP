@@ -28,8 +28,8 @@ namespace Kampai.UI.View
 
 		internal void SetupButtonHeight(float buttonHeight, float buttonPadding)
 		{
-			itemButtonHeight = buttonHeight;
-			itemPadding = buttonPadding;
+			itemButtonHeight = (buttonHeight > 0f) ? buttonHeight : 300f; // Sane default height for UI items
+			itemPadding = (buttonPadding >= 0f) ? buttonPadding : 10f;    // Sane default padding
 		}
 
 		internal global::System.Collections.Generic.Dictionary<global::Kampai.Game.StoreItemType, global::System.Collections.Generic.List<global::Kampai.UI.View.StoreButtonView>> GetAllButtonViews()
@@ -106,35 +106,60 @@ namespace Kampai.UI.View
 
 		internal void RefreshStoreButtonLayout()
 		{
-			ShowAndPositionMenuItems(currentType);
+			if (buttonViews.ContainsKey(currentType))
+			{
+				ShowAndPositionMenuItems(currentType);
+			}
 		}
 
 		internal void ShowAndPositionMenuItems(global::Kampai.Game.StoreItemType type)
 		{
+			if (!buttonViews.ContainsKey(type))
+			{
+				buttonViews[type] = new global::System.Collections.Generic.List<global::Kampai.UI.View.StoreButtonView>();
+			}
+
 			int count = buttonViews[type].Count;
 			if (count == 0)
 			{
+				// Hide previously shown items anyway
+				if (buttonViews.ContainsKey(currentType))
+				{
+					foreach (global::Kampai.UI.View.StoreButtonView item in buttonViews[currentType])
+					{
+						item.gameObject.SetActive(false);
+					}
+				}
+				currentType = type;
 				return;
 			}
-			foreach (global::Kampai.UI.View.StoreButtonView item in buttonViews[currentType])
+
+			if (buttonViews.ContainsKey(currentType))
 			{
-				item.gameObject.SetActive(false);
+				foreach (global::Kampai.UI.View.StoreButtonView item2 in buttonViews[currentType])
+				{
+					item2.gameObject.SetActive(false);
+				}
 			}
+
 			currentType = type;
 			int num = 0;
+			float h = (itemButtonHeight > 0f) ? itemButtonHeight : 300f;
+			float p = (itemPadding >= 0f) ? itemPadding : 10f;
+
 			for (int i = 0; i < count; i++)
 			{
 				global::Kampai.UI.View.StoreButtonView storeButtonView = buttonViews[type][i];
 				if (storeButtonView.ShouldBeRendered() || currentType == global::Kampai.Game.StoreItemType.Featured)
 				{
 					global::UnityEngine.RectTransform rectTransform = storeButtonView.transform as global::UnityEngine.RectTransform;
-					rectTransform.offsetMin = new global::UnityEngine.Vector2(0f, (0f - (itemButtonHeight + itemPadding)) * (float)num - itemButtonHeight);
-					rectTransform.offsetMax = new global::UnityEngine.Vector2(0f, (0f - (itemButtonHeight + itemPadding)) * (float)num);
+					rectTransform.offsetMin = new global::UnityEngine.Vector2(0f, (0f - (h + p)) * (float)num - h);
+					rectTransform.offsetMax = new global::UnityEngine.Vector2(0f, (0f - (h + p)) * (float)num);
 					storeButtonView.gameObject.SetActive(true);
 					num++;
 				}
 			}
-			ScrollViewParent.offsetMin = new global::UnityEngine.Vector2(0f, (float)(-num) * (itemButtonHeight + itemPadding) + ScrollViewParent.offsetMax.y);
+			ScrollViewParent.offsetMin = new global::UnityEngine.Vector2(0f, (float)(-num) * (h + p) + ScrollViewParent.offsetMax.y);
 		}
 
 		internal void MoveSubMenu(bool show)
