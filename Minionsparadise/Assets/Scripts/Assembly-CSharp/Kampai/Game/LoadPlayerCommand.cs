@@ -68,12 +68,16 @@ namespace Kampai.Game
 				case "remote":
 					if (userSessionService.IsOffline)
 					{
-						logger.Info("[OfflineMode] Offline mode detected, loading local save instead of remote.");
+						logger.Info("[OfflineMode] Offline mode detected, checking local save at {0}", global::Kampai.Util.OfflineModeUtility.PlayerSavePath);
 						text2 = global::Kampai.Util.OfflineModeUtility.LoadLocal(global::Kampai.Util.OfflineModeUtility.PlayerSavePath);
 						if (string.IsNullOrEmpty(text2))
 						{
 							logger.Warning("[OfflineMode] No local save found, falling back to initial player.");
 							text2 = defService.GetInitialPlayer();
+						}
+						else
+						{
+							logger.Info("[OfflineMode] Successfully loaded local save ({0} bytes).", text2.Length);
 						}
 					}
 					else
@@ -88,8 +92,18 @@ namespace Kampai.Game
 					goto IL_00fe;
 				}
 			}
-			text2 = defService.GetInitialPlayer();
-			goto IL_00fe;
+			if (string.IsNullOrEmpty(text2) && userSessionService.IsOffline)
+			{
+				logger.Info("[OfflineMode] LoadMode was '{0}', but we are offline. Attempting local save recovery.", text);
+				text2 = global::Kampai.Util.OfflineModeUtility.LoadLocal(global::Kampai.Util.OfflineModeUtility.PlayerSavePath);
+			}
+
+			if (string.IsNullOrEmpty(text2))
+			{
+				logger.Warning("[OfflineMode] Falling back to initial player.");
+				text2 = defService.GetInitialPlayer();
+			}
+			
 			IL_00fe:
 			if (!string.IsNullOrEmpty(text2))
 			{

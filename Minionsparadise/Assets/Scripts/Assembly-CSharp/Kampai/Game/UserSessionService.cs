@@ -200,6 +200,8 @@ namespace Kampai.Game
 			Session.SessionID = global::System.Guid.NewGuid().ToString();
 			
 			setupSwrveSignal.Dispatch(Session.UserID);
+			LocalPersistService.PutData("LoadMode", "remote");
+			
 			userSessionGrantedSignal.Dispatch();
 			
 			if (loginCallback != null)
