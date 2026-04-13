@@ -15,7 +15,7 @@ public static class CustomFMOD_MapService
 				{
 					using (global::System.IO.StreamWriter streamWriter = new global::System.IO.StreamWriter(stream))
 					{
-						string value = global::MiniJSON.Json.Serialize(item.Value);
+						string value = SerializeStringDictionary(item.Value);
 						streamWriter.Write(value);
 					}
 				}
@@ -28,7 +28,7 @@ public static class CustomFMOD_MapService
 	private static bool TryGenerateMaps(global::FMOD.Studio.System system, out global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.Dictionary<string, string>> nameIdMaps)
 	{
 		nameIdMaps = new global::System.Collections.Generic.Dictionary<string, global::System.Collections.Generic.Dictionary<string, string>>();
-		if (!(system != null) || !system.isValid())
+		if (!system.isValid())
 		{
 			return false;
 		}
@@ -54,7 +54,7 @@ public static class CustomFMOD_MapService
 				{
 					string path2;
 					ERRCHECK(eventDescription.getPath(out path2));
-					global::System.Guid id;
+					global::FMOD.GUID id;
 					ERRCHECK(eventDescription.getID(out id));
 					string value = GuidToString(id);
 					if (path2 != null && !path2.Contains("snapshot:/"))
@@ -102,8 +102,78 @@ public static class CustomFMOD_MapService
 		return array[array.Length - 1];
 	}
 
-	private static string GuidToString(global::System.Guid id)
+	private static string GuidToString(global::FMOD.GUID id)
 	{
-		return id.ToString("B");
+		return id.ToString();
+	}
+
+	private static string SerializeStringDictionary(global::System.Collections.Generic.Dictionary<string, string> values)
+	{
+		global::System.Text.StringBuilder stringBuilder = new global::System.Text.StringBuilder();
+		stringBuilder.Append('{');
+		bool flag = true;
+		foreach (global::System.Collections.Generic.KeyValuePair<string, string> value in values)
+		{
+			if (!flag)
+			{
+				stringBuilder.Append(',');
+			}
+			flag = false;
+			stringBuilder.Append('"');
+			stringBuilder.Append(EscapeJsonString(value.Key));
+			stringBuilder.Append("\":\"");
+			stringBuilder.Append(EscapeJsonString(value.Value));
+			stringBuilder.Append('"');
+		}
+		stringBuilder.Append('}');
+		return stringBuilder.ToString();
+	}
+
+	private static string EscapeJsonString(string value)
+	{
+		if (string.IsNullOrEmpty(value))
+		{
+			return string.Empty;
+		}
+		global::System.Text.StringBuilder stringBuilder = new global::System.Text.StringBuilder(value.Length);
+		foreach (char c in value)
+		{
+			switch (c)
+			{
+			case '"':
+				stringBuilder.Append("\\\"");
+				break;
+			case '\\':
+				stringBuilder.Append("\\\\");
+				break;
+			case '\b':
+				stringBuilder.Append("\\b");
+				break;
+			case '\f':
+				stringBuilder.Append("\\f");
+				break;
+			case '\n':
+				stringBuilder.Append("\\n");
+				break;
+			case '\r':
+				stringBuilder.Append("\\r");
+				break;
+			case '\t':
+				stringBuilder.Append("\\t");
+				break;
+			default:
+				if (c < ' ')
+				{
+					stringBuilder.Append("\\u");
+					stringBuilder.Append(((int)c).ToString("x4"));
+				}
+				else
+				{
+					stringBuilder.Append(c);
+				}
+				break;
+			}
+		}
+		return stringBuilder.ToString();
 	}
 }

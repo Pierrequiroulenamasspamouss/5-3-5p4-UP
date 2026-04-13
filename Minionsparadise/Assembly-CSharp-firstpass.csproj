@@ -36,7 +36,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <UnityProjectGenerator>Package</UnityProjectGenerator>
-    <UnityProjectGeneratorVersion>2.0.26</UnityProjectGeneratorVersion>
+    <UnityProjectGeneratorVersion>2.0.27</UnityProjectGeneratorVersion>
     <UnityProjectGeneratorStyle>SDK</UnityProjectGeneratorStyle>
     <UnityProjectType>GamePlugins:3</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
@@ -56,7 +56,6 @@
     <Compile Include="Assets\Plugins\Moonsharp\Errors\DynamicExpressionException.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataTypes\Closure.cs" />
     <Compile Include="Assets\Plugins\JSON_Parsers\SimpleJSON\JSONClass.cs" />
-    <Compile Include="Assets\Plugins\FMOD\Wrapper\fmod_dsp.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Execution\VM\Processor\Processor_Errors.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataTypes\CallbackArguments.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\LinqHelpers.cs" />
@@ -71,7 +70,6 @@
     <Compile Include="Assets\Plugins\Moonsharp\Interop\RegistrationPolicies\DefaultRegistrationPolicy.cs" />
     <Compile Include="Assets\Plugins\JSON_Parsers\SimpleJSON\JSONBinaryTag.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Loaders\UnityAssetsScriptLoader.cs" />
-    <Compile Include="Assets\Plugins\FMOD\Wrapper\fmod_studio.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Compatibility\Stopwatch.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Loaders\IScriptLoader.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataStructs\Slice.cs" />
@@ -104,7 +102,6 @@
     <Compile Include="Assets\Plugins\Moonsharp\Execution\VM\OpCode.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataStructs\FastStack.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\StandardDescriptors\MemberDescriptors\FunctionMemberDescriptorBase.cs" />
-    <Compile Include="Assets\Plugins\FMOD\ParamRef.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Loaders\InvalidScriptLoader.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Compatibility\Frameworks\FrameworkPCL.cs" />
     <Compile Include="Assets\Plugins\Kampai\Native\NativeAlertManager.cs" />
@@ -114,7 +111,6 @@
     <Compile Include="Assets\Plugins\Moonsharp\Interop\StandardDescriptors\AutoDescribingUserDataDescriptor.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\CoreLib\StringLib\StringRange.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\LuaStateInterop\LuaBase.cs" />
-    <Compile Include="Assets\Plugins\FMOD\Wrapper\fmod_errors.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\StandardDescriptors\ProxyUserDataDescriptor.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Errors\ScriptRuntimeException.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\Attributes\MoonSharpUserDataMetamethodAttribute.cs" />
@@ -124,7 +120,6 @@
     <Compile Include="Assets\Plugins\Moonsharp\Execution\VM\Processor\Processor_InstructionLoop.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\InteropAccessMode.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\IVariable.cs" />
-    <Compile Include="Assets\Plugins\FMOD\Studio\UnityUtil.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Modules\MoonSharpModuleMethodAttribute.cs" />
     <Compile Include="Assets\Plugins\P31RestKit\Prime31\Reflection\MemberMapLoader.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Statements\BreakStatement.cs" />
@@ -139,7 +134,6 @@
     <Compile Include="Assets\Plugins\Moonsharp\REPL\ReplHistoryNavigator.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\CoreLib\CoroutineModule.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataTypes\WellKnownSymbols.cs" />
-    <Compile Include="Assets\Plugins\FMOD\StudioListener.cs" />
     <Compile Include="Assets\Plugins\P31RestKit\Prime31\PocoJsonSerializerStrategy.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\CoreLib\DebugModule.cs" />
     <Compile Include="Assets\Plugins\P31RestKit\Prime31\ActionExtensions.cs" />
@@ -203,15 +197,10 @@
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Expressions\IndexExpression.cs" />
     <Compile Include="Assets\Plugins\P31RestKit\Properties\AssemblyInfo.cs" />
     <Compile Include="Assets\Plugins\P31RestKit\Prime31\Reflection\SafeDictionary.cs" />
-    <Compile Include="Assets\Plugins\FMOD\Wrapper\fmod.cs" />
     <Compile Include="Assets\Plugins\P31RestKit\Prime31\P31RestKit.cs" />
-    <Compile Include="Assets\Plugins\FMOD\StudioBankLoader.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Compatibility\Attributes.cs" />
-    <Compile Include="Assets\Plugins\FMOD\StudioEventEmitter.cs" />
-    <Compile Include="Assets\Plugins\FMOD\FMOD_StudioEventEmitter.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\StandardDescriptors\ReflectionMemberDescriptors\MethodMemberDescriptor.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\Attributes\MoonSharpUserDataAttribute.cs" />
-    <Compile Include="Assets\Plugins\FMOD\ProjectScripts\CustomFMOD_MapService.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Compatibility\Frameworks\Base\FrameworkBase.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Modules\ModuleRegister.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Expressions\BinaryOperatorExpression.cs" />
@@ -221,13 +210,11 @@
     <Compile Include="Assets\Plugins\Moonsharp\Tree\NodeBase.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Execution\VM\Processor\DebugContext.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\LuaStateInterop\CharPtr.cs" />
-    <Compile Include="Assets\Plugins\FMOD\ProjectScripts\CustomFMOD_AudioDLC.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Expressions\SymbolRefExpression.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Execution\Scopes\RuntimeScopeFrame.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Diagnostics\PerformanceCounterType.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Platforms\DotNetCorePlatformAccessor.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\BasicDescriptors\DispatchingUserDataDescriptor.cs" />
-    <Compile Include="Assets\Plugins\FMOD\RuntimeUtils.cs" />
     <Compile Include="Assets\Plugins\P31RestKit\Prime31\SimpleJson.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataTypes\TailCallData.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\CoreLib\IO\FileUserDataBase.cs" />
@@ -246,7 +233,6 @@
     <Compile Include="Assets\Plugins\Moonsharp\Serialization\Json\JsonTableConverter.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\RegistrationPolicies\IRegistrationPolicy.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\CoreLib\MetaTableModule.cs" />
-    <Compile Include="Assets\Plugins\FMOD\EventRefAttribute.cs" />
     <Compile Include="Assets\Plugins\Kampai\Helpers\IEnumerableExtensions.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\UserDataMemberType.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\InteropRegistrationPolicy.cs" />
@@ -254,24 +240,20 @@
     <Compile Include="Assets\Plugins\Moonsharp\Modules\MoonSharpModuleConstantAttribute.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Serialization\ObjectValueConverter.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Statements\ForEachLoopStatement.cs" />
-    <Compile Include="Assets\Plugins\FMOD\RuntimeManager.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\IUserDataDescriptor.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Execution\Scopes\ClosureContext.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Expressions\DynamicExprExpression.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\ReflectionSpecialNames.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataTypes\SymbolRef.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Statements\GotoStatement.cs" />
-    <Compile Include="Assets\Plugins\FMOD\ProjectScripts\FMOD_StudioSystem.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Debugging\IDebugger.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataTypes\Table.cs" />
-    <Compile Include="Assets\Plugins\FMOD\StudioParameterTrigger.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Execution\ScriptExecutionContext.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\IUserDataMemberDescriptor.cs" />
     <Compile Include="Assets\Plugins\P31RestKit\Prime31\P31Error.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Compatibility\Framework.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\IO\BinDumpBinaryWriter.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Loop.cs" />
-    <Compile Include="Assets\Plugins\FMOD\Settings.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataStructs\LinkedListIndex.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Expressions\AdjustmentExpression.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\CoreLib\DynamicModule.cs" />
@@ -290,7 +272,6 @@
     <Compile Include="Assets\Plugins\Moonsharp\Interop\StandardDescriptors\ReflectionMemberDescriptors\FieldMemberDescriptor.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataTypes\IScriptPrivateResource.cs" />
     <Compile Include="Assets\Plugins\JSON_Parsers\SimpleJSON\JSONData.cs" />
-    <Compile Include="Assets\Plugins\FMOD\BankRefAttribute.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataTypes\TypeValidationFlags.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\PredefinedUserData\EnumerableWrapper.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\BasicDescriptors\IMemberDescriptor.cs" />
@@ -305,11 +286,9 @@
     <Compile Include="Assets\Plugins\Moonsharp\DataStructs\FastStackDynamic.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Fast_Interface\Loader_Fast.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Statements\ForLoopStatement.cs" />
-    <Compile Include="Assets\Plugins\FMOD\FMODAsset.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Interop\Attributes\MoonSharpHideMemberAttribute.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Execution\ScriptLoadingContext.cs" />
     <Compile Include="Assets\Plugins\P31RestKit\Prime31\HTTPVerb.cs" />
-    <Compile Include="Assets\Plugins\FMOD\ProjectScripts\CustomFMOD_StudioEventEmitter.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Compatibility\Frameworks\FrameworkCore.cs" />
     <Compile Include="Assets\Plugins\Prime31\EtceteraAndroidManager.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Statements\RepeatStatement.cs" />
@@ -327,7 +306,6 @@
     <Compile Include="Assets\Plugins\Moonsharp\Diagnostics\PerformanceResult.cs" />
     <Compile Include="Assets\Plugins\P31RestKit\Prime31\DateTimeExtensions.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Expressions\UnaryOperatorExpression.cs" />
-    <Compile Include="Assets\Plugins\FMOD\OneshotList.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Execution\VM\ExecutionState.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataTypes\CallbackFunction.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\CoreLib\Bit32Module.cs" />
@@ -335,7 +313,6 @@
     <Compile Include="Assets\Plugins\Moonsharp\Execution\Scopes\LoopTracker.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Expressions\ExprListExpression.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\CoreLib\LoadModule.cs" />
-    <Compile Include="Assets\Plugins\FMOD\FMOD_Listener.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\DataStructs\ReferenceEqualityComparer.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Debugging\DebuggerCaps.cs" />
     <Compile Include="Assets\Plugins\Moonsharp\Tree\Statements\ScopeBlockStatement.cs" />
@@ -372,17 +349,18 @@
     <None Include="Assets\Plugins\x86_64\fmodl.dll" />
     <None Include="Assets\Plugins\Metro\fmodstudio.dll" />
     <None Include="Assets\Plugins\Metro\x86\fmod.dll" />
+    <None Include="Assets\Plugins\x86\resonanceaudio.dll" />
     <None Include="Assets\Plugins\x86_64\fmod.dll" />
     <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
     <None Include="Assets\Plugins\x86\fmodstudio.dll" />
-    <None Include="Assets\Plugins\x86_64\fmodstudiol.dll" />
     <None Include="Assets\Plugins\Metro\fmod.dll" />
     <None Include="Assets\Plugins\x86\fmod.dll" />
     <None Include="Assets\Plugins\x86_64\fmodstudio.dll" />
     <None Include="Assets\Plugins\Metro\x86\fmodstudio.dll" />
     <None Include="Assets\Plugins\Metro\arm\fmodstudio.dll" />
     <None Include="Assets\Plugins\x86\fmodl.dll" />
-    <None Include="Assets\Plugins\x86\fmodstudiol.dll" />
+    <None Include="Assets\Plugins\x86_64\resonanceaudio.dll" />
+    <None Include="Assets\Plugins\x86_64\fmod_haptics.dll" />
     <None Include="Assets\Plugins\Metro\arm\fmod.dll" />
   </ItemGroup>
   <ItemGroup>
@@ -1480,43 +1458,48 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Unity.Purchasing.SecurityStub.csproj" />
     <ProjectReference Include="Analytics.csproj" />
-    <ProjectReference Include="Unity.Analytics.DataPrivacy.csproj" />
+    <ProjectReference Include="FMODUnityResonance.csproj" />
+    <ProjectReference Include="FMODUnity.csproj" />
     <ProjectReference Include="Unity.TextMeshPro.Editor.csproj" />
+    <ProjectReference Include="FMODUnityEditor.csproj" />
     <ProjectReference Include="Unity.2D.Sprite.Editor.csproj" />
+    <ProjectReference Include="Unity.Analytics.DataPrivacy.csproj" />
     <ProjectReference Include="UnityEditor.UI.Analytics.csproj" />
     <ProjectReference Include="Unity.TextMeshPro.csproj" />
     <ProjectReference Include="UnityEngine.XR.LegacyInputHelpers.csproj" />
     <ProjectReference Include="Unity.VisualStudio.Editor.csproj" />
     <ProjectReference Include="UnityEngine.SpatialTracking.csproj" />
+    <ProjectReference Include="Unity.Services.Core.csproj" />
     <ProjectReference Include="Unity.2D.Tilemap.Editor.csproj" />
-    <ProjectReference Include="UnityEngine.Purchasing.SecurityStub.csproj" />
     <ProjectReference Include="UnityEditor.XR.LegacyInputHelpers.csproj" />
     <ProjectReference Include="Unity.AI.Navigation.csproj" />
-    <ProjectReference Include="Unity.Services.Core.csproj" />
-    <ProjectReference Include="UnityEngine.Purchasing.Stores.csproj" />
     <ProjectReference Include="UnityEditor.Purchasing.csproj" />
     <ProjectReference Include="Unity.Timeline.Editor.csproj" />
-    <ProjectReference Include="Purchasing.Common.csproj" />
+    <ProjectReference Include="Unity.Purchasing.SecurityCore.csproj" />
+    <ProjectReference Include="Unity.Purchasing.csproj" />
     <ProjectReference Include="UnityEngine.UI.csproj" />
     <ProjectReference Include="Unity.Multiplayer.Center.Common.csproj" />
     <ProjectReference Include="Unity.Services.Core.Environments.csproj" />
-    <ProjectReference Include="Unity.AI.Navigation.Updater.csproj" />
-    <ProjectReference Include="UnityEngine.Purchasing.csproj" />
-    <ProjectReference Include="Unity.AI.Navigation.Editor.csproj" />
     <ProjectReference Include="Unity.Timeline.csproj" />
+    <ProjectReference Include="Unity.AI.Navigation.Editor.csproj" />
+    <ProjectReference Include="Unity.AI.Navigation.Updater.csproj" />
     <ProjectReference Include="Unity.InternalAPIEngineBridge.004.csproj" />
-    <ProjectReference Include="UnityEngine.Purchasing.Codeless.csproj" />
+    <ProjectReference Include="Unity.Multiplayer.Center.Editor.csproj" />
     <ProjectReference Include="Unity.PlasticSCM.Editor.csproj" />
-    <ProjectReference Include="UnityEngine.Advertisements.Editor.csproj" />
+    <ProjectReference Include="Unity.Purchasing.Utilities.csproj" />
+    <ProjectReference Include="Unity.Purchasing.Stores.csproj" />
     <ProjectReference Include="Unity.Services.Core.Components.csproj" />
+    <ProjectReference Include="FMODUnityResonanceEditor.csproj" />
+    <ProjectReference Include="UnityEngine.Advertisements.Editor.csproj" />
     <ProjectReference Include="UnityEditor.SpatialTracking.csproj" />
     <ProjectReference Include="UnityEngine.Advertisements.csproj" />
-    <ProjectReference Include="UnityEngine.Purchasing.SecurityCore.csproj" />
-    <ProjectReference Include="Unity.Multiplayer.Center.Editor.csproj" />
+    <ProjectReference Include="FMODUnityHaptics.csproj" />
     <ProjectReference Include="Unity.Rider.Editor.csproj" />
     <ProjectReference Include="Unity.Services.Core.Analytics.csproj" />
     <ProjectReference Include="Unity.AI.Navigation.Editor.ConversionSystem.csproj" />
+    <ProjectReference Include="Unity.Purchasing.Codeless.csproj" />
     <ProjectReference Include="UnityEditor.UI.csproj" />
     <ProjectReference Include="Unity.Services.Analytics.csproj" />
   </ItemGroup>

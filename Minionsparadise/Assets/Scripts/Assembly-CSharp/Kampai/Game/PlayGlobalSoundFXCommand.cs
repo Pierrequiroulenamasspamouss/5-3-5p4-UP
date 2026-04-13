@@ -15,7 +15,7 @@ namespace Kampai.Game
 			FMOD_StudioSystem instance = FMOD_StudioSystem.instance;
 			string guid = fmodService.GetGuid(audioSource);
 			global::FMOD.Studio.EventInstance eventInstance = instance.GetEvent(guid);
-			if (eventInstance == null)
+			if (!eventInstance.isValid())
 			{
 				logger.Log(global::Kampai.Util.KampaiLogLevel.Error, "Failed to Load Audio Source: " + audioSource);
 				return;

@@ -39,7 +39,7 @@ public static class CustomFMOD_AudioDLC
 	private static global::System.Collections.Generic.HashSet<string> GetExistingDLCBundleNames()
 	{
 		string path = global::UnityEngine.Application.dataPath + global::System.IO.Path.DirectorySeparatorChar + DLC_CONTENT_LOCATION;
-		return global::System.Linq.Enumerable.Select(global::System.IO.Directory.GetDirectories(path), (string path2) => global::System.IO.Path.GetFileName(path2)).ToHashSet();
+		return new global::System.Collections.Generic.HashSet<string>(global::System.Linq.Enumerable.Select(global::System.IO.Directory.GetDirectories(path), (string path2) => global::System.IO.Path.GetFileName(path2)));
 	}
 
 	private static global::System.Collections.Generic.Dictionary<string, CustomFMOD_AudioDLC.AudioBundleFiles> GetAudioBundleFiles(string bankFileDirectory, global::System.Collections.Generic.HashSet<string> dlcBundleNames)

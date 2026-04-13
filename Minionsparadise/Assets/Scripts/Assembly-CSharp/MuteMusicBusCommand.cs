@@ -9,14 +9,14 @@ public class MuteMusicBusCommand : global::strange.extensions.command.impl.Comma
 	{
 		global::Kampai.Audio.AudioSettingsModel.MusicMuted = mute;
 		global::FMOD.Studio.System system = FMOD_StudioSystem.instance.System;
-		if (system == null)
+		if (!system.isValid())
 		{
 			logger.Log(global::Kampai.Util.KampaiLogLevel.Warning, "FMOD System is null, skipping mute.");
 			return;
 		}
 		global::FMOD.Studio.Bus bus;
 		system.getBus("bus:/Non-Diegetic/u_Music", out bus);
-		if (bus != null)
+		if (bus.isValid())
 		{
 			bus.setMute(mute);
 		}

@@ -10,7 +10,7 @@ namespace Kampai.Game
 		public void Execute(CustomFMOD_StudioEventEmitter emitter, string audioEvent, global::System.Collections.Generic.Dictionary<string, float> eventParameters)
 		{
 			global::FMOD.Studio.PLAYBACK_STATE state = global::FMOD.Studio.PLAYBACK_STATE.STOPPED;
-			if (emitter.evt != null)
+			if (emitter.HasValidEventInstance())
 			{
 				emitter.evt.getPlaybackState(out state);
 			}
@@ -27,11 +27,7 @@ namespace Kampai.Game
 				}
 				if (emitter.path != null && emitter.path != guid)
 				{
-					if (emitter.evt != null)
-					{
-						emitter.evt.release();
-						emitter.evt = null;
-					}
+					emitter.ReleaseEventInstance();
 					emitter.path = guid;
 				}
 				emitter.SetEventParameters(eventParameters);

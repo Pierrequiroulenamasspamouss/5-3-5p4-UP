@@ -10,10 +10,9 @@ namespace Kampai.Game
 			if (emitter != null)
 			{
 				emitter.Stop();
-				if (emitter.evt != null)
+				if (emitter.HasValidEventInstance())
 				{
-					emitter.evt.release();
-					emitter.evt = null;
+					emitter.ReleaseEventInstance();
 				}
 			}
 			emitter.path = fmodService.GetGuid(audioClip);

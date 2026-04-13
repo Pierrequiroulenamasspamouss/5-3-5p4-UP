@@ -6,9 +6,18 @@ namespace Kampai.Game
 
 		private static bool isShuttingDown;
 
+		private void ReleaseEventInstance()
+		{
+			if (eventInstance.isValid())
+			{
+				ERRCHECK(eventInstance.release());
+			}
+			eventInstance.clearHandle();
+		}
+
 		public virtual void Update()
 		{
-			if (eventInstance == null || !eventInstance.isValid() || HasFinished())
+			if (!eventInstance.isValid() || HasFinished())
 			{
 				global::UnityEngine.Object.Destroy(base.gameObject);
 			}
@@ -16,7 +25,7 @@ namespace Kampai.Game
 
 		public bool IsValid()
 		{
-			return eventInstance != null && eventInstance.isValid();
+			return eventInstance.isValid();
 		}
 
 		public bool HasFinished()
@@ -73,14 +82,13 @@ namespace Kampai.Game
 
 		private void OnDestroy()
 		{
-			if (!isShuttingDown && eventInstance != null && eventInstance.isValid())
+			if (!isShuttingDown && eventInstance.isValid())
 			{
 				if (getPlaybackState() != global::FMOD.Studio.PLAYBACK_STATE.STOPPED)
 				{
 					ERRCHECK(eventInstance.stop(global::FMOD.Studio.STOP_MODE.IMMEDIATE));
 				}
-				ERRCHECK(eventInstance.release());
-				eventInstance = null;
+				ReleaseEventInstance();
 			}
 		}
 
