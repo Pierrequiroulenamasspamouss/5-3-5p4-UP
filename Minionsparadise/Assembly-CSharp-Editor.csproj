@@ -49,16 +49,17 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.3.13f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Editor\KampaiAssetManifestGenerator.cs" />
-    <Compile Include="Assets\Scripts\Editor\FMODMigrationUtil.cs" />
-    <Compile Include="Assets\Scripts\Editor\ClearUserPrefs.cs" />
-    <Compile Include="Assets\Scripts\Editor\DiscordRPC\DiscordRPCEditor.cs" />
+    <Compile Include="Assets\Editor\KampaiAssetManifestGenerator.cs" />
+    <Compile Include="Assets\Editor\DiscordRPC\DiscordControllerEditor.cs" />
+    <Compile Include="Assets\Editor\DiscordRPC\DiscordRPCEditor.cs" />
     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\UI\View\Editor\KampaiTools.cs" />
     <Compile Include="Assets\Scripts\Assembly-CSharp\Kampai\Editor\KampaiSplineTool.cs" />
-    <Compile Include="Assets\Scripts\Editor\SetRotateIconMask.cs" />
-    <Compile Include="Assets\Scripts\Editor\DiscordRPC\DiscordControllerEditor.cs" />
-    <Compile Include="Assets\Scripts\Editor\FixMissingNormals.cs" />
-    <Compile Include="Assets\Scripts\Editor\CleanMissingScripts.cs" />
+    <Compile Include="Assets\Editor\SetRotateIconMask.cs" />
+    <Compile Include="Assets\Editor\FixMissingNormals.cs" />
+    <Compile Include="Assets\Editor\ClearUserPrefs.cs" />
+    <Compile Include="Assets\Editor\FMODMigrationUtil.cs" />
+    <Compile Include="Assets\Editor\CleanMissingScripts.cs" />
+    <Compile Include="Assets\Editor\GUIDReplacer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\PackageCache\com.unity.collab-proxy@0b1559bcd34e\Lib\Editor\Localization\cm-help.zh-Hans.txt" />
@@ -137,7 +138,7 @@
     <None Include="Library\PackageCache\com.unity.collab-proxy@0b1559bcd34e\Lib\Editor\Localization\images.es.txt" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@0b1559bcd34e\Lib\Editor\Localization\mergetool.ko.txt" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@0b1559bcd34e\Lib\Editor\Localization\basecommands.zh-Hans.txt" />
-    <None Include="Assets\Scripts\Editor\DiscordRPC\DiscordPartnerSdkDependencies.xml" />
+    <None Include="Assets\Editor\DiscordRPC\DiscordPartnerSdkDependencies.xml" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@0b1559bcd34e\Lib\Editor\Localization\guihelp.en.txt" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@0b1559bcd34e\Lib\Editor\Localization\guihelp.zh-Hans.txt" />
     <None Include="Library\PackageCache\com.unity.collab-proxy@0b1559bcd34e\Lib\Editor\Localization\workspaceserver.en.txt" />
