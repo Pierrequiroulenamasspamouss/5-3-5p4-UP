@@ -550,7 +550,7 @@ namespace Kampai.UI.View
 			global::Kampai.Game.DisplayableDefinition displayableDefinition = definition as global::Kampai.Game.DisplayableDefinition;
 			base.view.Title.ClickedSignal.RemoveListener(OnItemMenuTitleClicked);
 			dragIcon = new global::UnityEngine.GameObject("DragIcon");
-			dragIcon.transform.SetParent(glassCanvas.transform);
+			dragIcon.transform.SetParent(glassCanvas.transform, false);
 			dragIcon.layer = 5;
 			global::Kampai.UI.View.KampaiIngoreRaycastImage kampaiIngoreRaycastImage = dragIcon.AddComponent<global::Kampai.UI.View.KampaiIngoreRaycastImage>();
 			kampaiIngoreRaycastImage.sprite = UIUtils.LoadSpriteFromPath(displayableDefinition.Image);

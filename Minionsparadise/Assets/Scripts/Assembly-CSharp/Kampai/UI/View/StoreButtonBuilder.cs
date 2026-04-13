@@ -32,7 +32,7 @@ namespace Kampai.UI.View
 				component.UnlockedAtLevel.text = localService.GetString(key, definitionService.GetLevelItemUnlocksAt(displayableDefinition.ID));
 			}
 			global::UnityEngine.RectTransform rectTransform = gameObject.transform as global::UnityEngine.RectTransform;
-			rectTransform.SetParent(i_parent);
+			rectTransform.SetParent(i_parent, false);
 			rectTransform.SetAsFirstSibling();
 			rectTransform.localPosition = new global::UnityEngine.Vector3(rectTransform.localPosition.x, rectTransform.localPosition.y, 0f);
 			rectTransform.localScale = global::UnityEngine.Vector3.one;
