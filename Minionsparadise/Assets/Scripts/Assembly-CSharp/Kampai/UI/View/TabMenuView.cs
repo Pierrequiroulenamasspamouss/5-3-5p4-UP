@@ -98,6 +98,27 @@ namespace Kampai.UI.View
 			tabViews[count - 1].gameObject.SetActive(true);
 		}
 
+		internal void ClearTabs()
+		{
+			if (tabViews != null)
+			{
+				foreach (var tab in tabViews)
+				{
+					if (tab != null && tab.gameObject != null)
+					{
+						global::UnityEngine.Object.Destroy(tab.gameObject);
+					}
+				}
+				tabViews.Clear();
+			}
+			count = 0;
+			if (ScrollViewParent != null)
+			{
+				ScrollViewParent.offsetMin = global::UnityEngine.Vector2.zero;
+				ScrollViewParent.offsetMax = global::UnityEngine.Vector2.zero;
+			}
+		}
+
 		internal void ToggleStoreTab(global::Kampai.Game.StoreItemType type, bool show)
 		{
 			foreach (global::Kampai.UI.View.StoreTabView tabView in tabViews)

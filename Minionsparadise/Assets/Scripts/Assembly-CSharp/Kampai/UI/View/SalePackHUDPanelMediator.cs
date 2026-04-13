@@ -88,6 +88,12 @@ namespace Kampai.UI.View
 			}
 			if (salePackItem.Definition.Type == global::Kampai.Game.SalePackType.Upsell)
 			{
+				string localizedKey = salePackItem.Definition.LocalizedKey;
+				if (localizedKey == "HolidayOffer" || localizedKey == "PileDiamonds" || localizedKey == "SackDiamonds")
+				{
+					logger.Info("Skipping HUD upsell for {0} per user request.", localizedKey);
+					return;
+				}
 				global::Kampai.UI.View.SalepackHUDView salepackHUDView = BuildSaleItem(salePackItem);
 				salepackHUDView.transform.SetParent(view.scrollList.content, false);
 				salepackHUDView.transform.localScale = new global::UnityEngine.Vector3(1f, 1f, 1f);

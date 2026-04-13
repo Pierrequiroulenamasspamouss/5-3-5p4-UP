@@ -160,11 +160,15 @@ namespace Kampai.UI.View
 		public global::Kampai.Game.AwardLevelSignal awardLevelSignal { get; set; }
 
 		[Inject]
+		public global::Kampai.Main.LanguageChangedSignal languageChangedSignal { get; set; }
+
+		[Inject]
 		public global::Kampai.Common.ITelemetryService telemetryService { get; set; }
 
 		public override void OnRegister()
 		{
 			view.Init(hudChangingSiblingIndexSignal);
+			languageChangedSignal.AddListener(OnLanguageChanged);
 			setStorageSignal.AddListener(SetStorage);
 			closeAllOtherMenusSignal.AddListener(CloseAllMenu);
 			closeSignal.AddListener(CloseMenu);
@@ -206,6 +210,7 @@ namespace Kampai.UI.View
 
 		public override void OnRemove()
 		{
+			languageChangedSignal.RemoveListener(OnLanguageChanged);
 			setStorageSignal.RemoveListener(SetStorage);
 			closeAllOtherMenusSignal.RemoveListener(CloseAllMenu);
 			closeSignal.RemoveListener(CloseMenu);
@@ -231,6 +236,14 @@ namespace Kampai.UI.View
 			RemoveVillainLairSignals();
 			RemoveCurrencySignals();
 			rushDialogPurchaseHelper.Cleanup();
+		}
+
+		private void OnLanguageChanged()
+		{
+			SetGrindCurrency();
+			SetPremiumCurrency();
+			SetStorage();
+			UpdateSaleBadgeCount();
 		}
 
 		private void OnPauseSound(bool isPause)

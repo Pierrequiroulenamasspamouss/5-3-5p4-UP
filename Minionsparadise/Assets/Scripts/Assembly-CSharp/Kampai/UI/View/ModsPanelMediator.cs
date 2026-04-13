@@ -42,12 +42,21 @@ namespace Kampai.UI.View
 
 		[Inject]
 		public PopupMessageSignal popupMessageSignal { get; set; }
+		
+		[Inject]
+		public LoadDefinitionForUISignal loadDefSignal { get; set; }
+		
+		[Inject]
+		public ClearStoreTabsSignal clearTabsSignal { get; set; }
 
 		private static readonly string[] ALL_LANGUAGES = new string[] { "en", "fr", "de", "es", "it", "pt", "nl", "ko", "ru", "ja", "zh-cn", "zh-tw", "tr", "id", "lolcat", "minion" };
 
 		private List<string> m_availableLanguages;
 		private HashSet<string> m_renderedTimestamps = new HashSet<string>();
 		private Dictionary<string, GameObject> m_pendingMessages = new Dictionary<string, GameObject>();
+		
+		private float m_lastClickTime = 0f;
+		private const float CLICK_DEBOUNCE = 0.2f;
 
 		public override void OnRegister()
 		{
@@ -151,6 +160,9 @@ namespace Kampai.UI.View
 
 		private void OnLanguageButtonClicked()
 		{
+			if (Time.time - m_lastClickTime < CLICK_DEBOUNCE) return;
+			m_lastClickTime = Time.time;
+
 			Debug.Log("[ModsMediator] Language Button Clicked!");
 			string language = prefs.GetDevicePrefs().Language;
 			if (string.IsNullOrEmpty(language))
@@ -173,12 +185,20 @@ namespace Kampai.UI.View
 			localService.Initialize(nextLang);
 			localService.Update();
 			UpdateLanguageText();
+			
+			// Refresh Build Shop Tabs
+			clearTabsSignal.Dispatch();
+			loadDefSignal.Dispatch();
+			
 			languageChangedSignal.Dispatch();
 			soundFXSignal.Dispatch("Play_minion_confirm_select_01");
 		}
 
 		private void OnNightToggleClicked()
 		{
+			if (Time.time - m_lastClickTime < CLICK_DEBOUNCE) return;
+			m_lastClickTime = Time.time;
+
 			Debug.Log("[ModsMediator] Night Toggle Clicked!");
 			DayNightCycleManager manager = Object.FindObjectOfType<DayNightCycleManager>();
 			if (manager != null)
@@ -212,22 +232,28 @@ namespace Kampai.UI.View
 
 		private void OnOfflineToggleClicked()
 		{
+			if (Time.time - m_lastClickTime < CLICK_DEBOUNCE) return;
+			m_lastClickTime = Time.time;
+
 			DevicePrefs devicePrefs = prefs.GetDevicePrefs();
 			devicePrefs.OfflineMode_Pref = !devicePrefs.OfflineMode_Pref;
 			saveDevicePrefsSignal.Dispatch();
 			UpdateOfflineToggleText();
-			soundFXSignal.Dispatch("Play_minion_confirm_select_03");
+			soundFXSignal.Dispatch("Play_minion_confirm_select_01");
 			Debug.Log(string.Format("[ModsMediator] Offline Preference toggled to: {0}", devicePrefs.OfflineMode_Pref));
 		}
 
 		private void UpdateOfflineToggleText()
 		{
+			bool offlinePref = prefs.GetDevicePrefs().OfflineMode_Pref;
+			string newText = "OFFLINE: " + (offlinePref ? "ON" : "OFF");
+			
 			if (view.offlineToggleText != null)
 			{
-				bool offlinePref = prefs.GetDevicePrefs().OfflineMode_Pref;
-				view.offlineToggleText.text = "OFFLINE: " + (offlinePref ? "ON" : "OFF");
+				view.offlineToggleText.text = newText;
 			}
 		}
+
 
 		private void OnSendClicked()
 		{
