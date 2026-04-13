@@ -1990,9 +1990,8 @@ namespace Kampai.Util
 		[global::Kampai.Util.DebugCommand(Name = "synergy login")]
 		public void SynergyLogin(string[] args)
 		{
-			string userSynergyId = args[2];
 			logger.Debug("Logging into synergy");
-			// NimbleBridge_SynergyIdManager.GetComponent().Login(userSynergyId, "test");
+			// NimbleBridge_SynergyIdManager.GetComponent().Login(args[2], "test");
 		}
 
 		[global::Kampai.Util.DebugCommand(Name = "purchase a")]

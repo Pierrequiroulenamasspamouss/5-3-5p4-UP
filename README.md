@@ -44,38 +44,6 @@ Technical documentation and guides.
 ## 🛠️ TODO List
 
 ### High Priority
-- [ ] **OFFLINE MODE**: 
-Offline mode should consist in a button in the ModsPanelView that allows the player to switch to a local configuration. For that it need to pass different steps: 
-    - When logging in, and saving the player's progress, it needs to do also a local copy of the progress on the machine, in streamingAssets I guess, so that Android compatibility remains. For that the game also needs a copy of the configuration, and the definitions inside the game's internal files, that could be compiled with the game (I believe there is already a definitions.json inside the game's resources.) so that on the first launch it doesn't break for definitions missing. Once a first communication with the server has been made, the game will attempt to register to the server, as a new player, and upload the save with the player's progress up to now ( simple json object that contains the player's inventory and data.). That means the server has to handle that properly. It also will retrieve the config.json from the server (which is different from the config.json that is built inside the game) and store it inside the streaming assets. Same for the definitions, so that the player will always have the latest definitions possible. 
-    - If a login fails when launching the game the game falls back to the local resources (config, definitions, player save) for whatever is the latest version of it. That depends of if the player already has contacted the server once or not. 
-    - The screen showing there is no connection would have a button called Play offline (ANTIGRAVITY: ButtonView.OnClickEvent triggered on btn_playOfflineUnityEngine.Debug:Log(Object)Kampai.UI.View.ButtonView:OnClickEvent() (at Assets/Scripts/Assembly-CSharp/Kampai/UI/View/ButtonView.cs:16)UnityEngine.EventSystems.EventSystem:Update() the UI is already implemented in game. the logic is missing. )
-    - Once the game is in offline mode, the game will not attempt to connect to the server and use the local resources, that means the local version of the definitions, the local version of the server's config.json, and the local version of the player's data. 
-    - The first launch of the game is a little different since the player never had access to the server, the game has never connected to the server previously, the game HAS to rely on local defintions/config, and save newly generated data on device. Also since the user ID is defined by the server at registration I believe, there has changes to be made to the server for creating specific register requests, with a specific user ID. After the first launch of the game, the game will not need to rely on the builtin config/definitions and should prioritize the latest config and definitions that have been pulled from the server, AND been stored on the device. 
-    - The fix has to be implemented for Windows right now, but keeping compatibility with Android ina future date in time. 
-    - To sum up : 
-        - First-time playing the game : register -> failure -> create custom UID that may be replaced in the future.
-                    -> use builtin config and definitions, and load player data successfuly
-                 -> success of the registration, proceed as right now. 
-                 -> always saves a copy on device of the player's data when uploading the save to the server.  
-                 -> also saves a copy of the config and the definitions locally each time it fetches that data off the server. 
-        - Not first time playing the game (has already once downloaded config and definitions from the server, success to reach the server) -> failure to login ->  loads those instead, and loads the local game save. 
-            -> success to login : compares the player data off the server and off the device, and uses the one with the most recent timestamp. Loads that one and deletes the old one (renames it to .old and deletes the previous .old save file. so that it cycles.)
-        - First time reaching the server after offline first setup : register to the server with specifying a precise UID, the server COULD respond with a different UID if the one is already taken. else it will accept the UID, and respond as a valid registration. The server will create the entry in the database for that player. login after that SHOULD go smoothly. Saving the player data too, once the player is properly in the database. 
-
-- The ModsPanelView should be able to have a toggle for the preference of the player to remember, by default the game SHOULD try to play online, but if the toggle is set to offline in the mods, the game will not display the message of the device being offline again, since it would check the preference before loading the screen, and if the preference is set to online_pref = false, the game will directly launch the game offline without the "game offline popup screen". Note that the preference is different that the current game state. The preference indicates which default configuration is set, and the state whether the game is played online or offline is volatile and defined at each launch by either the preference, either the option to "play offline" on the popup screen.
-- Functions that use online functionality ( marketplace, socialEvents, etc...) should be able to handle null responses and show empty screens or "you are playing offline. This is not available" messages for example.
-
-        
-
-
-
-
-
-
-
-
-
-
 - [ ] **Android 8+ crash**: Self explanatory, I assume there is an issue with ARM7 libraries for FMOD 
 - [ ] **REBUILD FMOD PROJECT TO ADD CUSTOM AUDIO LOOPS**: Currently using raw banks extracted from the game, it is difficult to add new audio to the game
 - [ ] **Adding debug command to remove limited time offers**: Self explanatory 
@@ -84,12 +52,16 @@ Offline mode should consist in a button in the ModsPanelView that allows the pla
 - [ ] **Android Discord login doesn't work**: Add media playing and discord login on Android. 
 - [ ] **Video doesn't always play for new user.**: Self explanatory, depending on the platform the intro video should play, tho it doesn't.
 - [ ] **Some users get stuck at 30% loading on Android**: adding some telemetry back MIGHT be useful, some simple one that will send the logs to the server and then upload them in a Google drive folder
-- [ ] **Softlocks in early-game**: pretty common stuff, lua quests issues, I should fix the commands to unlock yourself 
 - [ ] **TeamOrderBoard no audio**: Self explanatory 
 - [ ] **Grayed out minion button softlocking the game**: Could be fixed by removing the party prerequisite ?
 - [ ] **Permissions issues on later Android versions**: Self explanatory 
-- [ ] **No development server**: I should put a development server running in parallel of the main prod server since playing with prod is not optimal 
-
+- [ ] **Apply more recent changes to the Unity 2018 version** Unity 2018 branch needs to be updated. 
+- [ ] **Broken assets**: 
+    'Assets/Resources/content/shared/shared_animation/animations/shared_anim_solo_awareness/a
+    nim_solo_awareness_lookAt_01_minion.prefab'
+    'Assets/Resources/content/dlc/anim_townsquare/anim_solo_minionParty_GachaPlayerAcknowledge02_minion.prefab'
+    'Assets/Resources/content/dlc/anim_townsquare/anim_solo_minionParty_GachaPlayerAcknowledge01_minion.prefab'
+- [ ] **Missing language keys** I need to make a list of the missing keys. I need a tool to sync all the languages, so I can take each key, and see if for exampole a language has keys missing
 
 
 ### Features & Infrastructure

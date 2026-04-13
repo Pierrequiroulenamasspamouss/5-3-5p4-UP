@@ -126,7 +126,6 @@ namespace Kampai.Util
 		protected static void FindViewContext<T>(T view, bool toAdd, bool finalTry, ref global::strange.extensions.context.api.IContext currentContext) where T : global::UnityEngine.MonoBehaviour, global::strange.extensions.mediation.api.IView
 		{
 			global::UnityEngine.GameObject gameObject = view.gameObject;
-			int layer = gameObject.layer;
 			if (!toAdd || finalTry)
 			{
 				int num = BubbleUpToContext(view, toAdd, gameObject, ref currentContext);

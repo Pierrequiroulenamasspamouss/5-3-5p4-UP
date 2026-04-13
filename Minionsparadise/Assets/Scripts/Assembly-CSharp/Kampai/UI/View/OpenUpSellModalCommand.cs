@@ -61,7 +61,6 @@ namespace Kampai.UI.View
 
 		public string SetByType()
 		{
-			string text = "screen_UpsellBundles";
 			switch (packDefinition.Layout)
 			{
 			case global::Kampai.Game.SalePackLayout.FreeOne:

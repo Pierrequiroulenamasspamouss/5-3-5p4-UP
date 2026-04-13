@@ -61,7 +61,7 @@ namespace Kampai.Game
 			}
 			else
 			{
-				global::Kampai.Game.Villain villain = playerService.GetByInstanceId<global::Kampai.Game.Villain>(prestige.trackedInstanceId);
+				playerService.GetByInstanceId<global::Kampai.Game.Villain>(prestige.trackedInstanceId);
 			}
 			telemetryService.Send_TelemetryCharacterPrestiged(prestige);
 			uiContext.injectionBinder.GetInstance<global::Kampai.UI.View.ShowBuddyWelcomePanelUISignal>().Dispatch(new global::Kampai.Util.Boxed<global::Kampai.Game.Prestige>(prestige), global::Kampai.UI.View.CharacterWelcomeState.Welcome, 0);

@@ -87,7 +87,6 @@ namespace Kampai.Game
 
 		private global::Kampai.Game.GenerateBuyItemsCommand.ItemCategory PickItemCategory(global::Kampai.Game.MarketplaceDefinition marketplaceDefinition, global::System.Collections.Generic.IList<int> craftableItems, global::System.Collections.Generic.IList<int> resourceItems, int dropCount)
 		{
-			global::Kampai.Game.GenerateBuyItemsCommand.ItemCategory itemCategory = global::Kampai.Game.GenerateBuyItemsCommand.ItemCategory.craftableType;
 			int craftableWeight = marketplaceDefinition.CraftableWeight;
 			int baseResourceWeight = marketplaceDefinition.BaseResourceWeight;
 			int dropWeight = marketplaceDefinition.DropWeight;
@@ -142,7 +141,6 @@ namespace Kampai.Game
 
 		private int FindSizeOfStack(global::Kampai.Game.GenerateBuyItemsCommand.ItemCategory categoryPicked, global::Kampai.Game.MarketplaceDefinition marketplaceDefinition)
 		{
-			int num = 1;
 			if (categoryPicked != global::Kampai.Game.GenerateBuyItemsCommand.ItemCategory.dropType)
 			{
 				return randomService.NextInt(1, marketplaceDefinition.MaxSellQuantity + 1);

@@ -28,7 +28,7 @@ namespace Kampai.Game.View
 			groundPlane.Raycast(mouseRay, out hitDistance);
 			hitPosition = mouseRay.GetPoint(hitDistance);
 			global::UnityEngine.Vector3 v = base.transform.worldToLocalMatrix.MultiplyPoint3x4(hitPosition);
-			global::UnityEngine.Vector3 vector = base.transform.localToWorldMatrix.MultiplyVector(v);
+			base.transform.localToWorldMatrix.MultiplyVector(v);
 			velocity = new global::UnityEngine.Vector3(0f, global::UnityEngine.Input.GetAxis("Mouse ScrollWheel") * 2000f, 0f);
 		}
 	}

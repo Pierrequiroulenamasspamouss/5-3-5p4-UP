@@ -49,7 +49,6 @@ namespace Kampai.UI.View
 			}
 			bool result = false;
 			int iD = view.definition.ID;
-			int quantity = (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.LEVEL_ID);
 			global::Kampai.Game.DisplayableDefinition displayableDefinition = view.definition as global::Kampai.Game.DisplayableDefinition;
 			global::Kampai.Game.StoreItemDefinition storeItemDefinition = view.storeItemDefinition;
 			int num = playerService.GetUnlockedQuantityOfID(iD);
