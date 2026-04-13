@@ -13,12 +13,18 @@ namespace Kampai.Game {
         [Inject]
         public global::Kampai.Game.IConfigurationsService configurationsService { get; set; }
 
+        [Inject]
+        public global::Kampai.Game.IDevicePrefsService prefsService { get; set; }
+
+        [Inject]
+        public global::Kampai.Game.SaveDevicePrefsSignal savePrefsSignal { get; set; }
+
         private Light _directionalLight;
         private Color _dayAmbient = new Color(0.5f, 0.5f, 0.5f);
         private Color _nightAmbient = new Color(0.15f, 0.15f, 0.35f);
         private Color _nightTint = new Color(0.3f, 0.35f, 0.7f);
         
-        private NightCycleMode _currentMode = NightCycleMode.AUTO;
+        private NightCycleMode _currentMode = NightCycleMode.DAY;
 
         void Awake() {
             global::UnityEngine.GameObject lightGo = global::UnityEngine.GameObject.Find("Directional Light");
@@ -28,6 +34,11 @@ namespace Kampai.Game {
         }
 
         void Start() {
+            // Load saved preference
+            if (prefsService != null) {
+                _currentMode = (NightCycleMode)prefsService.GetDevicePrefs().NightMode_Pref;
+            }
+
             // Initial update
             ApplyNightEffect(CalculateNightFactor());
         }
@@ -89,6 +100,12 @@ namespace Kampai.Game {
             if (_currentMode == NightCycleMode.AUTO) _currentMode = NightCycleMode.DAY;
             else if (_currentMode == NightCycleMode.DAY) _currentMode = NightCycleMode.NIGHT;
             else _currentMode = NightCycleMode.AUTO;
+
+            // Save preference
+            if (prefsService != null && savePrefsSignal != null) {
+                prefsService.GetDevicePrefs().NightMode_Pref = (int)_currentMode;
+                savePrefsSignal.Dispatch();
+            }
         }
 
         public NightCycleMode GetCurrentMode() {

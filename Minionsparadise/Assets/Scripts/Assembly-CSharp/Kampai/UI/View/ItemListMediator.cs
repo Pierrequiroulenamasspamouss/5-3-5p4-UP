@@ -559,12 +559,13 @@ namespace Kampai.UI.View
 			global::UnityEngine.RectTransform component = dragIcon.GetComponent<global::UnityEngine.RectTransform>();
 			component.localPosition = new global::UnityEngine.Vector3(0f, 0f, 0f);
 			global::Kampai.UI.View.KampaiImage component2 = dragIcon.GetComponent<global::Kampai.UI.View.KampaiImage>();
-			component.anchoredPosition = new global::UnityEngine.Vector2(eventData.position.x / UIUtils.GetHeightScale(), eventData.position.y / UIUtils.GetHeightScale() + 40f);
+			component.anchoredPosition = new global::UnityEngine.Vector2(eventData.position.x / UIUtils.GetHeightScale(), eventData.position.y / UIUtils.GetHeightScale() + component2.sprite.rect.height * component2.pixelsPerUnit / 2f);
+			component.localScale = global::UnityEngine.Vector3.one;
 			component.anchorMin = new global::UnityEngine.Vector2(0f, 0f);
 			component.anchorMax = new global::UnityEngine.Vector2(0f, 0f);
 			component.pivot = new global::UnityEngine.Vector2(0.5f, 0.5f);
 			float num = global::UnityEngine.Mathf.Max(component2.sprite.rect.width, component2.sprite.rect.height);
-			component.sizeDelta = new global::UnityEngine.Vector2(component2.sprite.rect.width / num * 80f, component2.sprite.rect.height / num * 80f);
+			component.sizeDelta = new global::UnityEngine.Vector2(component2.sprite.rect.width / num * 100f, component2.sprite.rect.height / num * 100f);
 		}
 
 		private void OnPointerDrag(global::UnityEngine.EventSystems.PointerEventData eventData, global::Kampai.Game.Definition definition, global::Kampai.Game.Transaction.TransactionDefinition transactionDef, int badgeCount)

@@ -82,6 +82,8 @@ namespace Kampai.UI.View
 
 		public void AddSalePack(global::Kampai.Game.Sale salePackItem, bool tryImpression = true)
 		{
+			// Disable all HUD offers per user request.
+			return;
 			if (playerSaleItems == null)
 			{
 				playerSaleItems = new global::System.Collections.Generic.List<global::Kampai.UI.View.SalepackHUDView>();
