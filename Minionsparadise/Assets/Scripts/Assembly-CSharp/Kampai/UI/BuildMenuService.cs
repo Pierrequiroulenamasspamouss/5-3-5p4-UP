@@ -148,6 +148,11 @@ namespace Kampai.UI
 
 		public bool ShouldRenderStoreDef(global::Kampai.Game.StoreItemDefinition storeDef)
 		{
+			if (storeDef == null || storeDef.Disabled)
+			{
+				return false;
+			}
+
 			bool flag = true;
 			int unlockedQuantityOfID = playerService.GetUnlockedQuantityOfID(storeDef.ReferencedDefID);
 			if (storeDef.OnlyShowIfUnlocked)
@@ -171,6 +176,32 @@ namespace Kampai.UI
 					}
 				}
 			}
+
+			// If no transaction is defined, it shouldn't be for sale.
+			// Hide if not owned, unless it's one of the specific exception items requested by the user.
+			if (storeDef.TransactionID == 0 && count == 0)
+			{
+				global::Kampai.Game.Definition referencedDef = definitionService.Get(storeDef.ReferencedDefID);
+				bool isExceptionItem = referencedDef != null && (referencedDef.LocalizedKey == "DecorWinterStandard01" || referencedDef.LocalizedKey == "DecorWinterPremium15");
+				if (!isExceptionItem)
+				{
+					return false;
+				}
+			}
+
+			// Check date-based availability (Sales/Events)
+			bool isOnSale = storeDef.IsOnSale(global::UnityEngine.Application.platform, timeService, localeService, logger);
+			if (!isOnSale && count == 0)
+			{
+				// If not on sale and the player doesn't own any, hide it.
+				// (Exception items stay visible as requested)
+				bool isExceptionItem = storeDef.LocalizedKey == "DecorWinterStandard01" || storeDef.LocalizedKey == "DecorWinterPremium15";
+				if (!isExceptionItem)
+				{
+					return false;
+				}
+			}
+
 			if (storeDef.SpecialEventID > 0 && flag)
 			{
 				global::Kampai.Game.SpecialEventItemDefinition definition;

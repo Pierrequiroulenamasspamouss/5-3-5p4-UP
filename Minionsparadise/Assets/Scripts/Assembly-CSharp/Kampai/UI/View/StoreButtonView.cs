@@ -388,14 +388,11 @@ namespace Kampai.UI.View
 		public void SetShouldBerendered(bool value)
 		{
 			shouldBeRendered = value;
+			base.gameObject.SetActive(value);
 		}
 
 		public bool ShouldBeRendered()
 		{
-			if (!shouldBeRendered)
-			{
-				ItemIcon.gameObject.SetActive(false);
-			}
 			return shouldBeRendered;
 		}
 

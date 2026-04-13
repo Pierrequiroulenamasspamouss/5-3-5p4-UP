@@ -11,6 +11,9 @@ namespace Kampai.UI.View
 
 		[Inject]
 		public global::Kampai.UI.View.AddStoreTabSignal addTabSignal { get; set; }
+		
+		[Inject]
+		public global::Kampai.UI.View.ClearStoreTabsSignal clearTabsSignal { get; set; }
 
 		[Inject]
 		public global::Kampai.UI.View.OnTabClickedSignal tabClickSignal { get; set; }
@@ -46,6 +49,7 @@ namespace Kampai.UI.View
 		{
 			view.Init(setNewUnlockForBuildMenuSignal, removeUnlockForBuildMenuSignal);
 			addTabSignal.AddListener(AddStoreTab);
+			clearTabsSignal.AddListener(view.ClearTabs);
 			moveTabSignal.AddListener(ShowMenu);
 			setBadgeForTabSignal.AddListener(SetBadgeForTab);
 			setNewUnlockForTabSignal.AddListener(SetUnlockForTab);
@@ -56,6 +60,7 @@ namespace Kampai.UI.View
 		public override void OnRemove()
 		{
 			addTabSignal.RemoveListener(AddStoreTab);
+			clearTabsSignal.RemoveListener(view.ClearTabs);
 			moveTabSignal.RemoveListener(ShowMenu);
 			setBadgeForTabSignal.RemoveListener(SetBadgeForTab);
 			setNewUnlockForTabSignal.RemoveListener(SetUnlockForTab);
