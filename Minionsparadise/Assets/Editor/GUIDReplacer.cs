@@ -34,7 +34,7 @@ public class GuidAndAssetReplacer : EditorWindow
     private Dictionary<string, Sprite> originalSprites = new Dictionary<string, Sprite>();
     private Dictionary<string, Sprite> newSprites = new Dictionary<string, Sprite>();
 
-    private string[] ignoreFolders = new string[] { "meshes", "fbx", "sourceassets", "mesh", "models", "costumes", "costumefbxs", "model" };
+    private string[] ignoreFolders = new string[] { "blank", "blank", "blank", "blank", "blank", "blank", "blank", "blank" };
 
     private static readonly string Manual = 
         "There is a duplicate button for assets that has multiple duplications. " +
