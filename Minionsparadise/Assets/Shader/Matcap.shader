@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced tex2D unity_Lightmap with UNITY_SAMPLE_TEX2D
 
 Shader "Kampai/Standard/Matcap" {
@@ -94,7 +96,7 @@ Shader "Kampai/Standard/Matcap" {
                     o.color = lerp(fixed4(1,1,1,1), v.color, _VertexColor);
                 #endif
 
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
                 // Calcul du Matcap (Normale Vue)

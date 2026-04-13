@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Standard/Vert Animation" {
     Properties {
         _Color ("Main Color", Color) = (1,1,1,1)
@@ -57,7 +59,7 @@ Shader "Kampai/Standard/Vert Animation" {
                 float3 animWave = vertColorMask * sin(_Time.y * _Speed) * _Scale;
                 v.vertex.xyz += animWave;
                 
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 return o;
             }

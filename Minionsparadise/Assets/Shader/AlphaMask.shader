@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/UI/AlphaMask"
 {
 Properties
@@ -174,7 +176,7 @@ SubShader
   {
    v2f o;
 
-   o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+   o.pos = UnityObjectToClipPos(v.vertex);
 
    o.uv = TRANSFORM_TEX(v.uv, _MainTex);
    o.uv2 = TRANSFORM_TEX(v.uv2, _AlphaTex);

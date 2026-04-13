@@ -30,7 +30,7 @@ namespace Kampai.Game.View
 			renderers = new global::System.Collections.Generic.List<global::UnityEngine.Renderer>(3);
 			RefreshRenderers();
 			defaultRenderer = base.gameObject.GetComponent<global::UnityEngine.Renderer>();
-			global::UnityEngine.GameObject gameObject = base.transform.FindChild(GetRootJointPath(character)).gameObject;
+			global::UnityEngine.GameObject gameObject = base.transform.Find(GetRootJointPath(character)).gameObject;
 			global::UnityEngine.BoxCollider boxCollider = gameObject.GetComponent<global::UnityEngine.BoxCollider>();
 			if (boxCollider == null)
 			{

@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -39,7 +40,7 @@ namespace Kampai.Util.AssetEditor
                 }
             }
 
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(map, Newtonsoft.Json.Formatting.Indented);
+            string json = SerializeManifest(map);
             string resourcesPath = Path.Combine(Application.dataPath, "Resources");
             if (!Directory.Exists(resourcesPath)) Directory.CreateDirectory(resourcesPath);
             
@@ -48,6 +49,48 @@ namespace Kampai.Util.AssetEditor
             AssetDatabase.Refresh();
 
             Debug.Log("KampaiAssetManifest: Generated manifest with " + map.Count + " entries at " + manifestPath);
+        }
+
+        private static string SerializeManifest(Dictionary<string, string> map)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("{");
+
+            int index = 0;
+            foreach (KeyValuePair<string, string> entry in map)
+            {
+                builder.Append("  \"");
+                builder.Append(EscapeJson(entry.Key));
+                builder.Append("\": \"");
+                builder.Append(EscapeJson(entry.Value));
+                builder.Append('"');
+
+                if (index < map.Count - 1)
+                {
+                    builder.Append(',');
+                }
+
+                builder.AppendLine();
+                index++;
+            }
+
+            builder.Append('}');
+            return builder.ToString();
+        }
+
+        private static string EscapeJson(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return string.Empty;
+            }
+
+            return value
+                .Replace("\\", "\\\\")
+                .Replace("\"", "\\\"")
+                .Replace("\r", "\\r")
+                .Replace("\n", "\\n")
+                .Replace("\t", "\\t");
         }
 
         static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)

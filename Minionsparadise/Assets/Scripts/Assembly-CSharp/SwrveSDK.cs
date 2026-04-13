@@ -1942,7 +1942,7 @@ public class SwrveSDK
 			{
 				byte[] byteArray = global::Swrve.CrossPlatformFile.ReadAllBytes(filePath);
 				global::UnityEngine.Texture2D loadedTexture2 = new global::UnityEngine.Texture2D(4, 4);
-				if (loadedTexture2.LoadImage(byteArray))
+				if (global::UnityEngine.ImageConversion.LoadImage(loadedTexture2, byteArray))
 				{
 					texture.Value(loadedTexture2);
 				}
@@ -1982,7 +1982,7 @@ public class SwrveSDK
 			{
 				string filePath = swrveTemporaryPath + "/" + fileName;
 				SwrveLog.Log("Saving to " + filePath);
-				byte[] bytes = loadedTexture.EncodeToPNG();
+				byte[] bytes = global::UnityEngine.ImageConversion.EncodeToPNG(loadedTexture);
 				global::Swrve.CrossPlatformFile.SaveBytes(filePath, bytes);
 				bytes = null;
 				texture.Value(loadedTexture);

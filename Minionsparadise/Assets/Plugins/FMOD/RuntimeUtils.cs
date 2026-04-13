@@ -137,7 +137,7 @@ namespace FMODUnity
 
             if (rigidbody)
             {
-                attributes.velocity = rigidbody.velocity.ToFMODVector();
+                attributes.velocity = rigidbody.linearVelocity.ToFMODVector();
             }
 
             return attributes;
@@ -149,7 +149,7 @@ namespace FMODUnity
 
             if (rigidbody)
             {
-                attributes.velocity = rigidbody.velocity.ToFMODVector();
+                attributes.velocity = rigidbody.linearVelocity.ToFMODVector();
             }
 
             return attributes;

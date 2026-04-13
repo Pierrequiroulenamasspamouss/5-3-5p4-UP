@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Standard/Texture" {
     Properties {
         _Color ("Main Color", Color) = (1,1,1,1)
@@ -95,7 +97,7 @@ Shader "Kampai/Standard/Texture" {
 
             v2f vert (appdata v) {
                 v2f o;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 
                 float2 scrollOffset = frac(_UVScroll.xy * _Time.x);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex) + scrollOffset;

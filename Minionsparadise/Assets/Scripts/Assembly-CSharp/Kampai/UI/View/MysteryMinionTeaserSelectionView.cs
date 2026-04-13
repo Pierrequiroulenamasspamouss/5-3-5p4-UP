@@ -105,8 +105,8 @@ namespace Kampai.UI.View
 
 		internal void DisableSelectPulse()
 		{
-			choice1PulseAnimator.Stop();
-			choice2PulseAnimator.Stop();
+			choice1PulseAnimator.enabled = false;
+			choice2PulseAnimator.enabled = false;
 		}
 
 		public void TriggerVFXReveal()

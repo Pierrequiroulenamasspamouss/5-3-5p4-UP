@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "Kampai/Animated/AnimVert_wOverlay" {
@@ -116,7 +118,7 @@ Shader "Kampai/Animated/AnimVert_wOverlay" {
                 o.blendWeight = (cos(6.283 * timeVar) * 0.5) + 0.5;
                 
                 o.color = v.color;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 
                 return o;
             }
@@ -199,7 +201,7 @@ Shader "Kampai/Animated/AnimVert_wOverlay" {
                 o.blendWeight = (cos(6.283 * timeVar) * 0.5) + 0.5;
                 
                 o.color = v.color;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 
                 return o;
             }

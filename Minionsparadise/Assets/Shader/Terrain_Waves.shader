@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Water/Terrain Waves" {
     Properties {
         _Diffuse ("Diffuse", 2D) = "white" { }
@@ -49,7 +51,7 @@ Shader "Kampai/Water/Terrain Waves" {
 
             v2f vert (appdata v) {
                 v2f o;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 
                 // Scrolling des UV sur l'axe Y pour la texture diffuse
                 float2 uvOffset = float2(0.0, frac(_Time.y * _Speed));

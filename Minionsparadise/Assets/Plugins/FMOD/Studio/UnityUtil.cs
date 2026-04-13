@@ -31,7 +31,7 @@ namespace FMOD.Studio
 			};
 			if ((bool)rigidbody)
 			{
-				result.velocity = rigidbody.velocity.toFMODVector();
+				result.velocity = rigidbody.linearVelocity.toFMODVector();
 			}
 			return result;
 		}

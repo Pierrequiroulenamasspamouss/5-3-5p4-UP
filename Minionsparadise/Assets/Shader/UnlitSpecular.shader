@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Standard/Specular" {
     Properties {
         _Color ("Main Color", Color) = (1,1,1,1)
@@ -46,7 +48,7 @@ Shader "Kampai/Standard/Specular" {
 
             v2f vert (appdata v) {
                 v2f o;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 // Gère le tiling/offset standard de Unity + le scrolling basé sur le temps
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex) + frac(_UVScroll.xy * _Time.x);
                 o.normalWorld = UnityObjectToWorldNormal(v.normal);

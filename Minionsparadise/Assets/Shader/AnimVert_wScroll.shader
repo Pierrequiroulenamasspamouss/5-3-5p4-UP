@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Animated/AnimVert_wScroll" {
     Properties {
         _MainTex ("Base (RGB)", 2D) = "white" { }
@@ -91,7 +93,7 @@ Shader "Kampai/Animated/AnimVert_wScroll" {
                 
                 // Application du bruit aux sommets
                 v.vertex.xyz += noise;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 
                 // 3. Calcul des UV de base + Défilement (Scrolling) basé sur le temps
                 // L'utilisation de frac() sur le temps permet d'éviter les erreurs de précision sur de longues durées de jeu
@@ -146,7 +148,7 @@ Shader "Kampai/Animated/AnimVert_wScroll" {
                 v2f o;
                 
                 // Pas d'animation des sommets ici
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 
                 float2 flowDir = frac(v.uv1.xy);
                 float2 decodedFlowDir = (flowDir - 0.5) * 2.0;
