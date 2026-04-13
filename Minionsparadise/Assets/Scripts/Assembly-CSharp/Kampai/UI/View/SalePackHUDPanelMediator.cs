@@ -84,6 +84,7 @@ namespace Kampai.UI.View
 		{
 			// Disable all HUD offers per user request.
 			return;
+			/*
 			if (playerSaleItems == null)
 			{
 				playerSaleItems = new global::System.Collections.Generic.List<global::Kampai.UI.View.SalepackHUDView>();
@@ -107,6 +108,7 @@ namespace Kampai.UI.View
 				playerSaleItems.Add(salepackHUDView);
 				UpdateScrollState();
 			}
+			*/
 		}
 
 		public void RemoveSalePack(int instanceID)

@@ -192,7 +192,6 @@ namespace Kampai.Game.Mignette.ButterflyCatch.View
 			}
 			case global::Kampai.Game.Mignette.ButterflyCatch.View.ButterflyCatchButterflyViewObject.StingState.Stinging:
 			{
-				global::UnityEngine.Vector3 position = transform.position;
 				if (BeeAnimator != null && !stingTriggered)
 				{
 					stingTriggered = true;

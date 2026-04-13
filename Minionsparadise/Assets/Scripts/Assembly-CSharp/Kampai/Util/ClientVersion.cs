@@ -29,7 +29,6 @@ namespace Kampai.Util
 
 		public string GetClientPlatform()
 		{
-			string text = "unknown";
 			return "android";
 		}
 

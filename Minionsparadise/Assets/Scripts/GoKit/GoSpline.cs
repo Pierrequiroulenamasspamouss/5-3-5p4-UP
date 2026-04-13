@@ -62,7 +62,9 @@ public class GoSpline
 
 	private static global::System.Collections.Generic.List<global::UnityEngine.Vector3> nodeListFromAsset(string pathAssetName)
 	{
+#pragma warning disable 618
 		if (global::UnityEngine.Application.platform == global::UnityEngine.RuntimePlatform.OSXWebPlayer || global::UnityEngine.Application.platform == global::UnityEngine.RuntimePlatform.WindowsWebPlayer)
+#pragma warning restore 618
 		{
 			global::UnityEngine.Debug.LogError("The Web Player does not support loading files from disk.");
 			return null;

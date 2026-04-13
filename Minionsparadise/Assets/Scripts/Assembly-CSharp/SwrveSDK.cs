@@ -1465,13 +1465,11 @@ public class SwrveSDK
 
 	private global::System.Collections.IEnumerator PostEvents_Coroutine(global::System.Collections.Generic.Dictionary<string, string> requestHeaders, byte[] eventsPostEncodedData)
 	{
-		byte[] eventsPostEncodedData2;
 		yield return Container.StartCoroutine(restClient.Post(eventsUrl, eventsPostEncodedData, requestHeaders, delegate(global::Swrve.REST.RESTResponse response)
 		{
 			if (response.Error != global::Swrve.Helpers.WwwDeducedError.NetworkError)
 			{
 				ClearEventBuffer();
-				eventsPostEncodedData2 = null;
 			}
 			eventsConnecting = false;
 			TaskFinished("PostEvents_Coroutine");

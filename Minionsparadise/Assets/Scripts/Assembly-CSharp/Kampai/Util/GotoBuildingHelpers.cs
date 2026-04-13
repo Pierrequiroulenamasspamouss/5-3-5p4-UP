@@ -65,7 +65,6 @@ namespace Kampai.Util
 
 		public static int GetSuitableMignette(global::Kampai.Game.IPlayerService playerService, global::Kampai.Game.IDefinitionService definitionService)
 		{
-			int num = 0;
 			global::System.Collections.Generic.List<int> list = new global::System.Collections.Generic.List<int>();
 			global::System.Collections.Generic.List<global::Kampai.Game.MignetteBuilding> list2 = new global::System.Collections.Generic.List<global::Kampai.Game.MignetteBuilding>();
 			global::System.Random random = new global::System.Random();

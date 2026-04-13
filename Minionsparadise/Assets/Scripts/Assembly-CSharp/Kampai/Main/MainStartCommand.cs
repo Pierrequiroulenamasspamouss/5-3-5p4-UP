@@ -104,7 +104,6 @@ namespace Kampai.Main
 			// telemetryService.AddTelemetrySender(nimbleTelemetryService);
 			// telemetryService.SharingUsageCompliance();
 			// telemetryService.COPPACompliance();
-			string sWRVEGroup = playerService.SWRVEGroup;
 			// telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("10 - Load Start", sWRVEGroup, dlcService.GetDownloadQualityLevel());
 			global::Kampai.Util.MediaClient.Start();
 			global::Kampai.Util.ScreenUtils.ToggleAutoRotation(true);

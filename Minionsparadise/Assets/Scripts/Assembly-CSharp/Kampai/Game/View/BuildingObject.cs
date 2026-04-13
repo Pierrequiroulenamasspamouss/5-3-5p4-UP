@@ -196,8 +196,9 @@ namespace Kampai.Game.View
 			return true;
 		}
 
-		protected virtual void LateUpdate()
+		public override void LateUpdate()
 		{
+			base.LateUpdate();
 			if (IsRotated)
 			{
 				global::UnityEngine.Vector3 localScale = base.transform.localScale;

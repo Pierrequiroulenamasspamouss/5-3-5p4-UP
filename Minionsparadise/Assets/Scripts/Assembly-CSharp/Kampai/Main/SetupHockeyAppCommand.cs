@@ -22,6 +22,7 @@ namespace Kampai.Main
 		{
 			// De-integrated HockeyApp: Skip initialization to avoid ClassNotFoundException and potential hangs on Android.
 			return;
+			/*
 #if !UNITY_ANDROID || UNITY_EDITOR
 			return;
 #else
@@ -44,6 +45,7 @@ namespace Kampai.Main
 			gameObject.SetActive(true);
 			logger.EventStop("SetupHockeyAppCommand.Execute");
 #endif
+			*/
 		}
 	}
 }
