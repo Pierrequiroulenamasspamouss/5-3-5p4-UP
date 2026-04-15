@@ -169,12 +169,13 @@ namespace Kampai.UI.View
 				}
 			}
 			global::System.Collections.Generic.HashSet<string> addedTitles = new global::System.Collections.Generic.HashSet<string>();
-
+			global::System.Collections.Generic.HashSet<global::Kampai.Game.StoreItemType> addedTypes = new global::System.Collections.Generic.HashSet<global::Kampai.Game.StoreItemType>();
 			if (isEventActive && buildMenuItems.ContainsKey(global::Kampai.Game.StoreItemType.SpecialEvent))
 			{
 				string title = localService.GetString(LocaleForType(global::Kampai.Game.StoreItemType.SpecialEvent));
 				addTabSignal.Dispatch(new global::Kampai.UI.View.StoreTab(title, global::Kampai.Game.StoreItemType.SpecialEvent));
 				addedTitles.Add(title);
+				addedTypes.Add(global::Kampai.Game.StoreItemType.SpecialEvent);
 			}
 
 			foreach (int typeValue in global::System.Enum.GetValues(typeof(global::Kampai.Game.StoreItemType)))
@@ -194,10 +195,11 @@ namespace Kampai.UI.View
 				if (isWhitelisted && buildMenuItems.ContainsKey(type))
 				{
 					string title = localService.GetString(LocaleForType(type));
-					if (!addedTitles.Contains(title))
+					if (!addedTitles.Contains(title) && !addedTypes.Contains(type))
 					{
 						addTabSignal.Dispatch(new global::Kampai.UI.View.StoreTab(title, type));
 						addedTitles.Add(title);
+						addedTypes.Add(type);
 					}
 				}
 			}
