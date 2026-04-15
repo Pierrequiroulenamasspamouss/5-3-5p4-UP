@@ -102,7 +102,6 @@ namespace Kampai.UI.View
 		{
 			global::UnityEngine.GameObject gameObject = guiService.Execute(global::Kampai.UI.View.GUIOperation.LoadUntrackedInstance, "cmp_TicketPrefab");
 			global::UnityEngine.RectTransform rectTransform = gameObject.transform as global::UnityEngine.RectTransform;
-			rectTransform.SetParent(base.transform, true);
 			rectTransform.position = position;
 			global::Kampai.UI.View.OrderBoardTicketView component = gameObject.GetComponent<global::Kampai.UI.View.OrderBoardTicketView>();
 			component.Index = index;
@@ -112,6 +111,7 @@ namespace Kampai.UI.View
 				component.HighlightTicket(true);
 			}
 			TicketSlots.Add(component);
+			rectTransform.SetParent(base.transform, false);
 		}
 
 		internal void SetupDeleteOrderButton(bool active)
