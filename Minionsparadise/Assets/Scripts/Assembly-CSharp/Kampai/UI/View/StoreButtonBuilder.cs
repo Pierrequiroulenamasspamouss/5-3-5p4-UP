@@ -14,14 +14,14 @@ namespace Kampai.UI.View
 			global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(original);
 			global::Kampai.UI.View.StoreButtonView component = gameObject.GetComponent<global::Kampai.UI.View.StoreButtonView>();
 			component.init(playerService);
-			component.ItemName.text = localService.GetStringUpper(definition.LocalizedKey);
+			component.ItemName.text = (definition.LocalizedKey != null) ? localService.GetStringUpper(definition.LocalizedKey) : "ITEM";
 			component.definition = definition;
 			component.transactionDef = transaction;
 			component.storeItemDefinition = storeItemDefinition;
 			global::Kampai.Game.DisplayableDefinition displayableDefinition = definition as global::Kampai.Game.DisplayableDefinition;
 			if (displayableDefinition != null)
 			{
-				component.ItemDescription.text = localService.GetString(displayableDefinition.Description);
+				component.ItemDescription.text = (displayableDefinition.Description != null) ? localService.GetString(displayableDefinition.Description) : string.Empty;
 				component.UpdatePartyPointText(localService);
 				if (string.IsNullOrEmpty(displayableDefinition.Mask))
 				{

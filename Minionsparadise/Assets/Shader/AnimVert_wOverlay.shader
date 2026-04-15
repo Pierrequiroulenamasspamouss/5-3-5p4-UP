@@ -1,4 +1,3 @@
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "Kampai/Animated/AnimVert_wOverlay" {
     Properties {
@@ -102,7 +101,7 @@ Shader "Kampai/Animated/AnimVert_wOverlay" {
                 o.uvMain = TRANSFORM_TEX(v.uv0, _MainTex);
                 
                 // 4. Calcul des UV pour la WaveTex basé sur le WORLD SPACE
-                float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
+                float4 worldPos = mul(_Object2World, v.vertex);
                 // Projection personnalisée : X s'incline en fonction de Y, Y utilise le Z global
                 float2 projUV = float2(worldPos.x - (worldPos.y * 0.5), worldPos.z + (worldPos.y * 0.5));
                 
@@ -189,7 +188,7 @@ Shader "Kampai/Animated/AnimVert_wOverlay" {
                 // Pas d'animation des sommets
                 o.uvMain = TRANSFORM_TEX(v.uv0, _MainTex);
                 
-                float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
+                float4 worldPos = mul(_Object2World, v.vertex);
                 float2 projUV = float2(worldPos.x - (worldPos.y * 0.5), worldPos.z + (worldPos.y * 0.5));
                 float2 baseFlowUV = (projUV * _WaveTex_ST.xy + _WaveTex_ST.zw) * 0.2;
                 
