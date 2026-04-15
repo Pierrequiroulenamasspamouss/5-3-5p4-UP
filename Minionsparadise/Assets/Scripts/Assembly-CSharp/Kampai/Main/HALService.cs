@@ -43,7 +43,7 @@ namespace Kampai.Main
 			language = ExtractLanguageFromLocale(jsonPath);
 			try
 			{
-				localStringDict = GetLocalizedDictionary(global::Kampai.Util.Native.GetStreamingTextAsset(string.Format("{0}{1}.json", "Loc_Text_Preinstalled/", jsonPath)));
+				localStringDict = GetLocalizedDictionary(global::Kampai.Util.Native.GetStreamingTextAsset(string.Format("{0}{1}.json", "loc_text/", jsonPath)));
 			}
 			catch (global::System.IO.FileNotFoundException ex)
 			{
@@ -73,7 +73,7 @@ namespace Kampai.Main
 
 		public void Update()
 		{
-			global::UnityEngine.TextAsset textAsset = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.TextAsset>(jsonPath);
+			global::UnityEngine.TextAsset textAsset = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.TextAsset>("loc_text/" + jsonPath);
 			if (textAsset == null)
 			{
 				logger.Error("Error obtaining full localization asset: {0}", jsonPath);

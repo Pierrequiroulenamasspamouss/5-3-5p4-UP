@@ -164,16 +164,30 @@ namespace Kampai.UI.View
 			}
 		}
 
+		private bool m_isUpdatingVisuals;
+		
 		private void OnDoubleConfirmClicked()
 		{
+			if (m_isUpdatingVisuals)
+			{
+				return;
+			}
 			if (doubleConfirmToggle != null)
 			{
 				bool isCurrentlyOn = localPersistService.GetDataIntPlayer("DoublePurchaseConfirm") != 0;
 				bool nextState = !isCurrentlyOn;
 				localPersistService.PutDataIntPlayer("DoublePurchaseConfirm", nextState ? 1 : 0);
 				
-				doubleConfirmToggle.isOn = nextState;
-				SyncCheckmarkVisual(nextState);
+				m_isUpdatingVisuals = true;
+				try
+				{
+					doubleConfirmToggle.isOn = nextState;
+					SyncCheckmarkVisual(nextState);
+				}
+				finally
+				{
+					m_isUpdatingVisuals = false;
+				}
 				
 				soundFXSignal.Dispatch("Play_button_click_01");
 			}

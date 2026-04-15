@@ -271,7 +271,7 @@ namespace Kampai.Game
 			}
 			catch (global::System.NotImplementedException)
 			{
-				logger.Warning("Discord SDK implies NotImplementedException. Falling back to Server Login.");
+				logger.Info("Discord SDK implies NotImplementedException. Falling back to Server Login.");
 				_useServerLogin = true;
 				_initSuccessSignal.Dispatch(this);
 			}
