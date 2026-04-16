@@ -45,6 +45,10 @@ namespace Kampai.UI.View
 			view.ClearPlayerTraining();
 			foreach (int trainingDefinitionID in playerTrainingCategoryDefinition.trainingDefinitionIDs)
 			{
+				if (trainingDefinitionID == 19000022 || trainingDefinitionID == 19000016)
+				{
+					continue;
+				}
 				global::Kampai.Game.PlayerTrainingDefinition definition = definitionService.Get<global::Kampai.Game.PlayerTrainingDefinition>(trainingDefinitionID);
 				view.AddPlayerTraining(definition, localizationService, playerTrainingService.HasSeen(trainingDefinitionID, global::Kampai.UI.PlayerTrainingVisiblityType.SETTINGS));
 			}
