@@ -159,26 +159,8 @@ namespace Kampai.UI.View
 		{
 			yield return null;
 			global::Kampai.Util.TimeProfiler.StartSection("signals");
-			bool isEventActive = false;
-			foreach (global::Kampai.Game.SpecialEventItemDefinition specialEvent in definitionService.GetAll<global::Kampai.Game.SpecialEventItemDefinition>())
-			{
-				if (specialEvent.IsActive)
-				{
-					isEventActive = true;
-					break;
-				}
-			}
 			global::System.Collections.Generic.HashSet<string> addedTitles = new global::System.Collections.Generic.HashSet<string>();
-
-            global::System.Collections.Generic.HashSet<global::Kampai.Game.StoreItemType> addedTypes = new global::System.Collections.Generic.HashSet<global::Kampai.Game.StoreItemType>();
-
-            if (isEventActive && buildMenuItems.ContainsKey(global::Kampai.Game.StoreItemType.SpecialEvent))
-			{
-				string title = localService.GetString(LocaleForType(global::Kampai.Game.StoreItemType.SpecialEvent));
-				addTabSignal.Dispatch(new global::Kampai.UI.View.StoreTab(title, global::Kampai.Game.StoreItemType.SpecialEvent));
-				addedTitles.Add(title);
-                addedTypes.Add(global::Kampai.Game.StoreItemType.SpecialEvent);
-            }
+			global::System.Collections.Generic.HashSet<global::Kampai.Game.StoreItemType> addedTypes = new global::System.Collections.Generic.HashSet<global::Kampai.Game.StoreItemType>();
 
 			foreach (int typeValue in global::System.Enum.GetValues(typeof(global::Kampai.Game.StoreItemType)))
 			{
@@ -191,8 +173,7 @@ namespace Kampai.UI.View
 					type == global::Kampai.Game.StoreItemType.Decoration ||
 					type == global::Kampai.Game.StoreItemType.Leisure ||
 					type == global::Kampai.Game.StoreItemType.MasterPlanLeftOvers ||
-					type == global::Kampai.Game.StoreItemType.Connectable ||
-					type == global::Kampai.Game.StoreItemType.SpecialEvent;
+					type == global::Kampai.Game.StoreItemType.Connectable;
 
 				if (isWhitelisted && buildMenuItems.ContainsKey(type))
 				{
@@ -205,6 +186,18 @@ namespace Kampai.UI.View
                     }
 				}
 			}
+
+			if (buildMenuItems.ContainsKey(global::Kampai.Game.StoreItemType.SpecialEvent))
+			{
+				string title = localService.GetString(LocaleForType(global::Kampai.Game.StoreItemType.SpecialEvent));
+				if (!addedTitles.Contains(title) && !addedTypes.Contains(global::Kampai.Game.StoreItemType.SpecialEvent))
+				{
+					addTabSignal.Dispatch(new global::Kampai.UI.View.StoreTab(title, global::Kampai.Game.StoreItemType.SpecialEvent));
+					addedTitles.Add(title);
+					addedTypes.Add(global::Kampai.Game.StoreItemType.SpecialEvent);
+				}
+			}
+
 			buildMenuLoadedSignal.Dispatch(buildMenuItems);
 			loadMTXStoreSignal.Dispatch();
 			currencyStoreService.Initialize();
