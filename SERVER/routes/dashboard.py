@@ -162,6 +162,8 @@ html_template = """
         .inv-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .inv-actions button { padding: 6px 12px; width: auto; font-size: 0.85rem; }
         
+        #dashboard-view { display: none; }
+        
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
         .modal-content { background: white; border-radius: 24px; padding: 2.5rem; max-width: 550px; width: 90%; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
         .close-btn { float: right; font-size: 24px; font-weight: 800; cursor: pointer; color: var(--text-light); }
@@ -351,6 +353,7 @@ html_template = """
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     
     function apiCall(endpoint, data, onSuccess) {
+        console.log("Calling API:", endpoint, data);
         fetch(endpoint, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -358,12 +361,16 @@ html_template = """
         })
         .then(r => r.json())
         .then(res => {
+            console.log("API Response:", res);
             if(res.error) showMsg(res.error, 'error');
             else {
                 if(res.msg) showMsg(res.msg, 'success');
                 onSuccess(res);
             }
-        }).catch(err => showMsg("Server error: " + err, 'error'));
+        }).catch(err => {
+            console.error("API Error:", err);
+            showMsg("Server error: " + err, 'error');
+        });
     }
 
     function login() {
