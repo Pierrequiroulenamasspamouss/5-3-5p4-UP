@@ -3,15 +3,17 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: minion_Prop_ShearsMesh
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 552
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 198
     localAABB:
@@ -57,16 +59,47 @@ Mesh:
     e33: 1
   m_BoneNameHashes: da2fb6ac314c6a95
   m_RootBoneNameHash: 2506771505
+  m_BonesAABB:
+  - m_Min: {x: -0.36732462, y: -0.1425762, z: -0.03326277}
+    m_Max: {x: 0.52729654, y: 0.044568393, z: 0.034074306}
+  - m_Min: {x: -0.36732462, y: -0.044631366, z: -0.03326277}
+    m_Max: {x: 0.52729654, y: 0.14338773, z: 0.034074306}
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -115,11 +148,11 @@ Mesh:
       m_Data: 469b579b570046004200429c5c9b5c006d006d9b719b71008200829b869b86009600969b19081919321932082d1d1d1d1d042d0432443234193419441d302d302d491d4934e134c977c977e134e777e734ff77ff98d098e198f898e7b9d9c2e1b9efc2e723e123e723d723f117e117e717d717f105e105e705d705f11bf820f820d11bd133bd33b377b377bd98bb98b3bab7bab3c3b6c3b421b421ba1b991b951e951e9917a01ea01d8e178e2f8e2fa029a0298e1c78177c1c81217c1f581f6b246b24582958296b2f6b2f58196b1958177c1c81217c1c78469b579b570046004200429c5c9b5c006d006d9b719b71008200829b869b86009600969b19081919321932082d1d1d1d1d042d0432443234193419441d302d302d491d4934e134c977c977e134e777e734ff77ff98d098e198f898e7b9d9c2e1b9efc2e723e123e723d723f117e117e717d717f105e105e705d705f11bf820f820d11bd133bd33b377b377bd98bb98b3bab7bab3c3b6c3b421b421ba1b991b951e951e9917a01ea01d8e178e2f8e2fa029a0298e
       m_BitSize: 8
     m_Normals:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 396
+      m_Range: 2
+      m_Start: -1
+      m_Data: a1e9655e169a633dd65aa0055aa0055ee665a1199aa55ffae55ffe400994400994000990000990bff66bbff66bfff66ffff66f9ee55ddfe5515ff675dff77ddee551a0f7651ee651a0d72d5be4551c077e5ee435a0f87dddf1592008821f0772200baea78ffae11ffedcbffd996ff54eeed0b66ddb12bfc3b19ed4466cc4bddaabe33ffee33ffe2008822008823ff883e00ffe00088049922476622720088220088261e6999e19666332269aaff99aaff99ee999611666655006255002800668800668c0066cc0066c7ff9977ff9973ff9933ff9935eeaa11feaad9ff9891ff8811eeaad60f899dee9ad60d8d19beba9dc08829eebc960f7811dfea52008829f088ee104526780062110021cb0015960098ee12c766227d2b0437191288663387dd557222002222002
+      m_BitSize: 6
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
@@ -131,9 +164,9 @@ Mesh:
       m_Data: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff3f
       m_BitSize: 5
     m_NormalSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 198
+      m_Data: 00ff00003ccc54150300003c00f00f0000003cb3aa0ee00000
+      m_BitSize: 1
     m_TangentSigns:
       m_NumItems: 0
       m_Data: 
@@ -157,6 +190,27 @@ Mesh:
     m_Center: {x: 0.07998593, y: 0, z: 0}
     m_Extent: {x: 0.44731057, y: 0.1429742, z: 0.033669703}
   m_MeshUsageFlags: 1
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0

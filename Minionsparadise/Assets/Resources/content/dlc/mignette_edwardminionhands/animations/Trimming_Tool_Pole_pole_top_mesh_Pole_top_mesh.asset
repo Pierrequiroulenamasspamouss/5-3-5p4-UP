@@ -3,15 +3,17 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Trimming_Tool_Pole_pole_top_mesh_Pole_top_mesh
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 600
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 138
     localAABB:
@@ -25,16 +27,43 @@ Mesh:
   m_BindPose: []
   m_BoneNameHashes: 
   m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -83,11 +112,11 @@ Mesh:
       m_Data: 2b7a007a004b2b4b557a554b807a804baa7aaa4bd47ad44bff7aff4b2b99009955998099aa99d499ff9900a12ba155a180a1aaa1d4a1ffa100a52ba555a580a5aaa5d4a5ffa500a92ba900ba2bba2bdc00dc55dc55ba80dc80baaadcaabad4dcd4baffdcffba2bff00ff55ff80ffaaffd4ffffff80a9aaa9d4a9ffa955a9000000000000000000000000004200382b382b425538554280388042aa38aa42d438d442ff38ff4200462b4655468046aa46d446ff462bdc2bba00ba00dc55dc55ba80dc80baaadcaabad4dcd4baffdcffba2bff00ff55ff80ffaaffd4ffffffaaa980a9d4a9ffa9aaa580a5aaa180a155a555a12ba52ba100a500a1d4a1d4a5ffa1ffa500a92ba955a9000000000000000000000000
       m_BitSize: 8
     m_Normals:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 276
+      m_Range: 1.8987422
+      m_Start: -0.949927
+      m_Data: 3cf88ab0f77bfc877fe0a77dc207780378784fe77cf8088f7f687e070888cff8867db7671e27884419952eb75f7bf575044aa892e9763c06833ec77331b85bb9e6659a27840159a086f9a050896ff0c7476234648308951e279044198dba55eee54eeee55eeea50e6b6f443f7bb73f3c784a9fa8480338408307450fe88639e88765688000f88003176c0fe88084756462567a7de8933b9a9b30fa96c7068143d4457cd68b70d99321b797efb89f60779b5a465043545889056d90e6af7bea9ead0975036658dabeeddaaeeddaaee9
+      m_BitSize: 6
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
@@ -99,9 +128,9 @@ Mesh:
       m_Data: 
       m_BitSize: 0
     m_NormalSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 138
+      m_Data: 0ffc783cfe811f33e0811f3ff06306fe0700
+      m_BitSize: 1
     m_TangentSigns:
       m_NumItems: 0
       m_Data: 
@@ -125,6 +154,27 @@ Mesh:
     m_Center: {x: 0.0017017573, y: 1.2370312, z: -0.024058966}
     m_Extent: {x: 0.15930428, y: 0.71676266, z: 0.07359678}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0

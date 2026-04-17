@@ -3,15 +3,17 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Decor_SignDriftwood_Decor_SignDriftwood_Mesh
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 144
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 74
     localAABB:
@@ -21,6 +23,7 @@ Mesh:
     firstByte: 288
     indexCount: 93
     topology: 0
+    baseVertex: 0
     firstVertex: 74
     vertexCount: 33
     localAABB:
@@ -30,6 +33,7 @@ Mesh:
     firstByte: 474
     indexCount: 57
     topology: 0
+    baseVertex: 0
     firstVertex: 107
     vertexCount: 24
     localAABB:
@@ -43,16 +47,43 @@ Mesh:
   m_BindPose: []
   m_BoneNameHashes: 
   m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -101,11 +132,11 @@ Mesh:
       m_Data: 725f275f277172710671065f8c718c5fd65fd671ae246222623fae3cfb31ae59ae0bfa71fa5fdf5fdf7105f305eb30ed05f305eb30ed05f305eb30ed05f305eb30ed05f305eb30ed4e474e410841084704dd42d9478b0990808980f0bdf9fbf2fcc1f1920a7f487f48780a788278827fbb78bb7ff47ff478a5090a090a0fa50f060f06090a15a51539510751075839586551655833fb1cfb1cc81cc81cc833fb05fb1cc81cfb1cc833fb33fb1cc811fb1cc814fb33fb33c833fb33c816fb05c805fb1cc811fb1cc805fb33fb1cfbffb7ff46002900b83bca62cb3abc46ae69ae56a846ae5ce977eb4cd940d53bca69ae7cbf82c586bb82b176ac69ae8fd390dc8ce285e377eb
       m_BitSize: 8
     m_Normals:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 262
+      m_Range: 2
+      m_Start: -0.99999994
+      m_Data: a5dfe6e35ffaf6677fdddffd166ff1c9977cc9977cc9977cc9677ff6677ff637c5533cc58bb9988bf9988ff998899aa8896a9cc6699c6ba99a6bc996924aa5932aa9134aa1132aa1534aa519ffeddc8eeda1feed1abff5177feddff78914587cdffffdc0077cc11898410984c0077cdffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddffffddf0f
+      m_BitSize: 6
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
@@ -117,9 +148,9 @@ Mesh:
       m_Data: 
       m_BitSize: 0
     m_NormalSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 131
+      m_Data: 3ffcfffffffffffff00300000000000000
+      m_BitSize: 1
     m_TangentSigns:
       m_NumItems: 0
       m_Data: 
@@ -143,6 +174,37 @@ Mesh:
     m_Center: {x: -0.18720958, y: 0.6047528, z: -0.007877439}
     m_Extent: {x: 0.8451364, y: 0.6047528, z: 0.6226584}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0

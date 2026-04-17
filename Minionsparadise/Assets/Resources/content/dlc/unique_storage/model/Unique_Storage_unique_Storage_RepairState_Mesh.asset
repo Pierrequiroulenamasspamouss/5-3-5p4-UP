@@ -3,15 +3,17 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Unique_Storage_unique_Storage_RepairState_Mesh
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 468
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 149
     localAABB:
@@ -25,16 +27,43 @@ Mesh:
   m_BindPose: []
   m_BoneNameHashes: 
   m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 2
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -83,11 +112,11 @@ Mesh:
       m_Data: 335b303300610210a6058f0370b705575a702500cf01f09c05b454400b001f01f051058855801800a855801a00b801805b05c701705c05fd25f163123f06d15f10fd49f1a314bc49c15b12bc05f1a316fd69f16319fd95f1a326bc69c29b363f6ac31b3a3fa2c39b16bc95719b16649bd2752a64b7e2752c57b7e2b5285793523f33983383795cf5c785f92ef5eff27f5cff3323a507529e90ea09a97a909b07b99d90f3373e5be3f31139f7a0f8118ff7a0b8358f7f03240e40be90db0bb9e1c0280e8cbe10b842382784f35c81cf85b340810b84f85c882bb433093bbf70f80b8793102d09d1bef0ec2fd6fe622d0fcff2e0ad13defe32330f273b31733427ff326d343377336d378abea3a8387462b366387b46a3e835812aa3a833994633a9327d0253273081dab2e72b8ac6a2a82a93da92e92b9702f329308a0243e7296b02f3e52f8a7e02ea29a902032a36a88653eb2fa77aa228256d7ae276257a5382b5227f7362b72a82abf2f72d6efba2f72f582703
       m_BitSize: 10
     m_Normals:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 298
+      m_Range: 1.9999678
+      m_Start: -0.9999679
+      m_Data: 74ae7fbd6d72687f7fff7fff007f007f007f007f707f707f697f697f607f5a81528554865c895b8d5c8d5b914db74fcd467f477f7cff79ff87ff4ca9477fa6c7b2b88dfa83fe7cff7bff7cff7aff6df96ffabda88afb0d802d9a0d7f2d65184a03681bb503986efc84fe7fff6afda97fa97f0c7f0c7f4f7f1a7fa37fa37f097f097f7fff7fff7fff7fff7fff7fff7fff7fff1a7f4f7f097f097fa37fa37f74fe81ff7fff74fe937f937f017f017f427f0e7f8c7f8c7f017f017f017f46f127da017f83ff81ff7eff7bff80fd7cff8dc2907f907f7f947fa3db9bdc93d2c383d39ff578f63cc855f4b4f4e9c5aaf4bec785f472c560f42ac74bf416c57fffd89cfb9efc947e9c2e9f059d219c23930394258f8e8ce58f98faabf4b9ee8afc7ffc7ffc75fc67fa54f446ee
+      m_BitSize: 8
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
@@ -99,9 +128,9 @@ Mesh:
       m_Data: 
       m_BitSize: 0
     m_NormalSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 149
+      m_Data: cffc3f8c3ffedfff01fefdffbb03e09f1dff1f
+      m_BitSize: 1
     m_TangentSigns:
       m_NumItems: 0
       m_Data: 
@@ -125,6 +154,27 @@ Mesh:
     m_Center: {x: -1.8623898, y: 1.8560941, z: -1.6782701}
     m_Extent: {x: 1.3588254, y: 0.74809855, z: 0.8769092}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0
