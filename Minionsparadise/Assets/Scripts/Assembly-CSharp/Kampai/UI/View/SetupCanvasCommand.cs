@@ -107,9 +107,9 @@ namespace Kampai.UI.View
 #if UNITY_ANDROID || UNITY_IOS
 			canvasScaler.referenceResolution = new global::UnityEngine.Vector2(960f, 640f);
 #elif UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX || UNITY_EDITOR || UNITY_WEBGL
-            canvasScaler.referenceResolution = new global::UnityEngine.Vector2(1920f, 1080f);
-#else
 			canvasScaler.referenceResolution = new global::UnityEngine.Vector2(960f, 640f);
+#else
+            canvasScaler.referenceResolution = new global::UnityEngine.Vector2(1920f, 1080f); //Until a solution for 1080p is found, use default resolution.
 #endif
         }
     }
