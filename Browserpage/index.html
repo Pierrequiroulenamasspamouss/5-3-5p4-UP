@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenMP - Minions Paradise Preservation Project</title>
+    <meta name="description" content="Official homepage of OpenMP, a community-driven preservation project for Minions Paradise. Download the game and explore our progress.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob yellow"></div>
+        <div class="blob blue"></div>
+    </div>
+
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">Open<span>MP</span></div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#downloads">Download</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#credits">Credits</a></li>
+                <li><a id="dashboard-nav" href="http://localhost:8080/dashboard" target="_blank">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="container hero-content">
+            <h1 class="fade-in">Bello! Welcome to <span>OpenMP</span></h1>
+            <p class="fade-in delay-1">The ultimate community project to keep <strong>Minions Paradise</strong> alive. Rediscover the tropical island, build your resort, and party with Phil and friends.</p>
+            <div class="hero-btns fade-in delay-2">
+                <a href="#downloads" class="btn btn-primary">Get the Game <i class="fas fa-download"></i></a>
+                <a href="#gallery" class="btn btn-secondary">View Gallery</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="downloads" class="section">
+        <div class="container">
+            <h2 class="section-title">Download <span>OpenMP</span></h2>
+            <div id="download-list" class="grid-downloads card-container">
+                <!-- Dynamic Content -->
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="section bg-light">
+        <div class="container">
+            <h2 class="section-title">Island <span>Moments</span></h2>
+            <div id="gallery-grid" class="gallery-grid">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </section>
+
+    <section id="credits" class="section">
+        <div class="container">
+            <h2 class="section-title">Project <span>Credits</span></h2>
+            <div id="credits-list" class="credits-grid">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </section>
+
+    <footer id="legal" class="footer">
+        <div class="container">
+            <div class="legal-info">
+                <h3>Legal Information</h3>
+                <p id="disclaimer-text">Loading disclaimer...</p>
+                <div class="legal-notice">
+                    <p>&copy; 2026 OpenMP Team. This project is not affiliated with, authorized, or endorsed by Electronic Arts, Illumination Entertainment, or Universal Studios.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="image-modal" class="modal">
+        <span class="modal-close">&times;</span>
+        <img class="modal-content" id="modal-img">
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
