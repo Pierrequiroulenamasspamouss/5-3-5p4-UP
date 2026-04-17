@@ -68,6 +68,7 @@ namespace Kampai.Game
 					{
 						targetPerformance2 = (global::Kampai.Util.TargetPerformance)(int)global::System.Enum.Parse(typeof(global::Kampai.Util.TargetPerformance), value);
 					}
+					global::Kampai.Util.QualityHelper.applyAntiAliasing(targetPerformance2);
 					logger.Debug("DLC quality to download = {0}", targetPerformance2.ToString());
 					dlcService.SetDownloadQualityLevel(targetPerformance2);
 					definitionService.SetPerformanceQualityLevel(targetPerformance2);

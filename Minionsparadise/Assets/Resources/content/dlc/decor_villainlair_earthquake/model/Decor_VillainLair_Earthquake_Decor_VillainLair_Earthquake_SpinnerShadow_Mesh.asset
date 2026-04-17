@@ -3,15 +3,17 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Decor_VillainLair_Earthquake_Decor_VillainLair_Earthquake_SpinnerShadow_Mesh
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 210
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 72
     localAABB:
@@ -25,16 +27,43 @@ Mesh:
   m_BindPose: []
   m_BoneNameHashes: 
   m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -80,14 +109,14 @@ Mesh:
       m_NumItems: 144
       m_Range: 0.34762996
       m_Start: 0.618991
-      m_Data: 8075602e027fbaa3f2ab397b1af425f7c8def05bfc9efd608cd93eb608af2ee823e2a0bf2413069d5d6dc994afb9832ec1ce6e121de56ab5636e329e0e33f16cb4b4cf8e6bffe37e1a2f0b8e62209aab680bba922456c6561a416ca20d623668752c1609a014e83426864bd896048d6bcc8c9492866925edd498c206a131
-      m_BitSize: 7
+      m_Data: 00d702e744c13ebb46cb5e9b669f0cf54add46ed1afd2cfd3cf706c730b71eb710bd74837c8970a17e939960a166af6c93527c9b76a197c19dbb93d1a3b9b5b5c7b993e3d3c399f1d9d1a5fbd9e3b5ffc7fbd3f16483466240685c8b6c835c934858326c4a46206c44361066065a3a2c2c24004a023a1a260c2ec36c9340c76a9932a528d360b524db52c728d940d130
+      m_BitSize: 8
     m_Normals:
-      m_NumItems: 0
-      m_Range: 0
+      m_NumItems: 144
+      m_Range: 1
       m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_Data: c00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffc
+      m_BitSize: 6
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
@@ -99,7 +128,7 @@ Mesh:
       m_Data: 
       m_BitSize: 0
     m_NormalSigns:
-      m_NumItems: 0
+      m_NumItems: 72
       m_Data: 
       m_BitSize: 0
     m_TangentSigns:
@@ -125,6 +154,27 @@ Mesh:
     m_Center: {x: 0, y: 0.0000000030652398, z: 0}
     m_Extent: {x: 1.7989079, y: 0, z: 1.7834643}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0

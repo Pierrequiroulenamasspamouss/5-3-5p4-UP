@@ -32,13 +32,12 @@ namespace Swrve
 				}
 			}
 #else
-			return array;
+			return null;
 #endif
 		}
 
 		public static string LoadText(string path)
 		{
-			string text = null;
 #if !UNITY_WEBPLAYER
 			using (global::System.IO.FileStream stream = new global::System.IO.FileStream(path, global::System.IO.FileMode.Open))
 			{
@@ -48,7 +47,7 @@ namespace Swrve
 				}
 			}
 #else
-			return text;
+			return null;
 #endif
 		}
 

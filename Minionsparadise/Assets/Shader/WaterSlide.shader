@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Water/WaterSlide" {
     Properties {
         _AlphaMask ("Alpha Mask", 2D) = "gray" { }
@@ -51,7 +53,7 @@ Shader "Kampai/Water/WaterSlide" {
 
             v2f vert (appdata v) {
                 v2f o;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.color = v.color;
                 
                 // Calcul du défilement de l'eau (scrolling)

@@ -15,7 +15,11 @@ namespace Kampai.Game
 
 		public override void Execute()
 		{
+#if UNITY_EDITOR
+			logger.Log(global::Kampai.Util.KampaiLogLevel.Warning, socialService.type.ToString() + " Init Failed in Unity Editor");
+#else
 			logger.Log(global::Kampai.Util.KampaiLogLevel.Error, socialService.type.ToString() + " Init Failed");
+#endif
 			if (!localPersistanceService.GetData("HindsightTriggeredAtGameLaunch").Equals("True"))
 			{
 				displayHindsightContentSignal.Dispatch(global::Kampai.Main.HindsightCampaign.Scope.game_launch);

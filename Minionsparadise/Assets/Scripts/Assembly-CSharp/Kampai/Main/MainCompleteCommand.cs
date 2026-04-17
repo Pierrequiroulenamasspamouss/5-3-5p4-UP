@@ -90,7 +90,6 @@ namespace Kampai.Main
 			logger.Info("MainCompleteCommand: Starting Execute phase...");
 			checkDLCTier.Dispatch();
 			int quantity = (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_ID);
-			int quantity2 = (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.TIER_GATE_ID);
 			dlcService.SetPlayerDLCTier(quantity);
 			global::Kampai.Util.TimeProfiler.StartSection("loading scenes");
 			// logger.Info("MainCompleteCommand: Dispatching loadDevicePrefsSignal...");

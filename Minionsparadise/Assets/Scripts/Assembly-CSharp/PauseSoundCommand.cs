@@ -15,13 +15,13 @@ public class PauseSoundCommand : global::strange.extensions.command.impl.Command
 	{
 		FMOD_StudioSystem instance = FMOD_StudioSystem.instance;
 		global::FMOD.Studio.System system = instance.System;
-		if (system == null)
+		if (!system.isValid())
 		{
 			return;
 		}
 		global::FMOD.Studio.Bus bus;
 		system.getBus(busName, out bus);
-		if (bus != null)
+		if (bus.isValid())
 		{
 			bus.setPaused(isPaused);
 		}

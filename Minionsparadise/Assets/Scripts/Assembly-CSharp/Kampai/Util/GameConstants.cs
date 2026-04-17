@@ -1547,7 +1547,7 @@ namespace Kampai.Util
 
 			public static global::UnityEngine.Color UI_DARK_RED = new global::UnityEngine.Color(0.543f, 0.109f, 0.109f, 1f);
 
-			public static global::UnityEngine.Sprite DUMMY_SCREEN_TWEEN_SPRITE = new global::UnityEngine.Sprite();
+			public static global::UnityEngine.Sprite DUMMY_SCREEN_TWEEN_SPRITE = null;
 
 			public static global::UnityEngine.Vector3 MAGNET_FINGER_OFFSET = new global::UnityEngine.Vector3(-1.5f, 5f, 1.5f);
 

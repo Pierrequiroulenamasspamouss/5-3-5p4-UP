@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Standard/Minion" {
     Properties {
         _MainTex ("Base (RGB)", 2D) = "gray" {}
@@ -39,7 +41,7 @@ Shader "Kampai/Standard/Minion" {
 
             v2f vert (appdata v) {
                 v2f o;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 
                 // Calcul Matcap Corrigé (transformation de la normale, pas de la position)

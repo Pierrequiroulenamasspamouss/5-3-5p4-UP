@@ -9,7 +9,7 @@ namespace Kampai.UI.View
 		public Text userNameText;
 		public Text messageText;
 		public Text timestampText;
-		public Image avatarImage;
+		// public Image avatarImage;
 
 		public void Setup(string user, string text, string timestamp)
 		{

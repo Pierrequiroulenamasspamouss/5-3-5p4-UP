@@ -388,14 +388,11 @@ namespace Kampai.UI.View
 		public void SetShouldBerendered(bool value)
 		{
 			shouldBeRendered = value;
+			base.gameObject.SetActive(value);
 		}
 
 		public bool ShouldBeRendered()
 		{
-			if (!shouldBeRendered)
-			{
-				ItemIcon.gameObject.SetActive(false);
-			}
 			return shouldBeRendered;
 		}
 
@@ -406,7 +403,7 @@ namespace Kampai.UI.View
 				if (dragPromptItem == null)
 				{
 					dragPromptItem = new global::UnityEngine.GameObject("drag");
-					dragPromptItem.transform.parent = base.gameObject.transform;
+					dragPromptItem.transform.SetParent(base.gameObject.transform, false);
 					dragPromptItem.layer = 5;
 					global::Kampai.UI.View.KampaiImage kampaiImage = dragPromptItem.AddComponent<global::Kampai.UI.View.KampaiImage>();
 					kampaiImage.sprite = UIUtils.LoadSpriteFromPath(DragSpritePath);

@@ -42,9 +42,23 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 
 	private static bool isShuttingDown;
 
+	public bool HasValidEventInstance()
+	{
+		return evt.isValid();
+	}
+
+	public void ReleaseEventInstance()
+	{
+		if (evt.isValid())
+		{
+			ERRCHECK(evt.release());
+		}
+		evt.clearHandle();
+	}
+
 	public void Play()
 	{
-		if (evt != null)
+		if (HasValidEventInstance())
 		{
 			UpdateEventParameters();
 			ERRCHECK(evt.start());
@@ -57,7 +71,7 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 
 	public void Pause()
 	{
-		if (evt != null)
+		if (HasValidEventInstance())
 		{
 			ERRCHECK(evt.setPaused(true));
 		}
@@ -65,7 +79,7 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 
 	public void Resume()
 	{
-		if (evt != null)
+		if (HasValidEventInstance())
 		{
 			ERRCHECK(evt.setPaused(false));
 		}
@@ -78,7 +92,7 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 
 	public void SetTimelinePosition(int time)
 	{
-		if (evt != null)
+		if (HasValidEventInstance())
 		{
 			ERRCHECK(evt.setTimelinePosition(time));
 		}
@@ -93,7 +107,7 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 		else
 		{
 			float volume = 0f;
-			if (evt != null)
+			if (HasValidEventInstance())
 			{
 				evt.getVolume(out volume);
 			}
@@ -107,22 +121,25 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 
 	public void Stop()
 	{
-		if (evt != null)
+		if (HasValidEventInstance())
 		{
 			ERRCHECK(evt.stop(global::FMOD.Studio.STOP_MODE.IMMEDIATE));
 		}
 	}
 
-	public global::FMOD.Studio.ParameterInstance getParameter(string name)
+	public float getParameter(string name)
 	{
-		global::FMOD.Studio.ParameterInstance instance = null;
-		ERRCHECK(evt.getParameter(name, out instance));
-		return instance;
+		float value = 0f;
+		if (HasValidEventInstance())
+		{
+			ERRCHECK(evt.getParameterByName(name, out value));
+		}
+		return value;
 	}
 
 	public global::FMOD.Studio.PLAYBACK_STATE getPlaybackState()
 	{
-		if (evt == null || !evt.isValid())
+		if (!HasValidEventInstance())
 		{
 			return global::FMOD.Studio.PLAYBACK_STATE.STOPPED;
 		}
@@ -154,7 +171,7 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 
 	private void CacheEventInstance()
 	{
-		if (evt == null)
+		if (!HasValidEventInstance())
 		{
 			if (asset != null)
 			{
@@ -173,20 +190,19 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 
 	public void UpdateEventParameters()
 	{
-		if (!(evt != null) || !evt.isValid() || eventParameters == null)
+		if (!HasValidEventInstance() || eventParameters == null)
 		{
 			return;
 		}
 		foreach (global::System.Collections.Generic.KeyValuePair<string, float> eventParameter in eventParameters)
 		{
-			global::FMOD.Studio.ParameterInstance instance;
 			if (float.IsNaN(eventParameter.Value))
 			{
 				global::FMOD.Studio.UnityUtil.LogError("NAN passed in as float value for param:" + eventParameter.Key);
 			}
-			else if (ERRCHECK(evt.getParameter(eventParameter.Key, out instance)) == global::FMOD.RESULT.OK && instance != null)
+			else
 			{
-				ERRCHECK(instance.setValue(eventParameter.Value));
+				ERRCHECK(evt.setParameterByName(eventParameter.Key, eventParameter.Value));
 			}
 		}
 	}
@@ -203,25 +219,24 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 			return;
 		}
 		global::FMOD.Studio.UnityUtil.Log("Destroy called");
-		if (evt != null && evt.isValid())
+		if (HasValidEventInstance())
 		{
 			if (getPlaybackState() != global::FMOD.Studio.PLAYBACK_STATE.STOPPED)
 			{
 				global::FMOD.Studio.UnityUtil.Log("Release evt: " + path);
 				ERRCHECK(evt.stop(global::FMOD.Studio.STOP_MODE.IMMEDIATE));
 			}
-			ERRCHECK(evt.release());
-			evt = null;
+			ReleaseEventInstance();
 		}
 	}
 
 	public void StartEvent()
 	{
-		if (evt == null || !evt.isValid())
+		if (!HasValidEventInstance())
 		{
 			CacheEventInstance();
 		}
-		if (evt != null && evt.isValid())
+		if (HasValidEventInstance())
 		{
 			Update3DAttributes();
 			UpdateEventParameters();
@@ -241,7 +256,7 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 		{
 			return false;
 		}
-		if (evt == null || !evt.isValid())
+		if (!HasValidEventInstance())
 		{
 			return true;
 		}
@@ -250,7 +265,7 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 
 	private void Update()
 	{
-		if (evt != null && evt.isValid())
+		if (HasValidEventInstance())
 		{
 			if (!staticSound)
 			{
@@ -270,24 +285,19 @@ public class CustomFMOD_StudioEventEmitter : global::UnityEngine.MonoBehaviour
 			{
 				string text = (string)queue.Dequeue();
 				path = text;
-				evt.release();
-				evt = null;
+				ReleaseEventInstance();
 				StartEvent();
 			}
 		}
 		else
 		{
-			if (evt != null)
-			{
-				ERRCHECK(evt.release());
-			}
-			evt = null;
+			evt.clearHandle();
 		}
 	}
 
 	private void Update3DAttributes()
 	{
-		if (evt != null && evt.isValid())
+		if (HasValidEventInstance())
 		{
 			global::FMOD.ATTRIBUTES_3D attributes = ((!shiftPosition) ? global::FMOD.Studio.UnityUtil.to3DAttributes(base.gameObject, cachedRigidBody) : global::FMOD.Studio.UnityUtil.to3DAttributes(base.gameObject, cachedRigidBody));
 			ERRCHECK(evt.set3DAttributes(attributes));

@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Standard/Outline" {
     Properties {
         _Color ("Main Color", Color) = (1,1,1,1)
@@ -80,7 +82,7 @@ Shader "Kampai/Standard/Outline" {
                 float displacement = _Outline * (vColor.g * 0.01);
                 v.vertex.xyz += v.normal * displacement;
                 
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 return o;
             }
 

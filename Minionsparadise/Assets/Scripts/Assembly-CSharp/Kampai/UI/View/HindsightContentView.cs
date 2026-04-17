@@ -58,7 +58,7 @@ namespace Kampai.UI.View
 			{
 				global::UnityEngine.Texture2D texture2D = new global::UnityEngine.Texture2D(1, 1);
 				byte[] data = global::System.IO.File.ReadAllBytes(filePath);
-				if (texture2D.LoadImage(data))
+				if (global::UnityEngine.ImageConversion.LoadImage(texture2D, data))
 				{
 					return texture2D;
 				}

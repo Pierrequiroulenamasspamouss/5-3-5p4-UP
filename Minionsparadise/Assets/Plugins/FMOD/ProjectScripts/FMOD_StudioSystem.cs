@@ -47,15 +47,15 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 
 	public global::FMOD.Studio.EventInstance GetEvent(string path)
 	{
-		global::FMOD.Studio.EventInstance eventInstance = null;
+		global::FMOD.Studio.EventInstance eventInstance = default(global::FMOD.Studio.EventInstance);
 		if (string.IsNullOrEmpty(path))
 		{
 			global::FMOD.Studio.UnityUtil.LogError("Empty event path!");
-			return null;
+			return eventInstance;
 		}
-		if (system == null)
+		if (!system.isValid())
 		{
-			return null;
+			return eventInstance;
 		}
 		if (eventDescriptions.ContainsKey(path) && eventDescriptions[path].isValid())
 		{
@@ -63,10 +63,10 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 		}
 		else
 		{
-			global::System.Guid guid = default(global::System.Guid);
+			global::FMOD.GUID guid = default(global::FMOD.GUID);
 			if (path.StartsWith("{"))
 			{
-				ERRCHECK(global::FMOD.Studio.Util.ParseID(path, out guid));
+				ERRCHECK(global::FMOD.Studio.Util.parseID(path, out guid));
 			}
 			else if (path.StartsWith("event:"))
 			{
@@ -76,15 +76,15 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 			{
 				global::FMOD.Studio.UnityUtil.LogError("Expected event path to start with 'event:/'");
 			}
-			global::FMOD.Studio.EventDescription _event = null;
+			global::FMOD.Studio.EventDescription _event = default(global::FMOD.Studio.EventDescription);
 			ERRCHECK(system.getEventByID(guid, out _event));
-			if (_event != null && _event.isValid())
+			if (_event.isValid())
 			{
 				eventDescriptions[path] = _event;
 				ERRCHECK(_event.createInstance(out eventInstance));
 			}
 		}
-		if (eventInstance == null)
+		if (!eventInstance.isValid())
 		{
 			global::FMOD.Studio.UnityUtil.Log("GetEvent FAILED: \"" + path + "\"");
 		}
@@ -104,7 +104,7 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 	public void PlayOneShot(string path, global::UnityEngine.Vector3 position, float volume)
 	{
 		global::FMOD.Studio.EventInstance eventInstance = GetEvent(path);
-		if (eventInstance == null)
+		if (!eventInstance.isValid())
 		{
 			global::FMOD.Studio.UnityUtil.LogWarning("PlayOneShot couldn't find event: \"" + path + "\"");
 			return;
@@ -132,7 +132,7 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 			// global::UnityEngine.Debug.Log("[FMOD-DEBUG] Init: Calling System.create...");
 			
 			global::FMOD.RESULT result = global::FMOD.Studio.System.create(out this.system);
-			if (result != global::FMOD.RESULT.OK || this.system == null) {
+			if (result != global::FMOD.RESULT.OK || !this.system.isValid()) {
 				// global::UnityEngine.Debug.LogError("[FMOD-DEBUG] Init: System.create FAILED with " + result.ToString());
 				return;
 			}
@@ -163,7 +163,7 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 				ERRCHECK(this.system.release());
 				ERRCHECK(global::FMOD.Studio.System.create(out this.system));
 				global::FMOD.System system;
-				ERRCHECK(this.system.getLowLevelSystem(out system));
+				ERRCHECK(this.system.getCoreSystem(out system));
 				rESULT = this.system.initialize(1024, iNITFLAGS, global::FMOD.INITFLAGS.NORMAL, global::System.IntPtr.Zero);
 				ERRCHECK(rESULT);
 			}
@@ -175,12 +175,12 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 	private void OnApplicationPause(bool pauseStatus)
 	{
 		isPaused = pauseStatus;
-		if (this.system != null && this.system.isValid())
+		if (this.system.isValid())
 		{
 			global::FMOD.Studio.UnityUtil.Log("Pause state changed to: " + pauseStatus);
 			global::FMOD.System system;
-			ERRCHECK(this.system.getLowLevelSystem(out system));
-			if (system == null)
+			ERRCHECK(this.system.getCoreSystem(out system));
+			if (!system.hasHandle())
 			{
 				global::FMOD.Studio.UnityUtil.LogError("Tried to suspend mixer, but no low level system found");
 			}
@@ -214,6 +214,8 @@ public class FMOD_StudioSystem : global::UnityEngine.MonoBehaviour
 		{
 			global::FMOD.Studio.UnityUtil.Log("__ SHUT DOWN FMOD SYSTEM __");
 			ERRCHECK(system.release());
+			system.clearHandle();
+			isInitialized = false;
 			if (this == sInstance)
 			{
 				sInstance = null;

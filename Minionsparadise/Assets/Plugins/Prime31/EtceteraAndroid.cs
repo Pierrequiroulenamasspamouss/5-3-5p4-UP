@@ -37,8 +37,8 @@ namespace Prime31
 #if !UNITY_WEBPLAYER
 			byte[] data = global::System.IO.File.ReadAllBytes(filePath);
 			global::UnityEngine.Texture2D texture2D = new global::UnityEngine.Texture2D(1, 1);
-			texture2D.LoadImage(data);
-			texture2D.Apply();
+            global::UnityEngine.ImageConversion.LoadImage(texture2D, data);
+            texture2D.Apply();
 			global::UnityEngine.Debug.Log("texture size: " + texture2D.width + "x" + texture2D.height);
 			return texture2D;
 #else

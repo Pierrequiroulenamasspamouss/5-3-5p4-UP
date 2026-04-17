@@ -15,6 +15,8 @@ namespace Kampai.Game
 
 		public bool AprilsFool { get; set; }
 
+		public bool promoPetsEnabled { get; set; }
+
 		[global::Newtonsoft.Json.JsonProperty(NullValueHandling = global::Newtonsoft.Json.NullValueHandling.Ignore)]
 		public float minimumVersion { get; set; }
 
@@ -129,6 +131,10 @@ namespace Kampai.Game
 			case "APRILSFOOL":
 				reader.Read();
 				AprilsFool = global::System.Convert.ToBoolean(reader.Value);
+				break;
+			case "PROMOPETSENABLED":
+				reader.Read();
+				promoPetsEnabled = global::System.Convert.ToBoolean(reader.Value);
 				break;
 			case "MINIMUMVERSION":
 				reader.Read();
@@ -269,7 +275,11 @@ namespace Kampai.Game
 				break;
 			case "APRILSFOOL":
 				reader.Read();
-				AprilsFool = global::System.Convert.ToBoolean(reader.Value);
+								AprilsFool = global::System.Convert.ToBoolean(reader.Value);
+				break;
+			case "PROMOPETSENABLED":
+				reader.Read();
+				promoPetsEnabled = global::System.Convert.ToBoolean(reader.Value);
 				break;
 			case "MINIMUMVERSION":
 				reader.Read();

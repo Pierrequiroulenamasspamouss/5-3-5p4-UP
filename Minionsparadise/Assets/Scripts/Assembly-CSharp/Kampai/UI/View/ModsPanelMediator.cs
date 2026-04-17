@@ -42,11 +42,21 @@ namespace Kampai.UI.View
 
 		[Inject]
 		public PopupMessageSignal popupMessageSignal { get; set; }
+		
+		[Inject]
+		public LoadDefinitionForUISignal loadDefSignal { get; set; }
+		
+		[Inject]
+		public ClearStoreTabsSignal clearTabsSignal { get; set; }
 
 		private static readonly string[] ALL_LANGUAGES = new string[] { "en", "fr", "de", "es", "it", "pt", "nl", "ko", "ru", "ja", "zh-cn", "zh-tw", "tr", "id", "lolcat", "minion" };
 
 		private List<string> m_availableLanguages;
 		private HashSet<string> m_renderedTimestamps = new HashSet<string>();
+		private Dictionary<string, GameObject> m_pendingMessages = new Dictionary<string, GameObject>();
+		
+		private float m_lastClickTime = 0f;
+		private const float CLICK_DEBOUNCE = 0.2f;
 
 		public override void OnRegister()
 		{
@@ -81,6 +91,8 @@ namespace Kampai.UI.View
 			UpdateLanguageText();
 			UpdateNightToggleText();
 			UpdateOfflineToggleText();
+
+			EnsureChatLayout();
 
 			if (view.sendButton != null)
 			{
@@ -148,6 +160,9 @@ namespace Kampai.UI.View
 
 		private void OnLanguageButtonClicked()
 		{
+			if (Time.time - m_lastClickTime < CLICK_DEBOUNCE) return;
+			m_lastClickTime = Time.time;
+
 			Debug.Log("[ModsMediator] Language Button Clicked!");
 			string language = prefs.GetDevicePrefs().Language;
 			if (string.IsNullOrEmpty(language))
@@ -170,12 +185,20 @@ namespace Kampai.UI.View
 			localService.Initialize(nextLang);
 			localService.Update();
 			UpdateLanguageText();
+			
+			// Refresh Build Shop Tabs
+			clearTabsSignal.Dispatch();
+			loadDefSignal.Dispatch();
+			
 			languageChangedSignal.Dispatch();
 			soundFXSignal.Dispatch("Play_minion_confirm_select_01");
 		}
 
 		private void OnNightToggleClicked()
 		{
+			if (Time.time - m_lastClickTime < CLICK_DEBOUNCE) return;
+			m_lastClickTime = Time.time;
+
 			Debug.Log("[ModsMediator] Night Toggle Clicked!");
 			DayNightCycleManager manager = Object.FindObjectOfType<DayNightCycleManager>();
 			if (manager != null)
@@ -209,22 +232,28 @@ namespace Kampai.UI.View
 
 		private void OnOfflineToggleClicked()
 		{
+			if (Time.time - m_lastClickTime < CLICK_DEBOUNCE) return;
+			m_lastClickTime = Time.time;
+
 			DevicePrefs devicePrefs = prefs.GetDevicePrefs();
 			devicePrefs.OfflineMode_Pref = !devicePrefs.OfflineMode_Pref;
 			saveDevicePrefsSignal.Dispatch();
 			UpdateOfflineToggleText();
-			soundFXSignal.Dispatch("Play_minion_confirm_select_03");
+			soundFXSignal.Dispatch("Play_minion_confirm_select_01");
 			Debug.Log(string.Format("[ModsMediator] Offline Preference toggled to: {0}", devicePrefs.OfflineMode_Pref));
 		}
 
 		private void UpdateOfflineToggleText()
 		{
+			bool offlinePref = prefs.GetDevicePrefs().OfflineMode_Pref;
+			string newText = "OFFLINE: " + (offlinePref ? "ON" : "OFF");
+			
 			if (view.offlineToggleText != null)
 			{
-				bool offlinePref = prefs.GetDevicePrefs().OfflineMode_Pref;
-				view.offlineToggleText.text = "OFFLINE: " + (offlinePref ? "ON" : "OFF");
+				view.offlineToggleText.text = newText;
 			}
 		}
+
 
 		private void OnSendClicked()
 		{
@@ -239,7 +268,12 @@ namespace Kampai.UI.View
 				localMsg.text = text;
 				localMsg.timestamp = System.DateTime.Now.ToString("HH:mm:ss");
 				
-				CreateChatItem(localMsg, true);
+				GameObject go = CreateChatItem(localMsg, true);
+				if (go != null)
+				{
+					// Track this pending message by its text so we can replace it later
+					m_pendingMessages[text] = go;
+				}
 
 				chatService.SendMessage(text);
 				view.chatInput.text = string.Empty;
@@ -272,6 +306,14 @@ namespace Kampai.UI.View
 					string key = msg.timestamp + msg.user + (msg.text.Length > 20 ? msg.text.Substring(0, 20) : msg.text);
 					if (!m_renderedTimestamps.Contains(key))
 					{
+						// Check if this confirms a pending message
+						if (m_pendingMessages.ContainsKey(msg.text))
+						{
+							Debug.Log("[ModsMediator] Server confirmed message. Removing optimistic item.");
+							Object.Destroy(m_pendingMessages[msg.text]);
+							m_pendingMessages.Remove(msg.text);
+						}
+
 						CreateChatItem(msg, false);
 						m_renderedTimestamps.Add(key);
 					}
@@ -279,12 +321,82 @@ namespace Kampai.UI.View
 			}
 		}
 
-		private void CreateChatItem(ChatMessage msg, bool isOptimistic)
+		private void EnsureChatLayout()
 		{
-			if (view.chatItemPrefab == null || view.chatItemsContainer == null) return;
+			if (view.chatItemsContainer == null) return;
 
-			GameObject go = Object.Instantiate(view.chatItemPrefab) as GameObject;
-			go.transform.SetParent(view.chatItemsContainer, false);
+			Debug.Log("[ModsMediator] Auto-configuring Chat Container Layout...");
+			
+			// 1. Ensure Pivot is at the Top so it grows downwards
+			RectTransform containerRect = view.chatItemsContainer.GetComponent<RectTransform>();
+			if (containerRect != null)
+			{
+				containerRect.pivot = new Vector2(0.5f, 1f);
+				containerRect.anchorMin = new Vector2(0f, 1f);
+				containerRect.anchorMax = new Vector2(1f, 1f);
+			}
+
+			// 2. Add/Configure Vertical Layout Group
+			VerticalLayoutGroup layout = view.chatItemsContainer.GetComponent<VerticalLayoutGroup>();
+			if (layout == null)
+			{
+				layout = view.chatItemsContainer.gameObject.AddComponent<VerticalLayoutGroup>();
+			}
+			layout.padding = new RectOffset(0, 0, 0, 0);
+			layout.spacing = 0f;
+			layout.childAlignment = TextAnchor.UpperCenter;
+			layout.childForceExpandHeight = false;
+			layout.childForceExpandWidth = true;
+
+			// 3. Add/Configure Content Size Fitter
+			ContentSizeFitter fitter = view.chatItemsContainer.GetComponent<ContentSizeFitter>();
+			if (fitter == null)
+			{
+				fitter = view.chatItemsContainer.gameObject.AddComponent<ContentSizeFitter>();
+			}
+			fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+		}
+
+		private GameObject CreateChatItem(ChatMessage msg, bool isOptimistic)
+		{
+			if (view.chatItemPrefab == null || view.chatItemsContainer == null) return null;
+
+			// Get the prefab's default dimensions to calculate aspect ratio
+			RectTransform prefabRect = view.chatItemPrefab.GetComponent<RectTransform>();
+			float prefabWidth = (prefabRect != null) ? prefabRect.rect.width : 100f;
+			float prefabHeight = (prefabRect != null) ? prefabRect.rect.height : 50f;
+
+			// Instantiate
+			GameObject go = Object.Instantiate(view.chatItemPrefab, view.chatItemsContainer) as GameObject;
+			
+			RectTransform rt = go.GetComponent<RectTransform>();
+			if (rt != null)
+			{
+				rt.SetParent(view.chatItemsContainer, false);
+				
+				// 1. Force Pivots and Anchors
+				rt.anchorMin = new Vector2(0f, 1f);
+				rt.anchorMax = new Vector2(1f, 1f);
+				rt.pivot = new Vector2(0.5f, 1f);
+				
+				// 2. Scaling
+				RectTransform containerRect = view.chatItemsContainer.GetComponent<RectTransform>();
+				float containerWidth = (containerRect != null) ? containerRect.rect.width : prefabWidth;
+				float scaleFactor = containerWidth / prefabWidth;
+				rt.localScale = new Vector3(scaleFactor, scaleFactor, 1f);
+				
+				// 3. Layout
+				float scaledHeight = prefabHeight * scaleFactor;
+				LayoutElement le = go.GetComponent<LayoutElement>();
+				if (le == null) le = go.AddComponent<LayoutElement>();
+				le.preferredHeight = scaledHeight;
+				le.minHeight = scaledHeight;
+				
+				rt.sizeDelta = new Vector2(prefabWidth, prefabHeight);
+				rt.localPosition = Vector3.zero;
+			}
+			
+			go.SetActive(true);
 			
 			ChatItemView item = go.GetComponent<ChatItemView>();
 			if (item != null)
@@ -293,13 +405,11 @@ namespace Kampai.UI.View
 				item.Setup(userLabel, msg.text, msg.timestamp);
 			}
 
-			// Limit children count
-			if (view.chatItemsContainer.childCount > 100)
+			if (view.chatItemsContainer.childCount > 50)
 			{
 				Object.Destroy(view.chatItemsContainer.GetChild(0).gameObject);
 			}
 			
-			// Trigger scroll update next frame
 			if (view.chatScrollView != null)
 			{
 				AutoScrollToBottom autoScroll = view.chatScrollView.GetComponent<AutoScrollToBottom>();
@@ -308,12 +418,13 @@ namespace Kampai.UI.View
 					autoScroll.ScrollToBottom();
 				}
 			}
+
+			return go;
 		}
 
 		private void OnChatError(string error)
 		{
 			Debug.LogError("[ModsMediator] Chat Error: " + error);
-			// Optional: Show popup
 			// popupMessageSignal.Dispatch("Chat Error: " + error, PopupMessageType.NORMAL);
 		}
 	}

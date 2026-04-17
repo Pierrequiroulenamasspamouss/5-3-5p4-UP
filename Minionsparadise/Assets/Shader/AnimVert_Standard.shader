@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Animated/AnimVert_Standard" {
     Properties {
         _MainTex ("Base (RGB)", 2D) = "white" { }
@@ -92,7 +94,7 @@ Shader "Kampai/Animated/AnimVert_Standard" {
                 // ----------------------------------------------------
 
                 // Compatible Unity 5.3
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv0, _MainTex);
                 o.color = v.color;
                 
@@ -139,7 +141,7 @@ Shader "Kampai/Animated/AnimVert_Standard" {
             v2f vert_static (appdata_anim v) {
                 v2f o;
                 // Version statique : on ignore complètement l'animation uv1 et le temps
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv0, _MainTex);
                 o.color = v.color;
                 return o;

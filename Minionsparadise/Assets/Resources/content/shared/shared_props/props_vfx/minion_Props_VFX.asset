@@ -3,15 +3,17 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: minion_Props_VFX
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 3
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 3
     localAABB:
@@ -41,16 +43,45 @@ Mesh:
     e33: 1
   m_BoneNameHashes: 314c6a95
   m_RootBoneNameHash: 2506771505
+  m_BonesAABB:
+  - m_Min: {x: 0.000012560958, y: 0.000012560958, z: -0.07164942}
+    m_Max: {x: 0.012648815, y: 0.01510822, z: -0.060370076}
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -96,14 +127,14 @@ Mesh:
       m_NumItems: 6
       m_Range: 0.3829195
       m_Start: 0.013433
-      m_Data: 71405df13700
-      m_BitSize: 7
+      m_Data: e300eb14ff0c
+      m_BitSize: 8
     m_Normals:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 6
+      m_Range: 0.082313985
+      m_Start: 0.49059162
+      m_Data: 3ff0033f00
+      m_BitSize: 6
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
@@ -115,7 +146,7 @@ Mesh:
       m_Data: ff7f
       m_BitSize: 5
     m_NormalSigns:
-      m_NumItems: 0
+      m_NumItems: 3
       m_Data: 
       m_BitSize: 0
     m_TangentSigns:
@@ -141,6 +172,27 @@ Mesh:
     m_Center: {x: 0.00632268, y: 0.00755411, z: -0.066019215}
     m_Extent: {x: 0.00632268, y: 0.00755411, z: 0.0056302007}
   m_MeshUsageFlags: 1
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0

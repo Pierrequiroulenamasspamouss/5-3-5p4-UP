@@ -3,15 +3,17 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: minion_Prop_ThrowingStar_Mesh
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 180
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 59
     localAABB:
@@ -41,16 +43,45 @@ Mesh:
     e33: 1
   m_BoneNameHashes: 314c6a95
   m_RootBoneNameHash: 2506771505
+  m_BonesAABB:
+  - m_Min: {x: -0.17283377, y: -0.1317442, z: -0.024226498}
+    m_Max: {x: 0.13465317, y: 0.1774548, z: 0.024396157}
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -99,11 +130,11 @@ Mesh:
       m_Data: 8c79aebdd17c64bff9c2d4fc84fc8e72d075ffc7dbff7dfe5ec4097900e4587f2d219c5b7100ad1255779854ae0b587f9c5bad12097900e4587f2d219c5b7100ad1255779854ae0b587f9c5bad12097900e4587f2d219c5b7100ad1255779854ae0b587f9c5bad128c79d17caebd64bff9c2d4fc84fc
       m_BitSize: 8
     m_Normals:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 118
+      m_Range: 1.9980823
+      m_Start: -0.9999704
+      m_Data: 190b82670b7dee874a1815fee1af3bba33444344c094007a54ff81980f8eec5006b1fe855fe881fbcbe01ef86f20e85fa2078c82da0e21187e21f8013f1986ccf17d89d279728ed380f879dff779d97aae2028812d58521905
+      m_BitSize: 6
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
@@ -115,9 +146,9 @@ Mesh:
       m_Data: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7f
       m_BitSize: 5
     m_NormalSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 59
+      m_Data: 7f800e70013a0000
+      m_BitSize: 1
     m_TangentSigns:
       m_NumItems: 0
       m_Data: 
@@ -141,6 +172,27 @@ Mesh:
     m_Center: {x: -0.019153371, y: 0.022917636, z: -0.000000011175871}
     m_Extent: {x: 0.1536804, y: 0.15453714, z: 0.024331799}
   m_MeshUsageFlags: 1
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0

@@ -83,7 +83,6 @@ namespace Kampai.Game.View
 			{
 				int iD = taskableBuilding.ID;
 				global::UnityEngine.Vector3 type = new global::UnityEngine.Vector3(taskableBuilding.Location.x, 0f, taskableBuilding.Location.y);
-				bool flag = false;
 				int transactionID = taskableBuilding.GetTransactionID(definitionService);
 				if (playerService.FinishTransaction(transactionID, global::Kampai.Game.TransactionTarget.HARVEST, new global::Kampai.Game.TransactionArg(iD)))
 				{
@@ -135,7 +134,6 @@ namespace Kampai.Game.View
 			{
 				return true;
 			}
-			bool flag = false;
 			int resourceItemID = villainLairResourcePlot.parentLair.Definition.ResourceItemID;
 			global::Kampai.Game.IngredientsItemDefinition ingredientsItemDefinition = definitionService.Get<global::Kampai.Game.IngredientsItemDefinition>(resourceItemID);
 			int transactionId = ingredientsItemDefinition.TransactionId;
@@ -190,7 +188,6 @@ namespace Kampai.Game.View
 				global::Kampai.Game.VillainLairResourcePlot byInstanceId2 = playerService.GetByInstanceId<global::Kampai.Game.VillainLairResourcePlot>(firstBuildingNumberOfHarvestableResourcePlot);
 				if (byInstanceId2 != null)
 				{
-					bool flag = false;
 					int resourceItemID = byInstanceId2.parentLair.Definition.ResourceItemID;
 					global::Kampai.Game.IngredientsItemDefinition ingredientsItemDefinition = definitionService.Get<global::Kampai.Game.IngredientsItemDefinition>(resourceItemID);
 					int transactionId = ingredientsItemDefinition.TransactionId;

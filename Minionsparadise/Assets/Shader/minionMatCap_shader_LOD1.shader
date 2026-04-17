@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 //////////////////////////////////////////
 ///////////////////////////////////////////
 Shader "Kampai/Standard/Minion_LOD1" {
@@ -38,7 +40,7 @@ Shader "Kampai/Standard/Minion_LOD1" {
 
             v2f vert (appdata v) {
                 v2f o;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 
                 // Calcul du Matcap correct

@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Standard/BluePrint" {
     Properties {
         _Color ("Main Color", Color) = (1,1,1,1)
@@ -81,7 +83,7 @@ Shader "Kampai/Standard/BluePrint" {
 
             v2f vert (appdata v) {
                 v2f o;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 
                 // Mix entre blanc et la couleur du sommet selon le toggle _VertexColor
                 o.color = lerp(float4(1,1,1,1), v.color, _VertexColor);

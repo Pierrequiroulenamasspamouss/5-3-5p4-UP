@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Transparent/Glass_Unity53" {
     Properties {
         _Color ("Main Color", Color) = (1,1,1,1)
@@ -47,7 +49,7 @@ Shader "Kampai/Transparent/Glass_Unity53" {
             v2f vert (appdata v) {
                 v2f o;
                 // Version Unity 5.3 standard
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 
                 // On applique le Tiling/Offset de la texture
                 o.uvMain = TRANSFORM_TEX(v.uv, _MainTex);

@@ -71,7 +71,7 @@ namespace Kampai.Game
 				string path = string.Format("{0}_Lightmap-{1}_comp_light", SceneName, i);
 				array[num + i] = new global::UnityEngine.LightmapData
 				{
-					lightmapFar = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.Texture2D>(path)
+					lightmapColor = global::Kampai.Util.KampaiResources.Load<global::UnityEngine.Texture2D>(path)
 				};
 			}
 			ApplyRendererInfo(m_RendererInfo, num);

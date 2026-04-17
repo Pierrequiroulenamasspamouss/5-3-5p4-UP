@@ -52,6 +52,8 @@ namespace Kampai.UI.View
 
 		private global::Kampai.Game.IPlayerService playerService;
 
+		protected global::Kampai.Util.IKampaiLogger logger;
+
 		private global::Kampai.Game.BuildingChangeStateSignal changeStateSignal;
 
 		internal global::strange.extensions.signal.impl.Signal<global::UnityEngine.EventSystems.PointerEventData> onPointerEnterSignal = new global::strange.extensions.signal.impl.Signal<global::UnityEngine.EventSystems.PointerEventData>();
@@ -66,12 +68,13 @@ namespace Kampai.UI.View
 
 		public int rushCost { get; set; }
 
-		internal void Init(global::Kampai.Game.IDefinitionService definitionService, global::Kampai.Game.ITimeEventService timeEventService, global::Kampai.Main.ILocalizationService localService, global::Kampai.Game.IPlayerService playerService, global::Kampai.Game.BuildingChangeStateSignal changeStateSignal)
+		public void Init(global::Kampai.Game.IDefinitionService definitionService, global::Kampai.Game.IPlayerService playerService, global::Kampai.Game.ITimeEventService timeEventService, global::Kampai.Main.ILocalizationService localizationService, global::Kampai.Game.BuildingChangeStateSignal changeStateSignal)
 		{
 			this.timeEventService = timeEventService;
-			localizationService = localService;
+			this.localizationService = localizationService;
 			this.playerService = playerService;
 			this.changeStateSignal = changeStateSignal;
+			logger = global::Elevation.Logging.LogManager.GetClassLogger("CraftingQueueView") as global::Kampai.Util.IKampaiLogger;
 			lockedPurchase.EnableDoubleConfirm();
 			SetPartyState(false);
 			if (index >= building.RecipeInQueue.Count)
@@ -116,14 +119,30 @@ namespace Kampai.UI.View
 				{
 					SetPartyState(flag);
 				}
-				inProgressTime.text = UIUtils.FormatTime(timeRemaining, localizationService);
-				rushCost = timeEventService.CalculateRushCostForTimer(timeRemaining, global::Kampai.Game.RushActionType.CRAFTING);
-				inProgressCost.text = rushCost.ToString();
 				if (timeRemaining <= 0)
 				{
+					// DIAGNOSTIC LOGGING
+					if (rushCost > 0 || (inProgressTime != null && inProgressTime.text != "00:00:00"))
+					{
+						if (logger != null)
+						{
+							logger.Warning("[TIMER_BUG] Time <= 0 but UI not swapped. ID: {0}, TimeRemaining: {1}, LastRushCost: {2}, Building: {3}", building.ID, timeRemaining, rushCost, building.Definition.LocalizedKey);
+						}
+					}
+
+					rushCost = 0;
+					inProgressTime.text = "00:00:00";
+					inProgressCost.text = "0";
+
 					inProduction = false;
 					harvestReady = true;
 					SwapToHarvest();
+				}
+				else
+				{
+					inProgressTime.text = UIUtils.FormatTime(timeRemaining, localizationService);
+					rushCost = timeEventService.CalculateRushCostForTimer(timeRemaining, global::Kampai.Game.RushActionType.CRAFTING);
+					inProgressCost.text = rushCost.ToString();
 				}
 			}
 		}

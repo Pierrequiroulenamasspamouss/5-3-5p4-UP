@@ -35,6 +35,7 @@ namespace Kampai.UI.View
 			injectionBinder.Bind<global::Kampai.UI.View.BuildMenuDefinitionLoadedSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.UI.View.BuildMenuButtonClickedSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.UI.View.AddStoreTabSignal>().ToSingleton();
+			injectionBinder.Bind<global::Kampai.UI.View.ClearStoreTabsSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.UI.View.ToggleStoreTabSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.UI.View.MoveTabMenuSignal>().ToSingleton();
 			injectionBinder.Bind<global::Kampai.UI.View.MoveHUDSignal>().ToSingleton();

@@ -42,7 +42,7 @@ namespace Kampai.Main
 			gameLoadedModel.gameLoaded = true;
 			global::UnityEngine.Application.targetFrameRate = new global::Kampai.Util.DeviceCapabilities().GetTargetFrameRate(logger, global::UnityEngine.Application.platform, deviceInformation);
 			long num = TimeUtil.CurrentTimeMillis() - global::Kampai.Util.Native.GetAppStartupTime();
-			logger.Log(global::Kampai.Util.KampaiLogLevel.Error, true, string.Format("App Started: {0}", ((float)num / 1000f).ToString()));
+			logger.Log(global::Kampai.Util.KampaiLogLevel.Info, true, string.Format("App Started: {0}", ((float)num / 1000f).ToString()));
 			gameLoadedModel.coldStartTime = num;
 		}
 	}

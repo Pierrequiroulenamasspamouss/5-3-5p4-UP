@@ -83,12 +83,10 @@ public class ConsoleProRemoteServer : global::UnityEngine.MonoBehaviour
 
 	private void Update()
 	{
-		global::UnityEngine.Application.RegisterLogCallback(LogCallback);
 	}
 
 	private void LateUpdate()
 	{
-		global::UnityEngine.Application.RegisterLogCallback(LogCallback);
 	}
 
 	private void OnDisable()

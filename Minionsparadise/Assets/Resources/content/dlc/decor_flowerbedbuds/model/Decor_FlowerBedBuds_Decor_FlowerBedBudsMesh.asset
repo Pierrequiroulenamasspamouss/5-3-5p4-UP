@@ -3,15 +3,17 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Decor_FlowerBedBuds_Decor_FlowerBedBudsMesh
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 285
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 93
     localAABB:
@@ -25,16 +27,43 @@ Mesh:
   m_BindPose: []
   m_BoneNameHashes: 
   m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -83,11 +112,11 @@ Mesh:
       m_Data: 93009330aa00cc00ef30ef00d530d5008b178b008b30bd17a400ee30ee17df00df17df30b5178b308b17a000b5008b00bd00d600ee00ca009f0aa100a30aa1149f0aa100a30aa1142b774252324e1f5d22d948f2249922ab11c3107f37fe27fd22f811dc12e9724c6142534373e77cdf79f5bfdf90efc0fbb5fcc77fd88bdc83dabaf5a8f2b5e166ff76fa80c06db35ab25282479c48e74fdb46e640d738ad378f31dbe4e4e0e1d964fc74ff1349313d08630c71078905d003b5
       m_BitSize: 8
     m_Normals:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 186
+      m_Range: 1.9958853
+      m_Start: -0.9986515
+      m_Data: a2e7856a48994c0980400778400780810674401868c0c77d1df87d1f087e62d8855fa77e8007840218868ba97c8bd9ac185c9118ccedddaef945bb855fcffdac2cc120b8899c0fe660f86d5cc8fdc1056cdceffd4dcef9592fe91bdffd5dbff59b1edaac1efada3ee1e0eff98309884345fa524eb84497584444ea695fd1d11efeca45446aa6706e15338e07
+      m_BitSize: 6
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
@@ -99,9 +128,9 @@ Mesh:
       m_Data: 
       m_BitSize: 0
     m_NormalSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 93
+      m_Data: 3f8afffbffffffffffdb5a1f
+      m_BitSize: 1
     m_TangentSigns:
       m_NumItems: 0
       m_Data: 
@@ -125,6 +154,27 @@ Mesh:
     m_Center: {x: -0.03961587, y: 0.2894033, z: -0.0801373}
     m_Extent: {x: 0.5724937, y: 0.33564356, z: 0.5737529}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0

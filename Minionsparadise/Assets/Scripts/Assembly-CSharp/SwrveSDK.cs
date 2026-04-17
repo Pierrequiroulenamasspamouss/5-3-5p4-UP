@@ -1465,13 +1465,11 @@ public class SwrveSDK
 
 	private global::System.Collections.IEnumerator PostEvents_Coroutine(global::System.Collections.Generic.Dictionary<string, string> requestHeaders, byte[] eventsPostEncodedData)
 	{
-		byte[] eventsPostEncodedData2;
 		yield return Container.StartCoroutine(restClient.Post(eventsUrl, eventsPostEncodedData, requestHeaders, delegate(global::Swrve.REST.RESTResponse response)
 		{
 			if (response.Error != global::Swrve.Helpers.WwwDeducedError.NetworkError)
 			{
 				ClearEventBuffer();
-				eventsPostEncodedData2 = null;
 			}
 			eventsConnecting = false;
 			TaskFinished("PostEvents_Coroutine");
@@ -1944,7 +1942,7 @@ public class SwrveSDK
 			{
 				byte[] byteArray = global::Swrve.CrossPlatformFile.ReadAllBytes(filePath);
 				global::UnityEngine.Texture2D loadedTexture2 = new global::UnityEngine.Texture2D(4, 4);
-				if (loadedTexture2.LoadImage(byteArray))
+				if (global::UnityEngine.ImageConversion.LoadImage(loadedTexture2, byteArray))
 				{
 					texture.Value(loadedTexture2);
 				}
@@ -1984,7 +1982,7 @@ public class SwrveSDK
 			{
 				string filePath = swrveTemporaryPath + "/" + fileName;
 				SwrveLog.Log("Saving to " + filePath);
-				byte[] bytes = loadedTexture.EncodeToPNG();
+				byte[] bytes = global::UnityEngine.ImageConversion.EncodeToPNG(loadedTexture);
 				global::Swrve.CrossPlatformFile.SaveBytes(filePath, bytes);
 				bytes = null;
 				texture.Value(loadedTexture);

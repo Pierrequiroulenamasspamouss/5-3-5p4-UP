@@ -61,6 +61,10 @@ namespace Kampai.UI.View
 			global::System.Collections.Generic.Dictionary<global::Kampai.Game.StoreItemType, global::System.Collections.Generic.List<global::Kampai.Game.Definition>> buildMenuItems = new global::System.Collections.Generic.Dictionary<global::Kampai.Game.StoreItemType, global::System.Collections.Generic.List<global::Kampai.Game.Definition>>();
 			foreach (global::Kampai.Game.StoreItemDefinition item in all)
 			{
+				if (item == null || item.Disabled)
+				{
+					continue;
+				}
 				switch (item.Type)
 				{
 				case global::Kampai.Game.StoreItemType.BaseResource:
@@ -155,30 +159,45 @@ namespace Kampai.UI.View
 		{
 			yield return null;
 			global::Kampai.Util.TimeProfiler.StartSection("signals");
-			bool isEventActive = false;
-			foreach (global::Kampai.Game.SpecialEventItemDefinition specialEvent in definitionService.GetAll<global::Kampai.Game.SpecialEventItemDefinition>())
+			global::System.Collections.Generic.HashSet<string> addedTitles = new global::System.Collections.Generic.HashSet<string>();
+			global::System.Collections.Generic.HashSet<global::Kampai.Game.StoreItemType> addedTypes = new global::System.Collections.Generic.HashSet<global::Kampai.Game.StoreItemType>();
+
+			foreach (int typeValue in global::System.Enum.GetValues(typeof(global::Kampai.Game.StoreItemType)))
 			{
-				if (specialEvent.IsActive)
+				global::Kampai.Game.StoreItemType type = (global::Kampai.Game.StoreItemType)typeValue;
+				
+				// Whitelist: only include these types
+				bool isWhitelisted = 
+					type == global::Kampai.Game.StoreItemType.BaseResource ||
+					type == global::Kampai.Game.StoreItemType.Crafting ||
+					type == global::Kampai.Game.StoreItemType.Decoration ||
+					type == global::Kampai.Game.StoreItemType.Leisure ||
+					type == global::Kampai.Game.StoreItemType.MasterPlanLeftOvers ||
+					type == global::Kampai.Game.StoreItemType.Connectable;
+
+				if (isWhitelisted && buildMenuItems.ContainsKey(type))
 				{
-					isEventActive = true;
-					break;
+					string title = localService.GetString(LocaleForType(type));
+                    if (!addedTitles.Contains(title) && !addedTypes.Contains(type))
+                    {
+						addTabSignal.Dispatch(new global::Kampai.UI.View.StoreTab(title, type));
+						addedTitles.Add(title);
+                        addedTypes.Add(type);
+                    }
 				}
 			}
-			if (isEventActive && buildMenuItems.ContainsKey(global::Kampai.Game.StoreItemType.SpecialEvent))
+
+			if (buildMenuItems.ContainsKey(global::Kampai.Game.StoreItemType.SpecialEvent))
 			{
-				addTabSignal.Dispatch(new global::Kampai.UI.View.StoreTab(localService.GetString(LocaleForType(global::Kampai.Game.StoreItemType.SpecialEvent)), global::Kampai.Game.StoreItemType.SpecialEvent));
-			}
-			foreach (int type in global::System.Enum.GetValues(typeof(global::Kampai.Game.StoreItemType)))
-			{
-				if (type != 10 && buildMenuItems.ContainsKey((global::Kampai.Game.StoreItemType)type))
+				string title = localService.GetString(LocaleForType(global::Kampai.Game.StoreItemType.SpecialEvent));
+				if (!addedTitles.Contains(title) && !addedTypes.Contains(global::Kampai.Game.StoreItemType.SpecialEvent))
 				{
-					addTabSignal.Dispatch(new global::Kampai.UI.View.StoreTab(localService.GetString(LocaleForType((global::Kampai.Game.StoreItemType)type)), (global::Kampai.Game.StoreItemType)type));
+					addTabSignal.Dispatch(new global::Kampai.UI.View.StoreTab(title, global::Kampai.Game.StoreItemType.SpecialEvent));
+					addedTitles.Add(title);
+					addedTypes.Add(global::Kampai.Game.StoreItemType.SpecialEvent);
 				}
 			}
-			if (!isEventActive && buildMenuItems.ContainsKey(global::Kampai.Game.StoreItemType.SpecialEvent))
-			{
-				addTabSignal.Dispatch(new global::Kampai.UI.View.StoreTab(localService.GetString(LocaleForType(global::Kampai.Game.StoreItemType.SpecialEvent)), global::Kampai.Game.StoreItemType.SpecialEvent));
-			}
+
 			buildMenuLoadedSignal.Dispatch(buildMenuItems);
 			loadMTXStoreSignal.Dispatch();
 			currencyStoreService.Initialize();

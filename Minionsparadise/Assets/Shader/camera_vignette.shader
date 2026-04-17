@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Kampai/Particles/Camera Vignette"
 {
 Properties
@@ -132,7 +134,7 @@ SubShader
   {
       v2f o;
 
-      o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+      o.pos = UnityObjectToClipPos(v.vertex);
 
       fixed4 col;
       col.rgb = v.color.rgb;
