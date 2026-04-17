@@ -503,7 +503,7 @@ namespace Kampai.Game.View
 
 		public virtual global::UnityEngine.AnimatorStateInfo? GetAnimatorStateInfo(int layer)
 		{
-			if (animators.Count > 0 && !animators[0].IsInTransition(layer))
+			if (animators.Count > 0 && animators[0].IsReady() && !animators[0].IsInTransition(layer))
 			{
 				return animators[0].GetCurrentAnimatorStateInfo(layer);
 			}
@@ -512,6 +512,10 @@ namespace Kampai.Game.View
 
 		public virtual bool IsInAnimatorState(int mecanimStateHash, int layer = 0)
 		{
+			if (animators.Count == 0 || !animators[0].IsReady())
+			{
+				return false;
+			}
 			global::UnityEngine.AnimatorStateInfo? animatorStateInfo = GetAnimatorStateInfo(layer);
 			if (animatorStateInfo.HasValue)
 			{

@@ -71,7 +71,7 @@ namespace Kampai.UI.View
 
 		public override void OnRegister()
 		{
-			view.Init(definitionService, timeEventService, localizationService, playerService, changeStateSignal);
+			view.Init(definitionService, playerService, timeEventService, localizationService, changeStateSignal);
 			view.inProgressRush.ClickedSignal.AddListener(RushButton);
 			view.inProgressHarvest.ClickedSignal.AddListener(HarvestCraftable);
 			view.lockedPurchase.ClickedSignal.AddListener(UnlockButton);
@@ -97,7 +97,7 @@ namespace Kampai.UI.View
 
 		private void UpdateView()
 		{
-			view.Init(definitionService, timeEventService, localizationService, playerService, changeStateSignal);
+			view.Init(definitionService, playerService, timeEventService, localizationService, changeStateSignal);
 		}
 
 		private void HandleHarvestables()
