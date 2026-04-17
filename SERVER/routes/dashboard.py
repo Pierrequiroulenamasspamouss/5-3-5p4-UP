@@ -15,149 +15,171 @@ html_template = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minions Paradise Decompiled Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>OpenMP - Save Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --panel-bg: rgba(30, 41, 59, 0.7);
-            --panel-border: rgba(255, 255, 255, 0.1);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #38bdf8;
-            --accent-hover: #0ea5e9;
-            --danger: #ef4444;
-            --warning: #f59e0b;
+            --primary: #FDE047; /* Minion Yellow */
+            --primary-dark: #FACC15;
+            --secondary: #0EA5E9; /* Sky Blue */
+            --secondary-dark: #0284C7;
+            --bg-light: #F8FAFC;
+            --bg-dark: #0F172A;
+            --text-main: #334155;
+            --text-light: #64748B;
+            --white: #FFFFFF;
+            --glass: rgba(255, 255, 255, 0.7);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
-        
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         
         body {
-            margin: 0;
-            padding: 0;
-            background: var(--bg-color);
+            background-color: var(--bg-light);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(239, 68, 68, 0.1), transparent 25%);
+            overflow-x: hidden;
+        }
+
+        /* Background Blobs */
+        .background-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        .blob {
+            position: absolute;
+            width: 40vw;
+            height: 40vw;
+            border-radius: 50%;
+            opacity: 0.15;
+        }
+
+        .blob.yellow { background: var(--primary); top: -10%; right: -10%; animation: move 20s infinite alternate; }
+        .blob.blue { background: var(--secondary); bottom: -10%; left: -10%; animation: move 25s infinite alternate-reverse; }
+
+        @keyframes move {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
         }
 
         .container {
             width: 100%;
             max-width: 900px;
             padding: 2rem;
-            margin: 2rem;
+            z-index: 10;
         }
 
         .glass-panel {
-            background: var(--panel-bg);
+            background: var(--glass);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--panel-border);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
             margin-bottom: 2rem;
         }
 
-        h1 { font-size: 2.25rem; font-weight: 800; margin-top: 0; margin-bottom: 0.5rem; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; border-bottom: 1px solid var(--panel-border); padding-bottom: 0.5rem; }
-        p { color: var(--text-muted); line-height: 1.6; }
+        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: var(--bg-dark); }
+        h1 span { color: var(--secondary); }
+        h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--bg-dark); }
+        p { color: var(--text-light); line-height: 1.6; }
 
         .input-group { margin-bottom: 1.5rem; }
-        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.875rem; color: var(--text-muted); }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
         
-        input[type="text"], input[type="password"], input[type="file"], select {
+        input[type="text"], input[type="password"], input[type="file"], select, input[type="number"] {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--panel-border);
-            background: rgba(15, 23, 42, 0.6);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: white;
             color: var(--text-main);
             font-size: 1rem;
             outline: none;
             transition: all 0.2s;
         }
         
-        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
+        input:focus, select:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2); }
 
         button, .btn {
             display: inline-block;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
             font-size: 1rem;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             border: none;
-            background: var(--accent);
-            color: #0f172a;
+            background: var(--primary);
+            color: var(--bg-dark);
             text-decoration: none;
             width: 100%;
+            box-shadow: 0 4px 14px 0 rgba(250, 204, 21, 0.39);
         }
         
-        button:hover, .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
-        button:active, .btn:active { transform: translateY(0); }
+        button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(250, 204, 21, 0.5); }
         
-        button.danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); }
-        button.danger:hover { background: var(--danger); color: white; }
-        button.secondary { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid var(--panel-border); }
-        button.secondary:hover { background: rgba(255, 255, 255, 0.2); }
+        button.danger { background: #ef4444; color: white; box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.39); }
+        button.danger:hover { box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
         
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: none;
-        }
-        .alert.warning { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning); color: #fcd34d; display: block; }
-        .alert.error { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); color: #fca5a5; display: block; }
-        .alert.success { background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #6ee7b7; display: block; }
+        button.secondary { background: var(--secondary); color: white; box-shadow: 0 4px 14px 0 rgba(14, 165, 233, 0.39); }
+        button.secondary:hover { box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5); }
+        
+        .alert { padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: none; font-weight: 600; }
+        .alert.warning { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; display: block; }
+        .alert.error { background: #fee2e2; border: 1px solid #fecaca; color: #b91c1c; display: block; }
+        .alert.success { background: #dcfce7; border: 1px solid #bbf7d0; color: #166534; display: block; }
 
-        #dashboard-view { display: none; }
-        
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
         
         .action-card {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid var(--panel-border);
-            border-radius: 12px;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
             padding: 1.5rem;
-            transition: all 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
         }
-        .action-card:hover { border-color: rgba(255, 255, 255, 0.2); background: rgba(15, 23, 42, 0.6); }
+        .action-card:hover { transform: translateY(-5px); }
+        .action-card h3 { margin-bottom: 0.5rem; color: var(--bg-dark); }
 
-        .discord-link { display: inline-flex; align-items: center; justify-content: center; background: #5865F2; color: white; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; width: 100%; transition: background 0.2s; margin-top: 1rem; }
-        .discord-link:hover { background: #4752C4; }
+        .discord-link { display: inline-flex; align-items: center; justify-content: center; background: #5865F2; color: white; text-decoration: none; padding: 0.8rem 1.5rem; border-radius: 50px; font-weight: 700; width: 100%; transition: scale 0.2s; margin-top: 1rem; }
+        .discord-link:hover { scale: 1.02; background: #4752C4; }
         
-        .inventory-list { max-height: 300px; overflow-y: auto; padding-right: 10px; }
-        .inventory-list::-webkit-scrollbar { width: 6px; }
-        .inventory-list::-webkit-scrollbar-track { background: var(--panel-border); border-radius: 4px; }
-        .inventory-list::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+        .inventory-list { max-height: 400px; overflow-y: auto; padding-right: 10px; }
+        .inv-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .inv-actions button { padding: 6px 12px; width: auto; font-size: 0.85rem; }
         
-        .inv-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--panel-border); }
-        .inv-item:last-child { border-bottom: none; }
-        .inv-actions button { padding: 4px 8px; width: auto; font-size: 0.8rem; margin-left: 4px; }
-        
-        /* Modal for forms */
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
-        .modal-content { background: var(--bg-color); border: 1px solid var(--panel-border); border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%; }
-        .close-btn { color: var(--text-muted); float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close-btn:hover { color: white; }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
+        .modal-content { background: white; border-radius: 24px; padding: 2.5rem; max-width: 550px; width: 90%; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .close-btn { float: right; font-size: 24px; font-weight: 800; cursor: pointer; color: var(--text-light); }
     </style>
 </head>
 <body>
+
+<div class="background-blobs">
+    <div class="blob yellow"></div>
+    <div class="blob blue"></div>
+</div>
 
 <div class="container">
     <div id="status-msg" class="alert"></div>
 
     <!-- Login View -->
     <div id="login-view" class="glass-panel">
-        <h1>Welcome to Minions Paradise Decompiled Dashboard</h1>
+        <h1>Welcome to <span>OpenMP</span> Dashboard</h1>
         <p>Manage your save data securely.</p>
         
         <div class="input-group" style="margin-top: 2rem;">
@@ -179,7 +201,7 @@ html_template = """
     <div id="dashboard-view">
         <div class="glass-panel">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>Dashboard: <span id="display-uid" style="color: var(--accent);"></span></h2>
+                <h2>Dashboard: <span id="display-uid" style="color: var(--secondary);"></span></h2>
                 <button class="secondary" style="width: auto;" onclick="logout()">Logout</button>
             </div>
             
