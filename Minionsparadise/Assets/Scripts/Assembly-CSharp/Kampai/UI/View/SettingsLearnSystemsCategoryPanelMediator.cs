@@ -29,6 +29,10 @@ namespace Kampai.UI.View
 			}
 			foreach (global::Kampai.Game.PlayerTrainingCategoryDefinition item in all)
 			{
+				if (item.ID == 19200001)
+				{
+					continue;
+				}
 				view.AddCategory(item, localizationService);
 			}
 			categorySelectedSignal.Dispatch(all[0].ID);

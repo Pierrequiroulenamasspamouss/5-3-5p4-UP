@@ -37,5 +37,8 @@ namespace Kampai.Game
 
 		[global::Newtonsoft.Json.JsonProperty("OfflineMode_Pref")]
 		public bool OfflineMode_Pref = false;
+		
+		[global::Newtonsoft.Json.JsonProperty("NightMode_Pref")]
+		public int NightMode_Pref = 1; // Default to Day (1)
 	}
 }

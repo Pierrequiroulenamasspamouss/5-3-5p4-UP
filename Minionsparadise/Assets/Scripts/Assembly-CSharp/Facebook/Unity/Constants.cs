@@ -131,8 +131,10 @@ namespace Discord.Unity
 				return global::Discord.Unity.FacebookUnityPlatform.Android;
 			case global::UnityEngine.RuntimePlatform.IPhonePlayer:
 				return global::Discord.Unity.FacebookUnityPlatform.IOS;
+#pragma warning disable 618
 			case global::UnityEngine.RuntimePlatform.OSXWebPlayer:
 			case global::UnityEngine.RuntimePlatform.WindowsWebPlayer:
+#pragma warning restore 618
 				return global::Discord.Unity.FacebookUnityPlatform.WebPlayer;
 			case global::UnityEngine.RuntimePlatform.WebGLPlayer:
 				return global::Discord.Unity.FacebookUnityPlatform.WebGL;

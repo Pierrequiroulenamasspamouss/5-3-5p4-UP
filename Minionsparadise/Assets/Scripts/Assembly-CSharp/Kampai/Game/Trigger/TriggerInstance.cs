@@ -93,9 +93,8 @@ namespace Kampai.Game.Trigger
 				reader.Read();
 				StartGameTime = global::System.Convert.ToInt32(reader.Value);
 				break;
-			default: return false;
-				RecievedRewardIds = global::Kampai.Util.ReaderUtil.PopulateListInt32(reader, RecievedRewardIds);
-				break;
+			default:
+				return false;
 			}
 			return true;
 		}

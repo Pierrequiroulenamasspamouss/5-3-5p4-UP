@@ -85,7 +85,6 @@ public class HockeyAppAndroid : global::UnityEngine.MonoBehaviour
 
 	protected string GetVersion()
 	{
-		string text = null;
 #if !UNITY_WEBPLAYER && UNITY_ANDROID && !UNITY_EDITOR
 		try
 		{

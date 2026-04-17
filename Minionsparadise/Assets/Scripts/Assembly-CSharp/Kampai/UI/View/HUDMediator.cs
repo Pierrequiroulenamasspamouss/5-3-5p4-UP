@@ -160,11 +160,18 @@ namespace Kampai.UI.View
 		public global::Kampai.Game.AwardLevelSignal awardLevelSignal { get; set; }
 
 		[Inject]
+		public global::Kampai.Main.LanguageChangedSignal languageChangedSignal { get; set; }
+
+		[Inject]
 		public global::Kampai.Common.ITelemetryService telemetryService { get; set; }
+
+		[Inject]
+		public global::Kampai.Game.IConfigurationsService configurationsService { get; set; }
 
 		public override void OnRegister()
 		{
 			view.Init(hudChangingSiblingIndexSignal);
+			languageChangedSignal.AddListener(OnLanguageChanged);
 			setStorageSignal.AddListener(SetStorage);
 			closeAllOtherMenusSignal.AddListener(CloseAllMenu);
 			closeSignal.AddListener(CloseMenu);
@@ -206,6 +213,7 @@ namespace Kampai.UI.View
 
 		public override void OnRemove()
 		{
+			languageChangedSignal.RemoveListener(OnLanguageChanged);
 			setStorageSignal.RemoveListener(SetStorage);
 			closeAllOtherMenusSignal.RemoveListener(CloseAllMenu);
 			closeSignal.RemoveListener(CloseMenu);
@@ -231,6 +239,14 @@ namespace Kampai.UI.View
 			RemoveVillainLairSignals();
 			RemoveCurrencySignals();
 			rushDialogPurchaseHelper.Cleanup();
+		}
+
+		private void OnLanguageChanged()
+		{
+			SetGrindCurrency();
+			SetPremiumCurrency();
+			SetStorage();
+			UpdateSaleBadgeCount();
 		}
 
 		private void OnPauseSound(bool isPause)
@@ -508,12 +524,20 @@ namespace Kampai.UI.View
 
 		internal void CheckShowPetsXPromo()
 		{
-			global::Kampai.Game.PetsXPromoDefinition petsXPromoDefinition = definitionService.Get<global::Kampai.Game.PetsXPromoDefinition>(95000);
-			bool flag = petsXPromoDefinition != null && petsXPromoDefinition.PetsXPromoEnabled;
+			global::Kampai.Game.ConfigurationDefinition configurations = configurationsService.GetConfigurations();
+			bool flag = configurations != null && configurations.promoPetsEnabled;
 			if (flag)
 			{
-				int quantity = (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.LEVEL_ID);
-				if (quantity < petsXPromoDefinition.PetsXPromoSurfaceLevel)
+				global::Kampai.Game.PetsXPromoDefinition petsXPromoDefinition = definitionService.Get<global::Kampai.Game.PetsXPromoDefinition>(95000);
+				if (petsXPromoDefinition != null && petsXPromoDefinition.PetsXPromoEnabled)
+				{
+					int quantity = (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.LEVEL_ID);
+					if (quantity < petsXPromoDefinition.PetsXPromoSurfaceLevel)
+					{
+						flag = false;
+					}
+				}
+				else
 				{
 					flag = false;
 				}

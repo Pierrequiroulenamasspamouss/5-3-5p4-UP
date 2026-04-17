@@ -135,7 +135,6 @@ namespace Kampai.Util
         protected void LogIt(global::Kampai.Util.KampaiLogLevel level, string format, params object[] args)
         {
             // On formate la chaîne avant de l'envoyer à Unity
-            string text = string.Format(format, args);
 
             // --- HIJACK UNITY LOGS ---
             switch (level)

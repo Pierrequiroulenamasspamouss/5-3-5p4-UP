@@ -243,7 +243,6 @@ namespace Kampai.Util
 			{
 				return null;
 			}
-			bool isEditorPath;
             if (_logger != null) _logger.Debug(string.Format("KampaiResources.Load('{0}', type={1})", path, type != null ? type.Name : "null"));
             
             Object cached = _cachedObjects.Get(path, type);
@@ -376,7 +375,6 @@ namespace Kampai.Util
 			{
 				return false;
 			}
-			string key = global::System.IO.Path.GetFileNameWithoutExtension(path);
             InitializeAssetMap();
             string fileName = Path.GetFileNameWithoutExtension(path);
             

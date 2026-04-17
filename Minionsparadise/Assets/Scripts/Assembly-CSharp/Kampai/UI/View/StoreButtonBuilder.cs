@@ -14,14 +14,14 @@ namespace Kampai.UI.View
 			global::UnityEngine.GameObject gameObject = global::UnityEngine.Object.Instantiate(original);
 			global::Kampai.UI.View.StoreButtonView component = gameObject.GetComponent<global::Kampai.UI.View.StoreButtonView>();
 			component.init(playerService);
-			component.ItemName.text = localService.GetStringUpper(definition.LocalizedKey);
+			component.ItemName.text = (definition.LocalizedKey != null) ? localService.GetStringUpper(definition.LocalizedKey) : "ITEM";
 			component.definition = definition;
 			component.transactionDef = transaction;
 			component.storeItemDefinition = storeItemDefinition;
 			global::Kampai.Game.DisplayableDefinition displayableDefinition = definition as global::Kampai.Game.DisplayableDefinition;
 			if (displayableDefinition != null)
 			{
-				component.ItemDescription.text = localService.GetString(displayableDefinition.Description);
+				component.ItemDescription.text = (displayableDefinition.Description != null) ? localService.GetString(displayableDefinition.Description) : string.Empty;
 				component.UpdatePartyPointText(localService);
 				if (string.IsNullOrEmpty(displayableDefinition.Mask))
 				{
@@ -42,9 +42,13 @@ namespace Kampai.UI.View
 
 		public static bool DetermineUnlock(global::Kampai.UI.View.StoreButtonView view, global::Kampai.Game.IPlayerService playerService, global::System.Collections.Generic.Dictionary<int, int> countMap, global::Kampai.Game.IDefinitionService definitionService, global::Kampai.Util.IKampaiLogger logger, global::Kampai.Game.ITimeService timeService, global::Kampai.Main.ILocalizationService localeService, global::Kampai.Game.IMasterPlanService masterPlanService, global::Kampai.UI.IBuildMenuService buildMenuService)
 		{
+			if (view.definition == null || view.definition.Disabled)
+			{
+				view.SetShouldBerendered(false);
+				return false;
+			}
 			bool result = false;
 			int iD = view.definition.ID;
-			int quantity = (int)playerService.GetQuantity(global::Kampai.Game.StaticItem.LEVEL_ID);
 			global::Kampai.Game.DisplayableDefinition displayableDefinition = view.definition as global::Kampai.Game.DisplayableDefinition;
 			global::Kampai.Game.StoreItemDefinition storeItemDefinition = view.storeItemDefinition;
 			int num = playerService.GetUnlockedQuantityOfID(iD);
@@ -54,25 +58,28 @@ namespace Kampai.UI.View
 				logger.Log(global::Kampai.Util.KampaiLogLevel.Error, "Your Building Definition: {0} doesn' have a image defined", displayableDefinition.ID);
 				displayableDefinition.Image = "btn_Circle01_mask";
 			}
-			if (false && ((flag && num == 0) || IsMasterPlanItemForIncompletePlan(storeItemDefinition, iD, definitionService, masterPlanService)))
+			if (((flag && num == 0) || IsMasterPlanItemForIncompletePlan(storeItemDefinition, iD, definitionService, masterPlanService)))
 			{
 				ItemLocked(view);
 			}
 			else
 			{
-				if (buildMenuService.ShouldRenderStoreDef(storeItemDefinition))
+				if (!buildMenuService.ShouldRenderStoreDef(storeItemDefinition))
 				{
-					global::UnityEngine.Sprite sprite = UIUtils.LoadSpriteFromPath(displayableDefinition.Image);
-					global::UnityEngine.Sprite sprite2 = UIUtils.LoadSpriteFromPath(displayableDefinition.Mask);
-					if (sprite != null && sprite2 != null)
-					{
-						global::Kampai.UI.View.KampaiImage itemIcon = view.ItemIcon;
-						itemIcon.sprite = sprite;
-						itemIcon.maskSprite = sprite2;
-						view.DragSpritePath = displayableDefinition.Image;
-						view.DragMaskPath = displayableDefinition.Mask;
-						view.DragAnimationController = "asm_BuildStore_StoreDragHint";
-					}
+					view.SetShouldBerendered(false);
+					return false;
+				}
+				view.SetShouldBerendered(true);
+				global::UnityEngine.Sprite sprite = UIUtils.LoadSpriteFromPath(displayableDefinition.Image);
+				global::UnityEngine.Sprite sprite2 = UIUtils.LoadSpriteFromPath(displayableDefinition.Mask);
+				if (sprite != null && sprite2 != null)
+				{
+					global::Kampai.UI.View.KampaiImage itemIcon = view.ItemIcon;
+					itemIcon.sprite = sprite;
+					itemIcon.maskSprite = sprite2;
+					view.DragSpritePath = displayableDefinition.Image;
+					view.DragMaskPath = displayableDefinition.Mask;
+					view.DragAnimationController = "asm_BuildStore_StoreDragHint";
 				}
 				CheckBadge(view);
 				result = CheckLocked(view);
