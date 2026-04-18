@@ -3,20 +3,22 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: VillainLair_Volcano_MP_TornadoMaker_Deco_Decor_VillainLair_Earthquake_streamers1
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 36
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 14
     localAABB:
-      m_Center: {x: -0.009834923, y: 0.2865023, z: 0.0042856866}
-      m_Extent: {x: 0.044927903, y: 0.2865023, z: 0.03155529}
+      m_Center: {x: -0.009966126, y: 0.28642845, z: 0.004454728}
+      m_Extent: {x: 0.044796698, y: 0.28657615, z: 0.03160315}
   m_Shapes:
     vertices: []
     shapes: []
@@ -25,16 +27,43 @@ Mesh:
   m_BindPose: []
   m_BoneNameHashes: 
   m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -77,10 +106,10 @@ Mesh:
       m_Data: 8f6401c914f50002403d2dd490850d4640768424905182008b353cc1e21e4a20cb8422c82e12c1d83d2831f61d4ffc0f8520ff0f02
       m_BitSize: 10
     m_UV:
-      m_NumItems: 28
+      m_NumItems: 56
       m_Range: 1.0229197
       m_Start: -0.58651936
-      m_Data: 010c23d07c417304c30e5c03705d413802e10dae0bb84e617d82f50cfe0ff80f
+      m_Data: 010c23d07c417304c30e5c03705d413802e10dae0bb84e617d82f50cfe0ff85fb264c992254b962c59b264c992254b962c59b264c992254b962c59b264c992
       m_BitSize: 9
     m_Normals:
       m_NumItems: 28
@@ -89,11 +118,11 @@ Mesh:
       m_Data: 0109c4001c90800cc8400cc4800cc8000cc0c11ffc
       m_BitSize: 6
     m_Tangents:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 28
+      m_Range: 0.7089736
+      m_Start: -0.7082442
+      m_Data: c00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffc
+      m_BitSize: 6
     m_Weights:
       m_NumItems: 0
       m_Data: 
@@ -103,13 +132,13 @@ Mesh:
       m_Data: ff3f
       m_BitSize: 1
     m_TangentSigns:
-      m_NumItems: 0
+      m_NumItems: 28
       m_Data: 
       m_BitSize: 0
     m_FloatColors:
-      m_NumItems: 0
+      m_NumItems: 56
       m_Range: 0
-      m_Start: 0
+      m_Start: 1
       m_Data: 
       m_BitSize: 0
     m_BoneIndices:
@@ -120,11 +149,32 @@ Mesh:
       m_NumItems: 36
       m_Data: 100232411245655467877689a998abcbbacd
       m_BitSize: 4
-    m_UVInfo: 5
+    m_UVInfo: 85
   m_LocalAABB:
-    m_Center: {x: -0.009834923, y: 0.2865023, z: 0.0042856866}
-    m_Extent: {x: 0.044927903, y: 0.2865023, z: 0.03155529}
+    m_Center: {x: -0.009966126, y: 0.28642845, z: 0.004454728}
+    m_Extent: {x: 0.044796698, y: 0.28657615, z: 0.03160315}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0

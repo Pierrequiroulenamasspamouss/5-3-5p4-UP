@@ -3,20 +3,22 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: VillainLair_Volcano_MP_Earthquake_ElectroMagnet_VillainLair_Volcano_MP_Earthquake_ElectroMagnet_Mesh2
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 90
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 21
     localAABB:
-      m_Center: {x: 0.00000008940697, y: 0.15811586, z: 0}
-      m_Extent: {x: 0.7141521, y: 0, z: 0.67919904}
+      m_Center: {x: 0.00000011920929, y: 0.15846789, z: 0.00000011920929}
+      m_Extent: {x: 0.7141521, y: 0, z: 0.6792473}
   m_Shapes:
     vertices: []
     shapes: []
@@ -25,16 +27,43 @@ Mesh:
   m_BindPose: []
   m_BoneNameHashes: 
   m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -77,10 +106,10 @@ Mesh:
       m_Data: 62c4398d3b71e674599cbe8415670668c6e98ba7716610719c39751ee73451c7f9dfff71fe17719cc6761e27cb68c619b4a7719a7f599c418715a7f9eec469ac1871b2ec4a9cff0110e77fffc5f91f
       m_BitSize: 10
     m_UV:
-      m_NumItems: 42
+      m_NumItems: 84
       m_Range: 1.3848227
       m_Start: -0.9645772
-      m_Data: 00fe77fceff17f80ff1dff03f8eff17f80ff1dff03f8eff17f80ff1dff03f8eff17f80ff1dff03f8eff17f80ff57ff03
+      m_Data: 00fe77fceff17f80ff1dff03f8eff17f80ff1dff03f8eff17f80ff1dff03f8eff17f80ff1dff03f8eff17f80ff57ff93254b962c59b264c992254b962c59b264c992254b962c59b264c992254b962c59b264c992254b962c59b264c992250b
       m_BitSize: 9
     m_Normals:
       m_NumItems: 42
@@ -89,11 +118,11 @@ Mesh:
       m_Data: c00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00f
       m_BitSize: 6
     m_Tangents:
-      m_NumItems: 0
-      m_Range: 0
+      m_NumItems: 42
+      m_Range: 1
       m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_Data: 3ff0033ff0033ff0033ff0033ff0033ff0033ff0033ff0033ff0033ff0033f00
+      m_BitSize: 6
     m_Weights:
       m_NumItems: 0
       m_Data: 
@@ -103,7 +132,7 @@ Mesh:
       m_Data: 
       m_BitSize: 0
     m_TangentSigns:
-      m_NumItems: 0
+      m_NumItems: 42
       m_Data: 
       m_BitSize: 0
     m_FloatColors:
@@ -120,11 +149,32 @@ Mesh:
       m_NumItems: 90
       m_Data: 200820c6106490528829e61c830e4a09a9a4d6526cb1d6986bee3d071f8c11ca28e794610680a89234402a1d858c3a4599a188502328095400
       m_BitSize: 5
-    m_UVInfo: 5
+    m_UVInfo: 85
   m_LocalAABB:
-    m_Center: {x: 0.00000008940697, y: 0.15811586, z: 0}
-    m_Extent: {x: 0.7141521, y: 0, z: 0.67919904}
+    m_Center: {x: 0.00000011920929, y: 0.15846789, z: 0.00000011920929}
+    m_Extent: {x: 0.7141521, y: 0, z: 0.6792473}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0

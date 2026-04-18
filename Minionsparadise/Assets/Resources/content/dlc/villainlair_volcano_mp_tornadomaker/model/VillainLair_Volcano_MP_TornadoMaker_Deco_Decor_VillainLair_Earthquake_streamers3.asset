@@ -3,20 +3,22 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: VillainLair_Volcano_MP_TornadoMaker_Deco_Decor_VillainLair_Earthquake_streamers3
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 36
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 14
     localAABB:
-      m_Center: {x: -0.012935653, y: 0.2865023, z: 0.0038920548}
-      m_Extent: {x: 0.04492788, y: 0.2865023, z: 0.031555288}
+      m_Center: {x: -0.012845572, y: 0.2865547, z: 0.0038049072}
+      m_Extent: {x: 0.04501796, y: 0.2864499, z: 0.031450905}
   m_Shapes:
     vertices: []
     shapes: []
@@ -25,16 +27,43 @@ Mesh:
   m_BindPose: []
   m_BoneNameHashes: 
   m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -77,11 +106,11 @@ Mesh:
       m_Data: 8e7841c914f91002403e31d4e0850e4550b68424945d82808b3938e1e21f4a240b4522c93e1201d9412441b61e4ffc4f4520ff1f02
       m_BitSize: 10
     m_UV:
-      m_NumItems: 28
-      m_Range: 0.26589873
-      m_Start: 0.19344375
-      m_Data: 6a007cf29fe801f753fae4d7c575f6e6bac90fcbc3753a9b0e
-      m_BitSize: 7
+      m_NumItems: 56
+      m_Range: 0.45934248
+      m_Start: 0
+      m_Data: e76bee81ff81f96bf699e599feafefaff5c5e8c5fcdcf0dcf3f2e9f200000000000000000000000000000000000000000000000000000000
+      m_BitSize: 8
     m_Normals:
       m_NumItems: 28
       m_Range: 0.9013463
@@ -89,11 +118,11 @@ Mesh:
       m_Data: 0109c4001c90800cc8400cc4800cc8000cc0c11ffc
       m_BitSize: 6
     m_Tangents:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 28
+      m_Range: 0.7102744
+      m_Start: -0.70815384
+      m_Data: c00ffcc00ffcc00ffcc00ffcc00ffcc00ffcc00ffc
+      m_BitSize: 6
     m_Weights:
       m_NumItems: 0
       m_Data: 
@@ -103,13 +132,13 @@ Mesh:
       m_Data: ff3f
       m_BitSize: 1
     m_TangentSigns:
-      m_NumItems: 0
+      m_NumItems: 28
       m_Data: 
       m_BitSize: 0
     m_FloatColors:
-      m_NumItems: 0
+      m_NumItems: 56
       m_Range: 0
-      m_Start: 0
+      m_Start: 1
       m_Data: 
       m_BitSize: 0
     m_BoneIndices:
@@ -120,11 +149,32 @@ Mesh:
       m_NumItems: 36
       m_Data: 100232411245655467877689a998abcbbacd
       m_BitSize: 4
-    m_UVInfo: 5
+    m_UVInfo: 85
   m_LocalAABB:
-    m_Center: {x: -0.012935653, y: 0.2865023, z: 0.0038920548}
-    m_Extent: {x: 0.04492788, y: 0.2865023, z: 0.031555288}
+    m_Center: {x: -0.012845572, y: 0.2865547, z: 0.0038049072}
+    m_Extent: {x: 0.04501796, y: 0.2864499, z: 0.031450905}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0

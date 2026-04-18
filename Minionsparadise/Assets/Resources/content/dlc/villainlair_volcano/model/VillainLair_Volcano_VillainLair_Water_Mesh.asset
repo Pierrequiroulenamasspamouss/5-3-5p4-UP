@@ -3,20 +3,22 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: VillainLair_Volcano_VillainLair_Water_Mesh
-  serializedVersion: 8
+  serializedVersion: 12
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
     indexCount: 1242
     topology: 0
+    baseVertex: 0
     firstVertex: 0
     vertexCount: 276
     localAABB:
-      m_Center: {x: 1.222292, y: -1.302008, z: 0.169909}
-      m_Extent: {x: 28.98362, y: 0.0002169609, z: 15.274393}
+      m_Center: {x: 1.222292, y: -1.3020188, z: 0.16991758}
+      m_Extent: {x: 28.98362, y: 0.00022113323, z: 15.274395}
   m_Shapes:
     vertices: []
     shapes: []
@@ -25,16 +27,43 @@ Mesh:
   m_BindPose: []
   m_BoneNameHashes: 
   m_RootBoneNameHash: 0
+  m_BonesAABB: []
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 1
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -86,14 +115,14 @@ Mesh:
       m_NumItems: 552
       m_Range: 1.8117373
       m_Start: -0.81173885
-      m_Data: 72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff48d248d25bcf72ff7bcb72ff81c981d484da72ff80d793d672ffa8dc72ff93ed72ff88f172ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff019500b972ff72ff72ff0cac00c11dd672ff49d972ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff72ff
-      m_BitSize: 8
+      m_Data: c9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd1f92d22129dd96cfc9fddf9ecbc9fd6fa0c9064a2de1dac9fd2fe0d74e6e9ddcffa2ce9ddcff4ede9edcff221e9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcff04580980b9c9fd9fdcffc9fd0f83ac00184cc7d6c9fd5fd2d9c9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcffc9fd9fdcff
+      m_BitSize: 10
     m_Tangents:
-      m_NumItems: 0
-      m_Range: 0
-      m_Start: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 552
+      m_Range: 1.9880111
+      m_Start: -0.9999984
+      m_Data: 000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000088801651850768072000818c085000838008903a048c08c000828c0890e6809808027880a80800eb8098080062c0980800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080000808808000080880800008088080d15865cd260008088080000818ca48d6c891463b000878c163000808808000080880800008088080000808808000080880804c0ff8ff80d30fd8ee802f0fe8f7808c0f58f680460f18ed80
+      m_BitSize: 10
     m_Weights:
       m_NumItems: 0
       m_Data: 
@@ -103,9 +132,9 @@ Mesh:
       m_Data: 0000000000000000000000000000000000000080eb56010000000000000040b8000000
       m_BitSize: 1
     m_TangentSigns:
-      m_NumItems: 0
-      m_Data: 
-      m_BitSize: 0
+      m_NumItems: 552
+      m_Data: 001001504001140005004000514101505500000455005441010444054440040504101411505501105055145501011510550054551515450454014514544414000054050000
+      m_BitSize: 1
     m_FloatColors:
       m_NumItems: 1104
       m_Range: 0.8
@@ -122,9 +151,30 @@ Mesh:
       m_BitSize: 9
     m_UVInfo: 85
   m_LocalAABB:
-    m_Center: {x: 1.222292, y: -1.302008, z: 0.169909}
-    m_Extent: {x: 28.98362, y: 0.0002169609, z: 15.274393}
+    m_Center: {x: 1.222292, y: -1.3020188, z: 0.16991758}
+    m_Extent: {x: 28.98362, y: 0.00022113323, z: 15.274395}
   m_MeshUsageFlags: 0
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+  m_MeshLodInfo:
+    serializedVersion: 2
+    m_LodSelectionCurve:
+      serializedVersion: 1
+      m_LodSlope: 0
+      m_LodBias: 0
+    m_NumLevels: 1
+    m_SubMeshes:
+    - serializedVersion: 2
+      m_Levels:
+      - serializedVersion: 1
+        m_IndexStart: 0
+        m_IndexCount: 0
