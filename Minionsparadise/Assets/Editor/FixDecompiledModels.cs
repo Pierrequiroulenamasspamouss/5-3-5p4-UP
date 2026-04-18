@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEditor;
 
-public class MeshRepairPipeline
+public class FixDecompiledModels
 {
     private const string TARGET_PATH = "Assets";
 
-    [MenuItem("Project/Models/Fix Decompiled Meshes")]
+    [MenuItem("Project/Models/Fix Decompiled Models")]
     public static void FixMeshes()
     {
         string[] guids = AssetDatabase.FindAssets("t:Mesh", new[] { TARGET_PATH });
