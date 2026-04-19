@@ -154,14 +154,7 @@ nav {
     cursor: pointer;
     border: none;
 }
-@media (max-width: 415px) {
-.btn-primary {
-    margin-right: 0rem !important;
-}
-    .btn {
-        margin: 5px 0px 5px 0px
-    }
-}
+
 
 .btn-primary {
     background: var(--primary);
@@ -464,6 +457,16 @@ nav {
     .nav-links { display: none; }
     .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(378px, 1fr)) !important;}
 }
+@media (max-width: 415px) {
+.btn-primary {
+    margin-right: 0rem !important;
+}
+    .btn {
+        margin: 5px 0px 5px 0px
+    }
+}
 @media (max-width: 430px) {
 .btn-primary { margin-right: 0rem !important; }
+        .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(84vw, 1fr)) !important;}
+
 }
