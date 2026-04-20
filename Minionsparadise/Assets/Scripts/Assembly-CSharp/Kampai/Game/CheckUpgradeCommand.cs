@@ -56,14 +56,20 @@ namespace Kampai.Game
 					if (result <= num)
 					{
 						logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "CheckUpgradeCommand: Going to Nudge player to update");
-						showClientUpgradeDialogSignal.Dispatch();
+#if UNITY_ANDROID || UNITY_IOS || !UNITY_EDITOR
+#else
+                        showClientUpgradeDialogSignal.Dispatch();
+#endif
 					}
 				}
 			}
 			else
 			{
 				logger.Log(global::Kampai.Util.KampaiLogLevel.Info, "CheckUpgradeCommand: Going to force client to upgrade");
+#if UNITY_ANDROID || UNITY_IOS || !UNITY_EDITOR
+#else
 				showForcedClientUpgradeScreenSignal.Dispatch();
+#endif
 			}
 		}
 	}
