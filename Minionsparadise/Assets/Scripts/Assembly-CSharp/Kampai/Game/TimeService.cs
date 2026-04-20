@@ -14,11 +14,8 @@ namespace Kampai.Game
 
 		public TimeService()
 		{
-#if !UNITY_WEBPLAYER
-			startTime = global::System.Diagnostics.Process.GetCurrentProcess().StartTime;
-#else
+
 			startTime = global::System.DateTime.Now;
-#endif
 			new global::System.Threading.Timer(delegate
 			{
 				appTickCount++;
