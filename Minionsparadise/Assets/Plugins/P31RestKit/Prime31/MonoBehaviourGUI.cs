@@ -1,3 +1,5 @@
+using UnityEngine.InputSystem;
+
 namespace Prime31
 {
 	public class MonoBehaviourGUI : global::UnityEngine.MonoBehaviour
@@ -166,7 +168,7 @@ namespace Prime31
 				_isWindowsPhone = global::UnityEngine.Application.platform.ToString().ToLower().Contains("wp8");
 			}
 			bool flag = false;
-			if (global::UnityEngine.Input.GetMouseButtonDown(0))
+			if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
 			{
 				float num = global::UnityEngine.Time.time - _previousClickTime;
 				if (num < _doubleClickDelay)
