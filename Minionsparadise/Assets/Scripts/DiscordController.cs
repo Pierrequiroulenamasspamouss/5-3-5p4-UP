@@ -2,6 +2,7 @@ using Discord.Sdk;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class DiscordController : MonoBehaviour
@@ -201,6 +202,49 @@ public class DiscordController : MonoBehaviour
 
     private string BuildDetailsText()
     {
+        try
+        {
+            var mgrType = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a => a.GetTypes())
+                .FirstOrDefault(t => t.FullName == "Kampai.Game.Mignette.View.MignetteManagerView");
+
+            if (mgrType != null)
+            {
+                var getIsPlayingMethod = mgrType.GetMethod("GetIsPlaying", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
+                if (getIsPlayingMethod != null)
+                {
+                    var isPlayingObj = getIsPlayingMethod.Invoke(null, null);
+                    bool isPlaying = isPlayingObj is bool b && b;
+
+                    if (isPlaying)
+                    {
+                        var findMethod = typeof(UnityEngine.Object).GetMethod("FindObjectOfType", new Type[] { typeof(Type) });
+
+                        var managerTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
+                            .Where(t => t != mgrType && mgrType.IsAssignableFrom(t) && !t.IsAbstract);
+
+                        foreach (var mt in managerTypes)
+                        {
+                            try
+                            {
+                                var instance = findMethod.Invoke(null, new object[] { mt });
+                                if (instance != null)
+                                {
+                                    string typeName = mt.Name;
+                                    string baseName = typeName.Replace("MignetteManagerView", "").Replace("MignetteManager", "").Trim();
+                                    baseName = Regex.Replace(baseName, "([a-z])([A-Z])", "$1 $2").Trim();
+                                    if (!string.IsNullOrEmpty(baseName))
+                                        return "Playing - " + baseName;
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                }
+            }
+        }
+        catch { }
+
         return "In Game - Level " + playerLevel;
     }
 
