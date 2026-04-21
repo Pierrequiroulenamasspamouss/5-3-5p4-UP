@@ -212,6 +212,16 @@ public class GUIDReplacer : EditorWindow
         return string.Empty;
     }
 
+    private bool IsMeshNamedAsset(string filePath)
+    {
+        if (string.IsNullOrEmpty(filePath)) return false;
+        string ext = Path.GetExtension(filePath);
+        if (!ext.Equals(".asset", System.StringComparison.OrdinalIgnoreCase)) return false;
+        string name = Path.GetFileNameWithoutExtension(filePath);
+        if (string.IsNullOrEmpty(name)) return false;
+        return name.IndexOf("mesh", System.StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
     private void ReplaceAnimClipSpriteReferencesYAML_SingleFile(string animFilePath, Dictionary<string, string> guidMap, Dictionary<string, string> fileIdMap)
     {
         string content = File.ReadAllText(animFilePath);
@@ -367,7 +377,11 @@ public class GUIDReplacer : EditorWindow
                     break;
                 }
 
-                if (!targetExtensions.Contains(Path.GetExtension(filePath).ToLower()) || filePath.EndsWith(".meta"))
+                string ext = Path.GetExtension(filePath).ToLower();
+                if (!targetExtensions.Contains(ext) || filePath.EndsWith(".meta"))
+                    continue;
+
+                if (ext == ".asset" && IsMeshNamedAsset(filePath))
                     continue;
 
                 string assetPath = "Assets" + filePath.Substring(Application.dataPath.Length);
@@ -705,7 +719,11 @@ public class GUIDReplacer : EditorWindow
                     break;
                 }
 
-                if (!targetExtensions.Contains(Path.GetExtension(filePath).ToLower()) || filePath.EndsWith(".meta"))
+                string ext = Path.GetExtension(filePath).ToLower();
+                if (!targetExtensions.Contains(ext) || filePath.EndsWith(".meta"))
+                    continue;
+
+                if (ext == ".asset" && IsMeshNamedAsset(filePath))
                     continue;
 
                 string assetPath = "Assets" + filePath.Substring(Application.dataPath.Length);
@@ -1426,6 +1444,9 @@ public class GUIDReplacer : EditorWindow
 
             string ext = Path.GetExtension(filePath).ToLower();
             if (!targetExtensions.Contains(ext) || filePath.EndsWith(".meta"))
+                continue;
+
+            if (ext == ".asset" && IsMeshNamedAsset(filePath))
                 continue;
 
             string assetPath = "Assets" + filePath.Substring(Application.dataPath.Length);
