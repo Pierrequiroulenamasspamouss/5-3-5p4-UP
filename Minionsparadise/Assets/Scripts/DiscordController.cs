@@ -9,6 +9,7 @@ public class DiscordController : MonoBehaviour
     private const ulong applicationId = 1493210561616543777UL;
 
     [SerializeField] private float presenceUpdateInterval = 5f;
+    [SerializeField] private int playerLevel = 0;
 
     private Discord.Sdk.Client client;
     private bool initialized;
@@ -19,6 +20,16 @@ public class DiscordController : MonoBehaviour
     private float nextUpdateUnscaled;
 
     public static DiscordController Instance { get; private set; }
+
+    public int PlayerLevel => playerLevel;
+
+    public void SetPlayerLevel(int level)
+    {
+        if (level < 0) level = 0;
+        if (playerLevel == level) return;
+        playerLevel = level;
+        RefreshPresence();
+    }
 
     private void Awake()
     {
@@ -99,6 +110,7 @@ public class DiscordController : MonoBehaviour
             nextUpdateUnscaled = Time.unscaledTime + Mathf.Max(1f, presenceUpdateInterval);
             initialized = true;
 
+            TryReadPlayerLevelFromService();
             RefreshPresence();
         }
         catch
@@ -128,12 +140,68 @@ public class DiscordController : MonoBehaviour
         if (client == null || !initialized)
             return;
 
-        UpdatePresence(BuildStateText(), "default_icon", "In Game", gameStartTimeMs);
+        TryReadPlayerLevelFromService();
+        UpdatePresence(BuildStateText(), "default_icon", BuildDetailsText(), gameStartTimeMs);
     }
 
     private string BuildStateText()
     {
         return "Unity " + Application.unityVersion;
+    }
+
+    private void TryReadPlayerLevelFromService()
+    {
+        try
+        {
+            var contextType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName == "strange.extensions.context.impl.Context");
+            if (contextType == null) return;
+
+            var firstContextField = contextType.GetField("firstContext", BindingFlags.Public | BindingFlags.Static);
+            if (firstContextField == null) return;
+
+            var firstContext = firstContextField.GetValue(null);
+            if (firstContext == null) return;
+
+            var injectionBinderProp = firstContext.GetType().GetProperty("injectionBinder", BindingFlags.Public | BindingFlags.Instance);
+            if (injectionBinderProp == null) return;
+
+            var injectionBinder = injectionBinderProp.GetValue(firstContext);
+            if (injectionBinder == null) return;
+
+            var playerServiceType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName == "Kampai.Game.IPlayerService");
+            if (playerServiceType == null) return;
+
+            var getInstanceMethod = injectionBinder.GetType().GetMethod("GetInstance", new Type[] { typeof(Type) });
+            object playerService = null;
+            if (getInstanceMethod != null)
+            {
+                playerService = getInstanceMethod.Invoke(injectionBinder, new object[] { playerServiceType });
+            }
+            if (playerService == null) return;
+
+            var staticItemType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName == "Kampai.Game.StaticItem");
+            if (staticItemType == null) return;
+
+            var levelEnum = Enum.Parse(staticItemType, "LEVEL_ID");
+
+            var getQuantityMethod = playerServiceType.GetMethod("GetQuantity", new Type[] { staticItemType });
+            if (getQuantityMethod == null) return;
+
+            var result = getQuantityMethod.Invoke(playerService, new object[] { levelEnum });
+            if (result == null) return;
+
+            int level = Convert.ToInt32(result);
+            if (level >= 0 && playerLevel != level)
+            {
+                playerLevel = level;
+            }
+        }
+        catch { }
+    }
+
+    private string BuildDetailsText()
+    {
+        return "In Game - Level " + playerLevel;
     }
 
     private void UpdatePresence(string state, string imageKey, string details, ulong startTimestampMs)
