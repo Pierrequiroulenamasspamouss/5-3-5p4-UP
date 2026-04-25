@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, render_template
 import uuid
 import os
 import random
@@ -381,15 +381,7 @@ def discord_callback():
     
     print(f"[DISCORD] Linked user {target_uid} with Discord {user_profile.get('username')} ({discord_id})")
     
-    return """
-    <html>
-    <body>
-        <h2>Login Complete!</h2>
-        <p>You can close this window and return to the game.</p>
-        <script>setTimeout(() => window.close(), 3000);</script>
-    </body>
-    </html>
-    """
+    return render_template('login_complete.html')
 
 # --- LEGACY FACEBOOK MOCKS (Redirected to Discord) ---
 @user_bp.route('/auth/facebook/login', methods=['GET'])

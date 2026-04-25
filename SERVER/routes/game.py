@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, send_file, current_app, redirect
+from flask import Blueprint, request, jsonify, send_file, current_app, redirect, render_template
 
 import os
 import json
@@ -427,25 +427,4 @@ def get_tse_teams(event_id):
 
 @game_bp.route('/join/<int:team_id>', methods=['GET'])
 def join_team_web(team_id):
-    return f"""
-    <html>
-        <head><title>Join Minions Paradise Team</title></head>
-        <body style="background: #222; color: #fff; font-family: sans-serif; text-align: center; padding-top: 50px;">
-            <div style="background: #333; display: inline-block; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                <h1 style="color: #fb0; margin-bottom: 20px;">Join Team #{team_id}!</h1>
-                <p style="font-size: 1.2em; margin-bottom: 30px;">Redirecting you to Minions Paradise...</p>
-                <div id="loader" style="border: 4px solid #444; border-top: 4px solid #fb0; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 30px;"></div>
-                <a href="deeplink://join/team/{team_id}" style="background: #fb0; color: #000; text-decoration: none; padding: 15px 30px; border-radius: 10px; font-weight: bold; display: inline-block; transition: transform 0.2s;">OPEN GAME</a>
-            </div>
-            <style>
-                @keyframes spin {{ 0% {{ transform: rotate(0deg); }} 100% {{ transform: rotate(360deg); }} }}
-                a:hover {{ transform: scale(1.05); }}
-            </style>
-            <script>
-                setTimeout(function() {{
-                    window.location.href = "deeplink://join/team/{team_id}";
-                }}, 1500);
-            </script>
-        </body>
-    </html>
-    """
+    return render_template('join_team.html', team_id=team_id)
