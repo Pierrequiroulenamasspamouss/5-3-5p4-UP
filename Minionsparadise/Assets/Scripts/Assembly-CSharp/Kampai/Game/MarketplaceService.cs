@@ -163,7 +163,15 @@ namespace Kampai.Game
 		public bool IsUnlocked()
 		{
 			global::Kampai.Game.MarketplaceDefinition marketplaceDefinition = definitionService.Get<global::Kampai.Game.MarketplaceDefinition>();
-			return playerService.GetQuantity(global::Kampai.Game.StaticItem.LEVEL_ID) >= marketplaceDefinition.LevelGate;
+			if (marketplaceDefinition == null)
+			{
+				global::UnityEngine.Debug.LogError("<color=red>[MARKETPLACE TRACE] MarketplaceService.IsUnlocked: MarketplaceDefinition is NULL! Returning false.</color>");
+				return false;
+			}
+			float playerLevel = playerService.GetQuantity(global::Kampai.Game.StaticItem.LEVEL_ID);
+			bool unlocked = playerLevel >= marketplaceDefinition.LevelGate;
+			global::UnityEngine.Debug.Log(string.Format("<color=cyan>[MARKETPLACE TRACE] MarketplaceService.IsUnlocked: PlayerLevel={0}, LevelGate={1}, result={2}</color>", playerLevel, marketplaceDefinition.LevelGate, unlocked));
+			return unlocked;
 		}
 
 		public bool AreThereSoldItems()

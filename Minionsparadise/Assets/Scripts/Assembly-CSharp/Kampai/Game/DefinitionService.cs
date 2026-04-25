@@ -282,6 +282,11 @@ namespace Kampai.Game
 
 		private void MarkMarketplaceDefinitions(global::Kampai.Game.Definitions definitions)
 		{
+			if (definitions.marketplaceDefinition == null)
+			{
+				logger.Error("MarkMarketplaceDefinitions: marketplaceDefinition is NULL! Marketplace will not function.");
+				return;
+			}
 			MarkDefinitionAsUsed(definitions.marketplaceDefinition);
 			MarkDefinitionsAsUsed(definitions.marketplaceDefinition.itemDefinitions);
 			MarkDefinitionsAsUsed(definitions.marketplaceDefinition.slotDefinitions);

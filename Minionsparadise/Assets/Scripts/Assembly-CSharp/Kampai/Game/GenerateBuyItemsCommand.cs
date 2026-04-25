@@ -25,7 +25,9 @@ namespace Kampai.Game
 
 		public override void Execute()
 		{
+			global::UnityEngine.Debug.Log("<color=yellow>[MARKETPLACE TRACE] GenerateBuyItemsCommand.Execute() CALLED</color>");
 			global::System.Collections.Generic.List<global::Kampai.Game.MarketplaceBuyItem> instancesByType = playerService.GetInstancesByType<global::Kampai.Game.MarketplaceBuyItem>();
+			global::UnityEngine.Debug.Log(string.Format("<color=yellow>[MARKETPLACE TRACE] GenerateBuyItemsCommand: Removing {0} existing buy items</color>", instancesByType != null ? instancesByType.Count : 0));
 			foreach (global::Kampai.Game.MarketplaceBuyItem item in instancesByType)
 			{
 				playerService.Remove(item);
@@ -33,14 +35,22 @@ namespace Kampai.Game
 			global::System.Collections.Generic.IList<global::Kampai.Game.IngredientsItemDefinition> unlockedDefsByType = playerService.GetUnlockedDefsByType<global::Kampai.Game.IngredientsItemDefinition>();
 			if (unlockedDefsByType.Count <= 0)
 			{
+				global::UnityEngine.Debug.LogError("<color=red>[MARKETPLACE TRACE] GenerateBuyItemsCommand: No items unlocked! Aborting.</color>");
 				logger.Error("No items are unlocked yet, so no Marketplace should exist.");
 				return;
 			}
+			global::UnityEngine.Debug.Log(string.Format("<color=yellow>[MARKETPLACE TRACE] GenerateBuyItemsCommand: {0} unlocked ingredient defs found</color>", unlockedDefsByType.Count));
 			global::System.Collections.Generic.IList<int> craftableItems = FindUnlockedInCategory("Craftable", unlockedDefsByType);
 			global::System.Collections.Generic.IList<int> resourceItems = FindUnlockedInCategory("Base Resource", unlockedDefsByType);
 			global::System.Collections.Generic.IList<global::Kampai.Game.DropItemDefinition> all = definitionService.GetAll<global::Kampai.Game.DropItemDefinition>();
 			global::Kampai.Game.MarketplaceDefinition marketplaceDefinition = definitionService.Get<global::Kampai.Game.MarketplaceDefinition>();
+			if (marketplaceDefinition == null)
+			{
+				global::UnityEngine.Debug.LogError("<color=red>[MARKETPLACE TRACE] GenerateBuyItemsCommand: MarketplaceDefinition is NULL! Cannot generate buy items.</color>");
+				return;
+			}
 			int totalBuyAds = marketplaceDefinition.TotalBuyAds;
+			global::UnityEngine.Debug.Log(string.Format("<color=yellow>[MARKETPLACE TRACE] GenerateBuyItemsCommand: TotalBuyAds={0}, craftable={1}, resource={2}, drops={3}</color>", totalBuyAds, craftableItems != null ? craftableItems.Count : -1, resourceItems != null ? resourceItems.Count : -1, all != null ? all.Count : -1));
 			for (int i = 0; i < totalBuyAds; i++)
 			{
 				global::Kampai.Game.GenerateBuyItemsCommand.ItemCategory categoryPicked = PickItemCategory(marketplaceDefinition, craftableItems, resourceItems, all.Count);
@@ -48,11 +58,18 @@ namespace Kampai.Game
 				int num = FindSizeOfStack(categoryPicked, marketplaceDefinition);
 				global::Kampai.Game.MarketplaceItemDefinition itemDefinition;
 				marketplaceService.GetItemDefinitionByItemID(itemID, out itemDefinition);
+				if (itemDefinition == null)
+				{
+					global::UnityEngine.Debug.LogError(string.Format("<color=red>[MARKETPLACE TRACE] GenerateBuyItemsCommand: itemDefinition NULL for itemID={0}! Skipping.</color>", itemID));
+					continue;
+				}
 				int num2 = randomService.NextInt(itemDefinition.MinStrikePrice, itemDefinition.MaxStrikePrice + 1);
 				int buyPrice = num2 * num;
 				global::Kampai.Game.MarketplaceBuyItem i2 = CreateMarketplaceBuyItem(itemDefinition, num, buyPrice);
 				playerService.Add(i2);
 			}
+			global::System.Collections.Generic.List<global::Kampai.Game.MarketplaceBuyItem> afterGeneration = playerService.GetInstancesByType<global::Kampai.Game.MarketplaceBuyItem>();
+			global::UnityEngine.Debug.Log(string.Format("<color=yellow>[MARKETPLACE TRACE] GenerateBuyItemsCommand: Generation complete. Total buy items now: {0}</color>", afterGeneration != null ? afterGeneration.Count : 0));
 		}
 
 		private global::System.Collections.Generic.IList<int> FindUnlockedInCategory(string category, global::System.Collections.Generic.IList<global::Kampai.Game.IngredientsItemDefinition> unlockedItems)

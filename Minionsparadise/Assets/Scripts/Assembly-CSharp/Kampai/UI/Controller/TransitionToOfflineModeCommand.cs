@@ -1,5 +1,6 @@
 using System;
 using Kampai.Game;
+using Kampai.Common;
 using Kampai.UI.View;
 using strange.extensions.command.impl;
 
@@ -25,6 +26,9 @@ namespace Kampai.UI.Controller
         [Inject]
         public LoginUserSignal loginUserSignal { get; set; }
 
+        [Inject]
+        public ICoppaService coppaService { get; set; }
+
         public override void Execute()
         {
             
@@ -40,6 +44,16 @@ namespace Kampai.UI.Controller
             {
                 string offlineUid = "OFFLINE_" + DateTime.Now.Ticks.ToString();
                 localPersistService.PutData("UserID", offlineUid);
+            }
+
+            // In offline mode, ensure COPPA birthdate is set so marketplace can initialize.
+            // Without this, IsBirthdateKnown() returns false, InitMarketplaceSlotsIfNeeded() is skipped,
+            // and the marketplace panels remain empty.
+            if (!coppaService.IsBirthdateKnown())
+            {
+                // Set an adult birthdate (year=2000, month=1) to bypass COPPA gate in offline mode
+                coppaService.SetUserBirthdate(new DateTime(2000, 1, 1));
+                UnityEngine.Debug.Log("[OfflineMode] Auto-set COPPA birthdate for offline marketplace access.");
             }
 
             // Continue the loading flow using local data

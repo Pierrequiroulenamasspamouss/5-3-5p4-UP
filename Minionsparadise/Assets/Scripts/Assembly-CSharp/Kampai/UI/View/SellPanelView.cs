@@ -16,7 +16,10 @@ namespace Kampai.UI.View
 
 		protected override void Awake()
 		{
-			global::Kampai.Util.KampaiView.BubbleToContextOnAwake(this, ref currentContext, true);
+			if (global::UnityEngine.Application.isPlaying)
+			{
+				base.Awake();
+			}
 		}
 
 		internal void FadeAnimation(bool fade)

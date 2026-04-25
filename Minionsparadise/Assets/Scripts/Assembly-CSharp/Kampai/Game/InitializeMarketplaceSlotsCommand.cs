@@ -24,13 +24,16 @@ namespace Kampai.Game
 
 		public override void Execute()
 		{
+			global::UnityEngine.Debug.Log("<color=green>[MARKETPLACE TRACE] InitializeMarketplaceSlotsCommand.Execute() CALLED</color>");
 			global::Kampai.Game.MarketplaceDefinition marketplaceDefinition = definitionService.Get<global::Kampai.Game.MarketplaceDefinition>();
-			int num = marketplaceDefinition.StandardSlots + global::System.Convert.ToInt32(playerService.GetQuantity(global::Kampai.Game.StaticItem.MARKETPLACE_ADDITIONAL_SALE_SLOTS_ID));
 			if (marketplaceDefinition == null)
 			{
+				global::UnityEngine.Debug.LogError("<color=red>[MARKETPLACE TRACE] InitializeMarketplaceSlotsCommand: MarketplaceDefinition is NULL!</color>");
 				logger.Warning("MarketplaceDefinition is null");
 				return;
 			}
+			int num = marketplaceDefinition.StandardSlots + global::System.Convert.ToInt32(playerService.GetQuantity(global::Kampai.Game.StaticItem.MARKETPLACE_ADDITIONAL_SALE_SLOTS_ID));
+			global::UnityEngine.Debug.Log(string.Format("<color=green>[MARKETPLACE TRACE] InitializeMarketplaceSlotsCommand: StandardSlots={0}, totalSlots={1}, CoppaRestricted={2}</color>", marketplaceDefinition.StandardSlots, num, coppaService.Restricted()));
 			if (coppaService.Restricted())
 			{
 				num += marketplaceDefinition.FacebookSlots;
@@ -45,6 +48,7 @@ namespace Kampai.Game
 				createLockedPremiumSlotSignal.Dispatch();
 			}
 			updateSlotStatesSignal.Dispatch();
+			global::UnityEngine.Debug.Log("<color=green>[MARKETPLACE TRACE] InitializeMarketplaceSlotsCommand: Slots created successfully.</color>");
 			logger.Debug("InitializeMarketplaceSlotsCommand: Marketplace slots created.");
 		}
 
