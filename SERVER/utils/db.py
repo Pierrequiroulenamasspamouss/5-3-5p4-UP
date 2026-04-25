@@ -396,8 +396,9 @@ def resolve_master_uid(user_id, conn=None):
         if local_conn: conn.close()
         return row['uid']
 
-    # 3. Check DISCORD uids list as fallback
-    search_cursor = conn.execute("SELECT uid FROM players WHERE DISCORD LIKE ?", (f'%"uids":%"{user_id_str}"%',))
+    # 3. Check DISCORD uids list and id as fallback
+    search_cursor = conn.execute("SELECT uid FROM players WHERE DISCORD LIKE ? OR DISCORD LIKE ?", 
+                                 (f'%"uids":%"{user_id_str}"%', f'%"id": "{user_id_str}"%'))
     search_row = search_cursor.fetchone()
     
     res = search_row['uid'] if search_row else None

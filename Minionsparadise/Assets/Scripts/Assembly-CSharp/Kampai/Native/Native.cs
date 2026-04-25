@@ -52,29 +52,45 @@ namespace Kampai.Util
 		{
 			get
 			{
-				string text = global::System.IO.Path.Combine(global::UnityEngine.Application.persistentDataPath, "local-config.json");
-				if (global::System.IO.File.Exists(text))
+				string persistentPath = global::System.IO.Path.Combine(global::UnityEngine.Application.persistentDataPath, "local-config.json");
+				
+				// 1. Try Persistent Data Path (User editable)
+				if (global::System.IO.File.Exists(persistentPath))
 				{
-					return global::System.IO.File.ReadAllText(text).Trim();
+					string content = global::System.IO.File.ReadAllText(persistentPath).Trim();
+					if (!string.IsNullOrEmpty(content)) return content;
 				}
-				string text2 = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "local-config.json");
+
+				// 2. Try StreamingAssets (Easy to edit on Windows/Editor builds)
+				string streamingPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "local-config.json");
+				string staticConfig = string.Empty;
+
 #if !UNITY_ANDROID || UNITY_EDITOR
-				if (global::System.IO.File.Exists(text2))
+				if (global::System.IO.File.Exists(streamingPath))
 				{
-					return global::System.IO.File.ReadAllText(text2).Trim();
+					staticConfig = global::System.IO.File.ReadAllText(streamingPath).Trim();
 				}
 #endif
-				string staticConfig = impl.StaticConfig;
-				if (!string.IsNullOrEmpty(staticConfig) && !global::System.IO.File.Exists(text))
+
+				// 3. Fallback to internal Resources (Original game behavior)
+				if (string.IsNullOrEmpty(staticConfig))
+				{
+					staticConfig = impl.StaticConfig;
+				}
+
+				// Cache the found config to Persistent Data Path for future editing
+				if (!string.IsNullOrEmpty(staticConfig))
 				{
 					try
 					{
-						global::System.IO.File.WriteAllText(text, staticConfig);
+						global::System.IO.File.WriteAllText(persistentPath, staticConfig);
 					}
-					catch
+					catch (global::System.Exception e)
 					{
+						global::UnityEngine.Debug.LogWarning("Native.StaticConfig: Failed to cache config to persistentDataPath: " + e.Message);
 					}
 				}
+
 				return staticConfig;
 			}
 		}

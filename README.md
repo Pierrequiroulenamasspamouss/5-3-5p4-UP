@@ -46,20 +46,10 @@ Technical documentation and guides.
 
 ### High Priority
 
+- Current issue : The game has a builtin progress restore prefab somewhere, and currently what the server does when you connect a discord account to your profile, is that the server replaces your profile with the most developed version of the save. I would like you to restore the feature to choose which version of your base you want to keep. Ensure that the server responds appropriately with the data the game requests. 
 
+- Current issue number 2 : marketplace is fucking dead. All is broken on the marketplace, buy/sell buttons, prices, items displayed inside the marketplace, etc... 
 
-- Config file should be easily editable without a rebuild of the game. Right now, the game will load the config.json file from the game resources, when I would need it to be not in the resources, but in the StreamedAssets, so that it can be modified by the user and not be "untouchable" in the blob of the Unity resources. For that I need to have a script to : 
-    - Load the internal config.json(Minionsparadise\Assets\Resources\config.json) in the persistent data path of the device (either Android, windows or potentially iOS), save it as a "local-config.json", and that the game itself uses the local-config.json from the streamingAssets to fetch the server's URL
-
-- [x] **loadDefinitionsCommand.cs categorization/reset issues** [SOLVED]: Fixed categorization and inventory reset logic.
-- [x] **Currency Shop prices messed up when online** [SOLVED]: Fixed `DebugCurrencyService` to merge server prices and preserve local fallbacks if the server returns incomplete data.
-- [x] **No Level Cap** [SOLVED]: Removed the soft-maximum level by clamping XP requirements and rewards to the last defined level, allowing for infinite leveling.
-- [x] **Optimizations breaking Villain Lair assets on Android** [SOLVED]: Corrected path sanitization in `KampaiResources.LoadAsync` to handle build-specific path prefixes.
-- [x] **Discord login on Android** [SOLVED]: Enabled `CanOpenURL` in Android native implementation to allow browser-based sign-up.
-- [x] **Video media not playing/launching** [SOLVED]: Integrated `IVideoService` in `LoadPlayerCommand` to play the intro video for new users on all platforms.
-- [x] **Events and server-related issues (TSE)** [SOLVED]: Implemented automatic cycle looping in `TimedSocialEventService` to ensure events restart indefinitely.
-- [x] **Stuck at 30% loading on Android** [SOLVED]: Restored telemetry funnel in `MainStartCommand` and added `SimpleLogTelemetrySender` for remote debugging.
-- [x] **Missing language keys tool** [SOLVED]: Created `LocalizationSyncTool.cs` (Editor/Kampai/Tools) to identify missing localization entries.
 - [ ] **REBUILD FMOD PROJECT TO ADD CUSTOM AUDIO LOOPS**: Currently using raw banks extracted from the game.
 - [ ] **TeamOrderBoard no audio**: Stuart performance after order completion is missing sound (FMOD event missing).
 

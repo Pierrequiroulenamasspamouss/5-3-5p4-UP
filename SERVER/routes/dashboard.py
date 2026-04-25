@@ -2,13 +2,11 @@ from flask import Blueprint, jsonify, request, render_template, redirect
 import json
 import os
 import sqlite3
-from utils.db import get_db_connection, DB_PATH, PLAYER_DATA_DIR, DEFINITIONS_PATH
+from utils.db import get_db_connection, DB_PATH, PLAYER_DATA_DIR, DEFINITIONS_PATH, resolve_master_uid
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
 EMPTY_PLAYER_JSON = os.path.join(os.path.dirname(__file__), '..', 'empty_player.json')
-
-
 
 # Very simple unauthenticated token implementation for the session (real apps should use JWT or proper sessions)
 # Since UID + password check is lightweight, we use a basic static "token" generation.
@@ -29,11 +27,17 @@ def render_dashboard():
 @dashboard_bp.route('/api/dashboard/login', methods=['POST'])
 def dashboard_login():
     data = request.json
-    uid = data.get('uid')
+    uid_input = data.get('uid')
     pwd = data.get('password', '')
     
+    # Resolve the actual UID in the database (handles consolidated/Discord linked accounts)
+    master_uid = resolve_master_uid(uid_input)
+    
+    if not master_uid:
+        return jsonify({"error": "Player not found. Login to the game first to create the account."})
+    
     conn = get_db_connection()
-    row = conn.execute("SELECT password, custom_name, discord_username FROM players WHERE uid = ?", (uid,)).fetchone()
+    row = conn.execute("SELECT password, custom_name, discord_username FROM players WHERE uid = ?", (master_uid,)).fetchone()
     
     if not row:
         conn.close()
@@ -52,9 +56,10 @@ def dashboard_login():
     
     return jsonify({
         "msg": "Login successful",
-        "token": gen_token(uid),
+        "token": gen_token(master_uid), # Use the actual master_uid for the session
         "name": name,
-        "secured": secured
+        "secured": secured,
+        "resolved_uid": master_uid # Inform the UI about the resolved UID if needed
     })
 
 @dashboard_bp.route('/api/dashboard/set_password', methods=['POST'])

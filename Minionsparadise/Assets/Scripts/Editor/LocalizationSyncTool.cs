@@ -72,7 +72,7 @@ namespace Kampai.Editor
                 }
                 catch (System.Exception ex)
                 {
-                    results.Add($"Error parsing {Path.GetFileName(file)}: {ex.Message}");
+                    results.Add(string.Format("Error parsing {0}: {1}", Path.GetFileName(file), ex.Message));
                 }
             }
 
@@ -91,10 +91,10 @@ namespace Kampai.Editor
                 if (missingInThisFile.Count > 0)
                 {
                     foundMissing = true;
-                    results.Add($"--- {entry.Key} is missing {missingInThisFile.Count} keys ---");
+                    results.Add(string.Format("--- {0} is missing {1} keys ---", entry.Key, missingInThisFile.Count));
                     foreach (var mk in missingInThisFile)
                     {
-                        results.Add($"  {mk}");
+                        results.Add(string.Format("  {0}", mk));
                     }
                 }
             }

@@ -14,7 +14,7 @@ namespace Kampai.Common
             {
                 foreach (var p in gameEvent.Parameters)
                 {
-                    parameters += string.Format("\n  {0}: {1}", p.Name, p.Value);
+                    parameters += string.Format("\n  {0}: {1}", p.name, p.value);
                 }
             }
             logger.Info("TELEMETRY EVENT: {0} {1}", gameEvent.Type, parameters);

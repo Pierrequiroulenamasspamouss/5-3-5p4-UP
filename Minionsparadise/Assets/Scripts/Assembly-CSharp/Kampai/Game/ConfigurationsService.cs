@@ -139,7 +139,14 @@ namespace Kampai.Game
 
 		private global::Kampai.Game.ConfigurationDefinition LoadConfig(string json)
 		{
-			if (!json.Trim().StartsWith("{\"allConfigs\""))
+			string strippedJson = json.Trim();
+			// Check if it already has the wrapper, ignoring whitespace/newlines
+			bool hasWrapper = strippedJson.StartsWith("{\"allConfigs\"") || 
+							 strippedJson.StartsWith("{\n\"allConfigs\"") || 
+							 strippedJson.StartsWith("{\r\n\"allConfigs\"") ||
+							 strippedJson.Replace(" ", "").Replace("\t", "").Replace("\n", "").Replace("\r", "").StartsWith("{\"allConfigs\"");
+			
+			if (!hasWrapper)
 			{
 				json = "{\"allConfigs\": " + json + "}";
 			}
