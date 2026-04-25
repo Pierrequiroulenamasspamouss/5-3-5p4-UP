@@ -63,7 +63,7 @@ Technical documentation and guides.
 
 - Clicking on "sign up with Discord" on Android doesn't open the browser or the application, like it does on Windows for example. 
 
-- Video media play on a new game doesn't launch. Usually the  
+- Video media play on a new game doesn't launch. Normally, a media player should play one video downloaded from the server, however the game seems to skip the video playing part, since I never implemented a media player in the game. I'd need to have that feature added back, both for Windows and Android. 
 
 - [ ] **REBUILD FMOD PROJECT TO ADD CUSTOM AUDIO LOOPS**: Currently using raw banks extracted from the game, it is difficult to add new audio to the game
 - [ ] **Events and server-related issues**: Social events not automatically restarted when a week has passed for example, or definitions not working properly
