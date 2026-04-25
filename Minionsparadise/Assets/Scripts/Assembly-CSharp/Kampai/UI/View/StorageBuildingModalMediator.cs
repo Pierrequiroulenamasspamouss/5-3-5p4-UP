@@ -410,7 +410,7 @@ namespace Kampai.UI.View
 				global::UnityEngine.Debug.Log("<color=lime>[MARKETPLACE TRACE] OpenBuyPanel: Dispatching openBuyPanelSignal</color>");
 				openBuyPanelSignal.Dispatch(isInstant);
 				base.view.BuyButtonView.gameObject.SetActive(false);
-				base.view.SellButtonView.gameObject.SetActive(true);
+				base.view.SellButtonView.gameObject.SetActive(false);
 				CheckForMarketplaceSurfacing();
 			}
 			else
@@ -428,6 +428,7 @@ namespace Kampai.UI.View
 		private void OnBuyPanelClosed()
 		{
 			base.view.BuyButtonView.gameObject.SetActive(true);
+			base.view.SellButtonView.gameObject.SetActive(true);
 			currentMode = global::Kampai.UI.View.StorageBuildingModalTypes.STORAGE;
 			UpdateItems();
 		}
