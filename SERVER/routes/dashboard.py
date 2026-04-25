@@ -34,14 +34,57 @@ html_template = """
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+            --primary: #FDE047; /* Minion Yellow */
+            --primary-dark: #FACC15;
+            --secondary: #0EA5E9; /* Sky Blue */
+            --secondary-dark: #0284C7;
+            --bg-light: #F8FAFC;
+            --bg-dark: #0F172A;
+            --text-main: #334155;
+            --text-light: #64748B;
+            --white: #FFFFFF;
+            --glass: rgba(255, 255, 255, 0.7);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
         
         body {
+            background-color: var(--bg-light);
             background-color: var(--bg-light);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Background Blobs */
+        .background-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        .blob {
+            position: absolute;
+            width: 40vw;
+            height: 40vw;
+            border-radius: 50%;
+            opacity: 0.15;
+        }
+
+        .blob.yellow { background: var(--primary); top: -10%; right: -10%; animation: move 20s infinite alternate; }
+        .blob.blue { background: var(--secondary); bottom: -10%; left: -10%; animation: move 25s infinite alternate-reverse; }
+
+        @keyframes move {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
             overflow-x: hidden;
         }
 
@@ -77,11 +120,17 @@ html_template = """
             max-width: 900px;
             padding: 2rem;
             z-index: 10;
+            z-index: 10;
         }
 
         .glass-panel {
             background: var(--glass);
+            background: var(--glass);
             backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 24px;
             padding: 2.5rem;
@@ -93,12 +142,22 @@ html_template = """
         h1 span { color: var(--secondary); }
         h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--bg-dark); }
         p { color: var(--text-light); line-height: 1.6; }
+        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: var(--bg-dark); }
+        h1 span { color: var(--secondary); }
+        h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--bg-dark); }
+        p { color: var(--text-light); line-height: 1.6; }
 
         .input-group { margin-bottom: 1.5rem; }
         .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
         
         input[type="text"], input[type="password"], input[type="file"], select, input[type="number"] {
+        input[type="text"], input[type="password"], input[type="file"], select, input[type="number"] {
             width: 100%;
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: white;
             padding: 0.8rem 1.2rem;
             border-radius: 12px;
             border: 1px solid rgba(0, 0, 0, 0.1);
@@ -110,9 +169,13 @@ html_template = """
         }
         
         input:focus, select:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2); }
+        input:focus, select:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2); }
 
         button, .btn {
             display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
             padding: 0.8rem 1.5rem;
             border-radius: 50px;
             font-weight: 700;
@@ -120,14 +183,19 @@ html_template = """
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
+            transition: all 0.3s;
             border: none;
+            background: var(--primary);
+            color: var(--bg-dark);
             background: var(--primary);
             color: var(--bg-dark);
             text-decoration: none;
             width: 100%;
             box-shadow: 0 4px 14px 0 rgba(250, 204, 21, 0.39);
+            box-shadow: 0 4px 14px 0 rgba(250, 204, 21, 0.39);
         }
         
+        button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(250, 204, 21, 0.5); }
         button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(250, 204, 21, 0.5); }
         
         button.danger { background: #ef4444; color: white; box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.39); }
@@ -135,7 +203,17 @@ html_template = """
         
         button.secondary { background: var(--secondary); color: white; box-shadow: 0 4px 14px 0 rgba(14, 165, 233, 0.39); }
         button.secondary:hover { box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5); }
+        button.danger { background: #ef4444; color: white; box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.39); }
+        button.danger:hover { box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
         
+        button.secondary { background: var(--secondary); color: white; box-shadow: 0 4px 14px 0 rgba(14, 165, 233, 0.39); }
+        button.secondary:hover { box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5); }
+        
+        .alert { padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: none; font-weight: 600; }
+        .alert.warning { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; display: block; }
+        .alert.error { background: #fee2e2; border: 1px solid #fecaca; color: #b91c1c; display: block; }
+        .alert.success { background: #dcfce7; border: 1px solid #bbf7d0; color: #166534; display: block; }
+
         .alert { padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: none; font-weight: 600; }
         .alert.warning { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; display: block; }
         .alert.error { background: #fee2e2; border: 1px solid #fecaca; color: #b91c1c; display: block; }
@@ -148,20 +226,37 @@ html_template = """
             background: white;
             border: 1px solid rgba(0, 0, 0, 0.05);
             border-radius: 20px;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
             padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s;
         }
         .action-card:hover { transform: translateY(-5px); }
         .action-card h3 { margin-bottom: 0.5rem; color: var(--bg-dark); }
+        .action-card:hover { transform: translateY(-5px); }
+        .action-card h3 { margin-bottom: 0.5rem; color: var(--bg-dark); }
 
+        .discord-link { display: inline-flex; align-items: center; justify-content: center; background: #5865F2; color: white; text-decoration: none; padding: 0.8rem 1.5rem; border-radius: 50px; font-weight: 700; width: 100%; transition: scale 0.2s; margin-top: 1rem; }
+        .discord-link:hover { scale: 1.02; background: #4752C4; }
         .discord-link { display: inline-flex; align-items: center; justify-content: center; background: #5865F2; color: white; text-decoration: none; padding: 0.8rem 1.5rem; border-radius: 50px; font-weight: 700; width: 100%; transition: scale 0.2s; margin-top: 1rem; }
         .discord-link:hover { scale: 1.02; background: #4752C4; }
         
         .inventory-list { max-height: 400px; overflow-y: auto; padding-right: 10px; }
         .inv-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .inv-actions button { padding: 6px 12px; width: auto; font-size: 0.85rem; }
+        .inventory-list { max-height: 400px; overflow-y: auto; padding-right: 10px; }
+        .inv-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .inv-actions button { padding: 6px 12px; width: auto; font-size: 0.85rem; }
         
+        #dashboard-view { display: none; }
+        
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
+        .modal-content { background: white; border-radius: 24px; padding: 2.5rem; max-width: 550px; width: 90%; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .close-btn { float: right; font-size: 24px; font-weight: 800; cursor: pointer; color: var(--text-light); }
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(8px); align-items: center; justify-content: center; }
         .modal-content { background: white; border-radius: 24px; padding: 2.5rem; max-width: 550px; width: 90%; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
         .close-btn { float: right; font-size: 24px; font-weight: 800; cursor: pointer; color: var(--text-light); }
@@ -174,11 +269,17 @@ html_template = """
     <div class="blob blue"></div>
 </div>
 
+<div class="background-blobs">
+    <div class="blob yellow"></div>
+    <div class="blob blue"></div>
+</div>
+
 <div class="container">
     <div id="status-msg" class="alert"></div>
 
     <!-- Login View -->
     <div id="login-view" class="glass-panel">
+        <h1>Welcome to <span>OpenMP</span> Dashboard</h1>
         <h1>Welcome to <span>OpenMP</span> Dashboard</h1>
         <p>Manage your save data securely.</p>
         
@@ -201,6 +302,7 @@ html_template = """
     <div id="dashboard-view">
         <div class="glass-panel">
             <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Dashboard: <span id="display-uid" style="color: var(--secondary);"></span></h2>
                 <h2>Dashboard: <span id="display-uid" style="color: var(--secondary);"></span></h2>
                 <button class="secondary" style="width: auto;" onclick="logout()">Logout</button>
             </div>
@@ -351,6 +453,7 @@ html_template = """
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     
     function apiCall(endpoint, data, onSuccess) {
+        console.log("Calling API:", endpoint, data);
         fetch(endpoint, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -358,12 +461,16 @@ html_template = """
         })
         .then(r => r.json())
         .then(res => {
+            console.log("API Response:", res);
             if(res.error) showMsg(res.error, 'error');
             else {
                 if(res.msg) showMsg(res.msg, 'success');
                 onSuccess(res);
             }
-        }).catch(err => showMsg("Server error: " + err, 'error'));
+        }).catch(err => {
+            console.error("API Error:", err);
+            showMsg("Server error: " + err, 'error');
+        });
     }
 
     function login() {
