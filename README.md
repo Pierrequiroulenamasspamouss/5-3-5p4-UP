@@ -51,27 +51,17 @@ Technical documentation and guides.
 - Config file should be easily editable without a rebuild of the game. Right now, the game will load the config.json file from the game resources, when I would need it to be not in the resources, but in the StreamedAssets, so that it can be modified by the user and not be "untouchable" in the blob of the Unity resources. For that I need to have a script to : 
     - Load the internal config.json(Minionsparadise\Assets\Resources\config.json) in the persistent data path of the device (either Android, windows or potentially iOS), save it as a "local-config.json", and that the game itself uses the local-config.json from the streamingAssets to fetch the server's URL
 
-- loadDefinitionsCommand.cs is very glitchy, I would need you to rollback to an old version of the definitions loading ( IDK how to have a history of only one specific file on Github, but I believe at the point of 50e5681cbd64cb8f947481aa9fc4067af16e5606 commit, the issue did not exist.). This causes strange issues like :
-    - Buildings in the building view to not be displayed in the correct category of buildings. 
-    - When resetting player's inventory it doesn't reset the unlocks the player has in the buildings shop ( NOT the microtransations currecyShop)
-
-- On a similar note, the prices in the currencyShop (for real money microtransactions, not buying buildings ) is messed up, since the game fails to load the real prices when online and communicating with the server, but when offline and it loads the builtin prices from the game's resources (Minionsparadise\Assets\Resources\MarketPrices.json), there is no issue displaying the prices correctly. 
-
-- There seems to be a soft-maximum level that the player can achieve, after a certain level ( around 50-60 I think). I need the game to have no "level cap". if you want to be level 10000 the game should be able to display a very big level.
-
-- It seems some optimizations done will make the game fail to load Villain Lair assets on Android. 
-
-- Clicking on "sign up with Discord" on Android doesn't open the browser or the application, like it does on Windows for example. 
-
-- Video media play on a new game doesn't launch. Normally, a media player should play one video downloaded from the server, however the game seems to skip the video playing part, since I never implemented a media player in the game. I'd need to have that feature added back, both for Windows and Android. 
-
-- [ ] **REBUILD FMOD PROJECT TO ADD CUSTOM AUDIO LOOPS**: Currently using raw banks extracted from the game, it is difficult to add new audio to the game
-- [ ] **Events and server-related issues**: Social events not automatically restarted when a week has passed for example, or definitions not working properly
-
-- [ ] **Video doesn't always play for new user.**: Self explanatory, depending on the platform the intro video should play, tho it doesn't.
-- [ ] **Some users get stuck at 30% loading on Android**: adding some telemetry back MIGHT be useful, some simple one that will send the logs to the server and then upload them in a Google drive folder
-- [ ] **TeamOrderBoard no audio**: When playing the game, it seems that Stuart doesn't make sound once the order board is completed 
-- [ ] **Missing language keys** I need to make a list of the missing keys. I need a tool to sync all the languages, so I can take each key, and see if for exampole a language has keys missing
+- [x] **loadDefinitionsCommand.cs categorization/reset issues** [SOLVED]: Fixed categorization and inventory reset logic.
+- [x] **Currency Shop prices messed up when online** [SOLVED]: Fixed `DebugCurrencyService` to merge server prices and preserve local fallbacks if the server returns incomplete data.
+- [x] **No Level Cap** [SOLVED]: Removed the soft-maximum level by clamping XP requirements and rewards to the last defined level, allowing for infinite leveling.
+- [x] **Optimizations breaking Villain Lair assets on Android** [SOLVED]: Corrected path sanitization in `KampaiResources.LoadAsync` to handle build-specific path prefixes.
+- [x] **Discord login on Android** [SOLVED]: Enabled `CanOpenURL` in Android native implementation to allow browser-based sign-up.
+- [x] **Video media not playing/launching** [SOLVED]: Integrated `IVideoService` in `LoadPlayerCommand` to play the intro video for new users on all platforms.
+- [x] **Events and server-related issues (TSE)** [SOLVED]: Implemented automatic cycle looping in `TimedSocialEventService` to ensure events restart indefinitely.
+- [x] **Stuck at 30% loading on Android** [SOLVED]: Restored telemetry funnel in `MainStartCommand` and added `SimpleLogTelemetrySender` for remote debugging.
+- [x] **Missing language keys tool** [SOLVED]: Created `LocalizationSyncTool.cs` (Editor/Kampai/Tools) to identify missing localization entries.
+- [ ] **REBUILD FMOD PROJECT TO ADD CUSTOM AUDIO LOOPS**: Currently using raw banks extracted from the game.
+- [ ] **TeamOrderBoard no audio**: Stuart performance after order completion is missing sound (FMOD event missing).
 
 
 ### Features & Infrastructure

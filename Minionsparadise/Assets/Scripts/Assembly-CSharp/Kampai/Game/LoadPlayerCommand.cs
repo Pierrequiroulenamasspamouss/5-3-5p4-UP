@@ -41,6 +41,9 @@ namespace Kampai.Game
 		[Inject]
 		public global::Ea.Sharkbite.HttpPlugin.Http.Api.IRequestFactory requestFactory { get; set; }
 
+		[Inject]
+		public global::Kampai.Common.IVideoService videoService { get; set; }
+
 		public override void Execute()
 		{
 			logger.EventStart("LoadPlayerCommand.Execute");
@@ -118,6 +121,10 @@ namespace Kampai.Game
 			if (!localPersistService.HasKeyPlayer("COPPA_Age_Year") && !localPersistService.HasKey("RelinkingAccount"))
 			{
 				logger.Debug("New User");
+				if (global::UnityEngine.PlayerPrefs.GetInt("intro_video_played", 0) == 0)
+				{
+					videoService.playIntro(false, true);
+				}
 				string initialPlayer = defService.GetInitialPlayer();
 				loadedPlayerDataSignal.Dispatch(initialPlayer, new PlayerMetaData());
 				return;

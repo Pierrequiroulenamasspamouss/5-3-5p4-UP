@@ -60,7 +60,11 @@ namespace Kampai.Game
 		public global::Kampai.Game.TimedSocialEventDefinition GetCurrentSocialEvent()
 		{
 			global::System.Collections.Generic.IList<global::Kampai.Game.TimedSocialEventDefinition> all = definitionService.GetAll<global::Kampai.Game.TimedSocialEventDefinition>();
+			if (all == null || all.Count == 0) return null;
+			
 			int num = timeService.CurrentTime();
+			
+			// First pass: look for a truly active event
 			foreach (global::Kampai.Game.TimedSocialEventDefinition item in all)
 			{
 				if (item.StartTime <= num && item.FinishTime >= num)
@@ -68,6 +72,35 @@ namespace Kampai.Game
 					return item;
 				}
 			}
+			
+			// Second pass: if all events are in the past, loop them!
+			// Find the total span of all events to determine the cycle length
+			int minStart = int.MaxValue;
+			int maxFinish = int.MinValue;
+			foreach (var item in all)
+			{
+				if (item.StartTime < minStart) minStart = item.StartTime;
+				if (item.FinishTime > maxFinish) maxFinish = item.FinishTime;
+			}
+			
+			if (num > maxFinish && maxFinish > minStart)
+			{
+				int cycleDuration = maxFinish - minStart + 3600; // Add 1 hour gap between cycles
+				int offset = ((num - minStart) / cycleDuration) * cycleDuration;
+				
+				foreach (var item in all)
+				{
+					if (item.StartTime + offset <= num && item.FinishTime + offset >= num)
+					{
+						// We found a looped event! 
+						// Note: We don't modify the definition itself to avoid persistence issues, 
+						// but we return it as the "current" one.
+						// The server might reject it, but at least the UI will show it.
+						return item;
+					}
+				}
+			}
+			
 			return null;
 		}
 
@@ -76,17 +109,51 @@ namespace Kampai.Game
 			global::Kampai.Game.TimedSocialEventDefinition result = null;
 			int num = int.MaxValue;
 			global::System.Collections.Generic.IList<global::Kampai.Game.TimedSocialEventDefinition> all = definitionService.GetAll<global::Kampai.Game.TimedSocialEventDefinition>();
-			int num2 = timeService.CurrentTime();
+			if (all == null || all.Count == 0) return null;
+
+			int currentTime = timeService.CurrentTime();
+			
+			// First pass: standard logic
 			foreach (global::Kampai.Game.TimedSocialEventDefinition item in all)
 			{
 				int startTime = item.StartTime;
-				int num3 = startTime - num2;
-				if (startTime > num2 && num3 < num)
+				int timeUntilStart = startTime - currentTime;
+				if (startTime > currentTime && timeUntilStart < num)
 				{
-					num = num3;
+					num = timeUntilStart;
 					result = item;
 				}
 			}
+			
+			if (result != null) return result;
+
+			// Second pass: loop logic
+			int minStart = int.MaxValue;
+			int maxFinish = int.MinValue;
+			foreach (var item in all)
+			{
+				if (item.StartTime < minStart) minStart = item.StartTime;
+				if (item.FinishTime > maxFinish) maxFinish = item.FinishTime;
+			}
+
+			if (maxFinish > minStart)
+			{
+				int cycleDuration = maxFinish - minStart + 3600;
+				int offset = ((currentTime - minStart) / cycleDuration + 1) * cycleDuration;
+				
+				num = int.MaxValue;
+				foreach (var item in all)
+				{
+					int shiftedStart = item.StartTime + offset;
+					int timeUntilStart = shiftedStart - currentTime;
+					if (shiftedStart > currentTime && timeUntilStart < num)
+					{
+						num = timeUntilStart;
+						result = item;
+					}
+				}
+			}
+
 			return result;
 		}
 

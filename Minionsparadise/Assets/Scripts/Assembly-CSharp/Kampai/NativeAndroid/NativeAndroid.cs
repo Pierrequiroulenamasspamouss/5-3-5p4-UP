@@ -195,7 +195,7 @@ namespace Kampai.Util
 
 		public bool CanOpenURL(string URL)
 		{
-			return false;
+			return true;
 		}
 
 		public void OpenURL(string URL)

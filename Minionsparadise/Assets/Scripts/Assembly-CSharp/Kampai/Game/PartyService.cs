@@ -70,7 +70,7 @@ namespace Kampai.Game
 
 		public bool IsInspirationParty(int level, int currentIndex)
 		{
-			IsInspiredParty = currentIndex >= levelFunList.partiesNeededList[level].PointsNeeded.Count - 1;
+			IsInspiredParty = currentIndex >= levelFunList.partiesNeededList[ClampLevel(level)].PointsNeeded.Count - 1;
 			return IsInspiredParty;
 		}
 
@@ -91,7 +91,7 @@ namespace Kampai.Game
 
 		public int GetCumulativePointsEarnedThisLevel(int level, int currentIndex, int currentPartyPoints)
 		{
-			int num = global::System.Linq.Enumerable.Sum(levelFunList.partiesNeededList[level].PointsNeeded.GetRange(0, currentIndex));
+			int num = global::System.Linq.Enumerable.Sum(levelFunList.partiesNeededList[ClampLevel(level)].PointsNeeded.GetRange(0, currentIndex));
 			return num + currentPartyPoints;
 		}
 
@@ -101,7 +101,7 @@ namespace Kampai.Game
 			{
 				levelFunList = DefinitionService.Get<global::Kampai.Game.LevelFunTable>(1000009681);
 			}
-			return global::System.Linq.Enumerable.Sum(levelFunList.partiesNeededList[currentLevel].PointsNeeded);
+			return global::System.Linq.Enumerable.Sum(levelFunList.partiesNeededList[ClampLevel(currentLevel)].PointsNeeded);
 		}
 
 		public int GetCumulativePointsNeededForNextParty(int level, int currentIndex)
@@ -115,9 +115,9 @@ namespace Kampai.Game
 			{
 				levelFunList = DefinitionService.Get<global::Kampai.Game.LevelFunTable>(1000009681);
 			}
+			level = ClampLevel(level);
 			global::System.Collections.Generic.List<int> pointsNeeded = levelFunList.partiesNeededList[level].PointsNeeded;
 			int num = 0;
-			level = ClampLevel(level);
 			int cumulativePointsRequiredThisLevel = GetCumulativePointsRequiredThisLevel(level);
 			if (xp >= cumulativePointsRequiredThisLevel)
 			{

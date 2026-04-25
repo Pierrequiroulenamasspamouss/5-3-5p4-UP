@@ -48,7 +48,36 @@ namespace Kampai.Util
 		private static readonly INativePlatform impl = new NativeDefault();
 #endif
 		
-		public static string StaticConfig { get { return impl.StaticConfig; } }
+		public static string StaticConfig
+		{
+			get
+			{
+				string text = global::System.IO.Path.Combine(global::UnityEngine.Application.persistentDataPath, "local-config.json");
+				if (global::System.IO.File.Exists(text))
+				{
+					return global::System.IO.File.ReadAllText(text).Trim();
+				}
+				string text2 = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "local-config.json");
+#if !UNITY_ANDROID || UNITY_EDITOR
+				if (global::System.IO.File.Exists(text2))
+				{
+					return global::System.IO.File.ReadAllText(text2).Trim();
+				}
+#endif
+				string staticConfig = impl.StaticConfig;
+				if (!string.IsNullOrEmpty(staticConfig) && !global::System.IO.File.Exists(text))
+				{
+					try
+					{
+						global::System.IO.File.WriteAllText(text, staticConfig);
+					}
+					catch
+					{
+					}
+				}
+				return staticConfig;
+			}
+		}
 		public static string BundleVersion { get { return impl.BundleVersion; } }
 		public static string BundleIdentifier { get { return impl.BundleIdentifier; } }
 

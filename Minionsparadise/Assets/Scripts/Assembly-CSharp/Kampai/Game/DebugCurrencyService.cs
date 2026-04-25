@@ -24,11 +24,8 @@ namespace Kampai.Game
 		[PostConstruct]
 		public void PostConstruct()
 		{
-			if (userSessionService != null && userSessionService.IsOffline)
-			{
-				TryLoadLocalPrices();
-			}
-			else
+			TryLoadLocalPrices();
+			if (userSessionService == null || !userSessionService.IsOffline)
 			{
 				RefreshCatalog();
 			}
@@ -100,19 +97,26 @@ namespace Kampai.Game
 						using (global::Newtonsoft.Json.JsonTextReader reader2 = new global::Newtonsoft.Json.JsonTextReader(reader))
 						{
 							global::Newtonsoft.Json.JsonSerializer serializer = new global::Newtonsoft.Json.JsonSerializer();
-							serverPrices = serializer.Deserialize<global::System.Collections.Generic.Dictionary<string, string>>(reader2);
-							logger.Info("[PRICES] Sync Successful. Found {0} prices.", serverPrices.Count);
+							var newPrices = serializer.Deserialize<global::System.Collections.Generic.Dictionary<string, string>>(reader2);
+							if (newPrices != null)
+							{
+								foreach (var pair in newPrices)
+								{
+									serverPrices[pair.Key] = pair.Value;
+								}
+								logger.Info("[PRICES] Sync Successful. Merged {0} prices.", newPrices.Count);
+							}
 						}
 					}
 				}
 				catch (global::System.Exception e)
 				{
-					logger.Error("[PRICES] Error parsing prices: {0}", e);
+					logger.Error("[PRICES] Error parsing prices from server: {0}. Response body: {1}", e, response.Body);
 				}
 			}
 			else
 			{
-				logger.Error("[PRICES] Error downloading prices: {0}", response.Body ?? "null");
+				logger.Error("[PRICES] Error downloading prices from server: {0} (Code: {1})", response.Body ?? "null", response.Code);
 			}
 		}
 

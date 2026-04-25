@@ -181,6 +181,8 @@ namespace Kampai.Game
 			this.validateDefinitions = validateDefinitions;
 			AllDefinitions = new global::System.Collections.Generic.Dictionary<int, global::Kampai.Game.Definition>(2500);
 			definitionsTypeMap = new global::System.Collections.Generic.Dictionary<global::System.Type, global::System.Collections.IList>();
+			levelUnlockLookUpTable = null;
+			itemTransactionTable = null;
 			
 			MarkDefinitions(definitions);
 			MarkMoreDefinitions(definitions);
@@ -948,9 +950,11 @@ namespace Kampai.Game
 				foreach (T item in used)
 				{
 					total++;
-					// OFFLINE FIX: Register all definitions to prevent missing JSON subsets
-					MarkDefinitionAsUsed(item);
-					registered++;
+					if (!item.Disabled)
+					{
+						MarkDefinitionAsUsed(item);
+						registered++;
+					}
 				}
 			}
 			return used;
