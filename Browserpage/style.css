@@ -155,6 +155,7 @@ nav {
     border: none;
 }
 
+
 .btn-primary {
     background: var(--primary);
     color: var(--bg-dark);
@@ -454,4 +455,18 @@ nav {
 @media (max-width: 768px) {
     .hero h1 { font-size: 2.5rem; }
     .nav-links { display: none; }
+    .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(378px, 1fr)) !important;}
+}
+@media (max-width: 415px) {
+.btn-primary {
+    margin-right: 0rem !important;
+}
+    .btn {
+        margin: 5px 0px 5px 0px
+    }
+}
+@media (max-width: 430px) {
+.btn-primary { margin-right: 0rem !important; }
+        .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(84vw, 1fr)) !important;}
+
 }
