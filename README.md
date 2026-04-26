@@ -46,9 +46,15 @@ Technical documentation and guides.
 
 ### High Priority
 
-- Current issue : The game has a builtin progress restore prefab somewhere, and currently what the server does when you connect a discord account to your profile, is that the server replaces your profile with the most developed version of the save. I would like you to restore the feature to choose which version of your base you want to keep. Ensure that the server responds appropriately with the data the game requests. 
+- [ ] **Script for Unity 6 porting creation.** I need you to see the changes made in the Unity 5 version and port them in the Unity 6 port in C:\Unity\UNITY6, see if the changes in the fork 
+I always update the Unity 5 version first, and I know there are significant differences between the Unity 5 and Unity 6 versions in terms of assets. However It has to focus on the code only when it comes to syncs between Unity versions. 
+    I would need a tool/or you to do the work to see the changes since the last commit inside the Unity 6 version, ignoring all sorts of assets, of course. Basically sync everything that can be synced without too many issues between Unity versions. 
 
-- Current issue number 2 : marketplace is fucking dead. All is broken on the marketplace, buy/sell buttons, prices, items displayed inside the marketplace, etc... 
+Also I need you to clone the development branch into main, since I tried to pull request development into main but it says : 
+"There isn’t anything to compare.
+main and Development are entirely different commit histories.". Please fix this issue. I need a development branch, and a main branch, main containing only stable changes, that I put development inside once the changes are stable. 
+
+    
 
 - [ ] **REBUILD FMOD PROJECT TO ADD CUSTOM AUDIO LOOPS**: Currently using raw banks extracted from the game.
 - [ ] **TeamOrderBoard no audio**: Stuart performance after order completion is missing sound (FMOD event missing).
