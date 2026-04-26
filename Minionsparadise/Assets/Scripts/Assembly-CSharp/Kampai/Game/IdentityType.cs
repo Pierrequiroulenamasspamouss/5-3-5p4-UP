@@ -5,6 +5,7 @@ namespace Kampai.Game
 		anonymous = 0,
 		discord = 1,
 		gamecenter = 2,
-		googleplay = 3
+		googleplay = 3,
+		facebook = 4
 	}
 }

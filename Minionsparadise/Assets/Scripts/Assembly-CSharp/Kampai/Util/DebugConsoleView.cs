@@ -1,5 +1,3 @@
-using UnityEngine.InputSystem;
-
 namespace Kampai.Util
 {
 	public class DebugConsoleView : global::Kampai.Util.KampaiView
@@ -52,7 +50,7 @@ namespace Kampai.Util
 			{
 				return;
 			}
-			if (Keyboard.current != null && (Keyboard.current.upArrowKey.wasPressedThisFrame || Keyboard.current.downArrowKey.wasPressedThisFrame))
+			if (global::UnityEngine.Input.GetKeyDown(global::UnityEngine.KeyCode.UpArrow) || global::UnityEngine.Input.GetKeyDown(global::UnityEngine.KeyCode.DownArrow))
 			{
 				arrowDown = true;
 			}
@@ -60,7 +58,7 @@ namespace Kampai.Util
 			{
 				return;
 			}
-			if (Keyboard.current != null && Keyboard.current.upArrowKey.wasReleasedThisFrame)
+			if (global::UnityEngine.Input.GetKeyUp(global::UnityEngine.KeyCode.UpArrow))
 			{
 				if (stackIndex != 0)
 				{
@@ -70,7 +68,7 @@ namespace Kampai.Util
 					arrowDown = false;
 				}
 			}
-			else if (Keyboard.current != null && Keyboard.current.downArrowKey.wasReleasedThisFrame && stackIndex < commandStack.Count - 1)
+			else if (global::UnityEngine.Input.GetKeyUp(global::UnityEngine.KeyCode.DownArrow) && stackIndex < commandStack.Count - 1)
 			{
 				stackIndex++;
 				inputField.text = commandStack[stackIndex];

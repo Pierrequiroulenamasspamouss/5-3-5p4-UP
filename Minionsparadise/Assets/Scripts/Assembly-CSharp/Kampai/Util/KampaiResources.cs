@@ -338,6 +338,14 @@ namespace Kampai.Util
                     return null;
                 }
 #endif
+#if !UNITY_EDITOR
+                // On build, Resources.LoadAsync expects path relative to Resources folder and NO extension
+                if (resolvedPath.StartsWith("Assets/Resources/", StringComparison.OrdinalIgnoreCase))
+                {
+                    resolvedPath = resolvedPath.Substring(17);
+                }
+                resolvedPath = global::System.IO.Path.ChangeExtension(resolvedPath, null);
+#endif
                 ResourceRequest request = Resources.LoadAsync(resolvedPath, type);
                 routineRunner.StartCoroutine(LoadAsyncWait(request, onComplete, path, type));
                 return request;

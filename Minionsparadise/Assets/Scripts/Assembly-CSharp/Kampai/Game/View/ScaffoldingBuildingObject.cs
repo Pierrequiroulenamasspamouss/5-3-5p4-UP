@@ -15,14 +15,7 @@ namespace Kampai.Game.View
 			base.Init(building, logger, null, definitionService);
 		}
 
-        protected override UnityEngine.Vector3 GetIndicatorPosition(bool center)
-        {
-            UnityEngine.Vector3 position = transform.position;
-            float indicatorHeight = 3f;
-            return new UnityEngine.Vector3(position.x, position.y + indicatorHeight, position.z);
-        }
-
-        public override void UpdateColliderState(global::Kampai.Game.BuildingState state)
+		public override void UpdateColliderState(global::Kampai.Game.BuildingState state)
 		{
 		}
 	}

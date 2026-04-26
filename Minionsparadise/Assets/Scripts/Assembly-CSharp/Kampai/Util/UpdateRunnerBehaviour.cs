@@ -28,7 +28,14 @@ namespace Kampai.Util
 		{
 			if (updateAction != null)
 			{
-				updateAction();
+				try
+				{
+					updateAction();
+				}
+				catch (global::System.Exception e)
+				{
+					global::UnityEngine.Debug.LogException(e);
+				}
 			}
 		}
 

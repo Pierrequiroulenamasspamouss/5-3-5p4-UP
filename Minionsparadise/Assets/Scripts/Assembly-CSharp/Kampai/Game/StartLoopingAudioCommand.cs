@@ -10,7 +10,11 @@ namespace Kampai.Game
 			string guid = fmodService.GetGuid(eventName);
 			if (emitter.path != null && emitter.path != guid)
 			{
-				emitter.ReleaseEventInstance();
+				if (emitter.evt.isValid())
+				{
+					emitter.evt.release();
+					emitter.evt = default;
+				}
 				emitter.path = guid;
 			}
 			emitter.SetEventParameters(parameters);

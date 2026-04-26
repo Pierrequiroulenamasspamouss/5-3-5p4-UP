@@ -1,5 +1,3 @@
-using UnityEngine.InputSystem;
-
 namespace Kampai.UI.View
 {
 	public class SkrimMediator : global::Kampai.UI.View.KampaiMediator, global::Kampai.Util.KampaiDisposable
@@ -138,7 +136,7 @@ namespace Kampai.UI.View
 			{
 				onClickSkrimSignal.Dispatch();
 				global::System.Action action = model.RemoveTopUI();
-				if (!(Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame))
+				if (!global::UnityEngine.Input.GetKeyDown(global::UnityEngine.KeyCode.Escape))
 				{
 					if (view.singleSkrimClose)
 					{

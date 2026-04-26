@@ -19,6 +19,12 @@ public class DiscordController : MonoBehaviour
     private static MethodInfo runCallbacksStatic;
 
     private float nextUpdateUnscaled;
+    private static Type contextType;
+    private static Type playerServiceType;
+    private static Type staticItemType;
+    private static Type mgrViewType;
+    private static object levelEnum;
+    private static MethodInfo getQuantityMethod;
 
     public static DiscordController Instance { get; private set; }
 
@@ -154,7 +160,8 @@ public class DiscordController : MonoBehaviour
     {
         try
         {
-            var contextType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName == "strange.extensions.context.impl.Context");
+            if (contextType == null)
+                contextType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName == "strange.extensions.context.impl.Context");
             if (contextType == null) return;
 
             var firstContextField = contextType.GetField("firstContext", BindingFlags.Public | BindingFlags.Static);
@@ -169,7 +176,8 @@ public class DiscordController : MonoBehaviour
             var injectionBinder = injectionBinderProp.GetValue(firstContext);
             if (injectionBinder == null) return;
 
-            var playerServiceType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName == "Kampai.Game.IPlayerService");
+            if (playerServiceType == null)
+                playerServiceType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName == "Kampai.Game.IPlayerService");
             if (playerServiceType == null) return;
 
             var getInstanceMethod = injectionBinder.GetType().GetMethod("GetInstance", new Type[] { typeof(Type) });
@@ -180,12 +188,15 @@ public class DiscordController : MonoBehaviour
             }
             if (playerService == null) return;
 
-            var staticItemType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName == "Kampai.Game.StaticItem");
+            if (staticItemType == null)
+                staticItemType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName == "Kampai.Game.StaticItem");
             if (staticItemType == null) return;
 
-            var levelEnum = Enum.Parse(staticItemType, "LEVEL_ID");
+            if (levelEnum == null)
+                levelEnum = Enum.Parse(staticItemType, "LEVEL_ID");
 
-            var getQuantityMethod = playerServiceType.GetMethod("GetQuantity", new Type[] { staticItemType });
+            if (getQuantityMethod == null)
+                getQuantityMethod = playerServiceType.GetMethod("GetQuantity", new Type[] { staticItemType });
             if (getQuantityMethod == null) return;
 
             var result = getQuantityMethod.Invoke(playerService, new object[] { levelEnum });
@@ -204,13 +215,16 @@ public class DiscordController : MonoBehaviour
     {
         try
         {
-            var mgrType = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a => a.GetTypes())
-                .FirstOrDefault(t => t.FullName == "Kampai.Game.Mignette.View.MignetteManagerView");
-
-            if (mgrType != null)
+            if (mgrViewType == null)
             {
-                var getIsPlayingMethod = mgrType.GetMethod("GetIsPlaying", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
+                mgrViewType = AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(a => a.GetTypes())
+                    .FirstOrDefault(t => t.FullName == "Kampai.Game.Mignette.View.MignetteManagerView");
+            }
+
+            if (mgrViewType != null)
+            {
+                var getIsPlayingMethod = mgrViewType.GetMethod("GetIsPlaying", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
                 if (getIsPlayingMethod != null)
                 {
                     var isPlayingObj = getIsPlayingMethod.Invoke(null, null);
@@ -221,7 +235,7 @@ public class DiscordController : MonoBehaviour
                         var findMethod = typeof(UnityEngine.Object).GetMethod("FindObjectOfType", new Type[] { typeof(Type) });
 
                         var managerTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
-                            .Where(t => t != mgrType && mgrType.IsAssignableFrom(t) && !t.IsAbstract);
+                            .Where(t => t != mgrViewType && mgrViewType.IsAssignableFrom(t) && !t.IsAbstract);
 
                         foreach (var mt in managerTypes)
                         {

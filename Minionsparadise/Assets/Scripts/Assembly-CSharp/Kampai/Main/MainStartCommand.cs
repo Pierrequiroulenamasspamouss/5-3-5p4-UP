@@ -100,19 +100,22 @@ namespace Kampai.Main
 
 		private void ContinueExecution()
 		{
-			// De-integrated telemetry
-			// telemetryService.AddTelemetrySender(nimbleTelemetryService);
-			// telemetryService.SharingUsageCompliance();
-			// telemetryService.COPPACompliance();
-			// telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("10 - Load Start", sWRVEGroup, dlcService.GetDownloadQualityLevel());
+			// Restore telemetry with a simple log sender for debugging
+			telemetryService.AddTelemetrySender(new global::Kampai.Common.SimpleLogTelemetrySender());
+			telemetryService.SharingUsageCompliance();
+			telemetryService.COPPACompliance();
+
+			string sWRVEGroup = "default";
+			telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("10 - Load Start", sWRVEGroup, dlcService.GetDownloadQualityLevel());
+			
 			global::Kampai.Util.MediaClient.Start();
 			global::Kampai.Util.ScreenUtils.ToggleAutoRotation(true);
 			SetupBindings();
-			// De-integrated MediaReceiver: RegisterMediaReceiver();
-			// reloadGameSignal.AddOnce(UnregisterMediaReceiver);
-			// telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("13 - Akamai Media Client Start", sWRVEGroup, dlcService.GetDownloadQualityLevel());
+
+			telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("13 - Akamai Media Client Start", sWRVEGroup, dlcService.GetDownloadQualityLevel());
 			setupHockeyAppSignal.Dispatch();
-			// telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("16 - HockeyApp And Loggy Start", sWRVEGroup, dlcService.GetDownloadQualityLevel());
+			
+			telemetryService.Send_Telemetry_EVT_USER_GAME_LOAD_FUNNEL("16 - HockeyApp And Loggy Start", sWRVEGroup, dlcService.GetDownloadQualityLevel());
 			loadEventSystemSignal.Dispatch();
 			loadConfigurationSignal.Dispatch(true);
 			setupNativeAlertManagerSignal.Dispatch();

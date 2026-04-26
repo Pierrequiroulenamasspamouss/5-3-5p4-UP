@@ -6,15 +6,6 @@ namespace Kampai.Game
 
 		private static bool isShuttingDown;
 
-		private void ReleaseEventInstance()
-		{
-			if (eventInstance.isValid())
-			{
-				ERRCHECK(eventInstance.release());
-			}
-			eventInstance.clearHandle();
-		}
-
 		public virtual void Update()
 		{
 			if (!eventInstance.isValid() || HasFinished())
@@ -88,7 +79,8 @@ namespace Kampai.Game
 				{
 					ERRCHECK(eventInstance.stop(global::FMOD.Studio.STOP_MODE.IMMEDIATE));
 				}
-				ReleaseEventInstance();
+				ERRCHECK(eventInstance.release());
+				eventInstance = default;
 			}
 		}
 

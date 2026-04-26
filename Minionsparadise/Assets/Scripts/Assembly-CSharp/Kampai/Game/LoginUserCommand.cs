@@ -44,18 +44,10 @@ namespace Kampai.Game
 			{
 				text2 = plainText;
 			}
-			else
-			{
-				text2 = string.Empty;
-			}
 			string text3 = LocalPersistService.GetData("AnonymousID");
 			if (encryptionService.TryDecrypt(text3, "Kampai!", out plainText))
 			{
 				text3 = plainText;
-			}
-			else
-			{
-				text3 = string.Empty;
 			}
 			if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(text2) || string.IsNullOrEmpty(text3))
 			{

@@ -4,17 +4,14 @@ namespace Newtonsoft.Json.Linq
 	{
 		private class JPropertKeyedCollection : global::System.Collections.ObjectModel.KeyedCollection<string, global::Newtonsoft.Json.Linq.JToken>
 		{
-			private static readonly global::System.Reflection.PropertyInfo DictionaryProperty = typeof(global::System.Collections.ObjectModel.KeyedCollection<string, global::Newtonsoft.Json.Linq.JToken>).GetProperty("Dictionary", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.DeclaredOnly);
-
-			private static readonly global::System.Reflection.PropertyInfo ItemsProperty = typeof(global::System.Collections.ObjectModel.Collection<global::Newtonsoft.Json.Linq.JToken>).GetProperty("Items", global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic | global::System.Reflection.BindingFlags.DeclaredOnly);
-
 			public new global::System.Collections.Generic.IDictionary<string, global::Newtonsoft.Json.Linq.JToken> Dictionary
 			{
 				get
 				{
-					if (DictionaryProperty != null)
+					global::System.Reflection.PropertyInfo property = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.Where(typeof(global::System.Collections.ObjectModel.KeyedCollection<string, global::Newtonsoft.Json.Linq.JToken>).GetProperties(global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic), (global::System.Reflection.PropertyInfo p) => p.Name == "Dictionary"));
+					if (property != null)
 					{
-						return (global::System.Collections.Generic.IDictionary<string, global::Newtonsoft.Json.Linq.JToken>)DictionaryProperty.GetValue(this, null);
+						return (global::System.Collections.Generic.IDictionary<string, global::Newtonsoft.Json.Linq.JToken>)property.GetValue(this, null);
 					}
 					return null;
 				}
@@ -40,9 +37,10 @@ namespace Newtonsoft.Json.Linq
 				}
 				string keyForItem = GetKeyForItem(item);
 				dictionary[keyForItem] = item;
-				if (ItemsProperty != null)
+				global::System.Reflection.PropertyInfo property = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.Where(typeof(global::System.Collections.ObjectModel.KeyedCollection<string, global::Newtonsoft.Json.Linq.JToken>).GetProperties(global::System.Reflection.BindingFlags.Instance | global::System.Reflection.BindingFlags.NonPublic), (global::System.Reflection.PropertyInfo p) => p.Name == "Items"));
+				if (property != null)
 				{
-					global::System.Collections.Generic.IList<global::Newtonsoft.Json.Linq.JToken> list = (global::System.Collections.Generic.IList<global::Newtonsoft.Json.Linq.JToken>)ItemsProperty.GetValue(this, null);
+					global::System.Collections.Generic.IList<global::Newtonsoft.Json.Linq.JToken> list = (global::System.Collections.Generic.IList<global::Newtonsoft.Json.Linq.JToken>)property.GetValue(this, null);
 					if (list != null)
 					{
 						list.Insert(index, item);

@@ -60,7 +60,7 @@ namespace Kampai.Util
 
 		public uint GetMemoryUsage()
 		{
-			return (uint)global::UnityEngine.Profiling.Profiler.usedHeapSizeLong;
+			return (uint)global::UnityEngine.Profiling.Profiler.GetMonoUsedSizeLong();
 		}
 
 		public void Crash() { }
@@ -212,7 +212,7 @@ namespace Kampai.Util
 
 		public bool CanOpenURL(string URL)
 		{
-			return false;
+			return true;
 		}
 
 		public void OpenURL(string URL)

@@ -48,7 +48,52 @@ namespace Kampai.Util
 		private static readonly INativePlatform impl = new NativeDefault();
 #endif
 		
-		public static string StaticConfig { get { return impl.StaticConfig; } }
+		public static string StaticConfig
+		{
+			get
+			{
+				string persistentPath = global::System.IO.Path.Combine(global::UnityEngine.Application.persistentDataPath, "local-config.json");
+				
+				// 1. Try Persistent Data Path (User editable)
+				if (global::System.IO.File.Exists(persistentPath))
+				{
+					string content = global::System.IO.File.ReadAllText(persistentPath).Trim();
+					if (!string.IsNullOrEmpty(content)) return content;
+				}
+
+				// 2. Try StreamingAssets (Easy to edit on Windows/Editor builds)
+				string streamingPath = global::System.IO.Path.Combine(global::UnityEngine.Application.streamingAssetsPath, "local-config.json");
+				string staticConfig = string.Empty;
+
+#if !UNITY_ANDROID || UNITY_EDITOR
+				if (global::System.IO.File.Exists(streamingPath))
+				{
+					staticConfig = global::System.IO.File.ReadAllText(streamingPath).Trim();
+				}
+#endif
+
+				// 3. Fallback to internal Resources (Original game behavior)
+				if (string.IsNullOrEmpty(staticConfig))
+				{
+					staticConfig = impl.StaticConfig;
+				}
+
+				// Cache the found config to Persistent Data Path for future editing
+				if (!string.IsNullOrEmpty(staticConfig))
+				{
+					try
+					{
+						global::System.IO.File.WriteAllText(persistentPath, staticConfig);
+					}
+					catch (global::System.Exception e)
+					{
+						global::UnityEngine.Debug.LogWarning("Native.StaticConfig: Failed to cache config to persistentDataPath: " + e.Message);
+					}
+				}
+
+				return staticConfig;
+			}
+		}
 		public static string BundleVersion { get { return impl.BundleVersion; } }
 		public static string BundleIdentifier { get { return impl.BundleIdentifier; } }
 

@@ -1,6 +1,3 @@
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.EnhancedTouch;
-
 namespace Kampai.Game
 {
 	[global::UnityEngine.AddComponentMenu("Event/Kampai Touch Input Module")]
@@ -32,12 +29,12 @@ namespace Kampai.Game
 		public override void UpdateModule()
 		{
 			m_LastMousePosition = m_MousePosition;
-			m_MousePosition = (Mouse.current != null) ? Mouse.current.position.ReadValue() : global::UnityEngine.Vector2.zero;
+			m_MousePosition = global::UnityEngine.Input.mousePosition;
 		}
 
 		public override bool IsModuleSupported()
 		{
-			return m_AllowActivationOnStandalone || Touchscreen.current != null;
+			return m_AllowActivationOnStandalone || global::UnityEngine.Input.touchSupported;
 		}
 
 		public override bool ShouldActivateModule()
@@ -48,7 +45,7 @@ namespace Kampai.Game
 			}
 			if (UseFakeInput())
 			{
-				bool mouseButtonDown = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+				bool mouseButtonDown = global::UnityEngine.Input.GetMouseButtonDown(0);
 				return mouseButtonDown | ((m_MousePosition - m_LastMousePosition).sqrMagnitude > 0f);
 			}
 			for (int i = 0; i < global::Kampai.Game.InputUtils.touchCount; i++)
@@ -64,7 +61,7 @@ namespace Kampai.Game
 
 		private bool UseFakeInput()
 		{
-			return Touchscreen.current == null;
+			return !global::UnityEngine.Input.touchSupported;
 		}
 
 		public override void Process()
@@ -82,11 +79,11 @@ namespace Kampai.Game
 		private void FakeTouches()
 		{
 			global::UnityEngine.TouchPhase phase;
-			if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+			if (global::UnityEngine.Input.GetMouseButtonDown(0))
 			{
 				phase = global::UnityEngine.TouchPhase.Began;
 			}
-			else if (Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame)
+			else if (global::UnityEngine.Input.GetMouseButtonUp(0))
 			{
 				phase = global::UnityEngine.TouchPhase.Ended;
 			}
@@ -98,7 +95,7 @@ namespace Kampai.Game
 			{
 				phase = global::UnityEngine.TouchPhase.Stationary;
 			}
-			global::UnityEngine.Touch touch = global::Kampai.Game.InputUtils.CreateTouch(-1, m_MousePosition, m_MousePosition - m_LastMousePosition, phase);
+			global::UnityEngine.Touch touch = global::Kampai.Game.InputUtils.CreateTouch(-1, global::UnityEngine.Input.mousePosition, m_MousePosition - m_LastMousePosition, phase);
 			bool pressed;
 			bool released;
 			global::UnityEngine.EventSystems.PointerEventData touchPointerEventData = GetTouchPointerEventData(touch, out pressed, out released);

@@ -1,6 +1,3 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
-
 namespace Swrve.Input
 {
 	public class NativeInputManager : global::Swrve.Input.IInputManager
@@ -25,48 +22,18 @@ namespace Swrve.Input
 
 		bool global::Swrve.Input.IInputManager.GetMouseButtonUp(int buttonId)
 		{
-			var mouse = Mouse.current;
-			if (mouse == null)
-				return true;
-
-			switch (buttonId)
-			{
-				case 0:
-					return !mouse.leftButton.isPressed;
-				case 1:
-					return !mouse.rightButton.isPressed;
-				case 2:
-					return !mouse.middleButton.isPressed;
-				default:
-					return !mouse.leftButton.isPressed;
-			}
+			return !global::UnityEngine.Input.GetMouseButton(buttonId);
 		}
 
 		bool global::Swrve.Input.IInputManager.GetMouseButtonDown(int buttonId)
 		{
-			var mouse = Mouse.current;
-			if (mouse == null)
-				return false;
-
-			switch (buttonId)
-			{
-				case 0:
-					return mouse.leftButton.isPressed;
-				case 1:
-					return mouse.rightButton.isPressed;
-				case 2:
-					return mouse.middleButton.isPressed;
-				default:
-					return mouse.leftButton.isPressed;
-			}
+			return global::UnityEngine.Input.GetMouseButton(buttonId);
 		}
 
 		global::UnityEngine.Vector3 global::Swrve.Input.IInputManager.GetMousePosition()
 		{
-			var mouse = Mouse.current;
-			Vector2 pos = mouse != null ? mouse.position.ReadValue() : Vector2.zero;
-			Vector3 mousePosition = new Vector3(pos.x, pos.y, 0f);
-			mousePosition.y = (float)Screen.height - mousePosition.y;
+			global::UnityEngine.Vector3 mousePosition = global::UnityEngine.Input.mousePosition;
+			mousePosition.y = (float)global::UnityEngine.Screen.height - mousePosition.y;
 			return mousePosition;
 		}
 	}

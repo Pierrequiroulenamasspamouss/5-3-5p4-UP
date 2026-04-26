@@ -20,7 +20,7 @@ namespace Kampai.Util
 
 		public string BundleIdentifier
 		{
-			get { return global::UnityEngine.Application.identifier; }
+			get { return global::UnityEngine.Application.bundleIdentifier; }
 		}
 
 		public bool IsUserMusicPlaying()
@@ -195,7 +195,7 @@ namespace Kampai.Util
 
 		public bool CanOpenURL(string URL)
 		{
-			return false;
+			return true;
 		}
 
 		public void OpenURL(string URL)

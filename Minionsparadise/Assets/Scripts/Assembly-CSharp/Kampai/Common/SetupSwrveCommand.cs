@@ -32,11 +32,13 @@ namespace Kampai.Common
 
 		public override void Execute()
 		{
+			/*
 #if UNITY_EDITOR
 			logger.Info("Swrve is disabled in Unity Editor.");
 			MoveForwardWithoutSwrve();
 			return;
 #endif
+			*/
 			if (configurationsService.isKillSwitchOn(global::Kampai.Game.KillSwitch.SWRVE))
 			{
 				logger.Info("Swrve is disabled by kill switch.");
