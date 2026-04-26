@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, render_template
 import uuid
 import os
 import random
@@ -8,6 +8,10 @@ from utils.db import player_exists, link_discord_to_player, get_uid_by_discord_i
 from urllib.parse import quote
 
 user_bp = Blueprint('user', __name__)
+
+# Cache to store Discord profiles between browser authentication and game-side linking
+# Key: Game UID (from state), Value: Discord Profile Dict
+pending_discord_logins = {}
 
 @user_bp.route('/rest/user/login', methods=['POST'])
 @user_bp.route('/rest/user/session', methods=['POST'])
@@ -25,6 +29,37 @@ def login():
     
     print(f"[LOGIN] UserID={uid_str} | isNewUser={is_new}")
     
+    # Fetch existing social identities to prevent NRE in client
+    from utils.db import get_db_connection, resolve_master_uid
+    conn = get_db_connection()
+    master_uid = resolve_master_uid(uid_str, conn)
+    social_identities = []
+    if master_uid:
+        row = conn.execute("SELECT DISCORD, FACEBOOK, GOOGLE_PLAY FROM players WHERE uid = ?", (master_uid,)).fetchone()
+        if row:
+            if row['DISCORD']:
+                try:
+                    d = json.loads(row['DISCORD'])
+                    social_identities.append({
+                        "id": d.get('id'),
+                        "externalId": d.get('id'),
+                        "userId": uid_str,
+                        "type": 4 # facebook (mocked)
+                    })
+                except: pass
+            if row['FACEBOOK']:
+                # Facebook is mocked as discord in this server
+                try:
+                    f = json.loads(row['FACEBOOK'])
+                    social_identities.append({
+                        "id": f.get('id'),
+                        "externalId": f.get('id'),
+                        "userId": uid_str,
+                        "type": 1 # discord (mocked)
+                    })
+                except: pass
+    conn.close()
+
     return jsonify({
         "userId": uid_str, 
         "sessionId": str(uuid.uuid4()),
@@ -33,7 +68,8 @@ def login():
         "isTester": True, 
         "country": "US",
         "tosVersion": "1.0", 
-        "privacyVersion": "1.0"
+        "privacyVersion": "1.0",
+        "socialIdentities": social_identities
     })
 
 @user_bp.route('/rest/user/register', methods=['POST'])
@@ -90,7 +126,7 @@ def link_identity(user_id):
     # Check if this external ID is already linked to a DIFFERENT player
     master_uid = resolve_master_uid(user_id) or str(user_id)
     
-    if identity_type == 'discord' and external_id:
+    if identity_type in ['discord', 'facebook'] and external_id:
         existing_uid = get_uid_by_discord_id(external_id)
         if existing_uid and existing_uid != master_uid:
             # This Discord account is already linked to another player
@@ -99,30 +135,60 @@ def link_identity(user_id):
                 "error": {
                     "code": 409,
                     "responseCode": 409,
-                    "description": "Social account already linked to another user",
                     "message": "CONFLICT",
+                    "description": "Social account already linked to another user",
                     "details": {
-                        "conflictType": identity_type,
-                        "conflictUserId": existing_uid,
-                        "conflictIdentityId": external_id
+                        "conflictType": str(identity_type),
+                        "conflictUserId": str(existing_uid),
+                        "conflictIdentityId": str(external_id)
                     },
                     "exceptionDetails": ""
                 }
             }), 409
     
     # No conflict — link normally
-    if identity_type == 'discord' and external_id:
+    if identity_type in ['discord', 'facebook'] and external_id:
         # Store the Discord link in the DB
         conn = get_db_connection()
+        
+        # Try to get extra info from pending cache
+        profile = pending_discord_logins.get(user_id, {})
+        if not profile and external_id:
+            # Fallback: find any pending login for this discord ID
+            for p_uid, p_profile in pending_discord_logins.items():
+                if str(p_profile.get('id')) == str(external_id):
+                    profile = p_profile
+                    break
+        
+        discord_username = profile.get('username', '')
+        discord_avatar = profile.get('avatar', '')
+        
         discord_json = json.dumps({"id": external_id, "uids": [str(user_id)]})
-        conn.execute("UPDATE players SET DISCORD = ? WHERE uid = ?", (discord_json, master_uid))
+        
+        # Update Discord info and also name/avatar if they are default
+        conn.execute(
+            "UPDATE players SET DISCORD = ?, discord_username = ?, discord_avatar = ? WHERE uid = ?", 
+            (discord_json, discord_username, discord_avatar, master_uid)
+        )
+        
+        # If user has a default name, update it with discord name
+        from utils.db import MINION_NAMES
+        row = conn.execute("SELECT name FROM players WHERE uid = ?", (master_uid,)).fetchone()
+        if row and (not row['name'] or row['name'] in MINION_NAMES) and discord_username:
+            conn.execute("UPDATE players SET name = ? WHERE uid = ?", (discord_username, master_uid))
+            
         conn.commit()
         conn.close()
+        
+        # Clean up cache
+        if user_id in pending_discord_logins:
+            del pending_discord_logins[user_id]
     
     return jsonify({
         "userId": user_id,
         "externalId": data.get('externalId', 'mock_external_id'),
-        "type": identity_type
+        "type": identity_type,
+        "id": data.get('externalId', 'mock_external_id')
     })
 
 @user_bp.route('/rest/v2/user/<user_id>/identity/<anon_id>', methods=['POST'])
@@ -151,51 +217,44 @@ def relink_identity_forward(user_id, anon_id):
     conflict_master = resolve_master_uid(to_user_id, conn) or str(to_user_id)
     
     if conflict_master and conflict_master != current_master:
-        # Move Discord from conflict to current player
-        # Get the conflict player's Discord data
-        conflict_row = conn.execute("SELECT DISCORD FROM players WHERE uid = ?", (conflict_master,)).fetchone()
-        discord_data = conflict_row['DISCORD'] if conflict_row else None
+        # 1. Update the master record's Discord data to include the new UID
+        conflict_row = conn.execute("SELECT DISCORD, FACEBOOK, GOOGLE_PLAY FROM players WHERE uid = ?", (conflict_master,)).fetchone()
         
-        if discord_data:
+        # We'll update the 'uids' list in the relevant social identity column
+        col_to_update = 'DISCORD' if identity_type == 'discord' else ('FACEBOOK' if identity_type == 'facebook' else None)
+        
+        if col_to_update and conflict_row[col_to_update]:
             try:
-                d = json.loads(discord_data)
-                # Add current user's UID to the uids list
-                uids = d.get('uids', [])
-                if str(user_id) not in uids:
-                    uids.append(str(user_id))
-                d['uids'] = uids
-                discord_data = json.dumps(d)
+                d = json.loads(conflict_row[col_to_update])
+                uids = set(d.get('uids', []))
+                # Add current user's UID and any other UIDs it was master of
+                for u in current_master.split(','):
+                    uids.add(u.strip())
+                for u in user_id.split(','):
+                    uids.add(u.strip())
+                    
+                d['uids'] = sorted(list(uids))
+                new_social_data = json.dumps(d)
+                conn.execute(f"UPDATE players SET {col_to_update} = ?, last_updated = CURRENT_TIMESTAMP WHERE uid = ?", (new_social_data, conflict_master))
             except:
                 pass
         
-        # Consolidate: merge current player into conflict player's row
-        # The current player's UID becomes part of the conflict player's UID list
-        all_uids = set()
-        for uid_str in [current_master, conflict_master]:
-            for part in uid_str.split(', '):
-                all_uids.add(part.strip())
-        consolidated_uid_str = ", ".join(sorted(list(all_uids)))
-        
-        # Update the conflict player's row to include this UID
-        conn.execute(
-            "UPDATE players SET uid = ?, ID = ?, DISCORD = ?, last_updated = CURRENT_TIMESTAMP WHERE uid = ?",
-            (consolidated_uid_str, consolidated_uid_str, discord_data, conflict_master)
-        )
-        
-        # Delete the current player's separate row if it exists and is different
+        # 2. Delete the current player's separate row
         if current_master != conflict_master:
             conn.execute("DELETE FROM players WHERE uid = ?", (current_master,))
         
         conn.commit()
-        print(f"[RELINK-FORWARD] Merged {current_master} into {conflict_master}. New UID: {consolidated_uid_str}")
+        print(f"[RELINK-FORWARD] Merged UID {user_id} into master record {conflict_master}")
     
     conn.close()
     
     # Return UserIdentity so the client can reload with the new user
+    # We return conflict_master as the userId so the game reloads with a single valid UID
     return jsonify({
-        "userId": to_user_id,
+        "userId": conflict_master,
         "externalId": external_id,
-        "type": identity_type
+        "type": identity_type,
+        "id": external_id
     })
 
 @user_bp.route('/rest/v2/user/<user_id>/identity/<anon_id>/reverseLink', methods=['POST'])
@@ -214,14 +273,46 @@ def relink_identity_reverse(user_id, anon_id):
     external_id = data.get('externalId', '')
     identity_type = data.get('identityType', 'discord')
     
-    print(f"[RELINK-REVERSE] User {user_id} keeps their data. Discord stays on {to_user_id}")
+    print(f"[RELINK-REVERSE] User {user_id} keeps their data. Discord moves from {to_user_id} to {user_id}")
     
-    # Nothing to change in DB — the Discord link stays on the original user.
+    if identity_type in ['discord', 'facebook']:
+        from utils.db import resolve_master_uid, get_db_connection
+    conn = get_db_connection()
+    
+    # 1. Unlink from conflict user
+    conflict_master = resolve_master_uid(to_user_id, conn) or str(to_user_id)
+    conn.execute(
+        "UPDATE players SET DISCORD = '', discord_username = '', discord_avatar = '', last_updated = CURRENT_TIMESTAMP WHERE uid = ?",
+        (conflict_master,)
+    )
+    
+    # 2. Link to current user
+    master_uid = resolve_master_uid(user_id, conn) or str(user_id)
+    discord_json = json.dumps({"id": external_id, "uids": [str(user_id)]})
+    
+    # Get extra info if available
+    profile = pending_discord_logins.get(user_id, {})
+    discord_username = profile.get('username', '')
+    discord_avatar = profile.get('avatar', '')
+    
+    conn.execute(
+        "UPDATE players SET DISCORD = ?, discord_username = ?, discord_avatar = ?, last_updated = CURRENT_TIMESTAMP WHERE uid = ?",
+        (discord_json, discord_username, discord_avatar, master_uid)
+    )
+    
+    conn.commit()
+    conn.close()
+    
+    # Clean up cache
+    if user_id in pending_discord_logins:
+        del pending_discord_logins[user_id]
+    
     # Just return success so the client knows to keep the current session.
     return jsonify({
         "userId": user_id,
         "externalId": external_id,
-        "type": identity_type
+        "type": identity_type,
+        "id": external_id
     })
 
 @user_bp.route('/rest/v2/user/<user_id>/discord/unlink', methods=['POST'])
@@ -371,25 +462,22 @@ def discord_callback():
     if not discord_id:
         return "Error: Failed to fetch Discord profile", 400
         
-    # 3. Link to player in DB
-    # If uid is empty, it means the user logged in directly without a pending game account.
-    target_uid = uid if uid else get_uid_by_discord_id(discord_id)
-    if not target_uid:
-        target_uid = discord_id
-        
-    link_discord_to_player(target_uid, user_profile)
+    # 3. Store in pending cache instead of linking immediately
+    # This allows the game to trigger the conflict resolution UI (Save Selection)
+    # the target_uid here is the game UID passed via 'state' (which is 'uid' here)
+    target_uid = uid if uid else discord_id
+    pending_discord_logins[target_uid] = user_profile
     
-    print(f"[DISCORD] Linked user {target_uid} with Discord {user_profile.get('username')} ({discord_id})")
+    print(f"[DISCORD] Auth successful for Discord {user_profile.get('username')} ({discord_id}). Pending link for game UID {target_uid}")
     
-    return """
-    <html>
-    <body>
-        <h2>Login Complete!</h2>
-        <p>You can close this window and return to the game.</p>
-        <script>setTimeout(() => window.close(), 3000);</script>
-    </body>
-    </html>
-    """
+    # Manually serve the completion page to avoid TemplateNotFound issues with Blueprints
+    try:
+        html_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'html', 'login_complete.html'))
+        with open(html_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        print(f"[ERROR] Failed to read login_complete.html: {e}")
+        return "Login Complete! You can close this window and return to the game."
 
 # --- LEGACY FACEBOOK MOCKS (Redirected to Discord) ---
 @user_bp.route('/auth/facebook/login', methods=['GET'])
@@ -401,9 +489,17 @@ def fb_login():
 def discord_status_check():
     """Checks for Discord linkage status for a given UID."""
     uid = request.args.get('uid', '')
-    if not uid:
-        return jsonify({"status": "pending"})
-        
+    # Check pending logins first (this is what the game is waiting for)
+    if uid in pending_discord_logins:
+        profile = pending_discord_logins[uid]
+        discord_id = profile.get('id')
+        print(f"[AUTH] Status check: UID {uid} has pending Discord link {discord_id}")
+        return jsonify({
+            "status": "success", 
+            "token": "discord_pending", 
+            "uid": discord_id  # Return Discord ID so game uses it as social ID
+        })
+
     from utils.db import resolve_master_uid, get_db_connection
     master_uid = resolve_master_uid(uid)
     
@@ -412,6 +508,11 @@ def discord_status_check():
     conn.close()
     
     if row and row['DISCORD']:
-        # Return success with the MASTER UID
-        return jsonify({"status": "success", "token": "discord_linked", "uid": master_uid})
+        try:
+            d = json.loads(row['DISCORD'])
+            discord_id = d.get('id')
+            return jsonify({"status": "success", "token": "discord_linked", "uid": discord_id})
+        except:
+            pass
+            
     return jsonify({"status": "pending"})

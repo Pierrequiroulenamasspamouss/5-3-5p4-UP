@@ -16,7 +16,7 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
 def create_app(port):
-    app = Flask(f"App_{port}")
+    app = Flask(f"App_{port}", template_folder='html')
     
     # Initialize DB
     init_db()
