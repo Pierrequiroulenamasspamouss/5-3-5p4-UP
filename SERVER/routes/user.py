@@ -217,49 +217,41 @@ def relink_identity_forward(user_id, anon_id):
     conflict_master = resolve_master_uid(to_user_id, conn) or str(to_user_id)
     
     if conflict_master and conflict_master != current_master:
-        # Move Discord from conflict to current player
-        # Get the conflict player's Discord data
-        conflict_row = conn.execute("SELECT DISCORD FROM players WHERE uid = ?", (conflict_master,)).fetchone()
-        discord_data = conflict_row['DISCORD'] if conflict_row else None
+        # 1. Update the master record's Discord data to include the new UID
+        conflict_row = conn.execute("SELECT DISCORD, FACEBOOK, GOOGLE_PLAY FROM players WHERE uid = ?", (conflict_master,)).fetchone()
         
-        if discord_data:
+        # We'll update the 'uids' list in the relevant social identity column
+        col_to_update = 'DISCORD' if identity_type == 'discord' else ('FACEBOOK' if identity_type == 'facebook' else None)
+        
+        if col_to_update and conflict_row[col_to_update]:
             try:
-                d = json.loads(discord_data)
-                # Add current user's UID to the uids list
-                uids = d.get('uids', [])
-                if str(user_id) not in uids:
-                    uids.append(str(user_id))
-                d['uids'] = uids
-                discord_data = json.dumps(d)
+                d = json.loads(conflict_row[col_to_update])
+                uids = set(d.get('uids', []))
+                # Add current user's UID and any other UIDs it was master of
+                for u in current_master.split(','):
+                    uids.add(u.strip())
+                for u in user_id.split(','):
+                    uids.add(u.strip())
+                    
+                d['uids'] = sorted(list(uids))
+                new_social_data = json.dumps(d)
+                conn.execute(f"UPDATE players SET {col_to_update} = ?, last_updated = CURRENT_TIMESTAMP WHERE uid = ?", (new_social_data, conflict_master))
             except:
                 pass
         
-        # Consolidate: merge current player into conflict player's row
-        # The current player's UID becomes part of the conflict player's UID list
-        all_uids = set()
-        for uid_str in [current_master, conflict_master]:
-            for part in uid_str.split(', '):
-                all_uids.add(part.strip())
-        consolidated_uid_str = ", ".join(sorted(list(all_uids)))
-        
-        # Update the conflict player's row to include this UID
-        conn.execute(
-            "UPDATE players SET uid = ?, ID = ?, DISCORD = ?, last_updated = CURRENT_TIMESTAMP WHERE uid = ?",
-            (consolidated_uid_str, consolidated_uid_str, discord_data, conflict_master)
-        )
-        
-        # Delete the current player's separate row if it exists and is different
+        # 2. Delete the current player's separate row
         if current_master != conflict_master:
             conn.execute("DELETE FROM players WHERE uid = ?", (current_master,))
         
         conn.commit()
-        print(f"[RELINK-FORWARD] Merged {current_master} into {conflict_master}. New UID: {consolidated_uid_str}")
+        print(f"[RELINK-FORWARD] Merged UID {user_id} into master record {conflict_master}")
     
     conn.close()
     
     # Return UserIdentity so the client can reload with the new user
+    # We return conflict_master as the userId so the game reloads with a single valid UID
     return jsonify({
-        "userId": to_user_id,
+        "userId": conflict_master,
         "externalId": external_id,
         "type": identity_type,
         "id": external_id

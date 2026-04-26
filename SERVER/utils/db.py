@@ -386,24 +386,63 @@ def resolve_master_uid(user_id, conn=None):
         if local_conn: conn.close()
         return row['uid']
         
-    # 2. Match within comma-separated list
-    # We search for: 'id, ', ', id,', ', id', or just 'id' if it's the only one.
-    query = "SELECT uid FROM players WHERE uid = ? OR uid LIKE ? OR uid LIKE ? OR uid LIKE ?"
-    params = (user_id_str, f"{user_id_str}, %", f"%, {user_id_str}, %", f"%, {user_id_str}")
-    row = conn.execute(query, params).fetchone()
-    
-    if row:
-        if local_conn: conn.close()
-        return row['uid']
+    # 3. Check social identity columns for uids list (consolidated accounts)
+    for col in ['DISCORD', 'FACEBOOK', 'GOOGLE_PLAY']:
+        query = f"SELECT uid FROM players WHERE {col} LIKE ?"
+        search_cursor = conn.execute(query, (f'%"uids":%"{user_id_str}"%',))
+        search_row = search_cursor.fetchone()
+        if search_row:
+            res = search_row['uid']
+            if local_conn: conn.close()
+            return res
 
-    # 3. Check DISCORD uids list and id as fallback
-    search_cursor = conn.execute("SELECT uid FROM players WHERE DISCORD LIKE ? OR DISCORD LIKE ?", 
-                                 (f'%"uids":%"{user_id_str}"%', f'%"id": "{user_id_str}"%'))
-    search_row = search_cursor.fetchone()
-    
-    res = search_row['uid'] if search_row else None
+    # 4. Check for id as fallback in social identity
+    for col in ['DISCORD', 'FACEBOOK', 'GOOGLE_PLAY']:
+        query = f"SELECT uid FROM players WHERE {col} LIKE ?"
+        search_cursor = conn.execute(query, (f'%"id": "{user_id_str}"%',))
+        search_row = search_cursor.fetchone()
+        if search_row:
+            res = search_row['uid']
+            if local_conn: conn.close()
+            return res
+
     if local_conn: conn.close()
-    return res
+    return None
+
+def fix_consolidated_uids():
+    """
+    Migration: Converts comma-separated 'uid' values into a single primary UID
+    and moves the other UIDs to the 'uids' list in the DISCORD/social identity JSON.
+    This prevents 'DeserializingPlayerData returned false' errors in the game client.
+    """
+    conn = get_db_connection()
+    rows = conn.execute("SELECT uid, DISCORD, FACEBOOK, GOOGLE_PLAY FROM players WHERE uid LIKE '%,%'").fetchall()
+    
+    for row in rows:
+        old_uid_str = row['uid']
+        uids = [u.strip() for u in old_uid_str.split(',')]
+        primary_uid = uids[0]
+        
+        print(f"[MIGRATION] Fixing consolidated UID: {old_uid_str} -> {primary_uid}")
+        
+        # Update DISCORD info
+        discord_info = row['DISCORD']
+        if discord_info:
+            try:
+                d = json.loads(discord_info)
+                existing_uids = set(d.get('uids', []))
+                for u in uids: existing_uids.add(u)
+                d['uids'] = sorted(list(existing_uids))
+                discord_info = json.dumps(d)
+            except: pass
+            
+        conn.execute(
+            "UPDATE players SET uid = ?, ID = ?, DISCORD = ? WHERE uid = ?",
+            (primary_uid, primary_uid, discord_info, old_uid_str)
+        )
+    
+    conn.commit()
+    conn.close()
 
 def update_player_in_db(user_id, player_data):
     # Find the record that "owns" this user_id
