@@ -135,12 +135,12 @@ def link_identity(user_id):
                 "error": {
                     "code": 409,
                     "responseCode": 409,
-                    "description": "Social account already linked to another user",
                     "message": "CONFLICT",
+                    "description": "Social account already linked to another user",
                     "details": {
-                        "conflictType": identity_type,
-                        "conflictUserId": existing_uid,
-                        "conflictIdentityId": external_id
+                        "conflictType": str(identity_type),
+                        "conflictUserId": str(existing_uid),
+                        "conflictIdentityId": str(external_id)
                     },
                     "exceptionDetails": ""
                 }

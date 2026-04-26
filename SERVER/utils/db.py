@@ -436,10 +436,19 @@ def fix_consolidated_uids():
                 discord_info = json.dumps(d)
             except: pass
             
-        conn.execute(
-            "UPDATE players SET uid = ?, ID = ?, DISCORD = ? WHERE uid = ?",
-            (primary_uid, primary_uid, discord_info, old_uid_str)
-        )
+        try:
+            # Check if primary_uid already exists
+            existing = conn.execute("SELECT uid FROM players WHERE uid = ?", (primary_uid,)).fetchone()
+            if existing and existing['uid'] != old_uid_str:
+                print(f"[MIGRATION] Primary UID {primary_uid} already exists. Deleting it to prioritize consolidated data.")
+                conn.execute("DELETE FROM players WHERE uid = ?", (primary_uid,))
+            
+            conn.execute(
+                "UPDATE players SET uid = ?, ID = ?, DISCORD = ? WHERE uid = ?",
+                (primary_uid, primary_uid, discord_info, old_uid_str)
+            )
+        except Exception as e:
+            print(f"[MIGRATION] ERROR fixing {old_uid_str}: {e}")
     
     conn.commit()
     conn.close()
@@ -577,9 +586,15 @@ def player_exists(user_id):
 
 def get_uid_by_discord_id(discord_id):
     conn = get_db_connection()
-    row = conn.execute("SELECT uid FROM players WHERE DISCORD LIKE ?", (f'%"id": "{discord_id}"%',)).fetchone()
+    # Check all social columns since they all might store Discord IDs in this mock server
+    for col in ['DISCORD', 'FACEBOOK', 'GOOGLE_PLAY']:
+        row = conn.execute(f"SELECT uid FROM players WHERE {col} LIKE ?", (f'%"id": "{discord_id}"%',)).fetchone()
+        if row:
+            uid = row['uid']
+            conn.close()
+            return uid
     conn.close()
-    return row['uid'] if row else None
+    return None
 
 def link_discord_to_player(uid, discord_profile):
     """
